@@ -23,8 +23,9 @@ false zero.
 from __future__ import annotations
 
 import hashlib
+import json
 import time
-from dataclasses import dataclass, field, replace
+from dataclasses import asdict, dataclass, field, replace
 from enum import Enum
 from typing import Literal
 
@@ -550,6 +551,22 @@ class FindingStatus(str, Enum):
 # （§8.5）。两份契约必然对不上，留着只会有一天骗人。
 
 
+@dataclass(frozen=True, slots=True)
+class RootCause:
+    """报告第一页的单位。一条 RootCause = 甲方改一处。"""
+
+    root_cause_id: str
+    summary: str  # 「首页连接器图标墙 8 个语言全部指向已迁移的文档路径」
+    fix_once: str  # 「改 1 处 → 修 8 条：…」
+    finding_ids: tuple[str, ...]
+    max_severity: Severity
+    instance_count: int  # = sum(f.occurrences)
+    unique_target_count: int  # = len(finding_ids)
+    defect: str = ""  # v2：缺陷指纹 id（§5.4 表），非空
+    source_pages: tuple[str, ...] = ()
+    merge_axes: dict[str, str] = field(default_factory=dict)  # 靠哪条边合并的，可审计
+
+
 # --------------------------------------------------------------------------- #
 # 链接上下文（§3.9 适配 #2：从 fetch/denoise.py 搬来，denoise 改为从这里 import）
 # --------------------------------------------------------------------------- #
@@ -830,3 +847,198 @@ class PositionSeed:
     unknown_reason: str | None = None
     unknown_remedy: str | None = None
     aggregate_of: int = 1
+
+
+# --------------------------------------------------------------------------- #
+# 报告状态账本（§2.5 标签表 / §2.9 Position / §2.10 Report）
+#
+# 这一段原先在 **三个** 文件里各有一份完全相同的占位：pipeline.py、
+# report/render.py、report/json_out.py —— 三个写手都需要它们，而三个都被禁止
+# 改本文件（并行时的正确做法：谁都不许单方面动共享定义）。三份用 AST 逐字段
+# 比对过，**零分叉**，唯一差异是 `Report.verdict_kind` 的注解写法
+# （pipeline 用 `VerdictKind` 别名，另两份内联 Literal）。
+#
+# 现按验收标准 A6 合并到唯一定义处，取 pipeline.py 那份（它带 VerdictKind
+# 别名与四张标签表，最全）。三处占位改为从这里 import。
+#
+# `Position` 只许由 `pipeline.build_positions()` 构造（验收 A7），本文件只给
+# 定义不给构造器。
+# --------------------------------------------------------------------------- #
+
+#: §2.5:868。链路图六格的标签，报告与 §7.2 进度输出共用。
+STAGE_LABEL: dict[Stage, str] = {
+    Stage.DISCOVERY: "① 入口发现",
+    Stage.INDEX_FILE: "② 索引文件真伪",
+    Stage.FULLTEXT: "③ 全文通道",
+    Stage.INDEX_LINKS: "④ 索引内链存活",
+    Stage.MD_CHANNEL: "⑤ .md 通道",
+    Stage.HUMAN_PATH: "⑥ 可点击路径",
+}
+
+#: §2.5:911。
+POSITION_LABEL: dict[PositionClass, str] = {
+    PositionClass.SALES_PATH: "销售路径",
+    PositionClass.DOC_ENTRY: "文档/教程唯一出口",
+    PositionClass.AI_CHANNEL: "AI 通道内部",
+    PositionClass.NAV: "站内导航",
+    PositionClass.BODY: "正文正在指引读者去点",
+    PositionClass.FOOTER_SOCIAL: "页脚社交图标",
+}
+
+#: §2.5:898。**严重度由位置决定，不由条数决定。**
+SEVERITY_BY_POSITION: dict[PositionClass, Severity] = {
+    PositionClass.SALES_PATH: Severity.CRITICAL,
+    PositionClass.DOC_ENTRY: Severity.HIGH,
+    PositionClass.AI_CHANNEL: Severity.HIGH,
+    PositionClass.NAV: Severity.MEDIUM,
+    PositionClass.BODY: Severity.MEDIUM,
+    PositionClass.FOOTER_SOCIAL: Severity.LOW,
+}
+
+#: §2.5:920。
+SEVERITY_RANK: tuple[Severity, ...] = (
+    Severity.CRITICAL,
+    Severity.HIGH,
+    Severity.MEDIUM,
+    Severity.LOW,
+    Severity.INFO,
+)
+
+VerdictKind = Literal["has_fail", "zero_with_unknown", "zero_clean", "no_ai_channel", "unusable"]
+
+
+@dataclass(frozen=True, slots=True)
+class Position:
+    """**报告状态账本里的一格**（§2.9:1196 逐字照抄字段表）。
+
+    它回答「AI 走到这里，通不通？」，恰好有一个 ``Status``。
+    **它不是一次 HTTP 请求，也不是一条 finding。**
+    """
+
+    position_id: str  # 稳定 id：f"{stage.value}:{key}"
+    stage: Stage
+    label: str  # 中文，直接显示
+    probe_url: str  # 代表性 URL（聚合型取被聚合对象的入口 URL）
+    status: Status
+    detail: str
+    kind: Literal["probe", "aggregate"]
+    aggregate_of: int = 1
+    unknown_reason: str | None = None  # Reason 的取值 | "interrupted"
+    unknown_remedy: str | None = None  # 每个 UNKNOWN 都必须有
+    evidence: Evidence | None = None
+    control: Evidence | None = None
+    #: §2.9 写的是 ``NaiveRow``；models.py 里这个类叫 ``NaiveContrast``
+    #: （字段是它的超集，见 models.py 的说明）。
+    naive: NaiveContrast | None = None
+    finding_ids: tuple[str, ...] = ()
+
+
+@dataclass(frozen=True, slots=True)
+class Exclusion:
+    """被去噪排除的一条链接（§2.6:1008 / ``Report.excluded`` 的元素类型）。
+
+    ``fetch/denoise.EligibilityExclusion`` 只有规则与理由、没有 URL，
+    报告的「被排除清单」区要按 URL 逐条列出来，所以这里是它的富版本。
+    字段与 ``report/render.py`` / ``report/json_out.py`` 里那两份占位**逐字一致**，
+    owner 合并时三份对得上。
+    """
+
+    url: str
+    rule_id: str
+    rule_desc: str
+    found_on: str | None = None
+    provenance: Literal["measured", "single_case"] = "measured"
+    disposition: Literal["excluded", "needs_review"] = "excluded"
+
+
+@dataclass(frozen=True, slots=True)
+class CoverageGap:
+    """§2.10:1246 逐字。"""
+
+    where: str
+    reason: str  # Reason 取值
+    detail: str
+    remedy: str
+
+
+@dataclass(frozen=True, slots=True)
+class Fragility:
+    """结构性脆弱点。零发现报告的主体。每条必须挂一个实测先例，否则就是编的。"""
+
+    fragility_id: str  # F1..F8
+    title: str
+    metric: str
+    why: str
+    precedent: str  # 实测先例，必填，非空有测试
+    watch_command: str  # 能直接放进 CI 的一条命令
+    severity: Severity = Severity.INFO
+
+
+@dataclass(frozen=True, slots=True)
+class Coverage:
+    """§2.10:1264 逐字。"""
+
+    checked: tuple[str, ...]
+    not_checked: tuple[str, ...]
+    positions_total: int
+    links_extracted: int = 0
+    links_excluded: int = 0
+    links_needs_review: int = 0
+    links_verified: int = 0
+    links_unknown: int = 0
+    pages_fetched: int = 0
+    index_links_sampled: bool = False
+    sampling_note: str = ""
+    robots_respected: bool = True
+    requests_made: int = 0
+    budget_cap: int = 0
+    interrupted: bool = False  # v2：Ctrl-C（§7.5）
+
+
+@dataclass(frozen=True, slots=True)
+class Counts:
+    """§2.10:1283 逐字。首页四格用 positions_*，条数用 findings。"""
+
+    positions: int
+    positions_pass: int
+    positions_fail: int
+    positions_unknown: int
+    positions_na: int
+    findings: int
+    findings_counted: int
+    occurrences: int
+    root_causes: int
+    by_severity: dict[str, int]
+    naive_divergences: int
+    naive_dead_count: int = 0
+    audited_dead_instances: int = 0
+    llm_calls: int = 0  # 恒为 0，有断言（A18）
+
+
+@dataclass(frozen=True, slots=True)
+class Report:
+    """§2.10:1303 逐字。``naive_table`` 的元素类型在 models.py 里叫 NaiveContrast。"""
+
+    schema_version: str
+    tool_version: str
+    denoise_ruleset_version: str
+    domain: str
+    scanned_at: str
+    duration_s: float
+    contact: str
+    user_agent: str
+    headline: str
+    verdict_kind: VerdictKind
+    positions: tuple[Position, ...]
+    findings: tuple[Finding, ...]
+    root_causes: tuple[RootCause, ...]
+    naive_table: tuple[NaiveContrast, ...]
+    fragilities: tuple[Fragility, ...]
+    coverage_gaps: tuple[CoverageGap, ...]
+    excluded: tuple[Exclusion, ...]
+    apex_www: ApexWwwResult | None
+    coverage: Coverage
+    counts: Counts
+
+    def to_json(self) -> str:
+        return json.dumps(asdict(self), ensure_ascii=False, indent=2, sort_keys=True, default=str)

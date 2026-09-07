@@ -52,26 +52,32 @@ Jinja 的 autoescape 不动圆括号与 ``@``，所以那种报告会被自己�
 from __future__ import annotations
 
 import importlib.resources as res
-import json
 import re
 from collections.abc import Sequence
-from dataclasses import asdict, dataclass
-from typing import Literal
 
 import jinja2
 from jinja2 import Environment, StrictUndefined, select_autoescape
 
 from ..models import (
+    POSITION_LABEL,
+    STAGE_LABEL,
     UNKNOWN_REMEDY,
-    ApexWwwResult,
-    Evidence,
+    Counts,
+    Coverage,
+    CoverageGap,
+    Exclusion,
     Finding,
-    NaiveContrast,
+    Fragility,
+    Position,
+    Report,
+    RootCause,
     Severity,
-    Stage,
     Status,
 )
-from ..rootcause import SEVERITY_ORDER, RootCause
+
+# RootCause 从 models 直取（唯一定义处）；经 rootcause 转口在 mypy strict 下
+# 会红（no_implicit_reexport）。SEVERITY_ORDER 仍属 rootcause 自己的东西。
+from ..rootcause import SEVERITY_ORDER
 from .chain_svg import render_chain_svg
 from .copy_zh import (
     CHECKED_TABLE,
@@ -83,193 +89,12 @@ from .copy_zh import (
     NAIVE_DEMO_COLUMNS,
     NAIVE_TABLE_COLUMNS,
     NOT_CHECKED_TABLE,
-    POSITION_LABEL,
-    STAGE_LABEL,
     STATUS_CSS,
     STATUS_GLYPH,
     STATUS_LABEL,
 )
 
 # ═════════════════════════════════════════════════════════════════════════════
-# ╔═══════════════════════════════════════════════════════════════════════════╗
-# ║ 占位区开始 —— PLACEHOLDER BLOCK BEGIN                                     ║
-# ║                                                                           ║
-# ║ 下面八个 dataclass 的**正式定义应在 src/geo_audit/models.py**：           ║
-# ║   Position   —— 规格 §2.9，行 1196–1211                                   ║
-# ║   Exclusion  —— 规格 §2.6，行 1017–1035                                   ║
-# ║   CoverageGap / Fragility / Coverage / Counts / Report                    ║
-# ║             —— 规格 §2.10，行 1240–1331                                   ║
-# ║ 仓库现状：models.py 有 Stage / Severity / PositionClass / Evidence /      ║
-# ║ FixHint / Finding / NaiveContrast / PositionSeed / UNKNOWN_REMEDY，       ║
-# ║ 但**这几个一个都没有**，而铁律 1 禁止本 agent 改 models.py。              ║
-# ║ 规格 §9 的步骤表从第 1 步到第 16 步没有任何一步负责补它们（简报 spec_gaps ║
-# ║ 停工级 1），所以先在这里占位。                                            ║
-# ║                                                                           ║
-# ║ 字段名、顺序、类型、默认值与规格逐字一致，搬入 models.py 时应当是纯剪贴：  ║
-# ║   1. 把整个占位区剪到 models.py 的 PositionSeed 之后；                    ║
-# ║   2. 本文件改成 ``from ..models import Coverage, Counts, ...``；          ║
-# ║   3. 第 16 步的 pipeline.py 也从 models 取（它同样需要这几个类，          ║
-# ║      两边的字段定义按规格原文写，整合时应当对得上）。                     ║
-# ║ 三处与规格原文的偏离（逐条写进交付说明 deviations_from_spec）：            ║
-# ║   a. ``Report.naive_table`` 与 ``Position.naive`` 的元素类型是            ║
-# ║      models.NaiveContrast，不是规格 §2.6 的 NaiveRow —— NaiveContrast     ║
-# ║      已在 models.py 里，且 naive.py（第 14 步）产出的就是它；再定义一个   ║
-# ║      NaiveRow 等于第二份契约。                                            ║
-# ║   b. ``RootCause`` 不在这里重定义，从 rootcause.py 的同款占位区 import    ║
-# ║      —— 那里已经有一份逐字占位，再写一份会让 A6 那类「恰好 1 处」的        ║
-# ║      grep 变红。                                                          ║
-# ║   c. ``Coverage`` 少一个 sampled_ratio 的分母字段（简报 spec_gaps         ║
-# ║      停工级 2）。本层只读 ``coverage.sampling_note`` 与 headline 里已经    ║
-# ║      算好的抽样率，不自己算，所以不替第 16 步决定那个字段叫什么。          ║
-# ║                                                                           ║
-# ║ ⚠️ 同一个包里的 ``json_out.py``（第 15c 步，另一个写手）有一份**孪生占位   ║
-# ║ 块**，同样是因为铁律禁止两边改 models.py。已逐字段比对过：Position /       ║
-# ║ Exclusion / CoverageGap / Fragility / Coverage / Counts / Report 七个类     ║
-# ║ **字段名、顺序、类型、默认值全部相同**（比对脚本见交付说明）。所以搬入      ║
-# ║ models.py 时删掉任意一份即可，不需要先对齐。**别只删一份就走** ——          ║
-# ║ 两份并存会让 A6 那类「恰好 1 处定义」的 grep 变红。                        ║
-# ╚═══════════════════════════════════════════════════════════════════════════╝
-
-
-@dataclass(frozen=True, slots=True)
-class Position:
-    """§2.9:1196。**报告状态账本里的一格**，回答「AI 走到这里，通不通？」
-
-    一个 Position 恰好有一个 ``Status``。**它不是一次 HTTP 请求，也不是一条
-    finding。** 只能由 ``pipeline.build_positions()`` 产生（A7 有 grep 守着）。
-    """
-
-    position_id: str  # 稳定 id：f"{stage.value}:{key}"，key 见 §2.9 构造表
-    stage: Stage
-    label: str  # 中文，直接显示
-    probe_url: str  # 代表性 URL（聚合型取被聚合对象的入口 URL）
-    status: Status
-    detail: str
-    kind: Literal["probe", "aggregate"]  # 区分单探测格与聚合格
-    aggregate_of: int = 1  # 这一格背后有几个被聚合对象
-    unknown_reason: str | None = None  # Reason 的取值 | "interrupted"
-    unknown_remedy: str | None = None  # 每个 UNKNOWN 都必须有
-    evidence: Evidence | None = None
-    control: Evidence | None = None
-    naive: NaiveContrast | None = None
-    finding_ids: tuple[str, ...] = ()
-
-
-@dataclass(frozen=True, slots=True)
-class Exclusion:
-    """§2.6:1017。被去噪规则排除的一条链接，**必须逐条留痕**。
-
-    实测教训：五个批次排除了 ``/cdn-cgi/l/email-protection``，另几个批次没排 ——
-    同一个东西两套口径。``fetch/denoise.py`` 里那个三字段的
-    ``EligibilityExclusion`` 是另一个名字，允许并存（A6）。
-    """
-
-    url: str
-    rule_id: str
-    rule_desc: str
-    found_on: str | None = None
-    provenance: Literal["measured", "single_case"] = "measured"
-    disposition: Literal["excluded", "needs_review"] = "excluded"
-
-
-@dataclass(frozen=True, slots=True)
-class CoverageGap:
-    """§2.10:1240。「我们想看但没看到」的一格，必须带可执行的补救办法。"""
-
-    where: str
-    reason: str  # Reason 取值
-    detail: str
-    remedy: str
-
-
-@dataclass(frozen=True, slots=True)
-class Fragility:
-    """§2.10:1248。结构性脆弱点，零发现报告的主体。
-
-    ``precedent`` 必填、非空 —— 每条必须挂一个实测先例，否则就是编的。
-    """
-
-    fragility_id: str  # F1..F8
-    title: str
-    metric: str
-    why: str
-    precedent: str
-    watch_command: str
-    severity: Severity = Severity.INFO
-
-
-@dataclass(frozen=True, slots=True)
-class Coverage:
-    """§2.10:1261。覆盖披露上首页、不藏附录（§6.1:3051）。"""
-
-    checked: tuple[str, ...]
-    not_checked: tuple[str, ...]
-    positions_total: int
-    links_extracted: int = 0
-    links_excluded: int = 0
-    links_needs_review: int = 0
-    links_verified: int = 0
-    links_unknown: int = 0
-    pages_fetched: int = 0
-    index_links_sampled: bool = False
-    sampling_note: str = ""
-    robots_respected: bool = True
-    requests_made: int = 0
-    budget_cap: int = 0
-    interrupted: bool = False
-
-
-@dataclass(frozen=True, slots=True)
-class Counts:
-    """§2.10:1283。首页四格是**位置数**，``findings`` 是**条数**，两个数分开显示。"""
-
-    positions: int
-    positions_pass: int
-    positions_fail: int
-    positions_unknown: int
-    positions_na: int
-    findings: int
-    findings_counted: int  # counted_as_hit=True 的条数，首页分子用这个
-    occurrences: int  # sum(f.occurrences)
-    root_causes: int
-    by_severity: dict[str, int]
-    naive_divergences: int
-    naive_dead_count: int = 0  # 朴素死链判定：首跳状态码 >= 400 即判死
-    audited_dead_instances: int = 0
-    llm_calls: int = 0  # 恒为 0，有断言（A18 / A22）
-
-
-@dataclass(frozen=True, slots=True)
-class Report:
-    """§2.10:1304。一次扫描的全部结论，HTML 与 JSON 两个出口共用它。"""
-
-    schema_version: str
-    tool_version: str
-    denoise_ruleset_version: str
-    domain: str
-    scanned_at: str
-    duration_s: float
-    contact: str
-    user_agent: str
-    headline: str
-    verdict_kind: Literal[
-        "has_fail", "zero_with_unknown", "zero_clean", "no_ai_channel", "unusable"
-    ]
-    positions: tuple[Position, ...]
-    findings: tuple[Finding, ...]
-    root_causes: tuple[RootCause, ...]
-    naive_table: tuple[NaiveContrast, ...]
-    fragilities: tuple[Fragility, ...]
-    coverage_gaps: tuple[CoverageGap, ...]
-    excluded: tuple[Exclusion, ...]
-    apex_www: ApexWwwResult | None
-    coverage: Coverage
-    counts: Counts
-
-    def to_json(self) -> str:
-        return json.dumps(asdict(self), ensure_ascii=False, indent=2, sort_keys=True, default=str)
-
-
 # ╔═══════════════════════════════════════════════════════════════════════════╗
 # ║ 占位区结束 —— PLACEHOLDER BLOCK END                                       ║
 # ╚═══════════════════════════════════════════════════════════════════════════╝

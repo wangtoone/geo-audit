@@ -30,44 +30,11 @@ from dataclasses import dataclass, field
 from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
 from .fetch.ratelimit import registrable_domain
-from .models import Severity, make_finding_id
+
+# RootCause 已按本文件原占位注释里的三步搬进 models.py（A6：唯一定义处）。
+from .models import RootCause, Severity, make_finding_id
 
 # ═════════════════════════════════════════════════════════════════════════════
-# ╔═══════════════════════════════════════════════════════════════════════════╗
-# ║ 占位区开始 —— PLACEHOLDER BLOCK BEGIN                                     ║
-# ║                                                                           ║
-# ║ ``RootCause`` 的**正式定义应在 src/geo_audit/models.py**（规格 §2.7，      ║
-# ║ 行 1116–1128）。仓库现状：models.py 有 Finding / FixHint / Evidence，      ║
-# ║ 但**没有 RootCause**，而铁律 1 禁止本 agent 改 models.py。                 ║
-# ║                                                                           ║
-# ║ 所以这里放本地占位 —— 字段名、顺序、类型、默认值与规格 §2.7 逐字一致，     ║
-# ║ 搬入 models.py 时应当是纯剪贴：                                           ║
-# ║   1. 把整个 dataclass 剪到 models.py 的 Finding 之后；                     ║
-# ║   2. 本文件改成 ``from .models import RootCause``；                        ║
-# ║   3. 报告层（§6）与 CLI 一律从 models 取，别从这里取。                     ║
-# ║ 先例：extract.py 的 LinkTarget / LinkGap 也是这么占位的（同一条 spec_gap）。║
-# ╚═══════════════════════════════════════════════════════════════════════════╝
-
-
-@dataclass(frozen=True, slots=True)
-class RootCause:
-    """报告第一页的单位。一条 RootCause = 甲方改一处。"""
-
-    root_cause_id: str
-    summary: str  # 「首页连接器图标墙 8 个语言全部指向已迁移的文档路径」
-    fix_once: str  # 「改 1 处 → 修 8 条：…」
-    finding_ids: tuple[str, ...]
-    max_severity: Severity
-    instance_count: int  # = sum(f.occurrences)
-    unique_target_count: int  # = len(finding_ids)
-    defect: str = ""  # v2：缺陷指纹 id（§5.4 表），非空
-    source_pages: tuple[str, ...] = ()
-    merge_axes: dict[str, str] = field(default_factory=dict)  # 靠哪条边合并的，可审计
-
-
-# ╔═══════════════════════════════════════════════════════════════════════════╗
-# ║ 占位区结束 —— PLACEHOLDER BLOCK END                                       ║
-# ╚═══════════════════════════════════════════════════════════════════════════╝
 # ═════════════════════════════════════════════════════════════════════════════
 
 

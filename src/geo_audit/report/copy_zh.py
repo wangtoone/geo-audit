@@ -24,7 +24,6 @@
 
 from __future__ import annotations
 
-from ..models import PositionClass, Stage
 from ..naive import HEADLINE_CLEAN, HEADLINE_WRONG, NAIVE_FIXED_PHRASE
 
 # ═════════════════════════════════════════════════════════════════════════════
@@ -49,26 +48,8 @@ from ..naive import HEADLINE_CLEAN, HEADLINE_WRONG, NAIVE_FIXED_PHRASE
 #: ⚠️ §6.1:3031 的版面示例印的是「② 索引真伪 / ④ 索引内链 / ⑤ .md / ⑥ 可点击」，
 #: 与本表逐字不同（简报 spec_gaps 第 12 条）。裁决：**一律以本表为准**，
 #: 否则同一个词在首页和第 2 页两种写法。
-STAGE_LABEL: dict[Stage, str] = {
-    Stage.DISCOVERY: "① 入口发现",
-    Stage.INDEX_FILE: "② 索引文件真伪",
-    Stage.FULLTEXT: "③ 全文通道",
-    Stage.INDEX_LINKS: "④ 索引内链存活",
-    Stage.MD_CHANNEL: "⑤ .md 通道",
-    Stage.HUMAN_PATH: "⑥ 可点击路径",
-}
-
 #: 位置类别的标签（§2.5:909 逐字）。严重度由位置决定，不由条数决定 —— 所以
 #: finding 卡片的抬头是「CRITICAL · 销售路径」而不是规则名。
-POSITION_LABEL: dict[PositionClass, str] = {
-    PositionClass.SALES_PATH: "销售路径",
-    PositionClass.DOC_ENTRY: "文档/教程唯一出口",
-    PositionClass.AI_CHANNEL: "AI 通道内部",
-    PositionClass.NAV: "站内导航",
-    PositionClass.BODY: "正文正在指引读者去点",
-    PositionClass.FOOTER_SOCIAL: "页脚社交图标",
-}
-
 # ╔═══════════════════════════════════════════════════════════════════════════╗
 # ║ 占位区结束 —— PLACEHOLDER BLOCK END                                       ║
 # ╚═══════════════════════════════════════════════════════════════════════════╝

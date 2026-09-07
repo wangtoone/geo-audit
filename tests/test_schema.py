@@ -545,16 +545,23 @@ def test_placeholder_classes_resolve_from_models_once_moved(gen: ModuleType) -> 
     实现是「先在 geo_audit.models 里按名字找，找不到才回落 json_out」，所以
     这条断言在搬家前后都成立：models 里有了就必须用 models 那个。
     """
+    seven = {"Exclusion", "Position", "CoverageGap", "Fragility", "Coverage", "Counts", "Report"}
+
+    # 搬家**已经完成**（A6：这 7 个类现在只在 models.py 里定义一次）。
+    # 原断言写的是 `set(gen.dataclasses_in(json_out)) == seven` —— 那把「占位还在
+    # json_out 里」当成了不变量，于是搬完必然红。而这条测试的标题与 docstring 说的
+    # 是「生成器不用改一行」，那才是真正的不变量。所以断言改成两条：
+    #   1. 七个类在 models.py 里全都解析得到（搬家的终态）
+    #   2. 生成器对它们的解析结果就是 models 里那个对象（不是某份残留占位）
+    # 搬家前这条同样成立（那时 models 里没有，回落 json_out），
+    # 所以它在搬家前后都是绿的 —— 这才是原 docstring 承诺的性质。
+    for name in sorted(seven):
+        resolved = gen.resolve_class(name)
+        assert resolved is getattr(models, name), (
+            f"{name} 没解析到 models.py 那份 —— A6 要求它只在 models 里定义一次"
+        )
+
     placeholders = gen.dataclasses_in(json_out)
-    assert set(placeholders) == {
-        "Exclusion",
-        "Position",
-        "CoverageGap",
-        "Fragility",
-        "Coverage",
-        "Counts",
-        "Report",
-    }
     for name in placeholders:
         resolved = gen.resolve_class(name)
         if hasattr(models, name):
