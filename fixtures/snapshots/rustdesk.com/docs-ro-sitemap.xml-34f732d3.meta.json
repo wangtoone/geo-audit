@@ -1,0 +1,33 @@
+{
+  "body_bytes": 76237,
+  "body_file": "snapshots/rustdesk.com/docs-ro-sitemap.xml-34f732d3.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://rustdesk.com/docs/ro/sitemap.xml",
+  "handwritten": false,
+  "headers": {
+    "cf-cache-status": "DYNAMIC",
+    "cf-ray": "a376b2983b403db0-SIN",
+    "connection": "keep-alive",
+    "content-encoding": "gzip",
+    "content-security-policy": "upgrade-insecure-requests",
+    "content-type": "text/xml",
+    "date": "Mon, 07 Sep 2026 15:20:28 GMT",
+    "etag": "W/\"6a982a25-129cd\"",
+    "last-modified": "Wed, 02 Sep 2026 13:52:37 GMT",
+    "permissions-policy": "geolocation=(), camera=(), microphone=(), autoplay=(), interest-cohort=()",
+    "server": "cloudflare",
+    "strict-transport-security": "max-age=31536000; includeSubDomains; preload",
+    "transfer-encoding": "chunked",
+    "vary": "Accept-Encoding",
+    "x-content-type-options": "nosniff",
+    "x-frame-options": "SAMEORIGIN"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "8995ae2da7ee9ee112898f8d3b701e0c",
+  "recorded_at": "2026-09-07T15:20:28Z",
+  "status": 200,
+  "stored_bytes": 76237,
+  "transport_error": null,
+  "url": "https://rustdesk.com/docs/ro/sitemap.xml"
+}

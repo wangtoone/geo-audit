@@ -642,13 +642,17 @@ def test_urls_txt_shape() -> None:
     是 §8.2 标题里写死的。
     """
     lines = load_urls_txt(FIXTURES)
-    assert len(lines) == 270
-    assert sum(1 for x in lines if x.kind == "url") == 212
-    assert sum(1 for x in lines if x.kind == "control") == 26
+    # 见 test_urls_txt_shape 的说明：§8.2 原始 270 条 + 第 4b 步之后补的画廊域两节。
+    assert len(lines) >= 270
+    # 四个分项同样改成「不少于」。原始值是 §8.2 那一节的 212/26/17/15；
+    # 第 4b 步之后补的画廊域两节又加了 url 与 control（expand/pair 没动）。
+    # 少了说明有人删了实测用例，多了是正常增长 —— 断言守的是前者。
+    assert sum(1 for x in lines if x.kind == "url") >= 212
+    assert sum(1 for x in lines if x.kind == "control") >= 26
     assert sum(1 for x in lines if x.kind == "expand") == 17
     assert sum(1 for x in lines if x.kind == "pair") == 15
     urls = [canon_url(x.url) for x in lines if x.kind == "url"]
-    assert len(set(urls)) == 212, "URL 行不许重复"
+    assert len(set(urls)) == len(urls), "URL 行不许重复"
 
 
 @urls_txt_needed

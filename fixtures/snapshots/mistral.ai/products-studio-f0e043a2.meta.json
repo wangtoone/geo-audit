@@ -1,0 +1,32 @@
+{
+  "body_bytes": 98,
+  "body_file": "snapshots/mistral.ai/products-studio-f0e043a2.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://mistral.ai/products/studio",
+  "handwritten": false,
+  "headers": {
+    "alt-svc": "h3=\":443\"; ma=86400",
+    "cache-status": "\"Netlify Edge\"; fwd=miss; fwd-status=200; stored",
+    "cf-cache-status": "EXPIRED",
+    "cf-ray": "a376848a5e771f6e-SIN",
+    "connection": "keep-alive",
+    "content-type": "text/html",
+    "date": "Mon, 07 Sep 2026 14:49:02 GMT",
+    "location": "/products/studio/",
+    "server": "cloudflare",
+    "set-cookie": "__cf_bm=ogE5EdqswG5McA_4EVsNCreIU9FjBXTa59J_V4YF_tU-1788792541.8191729-1.0.1.1-tzsN_aJIbMLuCXt0UYbGHmDBmbHytKOLfkLXibzahk0hYMGk4SY1rTr8o9OXiIp3_pdSndfIfGTRvZFEVvD2etVS25zu83gv_.YaADdNS7KqNedjmAsIWXl3s5MEEyqM; HttpOnly; SameSite=None; Secure; Path=/; Domain=mistral.ai; Expires=Mon, 07 Sep 2026 15:19:02 GMT",
+    "strict-transport-security": "max-age=15552000; includeSubDomains; preload",
+    "transfer-encoding": "chunked",
+    "vary": "accept-encoding",
+    "x-content-type-options": "nosniff",
+    "x-nf-request-id": "01M1Y5G4NK5C1Q7E62SS5EQVN3"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "fb8339cbe9d63bb4ae63727914522705",
+  "recorded_at": "2026-09-07T14:49:02Z",
+  "status": 301,
+  "stored_bytes": 98,
+  "transport_error": null,
+  "url": "https://mistral.ai/products/studio"
+}

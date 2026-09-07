@@ -19,6 +19,7 @@ owner 已裁决：**禁词只扫我们自己生成的文案，不扫引用的证
 
 from __future__ import annotations
 
+import inspect
 import re
 
 import pytest
@@ -26,13 +27,16 @@ from markupsafe import escape
 
 from geo_audit.models import Severity, Stage, Status, make_finding_id
 from geo_audit.naive import NAIVE_BANNED_WORDS
+from geo_audit.report import render as render_mod
 from geo_audit.report import render_html
 from geo_audit.report.copy_zh import COPY_ZH
 from geo_audit.report.render import (
     _BANNED_WORDS,
     _FORBIDDEN,
     _SIZE_CAP,
+    _our_markup,
     assert_no_banned_words,
+    assert_no_external_refs,
     assert_selfcontained,
     our_copy_corpus,
 )
@@ -470,3 +474,82 @@ def test_ua_is_printed_and_matches_the_compliance_shape() -> None:
     assert re.fullmatch(r"geo-audit/\d+\.\d+\.\d+ \(\+https://[^;]+; contact: .+@.+\)", UA)
     html = render_html(build_page_one_sample())
     assert UA in html
+
+
+# ═════════════════════════════════════════════════════════════════════════════
+# 自包含闸门的**扫描面**（修一处设计缺陷之后补的）
+#
+# 原实现是 `_defang(html)` 再 `assert_selfcontained(html)`。_defang 是对整份产物
+# 的全局无差别替换，跑完之后 `_FORBIDDEN` 的第 4 条（@import）与第 5 条
+# （url(http）**结构性地不可能再触发** —— 不管那两个字节序列来自甲方数据还是
+# 来自我们自己的疏漏。一个永远不会红的断言不是闸门。
+#
+# 现在的分工（与 assert_no_banned_words 的裁决同一个思路：换扫描面而非改规则）：
+#   assert_selfcontained(_our_markup(html))  扫我们自己写的那部分
+#   assert_no_external_refs(html)            对整份跑前三条
+#   _defang(html)                            最后跑，只为浏览器端
+# ═════════════════════════════════════════════════════════════════════════════
+
+
+def test_selfcontained_gate_scans_our_own_source_not_the_product() -> None:
+    """闸门扫的是**我们写的源文**（模板 + CSS），不是渲染产物。
+
+    第一版试图用 `data-customer` 标记从产物里挖掉甲方区 —— 模板里那个标记根本
+    不存在，所以那版实现完全没生效。现在的定义与 `our_copy_corpus` 一致：
+    源文才是我们写的字。
+
+    这条测试同时证明两件事：
+      1. 我们的源文现在是干净的（没有 @import、没有 url(http）；
+      2. 甲方数据里的同一批字节序列**不会**让报告判自己不自包含 ——
+         `build_hostile_report()` 的 inline_style 里就有 `url(https://cdn…)`、
+         html_snippet 里就有 `@import`（本文件第 83-84 行的 fixture），
+         而下面那条 A36 测试渲染它时不该红。
+    """
+    assert_selfcontained(_our_markup())
+
+
+def test_selfcontained_gate_bites_our_own_slips() -> None:
+    """反向：我们自己的源文里出现外链就必须红。一个永远不会红的断言不是闸门。"""
+    for bad in (
+        "<style>@import url(https://evil/x.css);</style>",
+        "<style>body{background:url(https://cdn/x.png)}</style>",
+        '<link rel="stylesheet" href="https://cdn/x.css">',
+    ):
+        with pytest.raises(AssertionError):
+            assert_selfcontained(bad)
+    # 片段引用不算外链（链路图的斜纹填充用的就是它）
+    assert_selfcontained("<style>.hatch{fill:url(#geoHatch)}</style>")
+
+
+def test_external_ref_gate_runs_on_the_whole_document() -> None:
+    """`_FORBIDDEN` 的前三条对**整份产物**跑。
+
+    它们与后两条的区别：后两条（`@import` / `url(http`）会被甲方的 CSS 值误触发
+    （本文件第 83-84 行的 hostile fixture 里就有），前三条不会 —— 而且甲方数据里
+    真冒出一个 `<script src=...>`，那不是「引用了外部资源」而是我们的转义漏了，
+    必须当场红。
+    """
+    with pytest.raises(AssertionError):
+        assert_no_external_refs('<p><script src="https://evil/x.js"></script></p>')
+    with pytest.raises(AssertionError):
+        assert_no_external_refs('<link rel="stylesheet" href="https://cdn/x.css">')
+    # 甲方 CSS 值里的 url(http 不在前三条的管辖范围，扫整份也不该红
+    assert_no_external_refs("<p>background: url(https://cdn.example.net/hero.png)</p>")
+
+
+def test_defang_runs_last_so_the_gate_can_still_bite() -> None:
+    """回归守卫：不许有人把 _defang 挪到闸门之前。
+
+    判据是源码顺序 —— 这条性质没法从行为上测（defang 之后行为看起来是对的，
+    只是闸门永远不红了，而那正是我们要防的东西）。
+    """
+    src = inspect.getsource(render_mod.render_html)
+    # 三个闸门都必须在 _defang 之前。取各自**最后一次**出现的位置：
+    # _defang 现在写在 `return _defang(html)` 里，是函数体的最后一句。
+    i_defang = src.rindex("_defang(")
+    for gate in ("assert_selfcontained(", "assert_no_external_refs(", "assert_no_banned_words("):
+        assert src.rindex(gate) < i_defang, (
+            f"{gate} 跑在 _defang 之后 —— _defang 是对整份产物的全局替换，"
+            "跑完之后 _FORBIDDEN 的后两条结构性不可能触发，闸门就废了"
+            "（见本文件上方那段注释）"
+        )

@@ -336,3 +336,29 @@ https://gusto.com/robots.txt
 https://docs.gusto.com/robots.txt
 https://tdengine.com/robots.txt
 https://docs.tdengine.com/robots.txt
+
+# ─────────────────────────────────────────────────────────────────────────────
+# 画廊域的 apex/www 根路径与对照探针（第 4b 步之后补）
+#
+# §8.2 的原始 212 条只覆盖了 docs 子域，但 `discover()` **无条件**探 apex 与 www
+# 的根路径（那正是 brevo 的教训：站内没有 href 指向裸域，爬链接永远到不了那个
+# 坏面）。于是 `--replay-fixtures` 在四个画廊域上全部 FixtureMissing 直接崩。
+#
+# 对照探针（@control）同样是必需的：软 404 判据的一半是「同 host 拿一个不可能
+# 存在的路径会怎么答」，缺了它整条判定不成立 —— 报错信息原话。
+# ─────────────────────────────────────────────────────────────────────────────
+https://mistral.ai/                                   # 画廊 · apex 根路径
+@control https://mistral.ai/
+https://www.modal.com/                                # 画廊 · www 根路径
+@control https://www.modal.com/
+https://www.rustdesk.com/                             # 画廊 · www 根路径
+@control https://www.rustdesk.com/
+https://openstatus.dev/                               # 画廊 · apex 根路径
+@control https://openstatus.dev/
+https://www.modal.com/robots.txt
+https://www.rustdesk.com/robots.txt
+https://openstatus.dev/robots.txt
+https://www.mistral.ai/                               # 画廊 · www 侧（apex/www 两侧都要探）
+@control https://www.mistral.ai/
+https://github.com/rustdesk/rustdesk/wiki/FAQ         # 画廊 · rustdesk 首页指向的站外文档
+@control https://github.com/rustdesk/rustdesk/wiki/FAQ

@@ -1,0 +1,27 @@
+{
+  "body_bytes": 0,
+  "body_file": "snapshots/www.modal.com/geo-audit-probe-a6c6b6b8db1be9b51fc6a8af-f75b0087.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://www.modal.com/geo-audit-probe-a6c6b6b8db1be9b51fc6a8af",
+  "handwritten": false,
+  "headers": {
+    "alt-svc": "h3=\":443\"; ma=86400",
+    "connection": "keep-alive",
+    "content-length": "0",
+    "date": "Mon, 07 Sep 2026 14:23:48 GMT",
+    "location": "https://modal.com/geo-audit-probe-a6c6b6b8db1be9b51fc6a8af",
+    "server": "CloudFront",
+    "via": "1.1 49236cda1dd6b9fd3248dbbd598776e8.cloudfront.net (CloudFront)",
+    "x-amz-cf-id": "kOp1Q7ib1vvRHDp9VmEuBk-4fMS5VcmQBUrVZXnoCsE8QPGq0MMVBQ==",
+    "x-amz-cf-pop": "SIN3-P1",
+    "x-cache": "FunctionGeneratedResponse from cloudfront"
+  },
+  "note": null,
+  "probe_for": "https://www.modal.com/",
+  "raw_md5": "d41d8cd98f00b204e9800998ecf8427e",
+  "recorded_at": "2026-09-07T14:23:47Z",
+  "status": 301,
+  "stored_bytes": 0,
+  "transport_error": null,
+  "url": "https://www.modal.com/geo-audit-probe-a6c6b6b8db1be9b51fc6a8af"
+}

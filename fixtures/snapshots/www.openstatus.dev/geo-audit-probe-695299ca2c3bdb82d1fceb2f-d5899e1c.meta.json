@@ -1,0 +1,33 @@
+{
+  "body_bytes": 28193,
+  "body_file": "snapshots/www.openstatus.dev/geo-audit-probe-695299ca2c3bdb82d1fceb2f-d5899e1c.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://www.openstatus.dev/geo-audit-probe-695299ca2c3bdb82d1fceb2f",
+  "handwritten": false,
+  "headers": {
+    "access-control-allow-origin": "*",
+    "age": "0",
+    "cache-control": "public, max-age=0, must-revalidate",
+    "content-disposition": "inline; filename=\"404\"",
+    "content-encoding": "gzip",
+    "content-security-policy": "frame-ancestors 'self' https://shoogle.dev",
+    "content-type": "text/html; charset=utf-8",
+    "date": "Mon, 07 Sep 2026 14:24:09 GMT",
+    "etag": "W/\"04df75a7a25e011eea43f2678ba3ee73\"",
+    "last-modified": "Mon, 07 Sep 2026 14:24:09 GMT",
+    "server": "Vercel",
+    "strict-transport-security": "max-age=63072000",
+    "transfer-encoding": "chunked",
+    "x-matched-path": "/404",
+    "x-vercel-cache": "MISS",
+    "x-vercel-id": "sin1::kkr28-1788791049543-b9f6fe5e07b7"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "04df75a7a25e011eea43f2678ba3ee73",
+  "recorded_at": "2026-09-07T14:24:09Z",
+  "status": 404,
+  "stored_bytes": 28193,
+  "transport_error": null,
+  "url": "https://www.openstatus.dev/geo-audit-probe-695299ca2c3bdb82d1fceb2f"
+}

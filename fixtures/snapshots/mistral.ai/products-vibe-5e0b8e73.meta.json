@@ -1,0 +1,16 @@
+{
+  "body_bytes": 0,
+  "body_file": null,
+  "body_storage": "full",
+  "canon_url": "https://mistral.ai/products/vibe",
+  "handwritten": false,
+  "headers": {},
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "d41d8cd98f00b204e9800998ecf8427e",
+  "recorded_at": "2026-09-07T14:50:05Z",
+  "status": 0,
+  "stored_bytes": 0,
+  "transport_error": "ConnectTimeout: timed out",
+  "url": "https://mistral.ai/products/vibe"
+}

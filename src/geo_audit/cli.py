@@ -35,7 +35,7 @@ import jinja2
 from geo_audit import __version__
 from geo_audit.fetch import resolve as resolve_mod
 from geo_audit.fetch.jsrender import RENDER_FLAG_MESSAGE
-from geo_audit.fixtures import FixtureStore
+from geo_audit.fixtures import DnsFixtureMissing, FixtureMissing, FixtureStore
 from geo_audit.models import SCHEMA_VERSION, Status
 from geo_audit.pipeline import (
     CHECK_IDS,
@@ -56,7 +56,7 @@ from geo_audit.pipeline import (
     RULE_REGISTRY,
     STAGE_LABEL,
     AuditOptions,
-    DomainUnreachable,
+    DomainUnreachableError,
     Report,
     audit_domain,
     count_positions,
@@ -716,9 +716,22 @@ def _run(parser: argparse.ArgumentParser, argv: Sequence[str] | None) -> int:
             resolver=store.resolver() if store is not None else None,
             progress=progress if not args.quiet else None,
         )
-    except DomainUnreachable as exc:
+    except DomainUnreachableError as exc:
         print(f"{PROG}: {exc}", file=sys.stderr)
         return EXIT_UNREACHABLE
+    except (FixtureMissing, DnsFixtureMissing) as exc:
+        # --replay-fixtures 缺快照。**必须有这个出口**：不接的话异常裸逃，
+        # 进程带退出码 1 结束 —— 而 §7.1 里 1 的语义是「扫描完成，有发现」，
+        # 调用方（CI、脚本）会把「快照没录」读成「站点有问题」。
+        # 用 4（用法错）：缺快照确实是用法问题，且 FixtureMissing 的 message
+        # 自带可直接复制的补录命令，照着跑就能修。
+        print(f"{PROG}: {exc}", file=sys.stderr)
+        print(
+            f"{PROG}: --replay-fixtures 只能跑 fixtures/urls.txt 里录过的域。"
+            "要审计别的域就去掉 --replay-fixtures（会走真网络）。",
+            file=sys.stderr,
+        )
+        return EXIT_USAGE
 
     report = apply_ignores(report, ignores)
 

@@ -810,6 +810,28 @@ class FixtureStore:
             out.append(f"bytes: expect {exp['bytes']:,} -> 实测 {body_bytes:,}")
         return out
 
+    def probe_url_lenient(self, url: str) -> str:
+        """:meth:`probe_url` 的宽容版：同 host 没录过探针时**不抛**，返回一个
+        必然缺快照的合成 URL。
+
+        为什么需要它：``discover()`` 会枚举 16 个子域前缀（help / support /
+        api-docs / …），每个活着的 host 都要一条对照探针。那是有限集，但 §8.2 的
+        urls.txt 只录了实测涉及的那些 —— 一个从没出现在实测里的子域（比如
+        ``help.mistral.ai``）缺探针是**正常的**，不该让整份报告产不出来。
+
+        返回的合成 URL 在 ``strict=False`` 的 transport 下会拿到 599，于是
+        ``host_profile`` 判 ``control_unavailable``，那个位置走 UNKNOWN ——
+        正是「我们没能做对照探测」该有的结论。
+
+        ``strict`` 版仍然存在且仍然抛：测试与 fixture 完整性检查用它。
+        """
+        try:
+            return self.probe_url(url)
+        except FixtureMissing:
+            parts = urlsplit(canon_url(url))
+            token = hashlib.sha256(f"lenient|{parts.netloc}".encode()).hexdigest()[:24]
+            return urlunsplit((parts.scheme, parts.netloc, f"/geo-audit-probe-{token}", "", ""))
+
     def probe_url(self, url: str) -> str:
         """录制时那条对照探针 URL（喂 ``Fetcher(probe_url_provider=...)``）。
 
@@ -834,13 +856,46 @@ class FixtureStore:
 
     # -- httpx 重放 ------------------------------------------------------- #
 
-    def transport(self) -> httpx.MockTransport:
+    def transport(self, *, strict: bool = True) -> httpx.MockTransport:
         """喂给 ``Fetcher(transport=...)`` 的重放 transport。
 
         逐跳重放：3xx 那一跳原样带着 ``Location`` 返回，由
         ``Fetcher._fetch_chain`` 自己跟下去，于是「必须跟随 3xx」也被测到。
+
+        ``strict``（默认 True）—— 缺快照抛 :class:`FixtureMissing`。测试与
+        「探测集里的固定位置」用这个：那些位置缺快照说明 fixture 不全，是**我们的**
+        问题，必须当场红。
+
+        ``strict=False`` —— 缺快照返回一条 ``599 + x-geo-audit-fixture: missing``
+        的合成响应，让判定层走 ``not_fetched`` / UNKNOWN。**这不是放宽纪律**：
+        站内抓到的链接是无穷集（mistral.ai 首页上百条），一条条录既不可能也没意义，
+        而「没录 = 没看过 = UNKNOWN」正是 ``not_fetched`` 本来的语义。
+        区别在于**谁的问题**：探测位置缺快照是我们的，站内链接缺快照是事实。
+
+        599 这个码刻意选在 5xx 段外的自定义区：``NOT_EVALUATED_REASONS`` 会把
+        它归到「未能评估」，不会被误判成「站点 500 了」。
         """
-        return httpx.MockTransport(self.replay)
+        if strict:
+            return httpx.MockTransport(self.replay)
+        return httpx.MockTransport(self._replay_lenient)
+
+    #: ``strict=False`` 下缺快照时的合成状态码。见 :meth:`transport`。
+    MISSING_STATUS = 599
+
+    def _replay_lenient(self, request: httpx.Request) -> httpx.Response:
+        """缺快照 -> 599 合成响应（而不是抛异常）。见 :meth:`transport`。"""
+        try:
+            return self.replay(request)
+        except FixtureMissing:
+            return httpx.Response(
+                self.MISSING_STATUS,
+                headers={
+                    "content-type": "text/plain",
+                    "x-geo-audit-fixture": "missing",
+                },
+                content=b"fixture missing: this URL was never recorded",
+                request=request,
+            )
 
     def replay(self, request: httpx.Request) -> httpx.Response:
         """一条请求 -> 一条冻结响应。缺快照就抛 :class:`FixtureMissing`。"""

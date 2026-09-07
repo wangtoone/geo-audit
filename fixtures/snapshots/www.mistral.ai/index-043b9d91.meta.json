@@ -1,0 +1,27 @@
+{
+  "body_bytes": 167,
+  "body_file": "snapshots/www.mistral.ai/index-043b9d91.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://www.mistral.ai/",
+  "handwritten": false,
+  "headers": {
+    "alt-svc": "h3=\":443\"; ma=86400",
+    "cf-ray": "a3766404f851ce21-SIN",
+    "connection": "keep-alive",
+    "content-length": "167",
+    "content-type": "text/html; charset=UTF-8",
+    "date": "Mon, 07 Sep 2026 14:26:49 GMT",
+    "location": "https://mistral.ai/",
+    "server": "cloudflare",
+    "strict-transport-security": "max-age=15552000; includeSubDomains; preload",
+    "x-content-type-options": "nosniff"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "0104c301c5e02bd6148b8703d19b3a73",
+  "recorded_at": "2026-09-07T14:26:49Z",
+  "status": 301,
+  "stored_bytes": 167,
+  "transport_error": null,
+  "url": "https://www.mistral.ai/"
+}

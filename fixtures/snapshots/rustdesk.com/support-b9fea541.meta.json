@@ -1,0 +1,30 @@
+{
+  "body_bytes": 178,
+  "body_file": "snapshots/rustdesk.com/support-b9fea541.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://rustdesk.com/support",
+  "handwritten": false,
+  "headers": {
+    "cf-cache-status": "DYNAMIC",
+    "cf-ray": "a376b51ddf95bb31-LAX",
+    "connection": "keep-alive",
+    "content-security-policy": "upgrade-insecure-requests",
+    "content-type": "text/html",
+    "date": "Mon, 07 Sep 2026 15:22:11 GMT",
+    "location": "https://rustdesk.com/support/",
+    "permissions-policy": "geolocation=(), camera=(), microphone=(), autoplay=(), interest-cohort=()",
+    "server": "cloudflare",
+    "strict-transport-security": "max-age=31536000; includeSubDomains; preload",
+    "transfer-encoding": "chunked",
+    "x-content-type-options": "nosniff",
+    "x-frame-options": "SAMEORIGIN"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "bd2695f4b079c71dbddde3436286fb9c",
+  "recorded_at": "2026-09-07T15:22:11Z",
+  "status": 301,
+  "stored_bytes": 178,
+  "transport_error": null,
+  "url": "https://rustdesk.com/support"
+}

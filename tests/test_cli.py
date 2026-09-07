@@ -406,7 +406,7 @@ def test_unreachable_exits_3_and_writes_nothing(
     monkeypatch: pytest.MonkeyPatch, tmp_path: Path
 ) -> None:
     def boom(*_a: object, **_k: object) -> Report:
-        raise cli.DomainUnreachable("apex 与 www 都连不上")
+        raise cli.DomainUnreachableError("apex 与 www 都连不上")
 
     monkeypatch.setattr(cli, "audit_domain", boom)
     out = tmp_path / "nothing"
