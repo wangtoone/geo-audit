@@ -37,7 +37,7 @@ import time
 from dataclasses import dataclass
 from pathlib import Path
 
-from .models import HostProfile, HttpResponse, RedirectHop
+from ..models import HostProfile, HttpResponse, RedirectHop
 
 #: 8 MiB.  The largest real file in the fixture set is
 #: docs.canvasmedical.com/llms-full.txt at ~4.3 MB, followed by
@@ -149,16 +149,28 @@ class HttpCache:
     def get(self, method: str, url: str, accept: str) -> HttpResponse | None:
         if not self.policy.read:
             return None
-        row = self._conn().execute(
-            "SELECT url, final_url, status, headers, body, redirects, elapsed_ms,"
-            " body_truncated, transport_error, fetched_at FROM responses WHERE key=?",
-            (self.key(method, url, accept),),
-        ).fetchone()
+        row = (
+            self._conn()
+            .execute(
+                "SELECT url, final_url, status, headers, body, redirects, elapsed_ms,"
+                " body_truncated, transport_error, fetched_at FROM responses WHERE key=?",
+                (self.key(method, url, accept),),
+            )
+            .fetchone()
+        )
         if row is None:
             return None
         (
-            r_url, final_url, status, headers, body, redirects, elapsed,
-            truncated, terr, fetched_at,
+            r_url,
+            final_url,
+            status,
+            headers,
+            body,
+            redirects,
+            elapsed,
+            truncated,
+            terr,
+            fetched_at,
         ) = row
         if time.time() - fetched_at > self.ttl_for(status, terr):
             return None
@@ -195,9 +207,14 @@ class HttpCache:
                 response.status,
                 json.dumps(response.headers, sort_keys=True),
                 body,
-                json.dumps([h.__dict__ if hasattr(h, "__dict__") else
-                            {"status": h.status, "from_url": h.from_url, "to_url": h.to_url}
-                            for h in response.redirects]),
+                json.dumps(
+                    [
+                        h.__dict__
+                        if hasattr(h, "__dict__")
+                        else {"status": h.status, "from_url": h.from_url, "to_url": h.to_url}
+                        for h in response.redirects
+                    ]
+                ),
                 response.elapsed_ms,
                 int(truncated),
                 response.transport_error,
@@ -210,13 +227,17 @@ class HttpCache:
     def get_profile(self, host: str) -> HostProfile | None:
         if not self.policy.read:
             return None
-        row = self._conn().execute(
-            "SELECT host,probe_url,status,content_type,norm_sha256,norm_len,"
-            "norm_body_prefix,struct_sha256,struct_tags,final_path,"
-            "status_discriminates,control_is_html,usable,probed_at"
-            " FROM host_profiles WHERE host=?",
-            (host.lower(),),
-        ).fetchone()
+        row = (
+            self._conn()
+            .execute(
+                "SELECT host,probe_url,status,content_type,norm_sha256,norm_len,"
+                "norm_body_prefix,struct_sha256,struct_tags,final_path,"
+                "status_discriminates,control_is_html,usable,probed_at"
+                " FROM host_profiles WHERE host=?",
+                (host.lower(),),
+            )
+            .fetchone()
+        )
         if row is None:
             return None
         probed_at = row[13]
@@ -224,11 +245,20 @@ class HttpCache:
         if time.time() - probed_at > ttl:
             return None
         return HostProfile(
-            host=row[0], probe_url=row[1], status=row[2], content_type=row[3],
-            norm_sha256=row[4], norm_len=row[5], norm_body_prefix=row[6],
-            struct_sha256=row[7], struct_tags=row[8], final_path=row[9],
-            status_discriminates=bool(row[10]), control_is_html=bool(row[11]),
-            usable=bool(row[12]), probed_at=probed_at,
+            host=row[0],
+            probe_url=row[1],
+            status=row[2],
+            content_type=row[3],
+            norm_sha256=row[4],
+            norm_len=row[5],
+            norm_body_prefix=row[6],
+            struct_sha256=row[7],
+            struct_tags=row[8],
+            final_path=row[9],
+            status_discriminates=bool(row[10]),
+            control_is_html=bool(row[11]),
+            usable=bool(row[12]),
+            probed_at=probed_at,
         )
 
     def put_profile(self, profile: HostProfile) -> None:
@@ -240,11 +270,20 @@ class HttpCache:
             "status_discriminates,control_is_html,usable,probed_at)"
             " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
             (
-                profile.host.lower(), profile.probe_url, profile.status,
-                profile.content_type, profile.norm_sha256, profile.norm_len,
-                profile.norm_body_prefix, profile.struct_sha256, profile.struct_tags,
-                profile.final_path, int(profile.status_discriminates),
-                int(profile.control_is_html), int(profile.usable), profile.probed_at,
+                profile.host.lower(),
+                profile.probe_url,
+                profile.status,
+                profile.content_type,
+                profile.norm_sha256,
+                profile.norm_len,
+                profile.norm_body_prefix,
+                profile.struct_sha256,
+                profile.struct_tags,
+                profile.final_path,
+                int(profile.status_discriminates),
+                int(profile.control_is_html),
+                int(profile.usable),
+                profile.probed_at,
             ),
         )
 
@@ -255,7 +294,8 @@ class HttpCache:
         cur = self._conn().execute(
             "DELETE FROM responses WHERE"
             " (transport_error IS NOT NULL AND ? - fetched_at > ?)"
-            " OR (transport_error IS NULL AND status NOT IN (200,201,204,301,302,303,307,308,404,410)"
+            " OR (transport_error IS NULL AND status NOT IN"
+            " (200,201,204,301,302,303,307,308,404,410)"
             "     AND ? - fetched_at > ?)"
             " OR (? - fetched_at > ?)",
             (now, TTL_INDETERMINATE, now, TTL_INDETERMINATE, now, TTL_DEFINITIVE),

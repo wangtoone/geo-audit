@@ -29,8 +29,7 @@ from __future__ import annotations
 import re
 from urllib.parse import urlsplit, urlunsplit
 
-from .client import Fetcher
-from .models import (
+from ..models import (
     ApexWwwResult,
     DiscoveredHost,
     Expect,
@@ -39,6 +38,7 @@ from .models import (
     SiteMap,
     Verdict,
 )
+from .client import Fetcher
 from .ratelimit import registrable_domain
 from .resolve import resolve_host
 
@@ -184,8 +184,16 @@ def mine_declared_hosts(bodies: list[str], *, apex: str) -> list[str]:
                 continue
             if any(
                 host == s or host.endswith("." + s)
-                for s in ("github.com", "x.com", "twitter.com", "linkedin.com",
-                          "youtube.com", "facebook.com", "npmjs.com", "pypi.org")
+                for s in (
+                    "github.com",
+                    "x.com",
+                    "twitter.com",
+                    "linkedin.com",
+                    "youtube.com",
+                    "facebook.com",
+                    "npmjs.com",
+                    "pypi.org",
+                )
             ):
                 continue
             if not re.match(r"^(docs?|developers?|api|apidocs?|platform|help|support)\.", host):
@@ -195,7 +203,9 @@ def mine_declared_hosts(bodies: list[str], *, apex: str) -> list[str]:
     return ranked[:MAX_DECLARED_HOSTS]
 
 
-def fetch_sitemap_urls(fetcher: Fetcher, host: str, robots_sitemaps: tuple[str, ...]) -> tuple[str, ...]:
+def fetch_sitemap_urls(
+    fetcher: Fetcher, host: str, robots_sitemaps: tuple[str, ...]
+) -> tuple[str, ...]:
     """robots.txt Sitemap: lines first, then the conventional filenames.
 
     One level of <sitemapindex> is followed (5 children max).  Used by the
@@ -233,7 +243,9 @@ def fetch_sitemap_urls(fetcher: Fetcher, host: str, robots_sitemaps: tuple[str, 
     return tuple(dict.fromkeys(urls))[:MAX_SITEMAP_URLS]
 
 
-def find_pricing_page(fetcher: Fetcher, host: str) -> tuple[str | None, tuple[tuple[str, Verdict], ...]]:
+def find_pricing_page(
+    fetcher: Fetcher, host: str
+) -> tuple[str | None, tuple[tuple[str, Verdict], ...]]:
     """First candidate that classifies OK, else None.
 
     None means "no pricing page found", which is a real state and must never
@@ -280,18 +292,25 @@ def discover(fetcher: Fetcher, raw_domain: str, *, include_apex_check: bool = Tr
             # 8.8.8.8 / 1.1.1.1, so a negative here is trustworthy.
             hosts.append(
                 DiscoveredHost(
-                    host, role, reachable=False,
+                    host,
+                    role,
+                    reachable=False,
                     verdict=Verdict.UNKNOWN,
                     reason="dns_poisoned" if resolution.poisoned else "dns_unresolved",
-                    evidence=(f"DNS 无有效记录（已过 8.8.8.8 / 1.1.1.1 复测）：{resolution.error}",),
+                    evidence=(
+                        f"DNS 无有效记录（已过 8.8.8.8 / 1.1.1.1 复测）：{resolution.error}",
+                    ),
                 )
             )
             continue
         root = fetcher.probe(f"https://{host}/", expect=Expect.HTML_PAGE)
         hosts.append(
             DiscoveredHost(
-                host, role, reachable=root.verdict is Verdict.OK,
-                verdict=root.verdict, reason=root.classification.reason,
+                host,
+                role,
+                reachable=root.verdict is Verdict.OK,
+                verdict=root.verdict,
+                reason=root.classification.reason,
                 resolved_ips=resolution.addresses,
                 evidence=root.classification.evidence,
             )
@@ -322,22 +341,26 @@ def discover(fetcher: Fetcher, raw_domain: str, *, include_apex_check: bool = Tr
             continue
         root = fetcher.probe(f"https://{extra}/", expect=Expect.HTML_PAGE)
         hosts.append(
-            DiscoveredHost(extra, HostRole.DECLARED, root.verdict is Verdict.OK,
-                           root.verdict, root.classification.reason,
-                           resolution.addresses,
-                           ("由站点自身声明（llms.txt / 文档横幅）发现",))
+            DiscoveredHost(
+                extra,
+                HostRole.DECLARED,
+                root.verdict is Verdict.OK,
+                root.verdict,
+                root.classification.reason,
+                resolution.addresses,
+                ("由站点自身声明（llms.txt / 文档横幅）发现",),
+            )
         )
         if root.verdict is Verdict.OK:
             for path in AI_PATH_CANDIDATES:
                 ai_probes.append(
-                    fetcher.probe(urlunsplit(("https", extra, path, "", "")),
-                                  expect=Expect.TEXT_FILE)
+                    fetcher.probe(
+                        urlunsplit(("https", extra, path, "", "")), expect=Expect.TEXT_FILE
+                    )
                 )
 
     robots = {h: fetcher.robots_for(f"https://{h}/") for h in live_hosts}
-    sitemaps = {
-        h: fetch_sitemap_urls(fetcher, h, robots[h].sitemaps) for h in live_hosts
-    }
+    sitemaps = {h: fetch_sitemap_urls(fetcher, h, robots[h].sitemaps) for h in live_hosts}
 
     marketing_host = www if any(x.host == www and x.reachable for x in hosts) else apex
     pricing_url, pricing_tried = find_pricing_page(fetcher, marketing_host)

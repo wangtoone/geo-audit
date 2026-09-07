@@ -41,18 +41,7 @@ from __future__ import annotations
 import re
 from urllib.parse import urlsplit
 
-from . import fingerprints as fp
-from .jsrender import detect_js_dependency
-from .normalize import (
-    MIN_SIMILARITY_LEN,
-    MIN_STRUCT_TAGS,
-    SIMILARITY_THRESHOLD,
-    normalize_body,
-    norm_sha256,
-    similarity_norm,
-    structural_fingerprint,
-)
-from .models import (
+from ..models import (
     Classification,
     Expect,
     HostProfile,
@@ -60,9 +49,22 @@ from .models import (
     RedirectHop,
     Verdict,
 )
+from . import fingerprints as fp
+from .jsrender import detect_js_dependency
+from .normalize import (
+    MIN_SIMILARITY_LEN,
+    MIN_STRUCT_TAGS,
+    SIMILARITY_THRESHOLD,
+    norm_sha256,
+    normalize_body,
+    similarity_norm,
+    structural_fingerprint,
+)
 
 _HTML_START_RE = re.compile(r"^\s*(?:<!doctype\s+html|<html\b|<\?xml[^>]*\?>\s*<html\b)", re.I)
-_SERVER_ERROR = frozenset({500, 502, 503, 504, 507, 508, 520, 521, 522, 523, 524, 525, 526, 527, 530})
+_SERVER_ERROR = frozenset(
+    {500, 502, 503, 504, 507, 508, 520, 521, 522, 523, 524, 525, 526, 527, 530}
+)
 
 
 def _host_of(url: str) -> str:
@@ -161,7 +163,7 @@ def find_notfound_copy(body: str) -> tuple[str, str] | None:
         m = pattern.search(window)
         if m:
             snippet = window[max(0, m.start() - 40) : m.end() + 40].strip()
-            return (rule_id, f'正文开头命中「未找到」文案（{rule_id}）：“{snippet}”')
+            return (rule_id, f"正文开头命中「未找到」文案（{rule_id}）：“{snippet}”")
     return None
 
 
@@ -291,11 +293,14 @@ def classify_response(
     # ---- L0  blocked -----------------------------------------------------
     blocked = is_blocked(status, headers, body, url=url)
     if blocked is not None:
-        _, reason, evidence = blocked
+        # 改名 blocked_evidence：这里是单条 str，而下面 L2 段的 evidence 是
+        # list[str]。同名两种类型，mypy strict 直接判 no-redef —— 行为上没出错
+        # 只是因为本分支立刻 return 了，但这种影子命名迟早咬人。
+        _, reason, blocked_evidence = blocked
         return Classification(
             Verdict.BLOCKED,
             reason,  # type: ignore[arg-type]
-            (evidence, "被拦截 != 不存在：本位置计入「未能评估」，不计入死链也不计入存活"),
+            (blocked_evidence, "被拦截 != 不存在：本位置计入「未能评估」，不计入死链也不计入存活"),
             naive_would_say="朴素实现会报「没有这个文件 / 这条链接是死的」",
         )
 
@@ -418,7 +423,7 @@ def classify_response(
                 return Classification(
                     Verdict.UNKNOWN,
                     "needs_js",
-                    tuple(evidence + [f"但正文需要 JS 渲染才可读：{', '.join(js.signals)}"]),
+                    (*evidence, f"但正文需要 JS 渲染才可读：{', '.join(js.signals)}"),
                     needs_js=True,
                     control_used=True,
                     control_discriminates=True,
@@ -453,8 +458,7 @@ def classify_response(
         # platform.kimi.ai/docs/nonsense-xyz vs /docs/overview (both 200,
         # 414072 B, <title>Quickstart - Kimi API Platform</title>).
         content_identical = (
-            len(target_norm) >= MIN_SIMILARITY_LEN
-            and target_sha == control.norm_sha256
+            len(target_norm) >= MIN_SIMILARITY_LEN and target_sha == control.norm_sha256
         )
         struct_identical = (
             target_tags >= MIN_STRUCT_TAGS
@@ -515,17 +519,17 @@ def classify_response(
         "ok",
         tuple(evidence) or (f"HTTP {status} / {content_type or '未声明'}",),
         control_used=control is not None,
-        control_discriminates=(
-            control.status_discriminates if control else None
-        ),
+        control_discriminates=(control.status_discriminates if control else None),
     )
 
 
-
-
-def classify(response: HttpResponse, *, expect: Expect = Expect.ANY,
-             control: HostProfile | None = None,
-             robots_disallowed: bool = False) -> Classification:
+def classify(
+    response: HttpResponse,
+    *,
+    expect: Expect = Expect.ANY,
+    control: HostProfile | None = None,
+    robots_disallowed: bool = False,
+) -> Classification:
     """Convenience wrapper over ``classify_response`` for an ``HttpResponse``."""
     return classify_response(
         response.status,

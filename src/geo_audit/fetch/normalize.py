@@ -23,9 +23,7 @@ _BLOCK_RE = re.compile(
     r"<(script|style|noscript|svg|template|iframe)\b[^>]*>.*?</\1\s*>",
     re.IGNORECASE | re.DOTALL,
 )
-_SELF_CLOSING_NOISE_RE = re.compile(
-    r"<(script|link|meta)\b[^>]*/?>", re.IGNORECASE
-)
+_SELF_CLOSING_NOISE_RE = re.compile(r"<(script|link|meta)\b[^>]*/?>", re.IGNORECASE)
 _COMMENT_RE = re.compile(r"<!--.*?-->", re.DOTALL)
 _DOCTYPE_RE = re.compile(r"<!doctype[^>]*>", re.IGNORECASE)
 _TAG_RE = re.compile(r"<[^>]+>")

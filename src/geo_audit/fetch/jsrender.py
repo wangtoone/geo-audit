@@ -35,8 +35,8 @@ from __future__ import annotations
 
 import re
 
+from ..models import JsAssessment
 from .normalize import visible_text
-from .models import JsAssessment
 
 #: Below this many visible characters an HTML page carries no readable prose.
 #: Calibrated on the two known cases: spoton's help centre extracts to

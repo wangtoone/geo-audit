@@ -73,19 +73,34 @@ line-length = 100
 target-version = "py311"
 src = ["src", "tests", "scripts"]
 
+# 冻结的 ground truth：这三个文件必须与搬入前逐字节相同（验收标准 A4）。
+# 它们的正确性由「146 passed」证明，不由 lint 证明；所以 lint 与 formatter 一律
+# 不许碰。实测教训：第 3b 步跑一次 `ruff check --fix && ruff format` 就把它们
+# 改了 —— 排 import、删掉未使用的 `field`。改动全是纯格式的，但 A4 要的就是 0 行。
+extend-exclude = [
+  "tests/test_classify.py",
+  "tests/test_infra.py",
+  "tests/fixtures/real_cases.py",
+]
+
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "N", "UP", "B", "A", "C4", "SIM", "PTH", "RUF", "S", "T20"]
 # RUF001/002/003（ambiguous-unicode）在本项目必须关：注释与 docstring 全是中文，
 # 全角标点（，。；（）"）是正确用法而不是同形字攻击。这三条规则的本意是防
 # identifier 里的 homoglyph，对中文散文误报 100%。方案 §1.2 选了 RUF 全组但没
 # 考虑这一点，实测第 1 步就报 16 条，全部是这三条。
-ignore = ["S101", "RUF001", "RUF002", "RUF003"]
+# UP042 也必须关：它建议把 ``class Verdict(str, Enum)`` 换成 ``StrEnum``。
+# 两者的 ``str()`` 语义不同（前者给 "Verdict.OK"，后者给 "ok"），而 146 个冻结
+# 回归测试与 JSON 报告的证据字符串都是按 str+Enum 的行为写的。方案 §2 也明确
+# 写的是 ``(str, Enum)``。为一条风格建议换掉判定枚举的序列化行为，不划算。
+ignore = ["S101", "RUF001", "RUF002", "RUF003", "UP042"]
 
 # 卡点 B17c：原型从未跑过 lint，这三条 per-file-ignore 是实测出来的最小集
 [tool.ruff.lint.per-file-ignores]
 "scripts/*" = ["T20"]
 "src/geo_audit/cli.py" = ["T201"]        # 进度输出走 print(file=sys.stderr)，不引 logging
-"tests/*" = ["S105", "S106", "S311"]
+# S104 是 test_infra 里的 0.0.0.0（构造 dns_poisoned 用例需要它，不是在监听）
+"tests/*" = ["S104", "S105", "S106", "S311"]
 
 [tool.ruff.format]
 quote-style = "double"

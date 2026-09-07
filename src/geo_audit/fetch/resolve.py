@@ -27,8 +27,10 @@ Rules, all mandatory:
 from __future__ import annotations
 
 import ipaddress
+import os
 import socket
 from dataclasses import dataclass
+from typing import Protocol
 
 try:  # pragma: no cover - import guard
     import dns.resolver as _dnspython
@@ -82,7 +84,9 @@ def _system_resolve(host: str) -> tuple[tuple[str, ...], str | None]:
         return (), f"getaddrinfo: {exc}"
     except OSError as exc:  # pragma: no cover
         return (), f"socket: {exc}"
-    return tuple(dict.fromkeys(i[4][0] for i in infos)), None
+    # typeshed 里 sockaddr[0] 是 str | int（AF_PACKET 之类的家族），
+    # 我们只用 AF_INET/AF_INET6，实际恒为 str。str() 在这里是恒等操作。
+    return tuple(dict.fromkeys(str(i[4][0]) for i in infos)), None
 
 
 def _public_resolve(host: str, nameserver: str) -> tuple[tuple[str, ...], str | None]:
@@ -103,13 +107,37 @@ def _public_resolve(host: str, nameserver: str) -> tuple[tuple[str, ...], str | 
     return tuple(dict.fromkeys(out)), (None if out else err)
 
 
-def resolve_host(host: str) -> Resolution:
+class HostResolver(Protocol):
+    """DNS 解析的注入点（§3.6 / 卡点 A8）。
+
+    存在的理由：DNS **不走 httpx**，所以 ``GEO_AUDIT_FORBID_NETWORK`` 那把闸
+    拦不住它 —— 离线 CI 会真去联网或超时，而且结果不确定。fixture 回放要能
+    把解析结果一起冻住，就必须有这个口子。
+    """
+
+    def __call__(self, host: str) -> Resolution: ...
+
+
+def resolve_host(host: str, *, resolver: HostResolver | None = None) -> Resolution:
     """Resolve ``host``, escalating through the fallback resolvers.
 
     Never raises.  The returned ``Resolution`` is the only input the fetcher
     needs to decide between "retry pinned", "unknown/dns_poisoned" and
     "unknown/dns_unresolved".
+
+    ``resolver`` 为 None 时走原来的 system -> 8.8.8.8 -> 1.1.1.1 逻辑。
+    ``GEO_AUDIT_FORBID_DNS=1`` 且没注入 resolver 时**直接抛 AssertionError**
+    —— 与 FORBID_NETWORK 对称，宁可红也不许静默回落真网络。
+    ``FixtureResolver``（从 fixtures/dns.json 回放）在第 4a 步随 fixture 层落地。
     """
+    if resolver is not None:
+        return resolver(host.lower().strip("."))
+    if os.environ.get("GEO_AUDIT_FORBID_DNS") == "1":
+        raise AssertionError(
+            f"测试试图对 {host} 做真 DNS 查询。GEO_AUDIT_FORBID_DNS=1 下必须注入 "
+            "resolver（FixtureResolver），静默回落真网络会让离线 CI 变成不确定测试。"
+        )
+
     host = host.lower().strip(".")
 
     addrs, err = _system_resolve(host)
