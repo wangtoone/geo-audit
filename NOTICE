@@ -1,0 +1,7 @@
+geo-audit
+Copyright (c) 2026 geo-audit contributors
+
+fixtures/ 下的 HTTP 快照是第三方公开网页的原样存档，仅用于回归测试，
+版权归各站点所有者；它们不构成本项目的可分发代码，也不适用 MIT 授权。
+corpus/feature-raw.json 是我们自己的实测记录，MIT。
+删除请求请开 issue。

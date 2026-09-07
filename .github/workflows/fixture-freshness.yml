@@ -1,0 +1,35 @@
+name: fixture-freshness
+# 每周对活网 diff 一次冻结快照，只开 issue，绝不阻塞 PR。
+# 快照过期是正常的（§8.1 的漂移四分支规程），把它做成阻塞项会逼人乱改断言。
+on:
+  schedule: [{ cron: "17 3 * * 1" }]   # 每周一 03:17 UTC
+  workflow_dispatch:
+permissions: { contents: read, issues: write }
+
+jobs:
+  diff:
+    # 第 18 步打开（依赖 scripts/refresh_fixtures.py，第 4a 步产出）
+    if: ${{ false }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v3
+      - run: uv sync --extra dev
+      - name: 对活网重抓并 diff（不写回快照）
+        run: uv run python scripts/refresh_fixtures.py --check --json drift.json
+        env:
+          GEO_AUDIT_CONTACT: ci@geo-audit.invalid
+      - name: 有漂移就开 issue
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const body = fs.existsSync('drift.json')
+              ? '```json\n' + fs.readFileSync('drift.json', 'utf8').slice(0, 60000) + '\n```'
+              : '重抓失败，见 job 日志。';
+            await github.rest.issues.create({
+              owner: context.repo.owner, repo: context.repo.repo,
+              title: `fixture 漂移 ${new Date().toISOString().slice(0, 10)}`,
+              body, labels: ['fixture-drift'],
+            });

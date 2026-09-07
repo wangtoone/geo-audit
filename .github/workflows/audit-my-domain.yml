@@ -1,0 +1,33 @@
+name: audit-my-domain
+# 给不会用命令行的人：在 Actions 页面填个域名点运行，报告作为 artifact 下载。
+# §7 的分发方案里这条是「CLI 之外的第二条路」，不是彩蛋。
+on:
+  workflow_dispatch:
+    inputs:
+      domain:
+        description: "要审计的域名，例如 example.com"
+        required: true
+        type: string
+      contact:
+        description: "抓取时带上的联系邮箱（必填，会出现在 User-Agent 里）"
+        required: true
+        type: string
+permissions: { contents: read }
+
+jobs:
+  audit:
+    # 第 18 步打开（依赖完整 CLI，第 16 步产出）
+    if: ${{ false }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v3
+      - run: uv sync
+      - run: >
+          uv run geo-audit "${{ inputs.domain }}"
+          --contact "${{ inputs.contact }}"
+          --out out --format html
+      - uses: actions/upload-artifact@v4
+        with:
+          name: report-${{ inputs.domain }}
+          path: out/
