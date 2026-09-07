@@ -26,7 +26,7 @@ import re
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, replace
 from typing import Literal, Protocol, cast
-from urllib.parse import parse_qsl, urlencode, urljoin, urlsplit, urlunsplit
+from urllib.parse import urljoin, urlsplit, urlunsplit
 
 from ..fetch.classify import (
     find_notfound_copy,
@@ -69,6 +69,10 @@ from ..models import (
     make_finding_id,
     verdict_to_status,
 )
+
+# 兑现本文件原注释里的承诺：「第 13 步 rootcause.normalize_url 落地后本函数改为
+# re-export，不许两份口径并存 —— 归并键分叉会让 finding 身份跟着分叉。」
+from ..rootcause import normalize_url
 
 # ═════════════════════════════════════════════════════════════════════════════
 # ╔═══════════════════════════════════════════════════════════════════════════╗
@@ -935,32 +939,8 @@ INDEX_LINKS_SAMPLE_SIZE = 60
 INDEX_LINKS_DETAIL_KEYS = ("index_url", "n_links", "n_alive", "n_dead", "n_unknown")
 
 #: §5.4:2838 的跟踪型 query 参数名。normalize_url 要丢掉它们。
-TRACKING_QUERY_KEYS = frozenset({"ref", "cta", "cta_page", "source", "fbclid", "gclid"})
 
 _DOUBLE_SCHEME_RE = re.compile(r"https?://.+https?://", re.I)
-
-
-def normalize_url(url: str) -> str:
-    """§5.4:2838 的口径：丢 fragment、丢跟踪型 query（``utm_*`` / ``ref`` /
-    ``cta`` / ``cta_page`` / ``source`` / ``fbclid`` / ``gclid``）、去尾斜杠、
-    host 小写。
-
-    ⚠️ 倒置依赖（spec_gaps 第 8 条）：这份口径的正式实现是第 13 步
-    ``rootcause.normalize_url``（别的 agent），而 ``IndexLink.norm_url`` 现在就要
-    用它。所以这里先按同一口径实现一份；第 13 步落地后本函数应改为 re-export，
-    **不许**两份口径并存 —— 归并键分叉会让 finding 身份跟着分叉。
-    """
-    parts = urlsplit(url.strip())
-    host = (parts.hostname or "").lower()
-    if parts.port:
-        host = f"{host}:{parts.port}"
-    kept = [
-        (k, v)
-        for k, v in parse_qsl(parts.query, keep_blank_values=True)
-        if not k.lower().startswith("utm_") and k.lower() not in TRACKING_QUERY_KEYS
-    ]
-    path = parts.path.rstrip("/") or "/"
-    return urlunsplit((parts.scheme.lower(), host, path, urlencode(kept), ""))
 
 
 def _right_strip(url: str) -> str:

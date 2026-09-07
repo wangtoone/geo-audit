@@ -25,11 +25,16 @@ import re
 from collections.abc import Iterator, Sequence
 from dataclasses import dataclass
 from typing import Literal
-from urllib.parse import parse_qsl, urlencode, urljoin, urlsplit, urlunsplit
+from urllib.parse import urljoin, urlsplit
 
 from selectolax.lexbor import LexborHTMLParser, LexborNode
 
 from .models import LinkContext
+
+# finding 身份的唯一口径在 rootcause（§5.4:2838）。本文件原先自带一份实现，
+# 与 rootcause 版有一处行为差（空 path 不折成 /）—— 两份口径并存会让同一个 URL
+# 在死链层与 AI 路径层拿到两个身份，进而把根因数算错。已统一为 re-export。
+from .rootcause import normalize_url
 
 # --------------------------------------------------------------------------- #
 # 常量（§5.1 / §5.2，逐字照抄规格）
@@ -93,7 +98,6 @@ _MAX_ANCESTORS = 200
 
 # ── normalize_url（§5.4 第一级折叠）────────────────────────────────────────
 #: 跟踪型 query key（行 2838）。另外所有 ``utm_*`` 前缀一律丢。
-_TRACKING_QUERY_KEYS = frozenset({"ref", "cta", "cta_page", "source", "fbclid", "gclid"})
 
 #: `mailto:` / `tel:` / `javascript:` 由第 12 步的 `non_http_scheme` 规则记进排除
 #: 日志（它判的是 `raw_href` 的 scheme），所以抽取阶段**照样抽出来**，不在这里丢。
@@ -293,28 +297,6 @@ def in_code_block(anchor: LexborNode) -> bool:
 # --------------------------------------------------------------------------- #
 # normalize_url（§5.4 第一级折叠：目标身份）
 # --------------------------------------------------------------------------- #
-
-
-def normalize_url(url: str) -> str:
-    """目标身份折叠：丢 fragment、丢跟踪型 query、去尾斜杠、host 小写。
-
-    ⚠️ **探测时用 `abs_url` 原样探**（服务端可能对 query 敏感），只有归并用
-    `norm_url`（行 2841）。
-
-    规格只给了这一句行为描述，没给实现（spec_gaps#17），所以这里把三处自由度定死：
-    根路径 ``/`` 保留（不折成空）、query 顺序保留（只删不排）、无值参数
-    （``?a``）会被规范成 ``a=``。
-    """
-    parts = urlsplit(url.strip())
-    pairs = [
-        (k, v)
-        for k, v in parse_qsl(parts.query, keep_blank_values=True)
-        if k.lower() not in _TRACKING_QUERY_KEYS and not k.lower().startswith("utm_")
-    ]
-    path = parts.path
-    if len(path) > 1 and path.endswith("/"):
-        path = path.rstrip("/") or "/"
-    return urlunsplit((parts.scheme.lower(), parts.netloc.lower(), path, urlencode(pairs), ""))
 
 
 def _domain_of(url: str) -> str:

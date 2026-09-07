@@ -44,8 +44,8 @@ jobs:
           GEO_AUDIT_FORBID_DNS: "1"      # 卡点 A8：DNS 不走 httpx，要单独一把闸
 
   labels:
-    # 第 18 步打开（依赖 scripts/verify_labels.py 与 tests/data/*，第 5 步产出）
-    if: ${{ false }}
+    # 第 5 步已完成（scripts/verify_labels.py 与 tests/data/* 都在位），提前打开 ——
+    # 标注可溯源性是 42 条判死的证据链，越早进 CI 越好。
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -55,8 +55,7 @@ jobs:
       - run: uv run python scripts/verify_labels.py
 
   fp-gate:
-    # 第 12b 步打开（依赖 scripts/fp_gate.py 与 42 条 deadlink 标注）
-    if: ${{ false }}
+    # 第 12b 步已完成（scripts/fp_gate.py 本地退出码 0，六条门禁逐条为 true），已打开。
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

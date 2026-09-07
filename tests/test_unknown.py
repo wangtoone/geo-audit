@@ -14,9 +14,18 @@
 
 from __future__ import annotations
 
+from pathlib import Path
+from typing import Any
+
+import httpx
 import pytest
 
 from geo_audit.checks.ai_path import UNKNOWN_REMEDY, ai_path_position_seeds
+from geo_audit.fetch.cache import HttpCache
+from geo_audit.fetch.client import Fetcher, FetcherConfig
+from geo_audit.fetch.discovery import discover
+from geo_audit.fetch.ratelimit import DomainLimiter
+from geo_audit.fixtures import DNS_ABSENT_KEY, FixtureResolver
 from geo_audit.models import (
     NOT_EVALUATED_REASONS,
     Classification,
@@ -149,3 +158,165 @@ def test_the_placeholder_table_is_gone_from_checks() -> None:
     import geo_audit.checks.ai_path as mod
 
     assert mod.UNKNOWN_REMEDY is MODELS_UNKNOWN_REMEDY
+
+
+# --------------------------------------------------------------------------- #
+# 第 7 步：发现层产出的 UNKNOWN（DNS / 预算 / WAF 三个来源）
+# --------------------------------------------------------------------------- #
+#
+# 这三类 UNKNOWN 全部出在 discovery 层，是 A32「每条 UNKNOWN 都要有原因码 +
+# 可执行补救」在发现层的落地点：
+#
+#   dns_unresolved / dns_poisoned  —— platform.minimax.io 一次并发跑出 12 条假
+#                                     DNS 失败，25 秒后重试全部 200；
+#                                     www.talkie-ai.com 本机解析到 127.0.0.1。
+#   not_fetched                    —— 预算耗尽，那个位置我们**没看**，
+#                                     绝不能渲染成「没有这个文件」。
+#   waf_challenge_body / rate_limited —— gusto 403 / pipedrive 429，真文件存在。
+
+CONTACT = "audit@example.org"
+CONTROL_PATH = "/zzz-geo-audit-control-1234"
+
+
+@pytest.fixture(autouse=True)
+def _no_pacing(monkeypatch: pytest.MonkeyPatch) -> None:
+    """掐掉限流器的 sleep（合规下限 2s/域，否则一次 discover() 要几十秒）。"""
+    monkeypatch.setattr("geo_audit.fetch.ratelimit.time.sleep", lambda _seconds: None)
+
+
+def _discover_fake(
+    tmp_path: Path,
+    pages: dict[str, tuple[int, str, str]],
+    dns: dict[str, dict[str, object]],
+    *,
+    domain: str,
+    budget: int = 120,
+) -> Any:
+    """在假站 + 注入 DNS 上跑一次 ``discover()``。一个真请求、一次真 DNS 都没有。"""
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        row = pages.get(str(request.url))
+        if row is None:
+            return httpx.Response(
+                404, headers={"content-type": "text/html"}, text="<title>404</title>not found"
+            )
+        status, ctype, body = row
+        return httpx.Response(status, headers={"content-type": ctype}, text=body)
+
+    table = dict(dns)
+    table.setdefault(
+        DNS_ABSENT_KEY,
+        {"addresses": [], "resolver": "none", "poisoned": False, "error": "NXDOMAIN"},
+    )
+    fetcher = Fetcher(
+        FetcherConfig(contact=CONTACT, interval=2.0, respect_robots=False),
+        cache=HttpCache(tmp_path / "c.sqlite3", ua_profile="test"),
+        limiter=DomainLimiter(2.0),
+        transport=httpx.MockTransport(handler),
+        probe_url_provider=lambda url: f"https://{httpx.URL(url).host}{CONTROL_PATH}",
+    )
+    try:
+        return discover(
+            fetcher,
+            domain,
+            budget=budget,
+            resolver=FixtureResolver(table, source="tests/test_unknown.py"),
+        )
+    finally:
+        fetcher.close()
+
+
+def test_dns_failures_are_unknown_never_dead(tmp_path: Path) -> None:
+    """R1/R3/R4：DNS 解析不出来、或解析到 127.0.0.1，都判 UNKNOWN，**绝不判死**。
+
+    ``platform.minimax.io`` 一次并发跑出 12 条假 DNS 失败（25 秒后重试全部 200），
+    ``www.talkie-ai.com`` 本机解析到 127.0.0.1 而公共解析器给真 Akamai 地址 ——
+    把这两种当死链就是凭空造出 12 条假阳。
+    """
+    pages = {"https://acme.test/": (200, "text/html", "<title>Acme</title>")}
+    dns: dict[str, dict[str, object]] = {
+        "acme.test": {"addresses": ["203.0.113.10"], "resolver": "system", "poisoned": False},
+        # 本地污染：系统解析器给 127.0.0.1，公共解析器无有效记录
+        "www.acme.test": {
+            "addresses": [],
+            "resolver": "none",
+            "poisoned": True,
+            "error": "dns-poisoned: 系统解析器返回 ('127.0.0.1',)，公共解析器无有效记录",
+        },
+    }
+    sm = _discover_fake(tmp_path, pages, dns, domain="acme.test")
+
+    by_host = {h.host: h for h in sm.hosts}
+    poisoned = by_host["www.acme.test"]
+    assert poisoned.verdict is Verdict.UNKNOWN
+    assert poisoned.reason == "dns_poisoned"
+    assert verdict_to_status(poisoned.verdict) is Status.UNKNOWN
+    assert poisoned.verdict is not Verdict.REAL404
+
+    absent = by_host["docs.acme.test"]
+    assert absent.verdict is Verdict.UNKNOWN
+    assert absent.reason == "dns_unresolved"
+    assert absent.evidence and "8.8.8.8" in absent.evidence[0]
+
+    # 两个原因码都在 A32 的补救表里，且文案可执行
+    for reason in ("dns_poisoned", "dns_unresolved"):
+        assert reason in NOT_EVALUATED_REASONS
+        assert len(UNKNOWN_REMEDY[reason]) >= 20
+
+
+def test_budget_skipped_positions_are_not_fetched_not_absent(tmp_path: Path) -> None:
+    """预算耗尽跳过的位置 -> ``not_fetched``（UNKNOWN），**不是「没有这个文件」**。
+
+    A32 要求每条 UNKNOWN 都带可执行补救；``not_fetched`` 的补救就是「提高
+    --max-requests 再跑」，所以这条文案必须存在且非空。
+    """
+    pages = {
+        "https://acme.test/": (200, "text/html", "<title>Acme</title>"),
+        "https://www.acme.test/": (200, "text/html", "<title>Acme www</title>"),
+        "https://docs.acme.test/": (200, "text/html", "<title>Docs</title>"),
+        "https://docs.acme.test/llms.txt": (200, "text/plain", "# Acme\n"),
+    }
+    dns: dict[str, dict[str, object]] = {
+        host: {"addresses": ["203.0.113.10"], "resolver": "system", "poisoned": False}
+        for host in ("acme.test", "www.acme.test", "docs.acme.test")
+    }
+    sm = _discover_fake(tmp_path, pages, dns, domain="acme.test", budget=6)
+
+    assert sm.budget_exhausted is True
+    assert "https://docs.acme.test/llms.txt" in sm.skipped_by_budget
+    # 真文件就在被跳过的那条上 —— 报告若把它当「没有」就是纯造假
+    assert "https://docs.acme.test/llms.txt" not in {p.url for p in sm.ai_path_probes}
+    assert "not_fetched" in NOT_EVALUATED_REASONS
+    assert UNKNOWN_REMEDY["not_fetched"].strip()
+    assert verdict_to_status(Verdict.UNKNOWN) is Status.UNKNOWN
+
+
+def test_waf_blocked_ai_path_is_unknown_with_a_remedy(tmp_path: Path) -> None:
+    """gusto 403（Cloudflare 挑战页）/ pipedrive 429：两条都判 BLOCKED、
+    ``evaluated is False``、折算 ``Status.UNKNOWN``，且补救文案可执行。"""
+    challenge = (
+        "<!doctype html><html><head><title>Just a moment...</title></head>"
+        "<body>__cf_chl_opt</body></html>"
+    )
+    pages = {
+        "https://acme.test/": (403, "text/html", challenge),
+        "https://acme.test/llms.txt": (403, "text/html", challenge),
+        "https://www.acme.test/": (200, "text/html", "<title>Acme</title>"),
+        "https://www.acme.test/llms.txt": (429, "text/plain", "rate limited"),
+    }
+    dns: dict[str, dict[str, object]] = {
+        host: {"addresses": ["203.0.113.10"], "resolver": "system", "poisoned": False}
+        for host in ("acme.test", "www.acme.test")
+    }
+    sm = _discover_fake(tmp_path, pages, dns, domain="acme.test")
+
+    by_url = {p.url: p for p in sm.ai_path_probes}
+    waf = by_url["https://acme.test/llms.txt"]
+    throttled = by_url["https://www.acme.test/llms.txt"]
+    assert waf.verdict is throttled.verdict is Verdict.BLOCKED
+    assert waf.classification.reason == "waf_challenge_body"
+    assert throttled.classification.reason == "rate_limited"
+    for probe in (waf, throttled):
+        assert probe.classification.evaluated is False
+        assert verdict_to_status(probe.verdict) is Status.UNKNOWN
+        assert len(UNKNOWN_REMEDY[probe.classification.reason]) >= 20
