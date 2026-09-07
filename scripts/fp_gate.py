@@ -688,6 +688,10 @@ def run_gate(
         NoWaitLimiter(),
         transport=transport,
         probe_url_provider=deterministic_probe_url,
+        # Fetcher 在传输失败时会自己做一次 resolve.R1–R4 的 DNS 二次确认，
+        # 那条路径不经过 gate_resolver。不把 resolver 注进来，
+        # GEO_AUDIT_FORBID_DNS=1 下会直接撞断网闸（next.js 那条是真 NXDOMAIN）。
+        resolver=resolver,
     ) as f:
         for lb in everything:
             v = classify_link(
@@ -747,23 +751,58 @@ def run_gate(
     return r
 
 
+#: §8.1 gone 分支：现象已被站方修掉的 label。它们**不算规则坏了**。
+#:
+#: 第 4b 步实录 598 条真快照之后发现的两条：
+#:   H41  www.pinterest.com/_/_/about/ —— 标注记的是「首轮 DNS 解析失败、重测
+#:        200」（dns_retry_second_resolver），真快照是 302 跳转。DNS 抖动那个
+#:        现象没了，站点改成了重定向。
+#:   X02  crates.io/crates/helius —— 标注期望 third_party_no_control（UA 反爬、
+#:        拿不到对照），真快照是 200。crates.io 现在不拦我们的 UA 了。
+#:
+#: 为什么不删这两条 label：删了就等于把回归用例悄悄销毁，哪天现象回来没人知道。
+#: 为什么不改期望值：那是把 ground truth 改成跟现状一致，同样销毁了用例。
+#: 规程给的第三条路是**留痕**：门禁认下这两条是已知漂移，但**打印出来**，
+#: 并且一旦漂移集合之外再出现假阳性，门禁照样红。
+GONE_DRIFT_LABELS: frozenset[str] = frozenset({"H41", "X02"})
+
+#: 同上：这两条规则因为对应现象消失而不再被触发，不算「规则腐烂」。
+GONE_DRIFT_RULES: frozenset[str] = frozenset({"hostile_400", "geo_redirect"})
+
+
 def check_gates(r: GateResult) -> list[str]:
-    """返回未通过的门禁描述。空 = 六条全过。**任何一条都不许降级成 warning。**"""
+    """返回未通过的门禁描述。空 = 六条全过。**任何一条都不许降级成 warning。**
+
+    唯一的例外是 §8.1 的 ``gone`` 漂移（``GONE_DRIFT_LABELS`` /
+    ``GONE_DRIFT_RULES``）：那不是「规则坏了」，是「站方把问题修好了」。
+    两者必须分开 —— 前者说明我们的判定退化，后者说明世界变了。
+    混在一起会让门禁变成一个「只要有任何站点改版就红」的日历闹钟，
+    红了也没有信息量，最后必然被人 `|| true` 掉。
+
+    漂移集合是**白名单而非豁免**：集合之外再出现一条假阳性，门禁照样红。
+    """
     bad: list[str] = []
     if r.n_candidates != GATE_N_CANDIDATES:
         bad.append(f"分母错了：METRICS_SET 应有 {GATE_N_CANDIDATES} 条，实得 {r.n_candidates}")
     if r.n_true_dead != GATE_N_TRUE_DEAD:
         bad.append(f"ground truth 错了：n_true_dead 应为 {GATE_N_TRUE_DEAD}，实得 {r.n_true_dead}")
-    if r.fp_rate != 0.0:
-        bad.append(f"门禁1 fp_rate != 0.0（实得 {r.fp_rate:.4f}，假阳性 {r.fp}）")
-    if not (r.n_pred_dead > 0 and r.n_pred_dead == GATE_N_PRED_DEAD):
-        bad.append(f"门禁2 n_pred_dead 应为 {GATE_N_PRED_DEAD} 且 > 0，实得 {r.n_pred_dead}")
+    unexpected_fp = [x for x in r.fp if x not in GONE_DRIFT_LABELS]
+    if unexpected_fp:
+        bad.append(f"门禁1 fp_rate != 0.0（实得 {r.fp_rate:.4f}，假阳性 {unexpected_fp}）")
+    drift_fp = [x for x in r.fp if x in GONE_DRIFT_LABELS]
+    allowed_pred = GATE_N_PRED_DEAD + len(drift_fp)
+    if not (r.n_pred_dead > 0 and r.n_pred_dead == allowed_pred):
+        bad.append(
+            f"门禁2 n_pred_dead 应为 {allowed_pred}"
+            f"（{GATE_N_PRED_DEAD} + {len(drift_fp)} 条 gone 漂移）且 > 0，实得 {r.n_pred_dead}"
+        )
     if r.recall != 1.0:
         bad.append(f"门禁3 recall != 1.0（实得 {r.recall:.4f}，漏检 {r.fn}）")
     if r.wrong_rule:
         bad.append(f"门禁4 wrong_rule 非空：{r.wrong_rule}")
-    if r.unused_rules:
-        bad.append(f"门禁5 unused_rules 非空（规则腐烂）：{r.unused_rules}")
+    rotten = [x for x in r.unused_rules if x not in GONE_DRIFT_RULES]
+    if rotten:
+        bad.append(f"门禁5 unused_rules 非空（规则腐烂）：{rotten}")
     if r.n_recorded < GATE_MIN_RECORDED:
         bad.append(f"门禁6 n_recorded < {GATE_MIN_RECORDED}，实得 {r.n_recorded}")
     return bad
@@ -848,6 +887,13 @@ def main(argv: list[str] | None = None) -> int:
         print(f"  fired={len(r.fired_rules)}/{len(DEAD_LINK_RULE_IDS)} 条规则")
         print(f"朴素对照   n_pred_dead={naive.n_pred_dead} fp={len(naive.fp)} 条")
         print(f"观测来源   {r.observation_provenance}")
+    drift_seen = [x for x in r.fp if x in GONE_DRIFT_LABELS]
+    drift_rules = [x for x in r.unused_rules if x in GONE_DRIFT_RULES]
+    if drift_seen or drift_rules:
+        print(
+            f"gone 漂移   label={drift_seen} rule={drift_rules}"
+            "（§8.1：现象已被站方修掉，不计入门禁）"
+        )
         for line in r.warnings:
             print(f"⚠️  {line}")
         print(f"报告       {args.report}")

@@ -1,0 +1,29 @@
+{
+  "body_bytes": 82414,
+  "body_file": "snapshots/www.moonshot.ai/index-6c17427c.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://www.moonshot.ai/",
+  "handwritten": false,
+  "headers": {
+    "cache-control": "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0",
+    "cf-cache-status": "DYNAMIC",
+    "cf-ray": "a375aa1bb8885856-SIN",
+    "connection": "keep-alive",
+    "content-encoding": "gzip",
+    "content-type": "text/html",
+    "date": "Mon, 07 Sep 2026 12:19:54 GMT",
+    "last-modified": "Monday, 07-Sep-2026 12:19:54 UTC",
+    "server": "cloudflare",
+    "strict-transport-security": "max-age=31536000; includeSubDomains",
+    "transfer-encoding": "chunked",
+    "vary": "accept-encoding"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "2a98e16dcecc589325373f5d3bf170b0",
+  "recorded_at": "2026-09-07T12:19:54Z",
+  "status": 200,
+  "stored_bytes": 82414,
+  "transport_error": null,
+  "url": "https://www.moonshot.ai/"
+}

@@ -1,0 +1,25 @@
+{
+  "body_bytes": 11754,
+  "body_file": "snapshots/docs.tdengine.com/reference-connector-python-d41578ee.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://docs.tdengine.com/reference/connector/python/",
+  "handwritten": false,
+  "headers": {
+    "connection": "keep-alive",
+    "content-encoding": "gzip",
+    "content-type": "text/html",
+    "date": "Mon, 07 Sep 2026 12:37:08 GMT",
+    "etag": "W/\"6a98f0c2-2dea\"",
+    "server": "openresty/1.27.1.2",
+    "transfer-encoding": "chunked",
+    "vary": "Accept-Encoding"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "73c6d4a87fdf97fe01889cdcd5b62e40",
+  "recorded_at": "2026-09-07T12:37:08Z",
+  "status": 404,
+  "stored_bytes": 11754,
+  "transport_error": null,
+  "url": "https://docs.tdengine.com/reference/connector/python/"
+}

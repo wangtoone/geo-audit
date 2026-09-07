@@ -1,0 +1,28 @@
+{
+  "body_bytes": 403667,
+  "body_file": "snapshots/printify.com/index-e8d2064f.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://printify.com/",
+  "handwritten": false,
+  "headers": {
+    "age": "4779",
+    "alt-svc": "h3=\":443\"; ma=86400",
+    "cache-control": "public, max-age=0, s-maxage=600, stale-while-revalidate=300",
+    "cf-cache-status": "HIT",
+    "cf-ray": "a375be8f6a42ab59-SIN",
+    "connection": "keep-alive",
+    "content-encoding": "gzip",
+    "content-type": "text/html; charset=utf-8",
+    "date": "Mon, 07 Sep 2026 12:33:52 GMT",
+    "server": "cloudflare",
+    "transfer-encoding": "chunked"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "e6794e91f3ebfbca058b30cb00467e43",
+  "recorded_at": "2026-09-07T12:33:52Z",
+  "status": 200,
+  "stored_bytes": 403667,
+  "transport_error": null,
+  "url": "https://printify.com/"
+}

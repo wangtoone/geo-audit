@@ -1,0 +1,32 @@
+{
+  "body_bytes": 0,
+  "body_file": "snapshots/www.unkey.com/docs-platform-workspaces-billing.md-ca06ad57.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://www.unkey.com/docs/platform/workspaces/billing.md",
+  "handwritten": false,
+  "headers": {
+    "cache-control": "public, max-age=0, must-revalidate",
+    "cf-cache-status": "EXPIRED",
+    "cf-ray": "a375c921c8d2fe0b-SIN",
+    "content-length": "0",
+    "date": "Mon, 07 Sep 2026 12:41:05 GMT",
+    "link": "</docs/llms.txt>; rel=\"llms-txt\", </docs/llms-full.txt>; rel=\"llms-full-txt\", </docs/.well-known/api-catalog>; rel=\"api-catalog\", </docs/.well-known/mcp/server-card.json>; rel=\"mcp-server-card\", </docs/.well-known/agent-card.json>; rel=\"agent-card\", </docs/.well-known/agent-skills/index.json>; rel=\"agent-skills\"",
+    "location": "/docs/platform/workspaces/billing/overview.md",
+    "server": "Vercel",
+    "strict-transport-security": "max-age=63072000",
+    "vary": "rsc",
+    "x-frame-options": "DENY",
+    "x-llms-txt": "/docs/llms.txt",
+    "x-matched-path": "/_mintlify/_markdown/_sites/[subdomain]/[[...slug]]",
+    "x-vercel-cache": "MISS",
+    "x-vercel-id": "sin1:sin1:sin1:sin1:iad1::iad1::mwrxp-1788784865478-64e9981b56e0"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "d41d8cd98f00b204e9800998ecf8427e",
+  "recorded_at": "2026-09-07T12:41:06Z",
+  "status": 307,
+  "stored_bytes": 0,
+  "transport_error": null,
+  "url": "https://www.unkey.com/docs/platform/workspaces/billing.md"
+}

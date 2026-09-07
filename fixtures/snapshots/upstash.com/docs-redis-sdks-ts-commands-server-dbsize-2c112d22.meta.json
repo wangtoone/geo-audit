@@ -1,0 +1,33 @@
+{
+  "body_bytes": 494351,
+  "body_file": "snapshots/upstash.com/docs-redis-sdks-ts-commands-server-dbsize-2c112d22.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://upstash.com/docs/redis/sdks/ts/commands/server/dbsize",
+  "handwritten": false,
+  "headers": {
+    "cache-control": "public, max-age=0, must-revalidate",
+    "cf-cache-status": "HIT",
+    "cf-ray": "a375c6ef5d0732e2-SIN",
+    "content-encoding": "gzip",
+    "content-type": "text/html",
+    "date": "Mon, 07 Sep 2026 12:39:35 GMT",
+    "etag": "W/\"7bf7db3f0295b409a6870d1fd5e7c16c\"",
+    "link": "<https://upstash.com/llms.txt>; rel=\"alternate\"; type=\"text/plain\"; title=\"LLM-friendly content index\", <https://upstash.com/ask?q=your+question>; rel=\"search\"; type=\"application/json\"; title=\"Upstash answer index\", <https://upstash.com/docs/devops/developer-api/openapi.yaml>; rel=\"service-desc\"; type=\"application/openapi+yaml\"; title=\"Upstash Developer API (OpenAPI)\", <https://upstash.com/docs/qstash/openapi.yaml>; rel=\"service-desc\"; type=\"application/openapi+yaml\"; title=\"QStash REST API (OpenAPI)\", <https://upstash.com/docs/workflow/openapi.yaml>; rel=\"service-desc\"; type=\"application/openapi+yaml\"; title=\"Upstash Workflow REST API (OpenAPI)\", </docs/redis/sdks/ts/commands/server/dbsize.md>; rel=\"alternate\"; type=\"text/markdown\", </docs/llms.txt>; rel=\"describedby\"; type=\"text/plain\", </docs/llms-full.txt>; rel=\"describedby\"; type=\"text/plain\", </docs/.well-known/agent-skills/index.json>; rel=\"agent-skills\"; type=\"application/json\"",
+    "referrer-policy": "strict-origin-when-cross-origin",
+    "server": "Vercel",
+    "strict-transport-security": "max-age=31536000",
+    "transfer-encoding": "chunked",
+    "vary": "Accept",
+    "x-content-type-options": "nosniff",
+    "x-vercel-cache": "MISS",
+    "x-vercel-id": "sin1::fpk6b-1788784775560-d70fb167ee2c"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "12a79962bdf61670595c9cb30f761b2c",
+  "recorded_at": "2026-09-07T12:39:35Z",
+  "status": 200,
+  "stored_bytes": 494351,
+  "transport_error": null,
+  "url": "https://upstash.com/docs/redis/sdks/ts/commands/server/dbsize"
+}

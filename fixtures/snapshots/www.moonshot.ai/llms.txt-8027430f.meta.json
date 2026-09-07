@@ -1,0 +1,28 @@
+{
+  "body_bytes": 145,
+  "body_file": "snapshots/www.moonshot.ai/llms.txt-8027430f.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://www.moonshot.ai/llms.txt",
+  "handwritten": false,
+  "headers": {
+    "cf-cache-status": "DYNAMIC",
+    "cf-ray": "a375aa0e9e545856-SIN",
+    "connection": "keep-alive",
+    "content-type": "text/html",
+    "date": "Mon, 07 Sep 2026 12:19:52 GMT",
+    "location": "/",
+    "server": "cloudflare",
+    "set-cookie": "__cf_bm=_eUAkGJ61k0w4JYPB1A7ONp0OShs7x3TBIxKBxTqNXE-1788783592.7393184-1.0.1.1-atdSu_2SP37BW9iheJaUbExIu9f9yCTrs1.rtpXftpuR7jWcAQNKiljeEzHO1VyxNEoq0DlmwYwiLM1cH3EfdOKwNmbVElN23fRRfXbrZMTKVYgIBCCLNwtH8XuG_Q_L; HttpOnly; SameSite=None; Secure; Path=/; Domain=moonshot.ai; Expires=Mon, 07 Sep 2026 12:49:52 GMT",
+    "strict-transport-security": "max-age=31536000; includeSubDomains",
+    "transfer-encoding": "chunked",
+    "x-robots-tag": "noindex"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "5df3fe7eb240f7111245be6903929f71",
+  "recorded_at": "2026-09-07T12:19:52Z",
+  "status": 302,
+  "stored_bytes": 145,
+  "transport_error": null,
+  "url": "https://www.moonshot.ai/llms.txt"
+}

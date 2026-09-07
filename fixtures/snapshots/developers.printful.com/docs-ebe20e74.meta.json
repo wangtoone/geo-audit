@@ -1,0 +1,27 @@
+{
+  "body_bytes": 167,
+  "body_file": "snapshots/developers.printful.com/docs-ebe20e74.body.gz",
+  "body_storage": "full",
+  "canon_url": "http://developers.printful.com/docs/",
+  "handwritten": false,
+  "headers": {
+    "alt-svc": "h3=\":443\"; ma=86400",
+    "cf-ray": "a375bede5c78f90e-SIN",
+    "connection": "keep-alive",
+    "content-type": "text/html; charset=UTF-8",
+    "date": "Mon, 07 Sep 2026 12:34:05 GMT",
+    "location": "https://developers.printful.com/docs/",
+    "server": "cloudflare",
+    "set-cookie": "__cf_bm=IElbzztly0fWrEHIq3O140aLaLeUzKA53Kzo5Gi0gcg-1788784445.172478-1.0.1.1-5soi0cc90rEIbiJYQco8fD84DcdqWmyxEaWkNWIxMJPAZEp3Eos5M1o_RiPcvwpZKTTcV1BosgX5ZJP5hFld_Tzuh1h82F5CH.0m2TImNEpR321mUQ8pxI1lMmq8TCmq; HttpOnly; Path=/; Domain=printful.com; Expires=Mon, 07 Sep 2026 13:04:05 GMT",
+    "transfer-encoding": "chunked",
+    "x-content-type-options": "nosniff"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "0104c301c5e02bd6148b8703d19b3a73",
+  "recorded_at": "2026-09-07T12:34:05Z",
+  "status": 301,
+  "stored_bytes": 167,
+  "transport_error": null,
+  "url": "http://developers.printful.com/docs/"
+}

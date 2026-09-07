@@ -1,0 +1,33 @@
+{
+  "body_bytes": 384052,
+  "body_file": "snapshots/www.minimax.io/index-bbc6afad.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://www.minimax.io/",
+  "handwritten": false,
+  "headers": {
+    "access-control-allow-origin": "*",
+    "akamai-grn": "0.6f833417.1788783587.7cbc7e73",
+    "alb_receive_time": "1788783587.235",
+    "alb_request_id": "856f9df71cc2abb01083dbd41e7ea081d6821b96",
+    "cache-control": "max-age=0, no-cache, no-store",
+    "connection": "keep-alive, Transfer-Encoding",
+    "content-encoding": "gzip",
+    "content-security-policy": "frame-ancestors 'none';",
+    "content-type": "text/html; charset=utf-8",
+    "date": "Mon, 07 Sep 2026 12:19:47 GMT",
+    "expires": "Mon, 07 Sep 2026 12:19:47 GMT",
+    "pragma": "no-cache",
+    "transfer-encoding": "chunked",
+    "vary": "RSC, Next-Router-State-Tree, Next-Router-Prefetch, Accept-Encoding",
+    "x-frame-options": "DENY",
+    "x-from": "ak"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "f922afb29fea13576c10c20ca9c21cb7",
+  "recorded_at": "2026-09-07T12:19:47Z",
+  "status": 200,
+  "stored_bytes": 384052,
+  "transport_error": null,
+  "url": "https://www.minimax.io/"
+}

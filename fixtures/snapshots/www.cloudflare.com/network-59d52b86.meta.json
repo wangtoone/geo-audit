@@ -1,0 +1,28 @@
+{
+  "body_bytes": 0,
+  "body_file": "snapshots/www.cloudflare.com/network-59d52b86.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://www.cloudflare.com/network",
+  "handwritten": false,
+  "headers": {
+    "alt-svc": "h3=\":443\"; ma=86400",
+    "cf-ray": "a375c88d3e737abd-SIN",
+    "connection": "keep-alive",
+    "content-length": "0",
+    "date": "Mon, 07 Sep 2026 12:40:41 GMT",
+    "location": "https://www.cloudflare.com/network/",
+    "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
+    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=hkc7TpMKtOCEKHhptMoI8myXrSudVpLAAC%2F7Zx85Ntl5%2BtTwmi%2Fh%2BQDJkx%2FSRiYcRxaL36W0yLVMfOD3CbK3RRtH6cdtjrUPspStc5pQ08HcZO%2FxVS0GESHXw3K6RIardSlDSg%3D%3D\"}]}",
+    "server": "cloudflare",
+    "server-timing": "cfEdge;dur=6,cfOrigin;dur=0,cfWorker;dur=0",
+    "vary": "accept-encoding"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "d41d8cd98f00b204e9800998ecf8427e",
+  "recorded_at": "2026-09-07T12:40:41Z",
+  "status": 301,
+  "stored_bytes": 0,
+  "transport_error": null,
+  "url": "https://www.cloudflare.com/network"
+}

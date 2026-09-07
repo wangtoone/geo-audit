@@ -1,0 +1,26 @@
+{
+  "body_bytes": 15,
+  "body_file": "snapshots/unkey.com/docs-platform-workspaces-billing.md-0e4844e0.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://unkey.com/docs/platform/workspaces/billing.md",
+  "handwritten": false,
+  "headers": {
+    "cache-control": "public, max-age=0, must-revalidate",
+    "content-type": "text/plain",
+    "date": "Mon, 07 Sep 2026 12:41:03 GMT",
+    "location": "https://www.unkey.com/docs/platform/workspaces/billing.md",
+    "refresh": "0;url=https://www.unkey.com/docs/platform/workspaces/billing.md",
+    "server": "Vercel",
+    "strict-transport-security": "max-age=63072000",
+    "transfer-encoding": "chunked",
+    "x-vercel-id": "sin1::9vsg7-1788784863204-9c61be8ba4db"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "42c939d0ba4bbdc4c7eab1b5c34aaf71",
+  "recorded_at": "2026-09-07T12:41:03Z",
+  "status": 308,
+  "stored_bytes": 15,
+  "transport_error": null,
+  "url": "https://unkey.com/docs/platform/workspaces/billing.md"
+}

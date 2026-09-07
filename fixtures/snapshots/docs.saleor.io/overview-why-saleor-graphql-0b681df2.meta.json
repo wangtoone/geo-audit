@@ -1,0 +1,31 @@
+{
+  "body_bytes": 49042,
+  "body_file": "snapshots/docs.saleor.io/overview-why-saleor-graphql-0b681df2.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://docs.saleor.io/overview/why-saleor/graphql",
+  "handwritten": false,
+  "headers": {
+    "access-control-allow-origin": "*",
+    "age": "4186",
+    "cache-control": "public, max-age=0, must-revalidate",
+    "content-disposition": "inline; filename=\"graphql\"",
+    "content-encoding": "gzip",
+    "content-type": "text/html; charset=utf-8",
+    "date": "Mon, 07 Sep 2026 12:32:08 GMT",
+    "etag": "W/\"a61f12dfa6a8acd3198b0a303c02fdca\"",
+    "last-modified": "Mon, 07 Sep 2026 11:22:21 GMT",
+    "server": "Vercel",
+    "strict-transport-security": "max-age=63072000",
+    "transfer-encoding": "chunked",
+    "x-vercel-cache": "HIT",
+    "x-vercel-id": "sin1::jtwxv-1788784328314-415298625bdf"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "a61f12dfa6a8acd3198b0a303c02fdca",
+  "recorded_at": "2026-09-07T12:32:08Z",
+  "status": 200,
+  "stored_bytes": 49042,
+  "transport_error": null,
+  "url": "https://docs.saleor.io/overview/why-saleor/graphql"
+}

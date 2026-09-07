@@ -1,0 +1,26 @@
+{
+  "body_bytes": 167,
+  "body_file": "snapshots/www.bytebase.com/changelog-b53e96da.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://www.bytebase.com/changelog/",
+  "handwritten": false,
+  "headers": {
+    "cf-ray": "a375c3ce9843aa7f-SIN",
+    "connection": "keep-alive",
+    "content-type": "text/html; charset=UTF-8",
+    "date": "Mon, 07 Sep 2026 12:37:27 GMT",
+    "location": "https://docs.bytebase.com/changelog/",
+    "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
+    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=BCvhTIeKkm5AD%2F1WO52QwFVsc2RlqxxF%2FkUMmRcNDC7h8vCeA0LYulBNTJs9SJ4SJ3nvDumqNEhZQ0JMRgcYIBYSGURSBiUCQn%2FTDpZjJ%2BIXD%2FE3Ld1P0Sy5p6RJh8afPuNT\"}]}",
+    "server": "cloudflare",
+    "transfer-encoding": "chunked"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "0104c301c5e02bd6148b8703d19b3a73",
+  "recorded_at": "2026-09-07T12:37:27Z",
+  "status": 301,
+  "stored_bytes": 167,
+  "transport_error": null,
+  "url": "https://www.bytebase.com/changelog/"
+}

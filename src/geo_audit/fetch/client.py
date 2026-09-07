@@ -71,7 +71,7 @@ from .normalize import (
     structural_fingerprint,
 )
 from .ratelimit import DomainLimiter, registrable_domain
-from .resolve import resolve_host
+from .resolve import HostResolver, resolve_host
 
 __version__ = "0.1.0"
 
@@ -132,6 +132,7 @@ class Fetcher:
         *,
         transport: httpx.BaseTransport | None = None,
         probe_url_provider: Callable[[str], str] | None = None,
+        resolver: HostResolver | None = None,
     ) -> None:
         """§3.9 适配 #4：加两个 keyword-only 注入点。
 
@@ -147,6 +148,11 @@ class Fetcher:
         self.cache = cache or HttpCache(ua_profile=self.user_agent)
         self.limiter = limiter or DomainLimiter(config.interval)
         self._probe_url_provider = probe_url_provider
+        # DNS 注入点。**必须有**：本类在传输失败时会自己做一次 resolve.R1–R4 的
+        # 二次确认（下面 _fetch_chain 里那处），那条路径绕过了 discover(resolver=...)。
+        # 第 7 步只把 discovery.py 的两个调用点接上了注入点，漏了这里 ——
+        # 于是 GEO_AUDIT_FORBID_DNS=1 下 fp_gate 的 7 条测试全部撞上断网闸。
+        self._resolver = resolver
         self._client = httpx.Client(
             transport=transport,
             follow_redirects=False,  # followed manually; the chain is evidence
@@ -405,7 +411,7 @@ class Fetcher:
                 # resolve.R1/R2/R3 -- never let a resolver hiccup become a
                 # dead link.  This is the platform.minimax.io case: 12 false
                 # positives in one run.
-                resolution = resolve_host(host)
+                resolution = resolve_host(host, resolver=self._resolver)
                 if resolution.poisoned:
                     return self._error_response(
                         url, f"dns-poisoned: {resolution.error}", time.monotonic()

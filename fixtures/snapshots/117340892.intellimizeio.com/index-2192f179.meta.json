@@ -1,0 +1,25 @@
+{
+  "body_bytes": 139,
+  "body_file": "snapshots/117340892.intellimizeio.com/index-2192f179.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://117340892.intellimizeio.com/",
+  "handwritten": false,
+  "headers": {
+    "connection": "keep-alive",
+    "content-length": "139",
+    "content-security-policy": "default-src 'none'",
+    "content-type": "text/html; charset=utf-8",
+    "date": "Mon, 07 Sep 2026 12:35:06 GMT",
+    "strict-transport-security": "max-age=15552000; includeSubDomains",
+    "x-content-type-options": "nosniff",
+    "x-powered-by": "Express"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "da7da7d630292e7a2a7dda8ca87b3d39",
+  "recorded_at": "2026-09-07T12:35:07Z",
+  "status": 404,
+  "stored_bytes": 139,
+  "transport_error": null,
+  "url": "https://117340892.intellimizeio.com/"
+}

@@ -1,0 +1,32 @@
+{
+  "body_bytes": 10187,
+  "body_file": "snapshots/docs.customer.io/integrations-data-out-getting-started.md-1d83d1fe.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://docs.customer.io/integrations/data-out/getting-started.md",
+  "handwritten": false,
+  "headers": {
+    "accept-ranges": "bytes",
+    "access-control-allow-origin": "*",
+    "age": "0",
+    "cache-control": "public,max-age=0,must-revalidate",
+    "cache-status": "\"Netlify Edge\"; fwd=miss; fwd-status=200; stored",
+    "content-encoding": "gzip",
+    "content-type": "text/markdown; charset=UTF-8",
+    "date": "Mon, 07 Sep 2026 12:33:03 GMT",
+    "etag": "W/\"b672fa4a6f3b1de7912cdb1cdedf8380-ssl-df\"",
+    "link": "</integrations/llms.txt>; rel=\"describedby\"; type=\"text/plain\"",
+    "server": "Netlify",
+    "strict-transport-security": "max-age=31536000",
+    "transfer-encoding": "chunked",
+    "vary": "Accept-Encoding",
+    "x-nf-request-id": "01M1XXQ5HZBA9TDK39ATV88JMJ"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "de90d7d21c5d07d90d2a03d3a9197a5f",
+  "recorded_at": "2026-09-07T12:33:03Z",
+  "status": 200,
+  "stored_bytes": 10187,
+  "transport_error": null,
+  "url": "https://docs.customer.io/integrations/data-out/getting-started.md"
+}

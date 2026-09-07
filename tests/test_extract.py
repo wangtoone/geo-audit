@@ -721,7 +721,12 @@ def test_upstash_largest_cluster_is_probed_five_times() -> None:
     )
     clusters = build_template_clusters(page.targets)
     key, biggest = max(clusters.items(), key=lambda kv: len(kv[1]))
-    assert len(biggest) >= 800
+    # §8.1 unchanged 分支（第 4b 步实录后调整）：原阈值 800 来自几个月前的实测，
+    # 今天实录到 641 条 —— upstash 的 Redis 命令索引条目变少了，
+    # 但**模板归并这个现象一点没变**（641 条仍归成一个簇、仍只探 5 次）。
+    # 阈值降到 600：守的是「有一个特别大的模板簇」，不是「恰好 800 条」。
+    # 后者是把回归测试变成日历测试，站点每加减一条命令就红一次。
+    assert len(biggest) >= 600, f"最大簇只有 {len(biggest)} 条，模板归并现象可能真没了"
     plan = cluster_probe_plan(biggest, domain="upstash.com", cluster_key=key)
     assert len(plan) == CLUSTER_SAMPLE_N == 5
 

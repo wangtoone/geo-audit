@@ -1,0 +1,32 @@
+{
+  "body_bytes": 0,
+  "body_file": "snapshots/docs.attio.com/index-90fb6ced.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://docs.attio.com/",
+  "handwritten": false,
+  "headers": {
+    "cache-control": "private, no-cache",
+    "cf-cache-status": "BYPASS",
+    "cf-ray": "a375aa454af0fd7c-SIN",
+    "content-length": "0",
+    "date": "Mon, 07 Sep 2026 12:20:01 GMT",
+    "link": "</llms.txt>; rel=\"llms-txt\", </llms-full.txt>; rel=\"llms-full-txt\", </.well-known/api-catalog>; rel=\"api-catalog\", </.well-known/mcp/server-card.json>; rel=\"mcp-server-card\", </.well-known/agent-card.json>; rel=\"agent-card\", </.well-known/agent-skills/index.json>; rel=\"agent-skills\"",
+    "location": "/docs/overview.md",
+    "server": "Vercel",
+    "strict-transport-security": "max-age=63072000",
+    "vary": "rsc, Accept, User-Agent",
+    "x-frame-options": "DENY",
+    "x-llms-txt": "/llms.txt",
+    "x-matched-path": "/_mintlify/_markdown/_sites/[subdomain]/[[...slug]]",
+    "x-vercel-cache": "REVALIDATED",
+    "x-vercel-id": "sin1:sin1:iad1::iad1::rvgcd-1788783601483-555aa8b8e702"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "d41d8cd98f00b204e9800998ecf8427e",
+  "recorded_at": "2026-09-07T12:20:02Z",
+  "status": 307,
+  "stored_bytes": 0,
+  "transport_error": null,
+  "url": "https://docs.attio.com/"
+}

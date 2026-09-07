@@ -1,0 +1,25 @@
+{
+  "body_bytes": 13125,
+  "body_file": "snapshots/manpages.ubuntu.com/index-804477c0.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://manpages.ubuntu.com/",
+  "handwritten": false,
+  "headers": {
+    "content-encoding": "gzip",
+    "content-security-policy": "default-src 'none'; script-src 'self'; connect-src 'self'; style-src 'self' 'unsafe-inline' https://assets.ubuntu.com; img-src 'self' data: https://assets.ubuntu.com; font-src 'self' https://assets.ubuntu.com https://fonts.gstatic.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'",
+    "content-type": "text/html; charset=utf-8",
+    "date": "Mon, 07 Sep 2026 12:36:55 GMT",
+    "referrer-policy": "strict-origin-when-cross-origin",
+    "transfer-encoding": "chunked",
+    "x-content-type-options": "nosniff",
+    "x-frame-options": "DENY"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "9fe1721eda00d02d598f183d0c1fd9dd",
+  "recorded_at": "2026-09-07T12:36:55Z",
+  "status": 200,
+  "stored_bytes": 13125,
+  "transport_error": null,
+  "url": "https://manpages.ubuntu.com/"
+}

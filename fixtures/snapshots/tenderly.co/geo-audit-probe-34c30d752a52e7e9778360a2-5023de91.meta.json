@@ -1,0 +1,25 @@
+{
+  "body_bytes": 32177,
+  "body_file": "snapshots/tenderly.co/geo-audit-probe-34c30d752a52e7e9778360a2-5023de91.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://tenderly.co/geo-audit-probe-34c30d752a52e7e9778360a2",
+  "handwritten": false,
+  "headers": {
+    "cache-control": "private, no-store, max-age=0",
+    "content-type": "text/html; charset=utf-8",
+    "date": "Mon, 07 Sep 2026 12:22:53 GMT",
+    "server": "Vercel",
+    "transfer-encoding": "chunked",
+    "x-vercel-challenge-token": "2.1788783773.60.N2RmYjJlY2QzMzc4Zjg4OGI3MTljODNlN2QyMTQ1NGQ7NDFkNGQ1ZDg7Mzk3ZTNiMzU2NzM1MTBmZGQ0NTlmYTQxNDExMTFjYTkwZWJiNTI3NzszO2e5jcsKaDnTmly8EtJZeNKBIslCp3KmgeYkNzocwmhoWL7QOLf1jLXvQiN0eOY=.c55a8b04bcc941bd462950813ebdb811",
+    "x-vercel-id": "sin1::1788783773-shJ8HCs1pnoifdSYk3CB7EXIS6hiY5U0",
+    "x-vercel-mitigated": "challenge"
+  },
+  "note": null,
+  "probe_for": "https://tenderly.co/",
+  "raw_md5": "0efd3674b6c4ab5679d5724e4fe36d6c",
+  "recorded_at": "2026-09-07T12:22:53Z",
+  "status": 429,
+  "stored_bytes": 32177,
+  "transport_error": null,
+  "url": "https://tenderly.co/geo-audit-probe-34c30d752a52e7e9778360a2"
+}

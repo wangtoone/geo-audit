@@ -59,7 +59,7 @@ if str(REPO_ROOT / "src") not in sys.path:
     sys.path.insert(0, str(REPO_ROOT / "src"))
 
 from geo_audit.fetch.cache import HttpCache  # noqa: E402
-from geo_audit.fetch.client import Fetcher, FetcherConfig  # noqa: E402
+from geo_audit.fetch.client import Fetcher, FetcherConfig, build_user_agent  # noqa: E402
 from geo_audit.fetch.resolve import resolve_host  # noqa: E402
 from geo_audit.fixtures import (  # noqa: E402
     REPLAY_STRIPPED_HEADERS,
@@ -106,12 +106,15 @@ class RecordingTransport(httpx.BaseTransport):
         store: FixtureStore,
         *,
         overwrite: bool = False,
+        contact: str = "",
         verify: bool = True,
         dry_run: bool = False,
     ) -> None:
         self._store = store
         self._inner = httpx.HTTPTransport(verify=verify, retries=0)
         self._overwrite = overwrite
+        self._contact = contact
+        self._user_agent = build_user_agent(contact) if contact else ""
         self._dry_run = dry_run
         self._comment: str | None = None
         self._probe_for: str | None = None
@@ -179,6 +182,11 @@ class RecordingTransport(httpx.BaseTransport):
             transport_error=transport_error,
             comment=self._comment,
             overwrite=self._overwrite,
+            # 目标站点会把我们的 UA 原样回显进响应正文（实测 7 条：youtube 塞进
+            # DEVICE 配置串、pinterest/facebook 塞进内嵌 JSON 的 user_agent 字段）。
+            # 快照要进公开仓库，所以录制者的邮箱必须在落盘前换掉。
+            contact=self._contact,
+            user_agent=self._user_agent,
         )
         self.recorded.append(url)
         drift = self._store.check_expect(url, raw_md5=snap.raw_md5, body_bytes=snap.body_bytes)
@@ -259,7 +267,11 @@ def build_fetcher(
 def capture(specs: Sequence[UrlSpec], args: argparse.Namespace) -> int:
     store = FixtureStore(args.fixtures_dir, dns_file=args.dns_file)
     recorder = RecordingTransport(
-        store, overwrite=args.overwrite, verify=not args.no_verify, dry_run=args.dry_run
+        store,
+        overwrite=args.overwrite,
+        verify=not args.no_verify,
+        dry_run=args.dry_run,
+        contact=args.contact or "",
     )
     fetcher = build_fetcher(
         contact=args.contact,

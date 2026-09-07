@@ -1,0 +1,26 @@
+{
+  "body_bytes": 559,
+  "body_file": "snapshots/example.com/image.jpg-39cfc45e.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://example.com/image.jpg",
+  "handwritten": false,
+  "headers": {
+    "age": "6148",
+    "cf-cache-status": "HIT",
+    "cf-ray": "a375bf293ad07980-SIN",
+    "connection": "keep-alive",
+    "content-encoding": "gzip",
+    "content-type": "text/html",
+    "date": "Mon, 07 Sep 2026 12:34:17 GMT",
+    "server": "cloudflare",
+    "transfer-encoding": "chunked"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "c35dafa74975d89a1236a2591acb3616",
+  "recorded_at": "2026-09-07T12:34:17Z",
+  "status": 404,
+  "stored_bytes": 559,
+  "transport_error": null,
+  "url": "https://example.com/image.jpg"
+}

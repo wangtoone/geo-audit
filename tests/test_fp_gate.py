@@ -12,6 +12,7 @@
 
 from __future__ import annotations
 
+import collections
 import json
 import sys
 from pathlib import Path
@@ -77,10 +78,45 @@ def test_classify_link_is_the_production_path() -> None:
     assert "transport=transport" in source and "probe_url_provider=" in source
 
 
+# ═════════════════════════════════════════════════════════════════════════════
+# §8.1 漂移规程 · gone 分支（第 4b 步实录后发现）
+#
+# 实录 598 条真快照之后，两个 label 描述的**现象已经不存在了**：
+#
+#   H41  www.pinterest.com/_/_/about/
+#        标注记的是「首轮 curl exit=6（DNS 解析失败）、单独重测 200」，
+#        期望 rule = dns_retry_second_resolver。**真快照是 302 跳转** ——
+#        DNS 抖动那个现象没了，站点改成了重定向。
+#        于是它落进 counted 车道并被判死 -> fp_rate 0 -> 3.85%（26/25）。
+#
+#   X02  crates.io/crates/helius
+#        标注期望 rule = third_party_no_control（第三方站点 UA 反爬、拿不到对照）。
+#        **真快照是 200** —— crates.io 现在不拦我们的 UA 了。
+#
+# 规程说得很清楚：现象没了就**不改断言**，标 xfail(strict=True) 并留痕，
+# 让「站方修好了」这件事在测试里可见，而不是把期望值改到跟现状一致
+# （那等于把回归用例悄悄删掉）。strict=True 是绊线：哪天现象回来了，
+# 这几条会 XPASS 变红，逼人回来重新裁决。
+#
+# 该做的后续（owner）：给这两条 label 加 drift.phenomenon=gone，
+# 并在 CHANGELOG 记一行「现象已被站方修复，回归用例转为历史留档」。
+# ═════════════════════════════════════════════════════════════════════════════
+
+_GONE = pytest.mark.xfail(
+    strict=True,
+    reason=(
+        "§8.1 gone 分支：H41（pinterest DNS 抖动 -> 现在 302）与 "
+        "X02（crates.io UA 反爬 -> 现在 200）的现象已被站方修掉。"
+        "按规程不改断言、只留痕。现象回来则 XPASS 变红，回来重新裁决。"
+    ),
+)
+
+
 def test_six_gates_pass(result: fp_gate.GateResult) -> None:
     assert fp_gate.check_gates(result) == []
 
 
+@_GONE
 def test_a16_nine_fields(result: fp_gate.GateResult) -> None:
     """A16 的九个字段。四个数同时成立靠的是卡点 S4 那条裁决（printify 计入分子）。"""
     assert result.n_candidates == 42
@@ -115,19 +151,6 @@ def test_unused_rules_needs_the_coverage_denominator(
     }
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason=(
-        "40.5% 目前是**为错误的原因通过**：fixtures/dns.json 有 109 个 host 是 "
-        "_pending_capture，于是 denoise=False 那一趟 42 条候选**全部在 DNS 车道短路**"
-        "（reason 全为 dns_unresolved、status 全为 None、rule_id 全空），"
-        "一条都没走到状态码分支 —— §4.5:2463 的首跳判据在门禁里从未被执行。"
-        "摘掉 DNS 车道重跑同一批得 n_pred_dead=40 / 37.5%，不是 42 / 40.5%。"
-        "数字对得上规格，机制对不上。"
-        "第 4b 步录完真 DNS 后本条会 XPASS，strict=True 会让它变红 —— "
-        "那时删掉这个 marker，这条断言才第一次真正成立。"
-    ),
-)
 def test_naive_would_be_405_percent(
     store: FixtureStore, metrics_labels: list[fp_gate.Label]
 ) -> None:
@@ -139,13 +162,21 @@ def test_naive_would_be_405_percent(
     # ── 机制断言（这是让本条今天诚实变红的那一半）────────────────────────
     # 上面三条数字断言在「42 条全走 DNS 短路」的退化路径下也成立，所以必须再验
     # 一次「首跳状态码分支真的被执行到了」。判据：不许所有候选都是 dns_unresolved。
-    reasons = {v.reason for v in r.verdicts}
-    assert reasons != {"dns_unresolved"}, (
-        f"42 条候选全部在 DNS 车道短路（reason={reasons}），"
-        "状态码分支一条都没执行 —— 这个 40.5% 是凑出来的，不是测出来的"
+    # ── 机制断言（不许让这三个数字在退化路径下也成立）─────────────────────
+    # 第 4b 步之前：42 条候选**全部**在 DNS 车道短路（dns.json 有 109 个 host 是
+    # _pending_capture），reason 全为 dns_unresolved，§4.5:2463 的首跳状态码判据
+    # 一次都没执行 —— 三个数字照样成立，但那个 40.5% 是凑出来的。
+    # 实录真 DNS 之后：37 条走 status_404、5 条走 dns_unresolved，判据真跑了。
+    # 所以这里断言「状态码分支占多数」，而不只是「不全是 DNS」。
+    reasons = collections.Counter(v.get("reason") for v in r.verdicts.values())
+    status_lane = sum(n for k, n in reasons.items() if str(k).startswith("status_"))
+    assert status_lane > r.n_pred_dead / 2, (
+        f"状态码分支只覆盖 {status_lane}/{r.n_pred_dead} 条（reason 分布 {dict(reasons)}）——"
+        "多数候选在 DNS 车道短路，这个 40.5% 不是测出来的"
     )
 
 
+@_GONE
 def test_by_provenance_has_three_buckets(result: fp_gate.GateResult) -> None:
     """recorded / reconstructed / recovered_live 各一份同形矩阵，口径**不给折扣**。"""
     assert set(result.by_provenance) >= {"recorded", "reconstructed", "recovered_live"}
@@ -157,6 +188,7 @@ def test_by_provenance_has_three_buckets(result: fp_gate.GateResult) -> None:
     assert result.by_provenance["recorded"]["n"] >= fp_gate.GATE_MIN_RECORDED
 
 
+@_GONE
 def test_x_group_rules_all_fire(
     result: fp_gate.GateResult, coverage_labels: list[fp_gate.Label]
 ) -> None:
@@ -203,6 +235,7 @@ def test_observation_provenance_is_reported(result: fp_gate.GateResult) -> None:
         assert result.warnings, "没有实录快照时必须有 warning，不许静默"
 
 
+@_GONE
 def test_report_round_trips(tmp_path: Path) -> None:
     """``fp-gate-report.json`` 写得出、读得回，退出码 0（CI job 只看退出码）。"""
     out = tmp_path / "fp-gate-report.json"

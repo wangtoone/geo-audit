@@ -1,0 +1,33 @@
+{
+  "body_bytes": 25598,
+  "body_file": "snapshots/www.inngest.com/llms.txt-44f2c5a5.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://www.inngest.com/llms.txt",
+  "handwritten": false,
+  "headers": {
+    "access-control-allow-origin": "*",
+    "age": "172235",
+    "cache-control": "s-maxage=360, stale-while-revalidate",
+    "content-disposition": "inline",
+    "content-encoding": "gzip",
+    "content-type": "text/plain;charset=UTF-8",
+    "date": "Mon, 07 Sep 2026 12:27:10 GMT",
+    "etag": "W/\"e330f7cc801895b5311745d0aec9ce23\"",
+    "link": "<https://www.inngest.com/llms.txt>; rel=\"canonical\"",
+    "server": "Vercel",
+    "strict-transport-security": "max-age=63072000",
+    "transfer-encoding": "chunked",
+    "vary": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch",
+    "x-matched-path": "/llms.txt",
+    "x-vercel-cache": "HIT",
+    "x-vercel-id": "sin1::pnmwc-1788784030700-476de6426798"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "c3d9f1a8d4a4456eb86ea87466a5ff27",
+  "recorded_at": "2026-09-07T12:27:10Z",
+  "status": 200,
+  "stored_bytes": 25598,
+  "transport_error": null,
+  "url": "https://www.inngest.com/llms.txt"
+}

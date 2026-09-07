@@ -1,0 +1,33 @@
+{
+  "body_bytes": 0,
+  "body_file": "snapshots/discord.gg/turso-da78e52a.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://discord.gg/turso",
+  "handwritten": false,
+  "headers": {
+    "cf-ray": "a375b9058fb36038-SIN",
+    "connection": "keep-alive",
+    "content-length": "0",
+    "content-type": "text/plain;charset=UTF-8",
+    "date": "Mon, 07 Sep 2026 12:30:05 GMT",
+    "location": "https://discord.com/invite/turso",
+    "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
+    "permissions-policy": "interest-cohort=()",
+    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=f4K%2FhyY72kaeiUuq57C4kqGDf7xDOHTyWp3boaH%2BPMXizq3ECxCN1P5BWYpWVOHrh5z462ElERiOB3uoeXA2HRsA1YFcELtbjzKNm2wNY3eUm7F4Fsp4sYRG99U%3D\"}]}",
+    "server": "cloudflare",
+    "set-cookie": "__cf_bm=zcO17XusnV4u1EaZw8.aPYUC988BqXfJ0GQb0u3Y3M4-1788784205.6884475-1.0.1.1-rJRLnOK.VFjW6RI_qnFrk5bDFwlDlqe62RfOv6ClprCZqInjm.UZsVtF8ZpRWi5uE6NL7ioqB_ASIGDk3rsyiFI2C1Rrhm_q.FtH1Y.lb0ewNvzUgzVidIBpsL7chQuN; HttpOnly; SameSite=None; Secure; Path=/; Domain=discord.gg; Expires=Mon, 07 Sep 2026 13:00:05 GMT",
+    "strict-transport-security": "max-age=31536000; includeSubDomains; preload",
+    "x-content-type-options": "nosniff",
+    "x-frame-options": "DENY",
+    "x-robots-tag": "noindex, nofollow, noarchive, nocache, noimageindex, noodp",
+    "x-xss-protection": "1; mode=block"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "d41d8cd98f00b204e9800998ecf8427e",
+  "recorded_at": "2026-09-07T12:30:05Z",
+  "status": 301,
+  "stored_bytes": 0,
+  "transport_error": null,
+  "url": "https://discord.gg/turso"
+}

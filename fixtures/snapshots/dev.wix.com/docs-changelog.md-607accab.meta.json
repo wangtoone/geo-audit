@@ -1,0 +1,33 @@
+{
+  "body_bytes": 208,
+  "body_file": "snapshots/dev.wix.com/docs-changelog.md-607accab.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://dev.wix.com/docs/changelog.md",
+  "handwritten": false,
+  "headers": {
+    "age": "0",
+    "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+    "cache-control": "no-store, no-cache",
+    "content-length": "208",
+    "content-type": "text/markdown; charset=utf-8",
+    "date": "Mon, 07 Sep 2026 12:40:39 GMT",
+    "etag": "W/\"d0-egAZ6YP8Gp+Hdc8de6PzAs+r+eo\"",
+    "glb-x-seen-by": "wMMTADooq5AJ3cFomJ/MuXOQWGce7NCZXKms1ErOpBs=",
+    "pragma": "no-cache",
+    "server": "Pepyaka",
+    "strict-transport-security": "max-age=120 ; includeSubDomains",
+    "via": "1.1 google",
+    "x-cache-status": "MISS",
+    "x-content-type-options": "nosniff",
+    "x-seen-by": "dwc60INy8NFddnU/0WdlOB9slopJdhD+WySraMrpIY8=,Ua1iSBCTq7qSXjmRCGE1NzlN+HEETYm74WluX5T25OjBPW8NnOGxbsFNvrxMwaVxsalu8zB5U2uO5sAXx+b7tliB5QmpRe2J37zq9nDD6cs=,2d58ifebGbosy5xc+FRalnqOeVRpLJdDFkjJLZwgB3V5B9R6MuY0Zh5yYd2OvILDhC0hnrIUgvD+wqf4vwNSYQ==,2UNV7KOq4oGjA5+PKsX47HIaKU6aTYMjcToOhrGq/R40y0ckMnr1iLTiwNRQRW9B,2UNV7KOq4oGjA5+PKsX47PYS4anOtHgwlOtgjzWiYmo0y0ckMnr1iLTiwNRQRW9B,r6yY0ta7bIKrqK70x072leMKqek6t8fsJzorahwvpyI=,5mXIne+ymmmf5TKtFzYgesI3mMeO9ijnz/Szl/p+7Ew/FynoaHbOnwNOHjpUXzJm57fn84/SaVMe4ykKtHNstg==,r6yY0ta7bIKrqK70x072leslCyxU669K5dcmun/N1yg=,mvxQ9qSAmY38asKjFCcmG83EsaU3oji8/KfEsjvSHfjdonlE73XGpbdAccGF+prEMiC0f41rmi8CYrWS3BlUXliB5QmpRe2J37zq9nDD6cs=",
+    "x-wix-request-id": "1788784838.213733052811426"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "74936a0b43d98553c660562af29d12c0",
+  "recorded_at": "2026-09-07T12:40:39Z",
+  "status": 404,
+  "stored_bytes": 208,
+  "transport_error": null,
+  "url": "https://dev.wix.com/docs/changelog.md"
+}

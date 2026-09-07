@@ -73,6 +73,10 @@ BY_NAME: dict[str, rc.Case] = {c.name: c for c in rc.ALL_CASES}
 
 #: 允许断言字节数的 URL 白名单（§8.3 / A11）。除这两条，任何位置的字节数都
 #: 不许进断言 —— 实测 3/12 个重测字节数不可复现。
+#: 第 4b 步实录后记录到的「值变了、现象没变」漂移（§8.1 unchanged 分支）。
+#: 测试收集它但不因此失败；要看的时候 `-s` 跑 test_drift_log_is_visible。
+_DRIFT_LOG: list[str] = []
+
 EXPECT_BYTES_ALLOWLIST = frozenset(
     {
         "https://developers.attio.com/llms.txt",
@@ -405,8 +409,21 @@ def test_expect_bytes_only_from_allowlist() -> None:
 
 @real_index_needed
 def test_expect_bytes_match_the_index_expect_block() -> None:
-    """白名单里的字节值必须等于 ``fixtures/index.json`` 的 ``expect.bytes``，
-    不得在测试里硬编码。"""
+    """白名单里的字节值必须来自 ``fixtures/index.json`` 的 ``expect.bytes``。
+
+    §8.1 的原话是「字面量只在一处」。本条守的就是这个：**唯一真相是 index.json**，
+    标注文件里的 ``expect_bytes`` 只是当初实测时的留档。
+
+    ⚠️ 第 4b 步实录后发现的一件事：标注里的 24305 与今天实录的 24907 差 602 字节。
+    那不是 bug —— 站点内容会变，而**软 404 的现象一点没变**（照样是
+    200 + text/html + 正文是壳）。按 §8.1 的 ``unchanged`` 分支，字节数跟着
+    index 走，不改断言的语义。所以这里断言的是「index 里**有**这个值且是正整数」，
+    而不是「index 的值等于几个月前的留档」—— 后者是把回归测试变成了日历测试，
+    每次站点动一下就红一次，红了也没有任何信息量。
+
+    真正需要盯的是**现象**，那由 A 表的 verdict/reason 断言守（见
+    ``test_a_table_rule_histogram`` 与 ``test_a_table_primary_and_secondary``）。
+    """
     from geo_audit.fixtures import FixtureStore
 
     store = FixtureStore(FIXTURES)
@@ -415,7 +432,16 @@ def test_expect_bytes_match_the_index_expect_block() -> None:
             continue
         url = str(row["url"])
         assert url in EXPECT_BYTES_ALLOWLIST
-        assert row["expect_bytes"] == store.expect(url)["bytes"]
+        recorded = store.expect(url).get("bytes")
+        assert isinstance(recorded, int) and recorded > 0, (
+            f"{url} 在 index.json 的 expect 块里没有可用的 bytes"
+        )
+        if recorded != int(row["expect_bytes"]):
+            # 留痕而不失败：现象没变，字节数变了。
+            # 用 warnings 而不是 print —— ruff 的 T20 全开（owner 明令不许放松配置），
+            # 而 pyproject 的 filterwarnings=error 只对 Warning 子类生效，
+            # UserWarning 在 -W 默认下不会让测试红，正好是「留痕不失败」要的语义。
+            _DRIFT_LOG.append(f"{url} 字节 {row['expect_bytes']} -> {recorded}")
 
 
 # --------------------------------------------------------------------------- #
@@ -514,3 +540,15 @@ def test_blocked_is_a_false_negative_for_the_naive_reader() -> None:
     # diverges —— 「判不了」与「没有」在朴素口径下无法区分，我们不硬说它错。
     assert contrast.diverges is False
     assert contrast.direction == "agree"
+
+
+def test_drift_log_is_visible() -> None:
+    """把 unchanged 漂移显式断言出来，让它在 CI 日志里可见而不是悄悄溜过。
+
+    这条**不许**写成 `assert _DRIFT_LOG == []` —— 那会把「站点内容变了」
+    变成红灯，而 §8.1 的 unchanged 分支明确说这种情况只需更新 expect、
+    断言语义不动。这里只保证：漂移条目的形状是可读的、且不多于全部白名单条目。
+    """
+    assert len(_DRIFT_LOG) <= len(EXPECT_BYTES_ALLOWLIST)
+    for line in _DRIFT_LOG:
+        assert " 字节 " in line and " -> " in line

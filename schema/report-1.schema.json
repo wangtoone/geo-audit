@@ -1,0 +1,1336 @@
+{
+  "$defs": {
+    "ApexWwwResult": {
+      "additionalProperties": false,
+      "properties": {
+        "apex": {
+          "$ref": "#/$defs/Probe"
+        },
+        "apex_host": {
+          "type": "string"
+        },
+        "evidence_strength": {
+          "enum": [
+            "single_case",
+            "measured"
+          ]
+        },
+        "outcome": {
+          "type": "string"
+        },
+        "www": {
+          "$ref": "#/$defs/Probe"
+        },
+        "www_host": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "apex_host",
+        "www_host",
+        "apex",
+        "www",
+        "outcome"
+      ],
+      "type": "object"
+    },
+    "Classification": {
+      "additionalProperties": false,
+      "properties": {
+        "control_discriminates": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "control_used": {
+          "type": "boolean"
+        },
+        "evidence": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "naive_would_say": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "needs_js": {
+          "type": "boolean"
+        },
+        "reason": {
+          "$ref": "#/$defs/Reason"
+        },
+        "secondary_reasons": {
+          "items": {
+            "$ref": "#/$defs/Reason"
+          },
+          "type": "array"
+        },
+        "verdict": {
+          "$ref": "#/$defs/Verdict"
+        }
+      },
+      "required": [
+        "verdict",
+        "reason"
+      ],
+      "type": "object"
+    },
+    "Counts": {
+      "additionalProperties": false,
+      "properties": {
+        "audited_dead_instances": {
+          "type": "integer"
+        },
+        "by_severity": {
+          "additionalProperties": {
+            "type": "integer"
+          },
+          "type": "object"
+        },
+        "findings": {
+          "type": "integer"
+        },
+        "findings_counted": {
+          "type": "integer"
+        },
+        "llm_calls": {
+          "const": 0
+        },
+        "naive_dead_count": {
+          "type": "integer"
+        },
+        "naive_divergences": {
+          "type": "integer"
+        },
+        "occurrences": {
+          "type": "integer"
+        },
+        "positions": {
+          "type": "integer"
+        },
+        "positions_fail": {
+          "type": "integer"
+        },
+        "positions_na": {
+          "type": "integer"
+        },
+        "positions_pass": {
+          "type": "integer"
+        },
+        "positions_unknown": {
+          "type": "integer"
+        },
+        "root_causes": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "positions",
+        "positions_pass",
+        "positions_fail",
+        "positions_unknown",
+        "positions_na",
+        "findings",
+        "findings_counted",
+        "occurrences",
+        "root_causes",
+        "by_severity",
+        "naive_divergences"
+      ],
+      "type": "object"
+    },
+    "Coverage": {
+      "additionalProperties": false,
+      "properties": {
+        "budget_cap": {
+          "type": "integer"
+        },
+        "checked": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "index_links_sampled": {
+          "type": "boolean"
+        },
+        "interrupted": {
+          "type": "boolean"
+        },
+        "links_excluded": {
+          "type": "integer"
+        },
+        "links_extracted": {
+          "type": "integer"
+        },
+        "links_needs_review": {
+          "type": "integer"
+        },
+        "links_unknown": {
+          "type": "integer"
+        },
+        "links_verified": {
+          "type": "integer"
+        },
+        "not_checked": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "pages_fetched": {
+          "type": "integer"
+        },
+        "positions_total": {
+          "type": "integer"
+        },
+        "requests_made": {
+          "type": "integer"
+        },
+        "robots_respected": {
+          "type": "boolean"
+        },
+        "sampling_note": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "checked",
+        "not_checked",
+        "positions_total"
+      ],
+      "type": "object"
+    },
+    "CoverageGap": {
+      "additionalProperties": false,
+      "properties": {
+        "detail": {
+          "type": "string"
+        },
+        "reason": {
+          "type": "string"
+        },
+        "remedy": {
+          "type": "string"
+        },
+        "where": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "where",
+        "reason",
+        "detail",
+        "remedy"
+      ],
+      "type": "object"
+    },
+    "DiscoveredHost": {
+      "additionalProperties": false,
+      "properties": {
+        "evidence": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "host": {
+          "type": "string"
+        },
+        "reachable": {
+          "type": "boolean"
+        },
+        "reason": {
+          "$ref": "#/$defs/Reason"
+        },
+        "resolved_ips": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "role": {
+          "$ref": "#/$defs/HostRole"
+        },
+        "verdict": {
+          "$ref": "#/$defs/Verdict"
+        }
+      },
+      "required": [
+        "host",
+        "role",
+        "reachable",
+        "verdict",
+        "reason"
+      ],
+      "type": "object"
+    },
+    "Evidence": {
+      "additionalProperties": false,
+      "properties": {
+        "body_head": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "bytes_len": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "content_type": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "curl_repro": {
+          "type": "string"
+        },
+        "error": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "fetched_at": {
+          "type": "string"
+        },
+        "final_url": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "http_status": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "norm_sha256": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "raw_md5": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "redirect_chain": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "resolver_used": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "title": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "url": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "type": "object"
+    },
+    "Exclusion": {
+      "additionalProperties": false,
+      "properties": {
+        "disposition": {
+          "enum": [
+            "excluded",
+            "needs_review"
+          ]
+        },
+        "found_on": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "provenance": {
+          "enum": [
+            "measured",
+            "single_case"
+          ]
+        },
+        "rule_desc": {
+          "type": "string"
+        },
+        "rule_id": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "url",
+        "rule_id",
+        "rule_desc"
+      ],
+      "type": "object"
+    },
+    "Expect": {
+      "enum": [
+        "text_file",
+        "html_page",
+        "any"
+      ]
+    },
+    "Finding": {
+      "additionalProperties": false,
+      "properties": {
+        "actual_conclusion": {
+          "type": "string"
+        },
+        "anchor_text": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "check_id": {
+          "type": "string"
+        },
+        "confidence": {
+          "enum": [
+            "confirmed",
+            "needs_review"
+          ]
+        },
+        "control": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Evidence"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "counted_as_hit": {
+          "type": "boolean"
+        },
+        "detail": {
+          "type": "object"
+        },
+        "display_value": {
+          "type": "string"
+        },
+        "exposure_pages": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "finding_id": {
+          "pattern": "^GA-[0-9A-F]{10}$",
+          "type": "string"
+        },
+        "fix": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FixHint"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "found_on": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "fp_guard": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "fp_note": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "html_snippet": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "kind": {
+          "$ref": "#/$defs/FindingKind"
+        },
+        "naive": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/NaiveContrast"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "naive_conclusion": {
+          "type": "string"
+        },
+        "naive_is_wrong": {
+          "type": "boolean"
+        },
+        "occurrence_hrefs": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "occurrence_pages": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "occurrences": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "position_class": {
+          "$ref": "#/$defs/PositionClass"
+        },
+        "root_cause_id": {
+          "type": "string"
+        },
+        "root_cause_summary": {
+          "type": "string"
+        },
+        "severity": {
+          "$ref": "#/$defs/Severity"
+        },
+        "severity_signals": {
+          "required": [
+            "page_role",
+            "anchor",
+            "anchor_class",
+            "region"
+          ],
+          "type": "object"
+        },
+        "sibling_count": {
+          "type": "integer"
+        },
+        "source_hint": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "stage": {
+          "$ref": "#/$defs/Stage"
+        },
+        "suppress_hint": {
+          "type": "string"
+        },
+        "target": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "title": {
+          "type": "string"
+        },
+        "why_it_matters": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "finding_id",
+        "kind",
+        "check_id",
+        "title",
+        "severity",
+        "position_class",
+        "stage",
+        "target"
+      ],
+      "type": "object"
+    },
+    "FindingKind": {
+      "enum": [
+        "soft_404",
+        "llms_full_fake",
+        "index_link_dead",
+        "md_unfulfilled",
+        "dead_link"
+      ]
+    },
+    "FixHint": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "type": "string"
+        },
+        "after": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "before": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "locator": {
+          "type": "string"
+        },
+        "open_this": {
+          "type": "string"
+        },
+        "verified_target": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "action",
+        "open_this",
+        "locator",
+        "before",
+        "after",
+        "verified_target"
+      ],
+      "type": "object"
+    },
+    "Fragility": {
+      "additionalProperties": false,
+      "properties": {
+        "fragility_id": {
+          "type": "string"
+        },
+        "metric": {
+          "type": "string"
+        },
+        "precedent": {
+          "type": "string"
+        },
+        "severity": {
+          "$ref": "#/$defs/Severity"
+        },
+        "title": {
+          "type": "string"
+        },
+        "watch_command": {
+          "type": "string"
+        },
+        "why": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "fragility_id",
+        "title",
+        "metric",
+        "why",
+        "precedent",
+        "watch_command"
+      ],
+      "type": "object"
+    },
+    "HostRole": {
+      "enum": [
+        "apex",
+        "www",
+        "docs",
+        "support",
+        "platform",
+        "declared"
+      ]
+    },
+    "HttpResponse": {
+      "additionalProperties": false,
+      "properties": {
+        "blocked": {
+          "type": "boolean"
+        },
+        "body": {
+          "contentEncoding": "base64",
+          "type": "string"
+        },
+        "body_truncated": {
+          "type": "boolean"
+        },
+        "elapsed_ms": {
+          "type": "integer"
+        },
+        "fetched_at": {
+          "type": "number"
+        },
+        "final_url": {
+          "type": "string"
+        },
+        "from_cache": {
+          "type": "boolean"
+        },
+        "headers": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "type": "object"
+        },
+        "norm_sha256": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "raw_md5": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "redirects": {
+          "items": {
+            "$ref": "#/$defs/RedirectHop"
+          },
+          "type": "array"
+        },
+        "resolver_used": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "status": {
+          "type": "integer"
+        },
+        "struct_sha256": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "transport_error": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "url": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "url",
+        "final_url",
+        "status",
+        "headers",
+        "body"
+      ],
+      "type": "object"
+    },
+    "NaiveContrast": {
+      "additionalProperties": false,
+      "properties": {
+        "actual_conclusion": {
+          "type": "string"
+        },
+        "direction": {
+          "enum": [
+            "false_positive",
+            "false_negative",
+            "over_report",
+            "agree"
+          ]
+        },
+        "diverges": {
+          "type": "boolean"
+        },
+        "extra_requests": {
+          "type": "integer"
+        },
+        "in_naive_probe_set": {
+          "type": "boolean"
+        },
+        "naive_conclusion": {
+          "type": "string"
+        },
+        "naive_method": {
+          "type": "string"
+        },
+        "probe_url": {
+          "type": "string"
+        },
+        "why": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "probe_url",
+        "in_naive_probe_set",
+        "naive_method",
+        "naive_conclusion",
+        "actual_conclusion",
+        "diverges",
+        "direction"
+      ],
+      "type": "object"
+    },
+    "Position": {
+      "additionalProperties": false,
+      "properties": {
+        "aggregate_of": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "control": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Evidence"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "detail": {
+          "type": "string"
+        },
+        "evidence": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Evidence"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "finding_ids": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "kind": {
+          "enum": [
+            "probe",
+            "aggregate"
+          ]
+        },
+        "label": {
+          "type": "string"
+        },
+        "naive": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/NaiveContrast"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "position_id": {
+          "type": "string"
+        },
+        "probe_url": {
+          "type": "string"
+        },
+        "stage": {
+          "$ref": "#/$defs/Stage"
+        },
+        "status": {
+          "$ref": "#/$defs/Status"
+        },
+        "unknown_reason": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "unknown_remedy": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "position_id",
+        "stage",
+        "label",
+        "probe_url",
+        "status",
+        "detail",
+        "kind"
+      ],
+      "type": "object"
+    },
+    "PositionClass": {
+      "enum": [
+        "sales_path",
+        "doc_entry",
+        "ai_channel",
+        "nav",
+        "body",
+        "footer_social"
+      ]
+    },
+    "Probe": {
+      "additionalProperties": false,
+      "properties": {
+        "classification": {
+          "$ref": "#/$defs/Classification"
+        },
+        "expect": {
+          "$ref": "#/$defs/Expect"
+        },
+        "response": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/HttpResponse"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "url": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "url",
+        "expect",
+        "response",
+        "classification"
+      ],
+      "type": "object"
+    },
+    "Reason": {
+      "enum": [
+        "ok",
+        "ok_control_discriminates",
+        "status_404",
+        "status_410",
+        "html_where_text_expected",
+        "notfound_copy_in_body",
+        "redirect_to_site_root",
+        "redirect_to_generic_landing",
+        "identical_to_control",
+        "near_identical_to_control",
+        "platform_deployment_missing",
+        "waf_status",
+        "waf_challenge_body",
+        "rate_limited",
+        "login_required",
+        "robots_disallowed",
+        "server_error",
+        "dns_unresolved",
+        "dns_poisoned",
+        "network_error",
+        "timeout",
+        "redirect_loop",
+        "too_many_redirects",
+        "control_unavailable",
+        "needs_js",
+        "body_truncated",
+        "not_fetched"
+      ]
+    },
+    "RedirectHop": {
+      "additionalProperties": false,
+      "properties": {
+        "from_url": {
+          "type": "string"
+        },
+        "status": {
+          "type": "integer"
+        },
+        "to_url": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "status",
+        "from_url",
+        "to_url"
+      ],
+      "type": "object"
+    },
+    "RobotsInfo": {
+      "additionalProperties": false,
+      "properties": {
+        "crawl_delay": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "fetched": {
+          "type": "boolean"
+        },
+        "host": {
+          "type": "string"
+        },
+        "raw": {
+          "type": "string"
+        },
+        "sitemaps": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "status": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "host",
+        "fetched",
+        "status",
+        "crawl_delay",
+        "sitemaps",
+        "raw"
+      ],
+      "type": "object"
+    },
+    "RootCause": {
+      "additionalProperties": false,
+      "properties": {
+        "defect": {
+          "type": "string"
+        },
+        "finding_ids": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "fix_once": {
+          "type": "string"
+        },
+        "instance_count": {
+          "type": "integer"
+        },
+        "max_severity": {
+          "$ref": "#/$defs/Severity"
+        },
+        "merge_axes": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "type": "object"
+        },
+        "root_cause_id": {
+          "type": "string"
+        },
+        "source_pages": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "summary": {
+          "type": "string"
+        },
+        "unique_target_count": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "root_cause_id",
+        "summary",
+        "fix_once",
+        "finding_ids",
+        "max_severity",
+        "instance_count",
+        "unique_target_count"
+      ],
+      "type": "object"
+    },
+    "Severity": {
+      "enum": [
+        "critical",
+        "high",
+        "medium",
+        "low",
+        "info"
+      ]
+    },
+    "SiteMap": {
+      "additionalProperties": false,
+      "properties": {
+        "ai_path_probes": {
+          "items": {
+            "$ref": "#/$defs/Probe"
+          },
+          "type": "array"
+        },
+        "apex_www": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ApexWwwResult"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "budget_exhausted": {
+          "type": "boolean"
+        },
+        "hosts": {
+          "items": {
+            "$ref": "#/$defs/DiscoveredHost"
+          },
+          "type": "array"
+        },
+        "input_domain": {
+          "type": "string"
+        },
+        "pricing_candidates_tried": {
+          "items": {
+            "maxItems": 2,
+            "minItems": 2,
+            "prefixItems": [
+              {
+                "type": "string"
+              },
+              {
+                "$ref": "#/$defs/Verdict"
+              }
+            ],
+            "type": "array"
+          },
+          "type": "array"
+        },
+        "pricing_url": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "registrable_domain": {
+          "type": "string"
+        },
+        "requests_spent": {
+          "type": "integer"
+        },
+        "robots": {
+          "additionalProperties": {
+            "$ref": "#/$defs/RobotsInfo"
+          },
+          "type": "object"
+        },
+        "sitemap_urls": {
+          "additionalProperties": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "type": "object"
+        },
+        "skipped_by_budget": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "tiers_run": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "input_domain",
+        "registrable_domain",
+        "hosts",
+        "apex_www",
+        "sitemap_urls",
+        "pricing_url",
+        "pricing_candidates_tried",
+        "ai_path_probes",
+        "robots"
+      ],
+      "type": "object"
+    },
+    "Stage": {
+      "enum": [
+        "discovery",
+        "index_file",
+        "fulltext",
+        "index_links",
+        "md_channel",
+        "human_path"
+      ]
+    },
+    "Status": {
+      "enum": [
+        "pass",
+        "fail",
+        "unknown",
+        "not_applicable"
+      ]
+    },
+    "Verdict": {
+      "enum": [
+        "ok",
+        "soft404",
+        "real404",
+        "blocked",
+        "unknown"
+      ]
+    }
+  },
+  "$id": "https://github.com/OWNER/geo-audit/schema/report-1.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "apex_www": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ApexWwwResult"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "contact": {
+      "type": "string"
+    },
+    "counts": {
+      "$ref": "#/$defs/Counts"
+    },
+    "coverage": {
+      "$ref": "#/$defs/Coverage"
+    },
+    "coverage_gaps": {
+      "items": {
+        "$ref": "#/$defs/CoverageGap"
+      },
+      "type": "array"
+    },
+    "denoise_ruleset_version": {
+      "type": "string"
+    },
+    "domain": {
+      "type": "string"
+    },
+    "duration_s": {
+      "type": "number"
+    },
+    "excluded": {
+      "items": {
+        "$ref": "#/$defs/Exclusion"
+      },
+      "type": "array"
+    },
+    "findings": {
+      "items": {
+        "$ref": "#/$defs/Finding"
+      },
+      "type": "array"
+    },
+    "fragilities": {
+      "items": {
+        "$ref": "#/$defs/Fragility"
+      },
+      "type": "array"
+    },
+    "headline": {
+      "type": "string"
+    },
+    "naive_table": {
+      "items": {
+        "$ref": "#/$defs/NaiveContrast"
+      },
+      "type": "array"
+    },
+    "positions": {
+      "items": {
+        "$ref": "#/$defs/Position"
+      },
+      "type": "array"
+    },
+    "root_causes": {
+      "items": {
+        "$ref": "#/$defs/RootCause"
+      },
+      "type": "array"
+    },
+    "scanned_at": {
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "geo-audit/report/1"
+    },
+    "tool_version": {
+      "type": "string"
+    },
+    "user_agent": {
+      "type": "string"
+    },
+    "verdict_kind": {
+      "enum": [
+        "has_fail",
+        "zero_with_unknown",
+        "zero_clean",
+        "no_ai_channel",
+        "unusable"
+      ]
+    }
+  },
+  "required": [
+    "schema_version",
+    "tool_version",
+    "denoise_ruleset_version",
+    "domain",
+    "scanned_at",
+    "duration_s",
+    "contact",
+    "user_agent",
+    "headline",
+    "verdict_kind",
+    "positions",
+    "findings",
+    "root_causes",
+    "naive_table",
+    "fragilities",
+    "coverage_gaps",
+    "excluded",
+    "apex_www",
+    "coverage",
+    "counts"
+  ],
+  "title": "geo-audit report v1",
+  "type": "object"
+}

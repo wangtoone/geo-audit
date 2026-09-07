@@ -1,0 +1,33 @@
+{
+  "body_bytes": 42011,
+  "body_file": "snapshots/www.browserbase.com/sign-in-q-0570a9d9.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://www.browserbase.com/sign-in?redirect=https%3A%2F%2Fwww.browserbase.com%2Fllms-full.txt",
+  "handwritten": false,
+  "headers": {
+    "age": "0",
+    "cache-control": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "content-encoding": "gzip",
+    "content-type": "text/html; charset=utf-8",
+    "date": "Mon, 07 Sep 2026 12:20:52 GMT",
+    "link": "</_next/static/immutable/media/gt_planar_light-s.p.2bjc7t8w01ctg.woff2>; rel=preload; as=\"font\"; crossorigin=\"\"; type=\"font/woff2\", </_next/static/immutable/media/gt_planar_medium-s.p.2tj8ldbl6hq9p.woff2>; rel=preload; as=\"font\"; crossorigin=\"\"; type=\"font/woff2\", </_next/static/immutable/media/gt_planar_regular-s.p.2ndkjvk7f5evk.woff2>; rel=preload; as=\"font\"; crossorigin=\"\"; type=\"font/woff2\", </_next/static/immutable/media/gt_standard_mono_medium-s.p.2i2b1xiblu9h0.woff2>; rel=preload; as=\"font\"; crossorigin=\"\"; type=\"font/woff2\", </_next/static/immutable/media/gt_standard_mono_medium_oblique-s.p.0upaf3l1l_2fo.woff2>; rel=preload; as=\"font\"; crossorigin=\"\"; type=\"font/woff2\", </_next/static/immutable/media/gt_standard_mono_regular-s.p.42ji9d_h789-o.woff2>; rel=preload; as=\"font\"; crossorigin=\"\"; type=\"font/woff2\", </_next/static/immutable/media/plain_light-s.p.3j5m_cbugh72v.woff2>; rel=preload; as=\"font\"; crossorigin=\"\"; type=\"font/woff2\", </_next/static/immutable/media/plain_medium-s.p.3q1eq9j_mb977.woff2>; rel=preload; as=\"font\"; crossorigin=\"\"; type=\"font/woff2\", </_next/static/immutable/media/plain_regular-s.p.1ym6r3l53l1ce.woff2>; rel=preload; as=\"font\"; crossorigin=\"\"; type=\"font/woff2\"",
+    "server": "Vercel",
+    "strict-transport-security": "max-age=63072000",
+    "transfer-encoding": "chunked",
+    "vary": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch",
+    "x-clerk-auth-reason": "session-token-and-uat-missing",
+    "x-clerk-auth-status": "signed-out",
+    "x-matched-path": "/sign-in",
+    "x-powered-by": "Next.js",
+    "x-vercel-cache": "MISS",
+    "x-vercel-id": "sin1::pdx1::jtwxv-1788783652081-952505e75723"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "234a5a70d2517dd2bf86672b21d75797",
+  "recorded_at": "2026-09-07T12:20:52Z",
+  "status": 200,
+  "stored_bytes": 42011,
+  "transport_error": null,
+  "url": "https://www.browserbase.com/sign-in?redirect=https%3A%2F%2Fwww.browserbase.com%2Fllms-full.txt"
+}

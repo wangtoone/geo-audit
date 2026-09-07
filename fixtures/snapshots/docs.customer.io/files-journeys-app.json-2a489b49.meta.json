@@ -1,0 +1,31 @@
+{
+  "body_bytes": 12762162,
+  "body_file": null,
+  "body_storage": "digest_only",
+  "canon_url": "https://docs.customer.io/files/journeys-app.json",
+  "handwritten": false,
+  "headers": {
+    "accept-ranges": "bytes",
+    "access-control-allow-origin": "*",
+    "age": "1",
+    "cache-control": "public,max-age=604800,stale-while-revalidate=86400",
+    "cache-status": "\"Netlify Edge\"; fwd=miss; fwd-status=200; stored",
+    "content-encoding": "gzip",
+    "content-type": "application/json",
+    "date": "Mon, 07 Sep 2026 12:32:49 GMT",
+    "etag": "W/\"cc0cdd4da088277cc06e69516c6272ef-ssl-df\"",
+    "server": "Netlify",
+    "strict-transport-security": "max-age=31536000",
+    "transfer-encoding": "chunked",
+    "vary": "Accept-Encoding",
+    "x-nf-request-id": "01M1XXPQ55NFKGMFBZZ683T0KC"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "af1802e9441ed66708d7e78535a23006",
+  "recorded_at": "2026-09-07T12:32:51Z",
+  "status": 200,
+  "stored_bytes": 0,
+  "transport_error": null,
+  "url": "https://docs.customer.io/files/journeys-app.json"
+}

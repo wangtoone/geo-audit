@@ -1,0 +1,29 @@
+{
+  "body_bytes": 42697,
+  "body_file": "snapshots/platform.kimi.ai/console-account-8a13a368.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://platform.kimi.ai/console/account",
+  "handwritten": false,
+  "headers": {
+    "cache-control": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "cf-cache-status": "DYNAMIC",
+    "cf-ray": "a375c0d8af44f882-SIN",
+    "connection": "keep-alive",
+    "content-encoding": "gzip",
+    "content-type": "text/html; charset=utf-8",
+    "date": "Mon, 07 Sep 2026 12:35:26 GMT",
+    "server": "cloudflare",
+    "strict-transport-security": "max-age=31536000; includeSubDomains",
+    "transfer-encoding": "chunked",
+    "vary": "RSC, Next-Router-State-Tree, Next-Router-Prefetch, Accept-Encoding",
+    "x-powered-by": "Next.js"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "7c34fcc6d8ef7442f626be9c662f83eb",
+  "recorded_at": "2026-09-07T12:35:26Z",
+  "status": 200,
+  "stored_bytes": 42697,
+  "transport_error": null,
+  "url": "https://platform.kimi.ai/console/account"
+}

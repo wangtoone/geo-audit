@@ -1,0 +1,25 @@
+{
+  "body_bytes": 74,
+  "body_file": "snapshots/tdengine.com/robots.txt-4ad023b5.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://tdengine.com/robots.txt",
+  "handwritten": false,
+  "headers": {
+    "accept-ranges": "bytes",
+    "connection": "keep-alive",
+    "content-length": "74",
+    "content-type": "text/plain",
+    "date": "Mon, 07 Sep 2026 12:42:03 GMT",
+    "etag": "\"6618ab2c-4a\"",
+    "last-modified": "Fri, 12 Apr 2024 03:31:56 GMT",
+    "server": "openresty/1.27.1.2"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "839034a95badd475ef2f1549e05db1d7",
+  "recorded_at": "2026-09-07T12:42:03Z",
+  "status": 200,
+  "stored_bytes": 74,
+  "transport_error": null,
+  "url": "https://tdengine.com/robots.txt"
+}

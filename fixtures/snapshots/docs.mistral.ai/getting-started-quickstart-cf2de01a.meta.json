@@ -1,0 +1,32 @@
+{
+  "body_bytes": 142,
+  "body_file": "snapshots/docs.mistral.ai/getting-started-quickstart-cf2de01a.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://docs.mistral.ai/getting-started/quickstart",
+  "handwritten": false,
+  "headers": {
+    "cache-control": "public, max-age=0, must-revalidate",
+    "content-security-policy": "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://analytics.google.com https://client.axept.io https://api.axept.io https://static.axept.io https://cdn.jsdelivr.net https://vercel.live; style-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://www.googletagmanager.com https://www.google-analytics.com https://analytics.google.com https://axeptio.imgix.net https://colab.research.google.com; media-src 'self' blob:; connect-src 'self' https://www.google-analytics.com https://region1.google-analytics.com https://analytics.google.com https://www.googletagmanager.com https://client.axept.io https://static.axept.io https://api.axept.io https://esm.sh; frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com https://vercel.live/; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests",
+    "content-type": "text/html",
+    "date": "Mon, 07 Sep 2026 12:40:52 GMT",
+    "location": "/getting-started/quickstarts",
+    "permissions-policy": "geolocation=(), microphone=(), camera=()",
+    "referrer-policy": "strict-origin-when-cross-origin",
+    "refresh": "0;url=/getting-started/quickstarts",
+    "server": "Vercel",
+    "strict-transport-security": "max-age=63072000",
+    "transfer-encoding": "chunked",
+    "x-content-type-options": "nosniff",
+    "x-frame-options": "SAMEORIGIN",
+    "x-vercel-id": "sin1::7jxp5-1788784852201-17f180f68b6f",
+    "x-xss-protection": "1; mode=block"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "02943b5f74ad9ed3588b669e5ad74991",
+  "recorded_at": "2026-09-07T12:40:52Z",
+  "status": 308,
+  "stored_bytes": 142,
+  "transport_error": null,
+  "url": "https://docs.mistral.ai/getting-started/quickstart"
+}

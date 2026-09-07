@@ -1,0 +1,30 @@
+{
+  "body_bytes": 4490,
+  "body_file": "snapshots/ed.link/llms.txt-77ec8793.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://ed.link/llms.txt",
+  "handwritten": false,
+  "headers": {
+    "accept-ranges": "bytes",
+    "alt-svc": "h3=\":443\"; ma=2592000",
+    "cache-control": "max-age=0,no-cache",
+    "content-length": "4490",
+    "content-type": "text/html",
+    "date": "Mon, 07 Sep 2026 12:19:24 GMT",
+    "etag": "\"6a960540-118a\"",
+    "expires": "Mon, 07 Sep 2026 12:19:24 GMT",
+    "last-modified": "Mon, 31 Aug 2026 22:50:40 GMT",
+    "server": "nginx/1.31.4",
+    "strict-transport-security": "max-age=31536000; includeSubDomains; preload",
+    "via": "1.1 google",
+    "x-content-type-options": "nosniff"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "e6d49685daa9157b2105d7fc1f9c17ad",
+  "recorded_at": "2026-09-07T12:19:24Z",
+  "status": 200,
+  "stored_bytes": 4490,
+  "transport_error": null,
+  "url": "https://ed.link/llms.txt"
+}

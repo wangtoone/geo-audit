@@ -1,0 +1,28 @@
+{
+  "body_bytes": 0,
+  "body_file": "snapshots/policy.pinterest.com/developer-guidelines-e79ae6b2.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://policy.pinterest.com/developer-guidelines/",
+  "handwritten": false,
+  "headers": {
+    "accept-ranges": "bytes",
+    "connection": "close",
+    "content-length": "0",
+    "date": "Mon, 07 Sep 2026 12:34:24 GMT",
+    "location": "https://policy.pinterest.com/en/developer-guidelines/",
+    "retry-after": "0",
+    "set-cookie": "_ss_country_code=SG; Secure; Path=/",
+    "x-cache": "HIT",
+    "x-cache-hits": "0",
+    "x-served-by": "cache-sin-wsap440057-SIN",
+    "x-timer": "S1788784464.465454,VS0,VE0"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "d41d8cd98f00b204e9800998ecf8427e",
+  "recorded_at": "2026-09-07T12:34:24Z",
+  "status": 307,
+  "stored_bytes": 0,
+  "transport_error": null,
+  "url": "https://policy.pinterest.com/developer-guidelines/"
+}

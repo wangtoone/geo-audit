@@ -1,0 +1,31 @@
+{
+  "body_bytes": 29128,
+  "body_file": "snapshots/docs.saleor.io/developer-extending-apps-quickstart-3ce363f9.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://docs.saleor.io/developer/extending/apps/quickstart",
+  "handwritten": false,
+  "headers": {
+    "access-control-allow-origin": "*",
+    "age": "0",
+    "cache-control": "public, max-age=0, must-revalidate",
+    "content-disposition": "inline; filename=\"quickstart\"",
+    "content-encoding": "gzip",
+    "content-type": "text/html; charset=utf-8",
+    "date": "Mon, 07 Sep 2026 12:32:06 GMT",
+    "etag": "W/\"901df8bb95b4e742b6dd4f4f4caba80c\"",
+    "last-modified": "Mon, 07 Sep 2026 12:32:06 GMT",
+    "server": "Vercel",
+    "strict-transport-security": "max-age=63072000",
+    "transfer-encoding": "chunked",
+    "x-vercel-cache": "MISS",
+    "x-vercel-id": "sin1::p6ptf-1788784325898-608781a4b286"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "901df8bb95b4e742b6dd4f4f4caba80c",
+  "recorded_at": "2026-09-07T12:32:06Z",
+  "status": 200,
+  "stored_bytes": 29128,
+  "transport_error": null,
+  "url": "https://docs.saleor.io/developer/extending/apps/quickstart"
+}

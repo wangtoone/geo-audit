@@ -1,0 +1,32 @@
+{
+  "body_bytes": 57592,
+  "body_file": "snapshots/www.medplum.com/llms.txt-b859ec43.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://www.medplum.com/llms.txt",
+  "handwritten": false,
+  "headers": {
+    "cache-control": "no-cache",
+    "connection": "keep-alive",
+    "content-encoding": "gzip",
+    "content-type": "text/html; charset=utf-8",
+    "date": "Mon, 07 Sep 2026 12:19:20 GMT",
+    "etag": "W/\"3eec8c66b08d53a2e95eca400ae9cc06\"",
+    "last-modified": "Sat, 05 Sep 2026 18:05:18 GMT",
+    "server": "AmazonS3",
+    "transfer-encoding": "chunked",
+    "vary": "Accept-Encoding",
+    "via": "1.1 e88560622a029ed700e23054a38daaa4.cloudfront.net (CloudFront)",
+    "x-amz-cf-id": "uBtqy2os4sNpY_sKhBDXfK7-RgZyhQKWLIziMQIpu2_cwh75wKqThg==",
+    "x-amz-cf-pop": "FRA56-P13",
+    "x-amz-server-side-encryption": "AES256",
+    "x-cache": "Error from cloudfront"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "3eec8c66b08d53a2e95eca400ae9cc06",
+  "recorded_at": "2026-09-07T12:19:19Z",
+  "status": 200,
+  "stored_bytes": 57592,
+  "transport_error": null,
+  "url": "https://www.medplum.com/llms.txt"
+}

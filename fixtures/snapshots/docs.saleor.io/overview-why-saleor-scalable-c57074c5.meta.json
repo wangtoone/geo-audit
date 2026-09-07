@@ -1,0 +1,31 @@
+{
+  "body_bytes": 48614,
+  "body_file": "snapshots/docs.saleor.io/overview-why-saleor-scalable-c57074c5.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://docs.saleor.io/overview/why-saleor/scalable",
+  "handwritten": false,
+  "headers": {
+    "access-control-allow-origin": "*",
+    "age": "0",
+    "cache-control": "public, max-age=0, must-revalidate",
+    "content-disposition": "inline; filename=\"scalable\"",
+    "content-encoding": "gzip",
+    "content-type": "text/html; charset=utf-8",
+    "date": "Mon, 07 Sep 2026 12:32:10 GMT",
+    "etag": "W/\"827d95e778e6b7e4cc1270cc2d97cbf7\"",
+    "last-modified": "Mon, 07 Sep 2026 12:32:10 GMT",
+    "server": "Vercel",
+    "strict-transport-security": "max-age=63072000",
+    "transfer-encoding": "chunked",
+    "x-vercel-cache": "MISS",
+    "x-vercel-id": "sin1::4t6tg-1788784330423-e2c53b76e124"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "827d95e778e6b7e4cc1270cc2d97cbf7",
+  "recorded_at": "2026-09-07T12:32:10Z",
+  "status": 200,
+  "stored_bytes": 48614,
+  "transport_error": null,
+  "url": "https://docs.saleor.io/overview/why-saleor/scalable"
+}

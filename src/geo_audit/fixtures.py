@@ -39,7 +39,7 @@ from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any, Final, Literal
-from urllib.parse import urlsplit, urlunsplit
+from urllib.parse import quote, urlsplit, urlunsplit
 
 import httpx
 
@@ -494,6 +494,97 @@ _DERIVED_KEYS: Final = (
 )
 
 
+#: 录制者的联系邮箱**会被目标站点回显进响应正文**。实测 7 条：youtube.com
+#: 把 UA 塞进 `DEVICE` 配置串、pinterest 与 facebook 把它塞进页面内嵌 JSON 的
+#: `user_agent` 字段。这些正文要进公开仓库，等于把私人邮箱发布出去。
+#:
+#: 所以在**落盘之前**替换掉，且摘要按脱敏后的字节算 —— 顺序反了就会得到一个
+#: 对不上磁盘内容的 md5。
+REDACTED_CONTACT = b"contact-redacted@example.invalid"
+#: UA 整串的占位。见 redact_contact 里的理由。
+REDACTED_UA = b"geo-audit/x.y.z (+https://example.invalid/geo-audit; contact: redacted)"
+#: owner handle 的单独占位（第一步半的兜底，见 redact_contact）。
+REDACTED_REPO_PATH = b"example.invalid/geo-audit-owner/geo-audit"
+
+
+#: 同理：UA 里带着仓库 URL 与版本号，回显出来无所谓，但邮箱那一段要换掉。
+#: URL 编码形态也要覆盖（youtube 回显的是 `contact%3A+x%40gmail.com`，
+#: facebook 回显的是 `x` 加 JSON 转义的 at 符号 加 `gmail.com`）。
+def redact_contact(body: bytes, contact: str, user_agent: str = "") -> tuple[bytes, int]:
+    r"""把正文里回显出来的联系邮箱与 UA 换成占位符。返回 (脱敏后正文, 替换次数)。
+
+    **顺序很重要，UA 必须先换。** 实测踩过：先把邮箱换成占位符之后，完整 UA 串里
+    的邮箱那一段也跟着变了，于是 UA 整串再也匹配不上，``github.com/<owner>``
+    那半就留在了正文里。两步互相破坏。
+
+    邮箱覆盖四种形态：原样、URL 编码（``%40``）、JSON ``\u0040``、双转义。
+    UA 覆盖三种：原样、JSON 里 ``/`` 转义成 ``\/``、整串 URL 编码。
+    找不到就原样返回，零开销。
+    """
+    if not body:
+        return body, 0
+    n = 0
+
+    # ── 第一步：UA 整串（必须在邮箱之前）──────────────────────────────────
+    for ua in _ua_variants(user_agent):
+        c = body.count(ua)
+        if c:
+            body = body.replace(ua, REDACTED_UA)
+            n += c
+
+    # ── 第一步半：owner handle 的兜底 ────────────────────────────────────
+    # 上一步靠**整串** UA 匹配。如果正文已经被旧版本的脱敏动过一次（邮箱换了、
+    # UA 整串因此对不上了），或者站点自己改写了 UA 的某一段，整串就命不中，
+    # `github.com/<owner>` 那半会漏下来。实测踩过（facebook 那条）。
+    # 所以再兜一层：把 UA 里的仓库路径单独换掉，形态同样覆盖 JSON 的 `\/` 转义。
+    if user_agent:
+        for repo in _repo_path_variants(user_agent):
+            c = body.count(repo)
+            if c:
+                body = body.replace(repo, REDACTED_REPO_PATH)
+                n += c
+
+    # ── 第二步：残留的裸邮箱（UA 之外的回显位置）─────────────────────────
+    if contact:
+        local, _, domain = contact.partition("@")
+        if domain:
+            for v in (
+                contact.encode(),
+                f"{local}%40{domain}".encode(),
+                f"{local}\\u0040{domain}".encode(),
+                f"{local}\\\\u0040{domain}".encode(),
+            ):
+                c = body.count(v)
+                if c:
+                    body = body.replace(v, REDACTED_CONTACT)
+                    n += c
+    return body, n
+
+
+def _repo_path_variants(ua: str) -> tuple[bytes, ...]:
+    r"""从 UA 里抽出 ``github.com/<owner>/geo-audit`` 并给出它的两种形态。
+
+    存在的理由见 ``redact_contact`` 第一步半：整串 UA 匹配会被「已经被脱敏动过
+    一次的正文」打败，这一层单独兜住 owner handle。
+    """
+    m = re.search(r"github\.com/([^/\s)]+)/geo-audit", ua)
+    if not m:
+        return ()
+    path = m.group(0)
+    return (path.encode(), path.replace("/", "\\/").encode())
+
+
+def _ua_variants(ua: str) -> tuple[bytes, ...]:
+    r"""UA 串在正文里的三种形态：原样、JSON 里 ``/`` 被转义成 ``\/``、URL 编码。"""
+    if not ua:
+        return ()
+    return (
+        ua.encode(),
+        ua.replace("/", "\\/").encode(),
+        quote(ua, safe="").encode(),
+    )
+
+
 class FixtureStore:
     """``fixtures/`` 目录的读写口。
 
@@ -841,6 +932,8 @@ class FixtureStore:
         handwritten: bool = False,
         note: str | None = None,
         overwrite: bool = False,
+        contact: str | None = None,
+        user_agent: str | None = None,
     ) -> Snapshot:
         """落一条快照并更新索引。**默认不覆盖已有快照。**
 
@@ -855,6 +948,15 @@ class FixtureStore:
         canon = canon_url(url)
         if canon in self._index and not overwrite:
             return self.get(canon)
+
+        # 脱敏必须在算 total / digest **之前** —— 摘要要对得上磁盘上的字节。
+        redacted = 0
+        if contact and body:
+            body, redacted = redact_contact(body, contact, user_agent or "")
+            if redacted:
+                # 脱敏改了长度，调用方传进来的 body_bytes / raw_md5 就作废了。
+                body_bytes = None
+                raw_md5 = None
 
         total = len(body) if body_bytes is None else body_bytes
         if body_bytes is not None and body and len(body) > body_bytes:

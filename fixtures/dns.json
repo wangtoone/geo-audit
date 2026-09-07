@@ -1,809 +1,1017 @@
 {
-  "_note": "录制于 2026-09-07。IP 会变，所以 resolved_ips 在 VOLATILE_JSON_FIELDS 里、不进确定性比对；这里冻结的是 ok / poisoned / resolver 三个决策位。带 _pending_capture 的条目只冻结决策位，addresses 由第 4b 步录制回填 —— IP 一律不许手写。urls.txt 里出现过的每个 host 都必须在此有条目（test_fixture_store.py 断言）；不在表里的 host 走 _default_absent。",
-  "docs.mistral.ai": {
-    "addresses": [
-      "104.18.7.90"
-    ],
-    "resolver": "system",
-    "poisoned": false
-  },
-  "platform.minimax.io": {
-    "addresses": [
-      "104.18.20.15"
-    ],
-    "resolver": "system",
-    "poisoned": false
-  },
-  "cog.run": {
-    "addresses": [
-      "104.18.17.10"
-    ],
-    "resolver": "8.8.8.8",
-    "poisoned": false
-  },
-  "www.talkie-ai.com": {
-    "addresses": [
-      "23.55.161.10"
-    ],
-    "resolver": "8.8.8.8",
-    "poisoned": false,
-    "system_answer": [
-      "127.0.0.1"
-    ]
-  },
-  "next.js": {
-    "addresses": [],
-    "resolver": "none",
-    "poisoned": false,
-    "error": "NXDOMAIN on system/8.8.8.8/1.1.1.1"
-  },
   "117340892.intellimizeio.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "api-docs.ecwid.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "api.factorialhr.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "api.gumroad.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "api.printful.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "app.buildwithfern.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "app.moderntreasury.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "attio.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "brevo.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "business.pinterest.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "canvas-medical.help.usepylon.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "close.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "crates.io": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "depot.dev": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "dev.hume.ai": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "dev.wix.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "developer.squareup.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "developers.attio.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "developers.brevo.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "developers.deepgram.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "developers.mailerlite.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "developers.pinterest.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "developers.pipedrive.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "developers.printify.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "developers.sendinblue.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "discord.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "docs.bigcommerce.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "docs.bytebase.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "docs.canvasmedical.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "docs.commercelayer.io": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "docs.customer.io": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "docs.dify.ai": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "docs.emqx.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "docs.gusto.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "docs.lawmatics.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "docs.moderntreasury.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "docs.pingcap.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "docs.snipcart.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "docs.tdengine.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "docs.zilliz.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "ed.link": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "elevenlabs.io": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "enterprise.printful.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "example.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "example.org": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "factorialhr.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "gethealthie.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "github.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "gumroad.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "gusto.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "help.canvasmedical.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "help.close.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "help.copper.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "help.spoton.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "hookdeck.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "liveblocks.io": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "manpages.ubuntu.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "mistral.ai": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "modal.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "platform.kimi.ai": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "printify.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "replicate.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "replicatestatus.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "resend.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "rustdesk.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "s3.staging.printful.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "saleor.io": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "snipcart.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "spoton.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "squareup.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "sso.teachable.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "support.freshbooks.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "support.zendesk.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "tdengine.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "tenderly.co": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "turso.tech": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "twitter.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "unkey.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "upstash.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "www.assemblyai.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "www.brevo.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "www.browserbase.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "www.bytebase.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "www.canvasmedical.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "www.cloudflare.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "www.copper.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "www.emqx.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "www.facebook.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "www.inngest.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "www.juicefs.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "www.klaviyo.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "www.linkedin.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "www.llamaindex.ai": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "www.medplum.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "www.minimax.io": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "www.moonshot.ai": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "www.openstatus.dev": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "www.pingcap.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "www.pinterest.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。 urls.txt:187 记着首轮 curl exit=6、重测 200 (dns_retry_second_resolver)；哪个 resolver 最终给出答案规格未给，第 4b 步录制时一并确定。"
-  },
-  "www.pipedrive.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "www.printful.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "www.shopify.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "www.swell.is": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "www.tinybird.co": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "www.unkey.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "www.voyageai.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "www.wix.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "x.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
-  },
-  "xayn.com": {
-    "addresses": [],
-    "_pending_capture": true,
-    "resolver": "system",
-    "poisoned": false,
-    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+    "addresses": [
+      "32.236.197.104",
+      "52.63.61.205",
+      "3.24.8.85"
+    ],
+    "poisoned": false,
+    "resolver": "system"
   },
   "_default_absent": {
     "addresses": [],
-    "resolver": "none",
+    "error": "NXDOMAIN",
     "poisoned": false,
-    "error": "NXDOMAIN"
+    "resolver": "none"
+  },
+  "_note": "冻结的 DNS 答案（§3.6）。IP 会变，所以 resolved_ips 在 VOLATILE_JSON_FIELDS 里、不进确定性比对；这里冻结的是 ok / poisoned / resolver 三个决策位。",
+  "api-docs.ecwid.com": {
+    "addresses": [
+      "13.249.146.37",
+      "13.249.146.43",
+      "13.249.146.8",
+      "13.249.146.10"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "api.factorialhr.com": {
+    "addresses": [
+      "104.18.22.2",
+      "104.18.23.2",
+      "2606:4700::6812:1602",
+      "2606:4700::6812:1702"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "api.gumroad.com": {
+    "addresses": [
+      "104.18.243.99",
+      "104.17.176.98"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "api.printful.com": {
+    "addresses": [
+      "104.18.6.241",
+      "104.18.7.241"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "app.buildwithfern.com": {
+    "addresses": [
+      "64.239.109.129",
+      "64.239.123.129"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "app.moderntreasury.com": {
+    "addresses": [
+      "104.249.160.4",
+      "104.249.161.4",
+      "2600:9000:a61f:4f0c:eb3c:b448:76c:d9eb",
+      "2600:9000:a706:5256:e69a:47a:8176:68c9"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "attio.com": {
+    "addresses": [
+      "104.20.30.68",
+      "172.66.165.206",
+      "2606:4700:10::ac42:a5ce",
+      "2606:4700:10::6814:1e44"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "brevo.com": {
+    "addresses": [
+      "141.101.90.105",
+      "141.101.90.107",
+      "141.101.90.106",
+      "141.101.90.104",
+      "2a06:98c1:3200::90:80",
+      "2a06:98c1:3200::90:83",
+      "2a06:98c1:3200::90:81",
+      "2a06:98c1:3200::90:82"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "business.pinterest.com": {
+    "addresses": [
+      "151.101.64.84",
+      "151.101.128.84",
+      "151.101.0.84",
+      "151.101.192.84"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "canvas-medical.help.usepylon.com": {
+    "addresses": [
+      "13.35.36.64",
+      "13.35.36.43",
+      "13.35.36.120",
+      "13.35.36.104"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "close.com": {
+    "addresses": [
+      "198.202.211.1"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "cog.run": {
+    "addresses": [
+      "104.18.16.10",
+      "104.18.17.10",
+      "2606:4700::6812:100a",
+      "2606:4700::6812:110a"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "crates.io": {
+    "addresses": [
+      "151.101.194.137",
+      "151.101.130.137",
+      "151.101.2.137",
+      "151.101.66.137"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "depot.dev": {
+    "addresses": [
+      "13.249.231.122",
+      "13.249.231.47",
+      "13.249.231.106",
+      "13.249.231.111"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "dev.hume.ai": {
+    "addresses": [
+      "104.18.4.93",
+      "104.18.5.93",
+      "2606:4700::6812:45d",
+      "2606:4700::6812:55d"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "dev.wix.com": {
+    "addresses": [
+      "34.149.206.255"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "developer.squareup.com": {
+    "addresses": [
+      "162.159.140.47",
+      "172.66.0.47"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "developers.attio.com": {
+    "addresses": [
+      "104.20.30.68",
+      "172.66.165.206",
+      "2606:4700:10::6814:1e44",
+      "2606:4700:10::ac42:a5ce"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "developers.brevo.com": {
+    "addresses": [
+      "64.239.109.129",
+      "64.239.123.129"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "developers.deepgram.com": {
+    "addresses": [
+      "76.76.21.164",
+      "66.33.60.34"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "developers.mailerlite.com": {
+    "addresses": [
+      "104.18.37.66",
+      "172.64.150.190"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "developers.pinterest.com": {
+    "addresses": [
+      "151.101.128.84",
+      "151.101.64.84",
+      "151.101.0.84",
+      "151.101.192.84"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "developers.pipedrive.com": {
+    "addresses": [
+      "104.18.189.228",
+      "104.18.188.228",
+      "2606:4700::6812:bce4",
+      "2606:4700::6812:bde4"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "developers.printify.com": {
+    "addresses": [
+      "104.18.19.167",
+      "104.18.18.167",
+      "2606:4700::6812:12a7",
+      "2606:4700::6812:13a7"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "developers.sendinblue.com": {
+    "addresses": [
+      "104.18.249.233",
+      "104.18.250.233",
+      "2606:4700::6812:fae9",
+      "2606:4700::6812:f9e9"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "discord.com": {
+    "addresses": [
+      "162.159.137.232",
+      "162.159.138.232",
+      "162.159.128.233",
+      "162.159.135.232",
+      "162.159.136.232"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "docs.bigcommerce.com": {
+    "addresses": [
+      "63.141.128.3",
+      "192.200.160.253"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "docs.bytebase.com": {
+    "addresses": [
+      "162.159.143.13",
+      "172.66.3.9",
+      "2606:4700:7::2fd",
+      "2a06:98c1:58::2fd"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "docs.canvasmedical.com": {
+    "addresses": [
+      "99.84.152.72",
+      "99.84.152.106",
+      "99.84.152.78",
+      "99.84.152.94"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "docs.commercelayer.io": {
+    "addresses": [
+      "104.18.40.47",
+      "172.64.147.209",
+      "2606:4700:4401::ac40:93d1",
+      "2a06:98c1:310d::6812:282f"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "docs.customer.io": {
+    "addresses": [
+      "52.74.6.109",
+      "13.215.239.219",
+      "2406:da18:b3d:e201::259",
+      "2406:da18:b3d:e201::258"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "docs.dify.ai": {
+    "addresses": [
+      "66.33.60.194",
+      "76.76.21.93"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "docs.emqx.com": {
+    "addresses": [
+      "61.170.88.228",
+      "58.212.47.158"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "docs.gusto.com": {
+    "addresses": [
+      "104.16.241.118",
+      "104.16.242.118",
+      "2606:4700::6810:f276",
+      "2606:4700::6810:f176"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "docs.lawmatics.com": {
+    "addresses": [
+      "98.94.229.252",
+      "54.197.125.254",
+      "100.25.145.89"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "docs.mistral.ai": {
+    "addresses": [
+      "216.150.16.129",
+      "216.150.1.129",
+      "2a03:2880:f130:83:face:b00c:0:25de"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "docs.moderntreasury.com": {
+    "addresses": [
+      "104.16.242.118",
+      "104.16.241.118",
+      "2606:4700::6810:f276",
+      "2606:4700::6810:f176"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "docs.pingcap.com": {
+    "addresses": [
+      "61.170.83.15",
+      "61.170.66.126"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "docs.snipcart.com": {
+    "addresses": [
+      "52.74.6.109",
+      "13.215.239.219",
+      "2406:da18:b3d:e201::258",
+      "2406:da18:b3d:e201::259"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "docs.tdengine.com": {
+    "addresses": [
+      "20.124.239.6"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "docs.zilliz.com": {
+    "addresses": [
+      "76.223.114.12",
+      "13.248.243.140"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "ed.link": {
+    "addresses": [
+      "34.36.66.238"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "elevenlabs.io": {
+    "addresses": [
+      "34.54.252.193"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "enterprise.printful.com": {
+    "addresses": [
+      "104.18.6.241",
+      "104.18.7.241"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "example.com": {
+    "addresses": [
+      "104.20.23.154",
+      "172.66.147.243",
+      "2606:4700:10::ac42:93f3",
+      "2606:4700:10::6814:179a"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "example.org": {
+    "addresses": [
+      "172.66.157.237",
+      "104.20.26.136",
+      "2606:4700:10::ac42:9ded",
+      "2606:4700:10::6814:1a88"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "factorialhr.com": {
+    "addresses": [
+      "104.18.30.236",
+      "104.18.31.236",
+      "2606:4700::6812:1eec",
+      "2606:4700::6812:1fec"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "gethealthie.com": {
+    "addresses": [
+      "198.202.211.1"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "github.com": {
+    "addresses": [
+      "20.205.243.166"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "gumroad.com": {
+    "addresses": [
+      "104.17.176.98",
+      "104.18.243.99"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "gusto.com": {
+    "addresses": [
+      "104.18.33.187",
+      "172.64.154.69",
+      "2606:4700:4406::6812:21bb",
+      "2606:4700:4405::ac40:9a45"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "help.canvasmedical.com": {
+    "addresses": [
+      "65.8.76.44",
+      "65.8.76.119",
+      "65.8.76.52",
+      "65.8.76.51",
+      "2600:9000:2119:7a00:f:9e37:5200:93a1",
+      "2600:9000:2119:8800:f:9e37:5200:93a1",
+      "2600:9000:2119:ee00:f:9e37:5200:93a1",
+      "2600:9000:2119:1200:f:9e37:5200:93a1",
+      "2600:9000:2119:3a00:f:9e37:5200:93a1",
+      "2600:9000:2119:6600:f:9e37:5200:93a1",
+      "2600:9000:2119:b600:f:9e37:5200:93a1"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "help.close.com": {
+    "addresses": [
+      "64.239.123.65",
+      "64.239.109.65"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "help.copper.com": {
+    "addresses": [],
+    "error": "getaddrinfo: [Errno 8] nodename nor servname provided, or not known",
+    "poisoned": false,
+    "resolver": "none"
+  },
+  "help.spoton.com": {
+    "addresses": [
+      "104.16.109.101",
+      "104.16.110.101",
+      "104.16.108.101",
+      "104.16.107.101",
+      "104.16.106.101",
+      "2606:4700::6810:6b65",
+      "2606:4700::6810:6e65",
+      "2606:4700::6810:6a65",
+      "2606:4700::6810:6d65",
+      "2606:4700::6810:6c65"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "hookdeck.com": {
+    "addresses": [
+      "76.76.21.21"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "liveblocks.io": {
+    "addresses": [
+      "64.239.123.129",
+      "64.239.109.65"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "manpages.ubuntu.com": {
+    "addresses": [
+      "91.189.92.195"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "mistral.ai": {
+    "addresses": [
+      "162.159.142.207",
+      "172.66.2.203"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "modal.com": {
+    "addresses": [
+      "3.166.34.120",
+      "3.166.34.38",
+      "3.166.34.66",
+      "3.166.34.116"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "next.js": {
+    "addresses": [],
+    "error": "getaddrinfo: [Errno 8] nodename nor servname provided, or not known",
+    "poisoned": false,
+    "resolver": "none"
+  },
+  "platform.kimi.ai": {
+    "addresses": [
+      "104.18.16.93",
+      "104.18.17.93",
+      "2606:4700::6812:115d",
+      "2606:4700::6812:105d"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "platform.minimax.io": {
+    "addresses": [
+      "2.17.106.5",
+      "2.17.106.21",
+      "2600:1417:e800::17d9:b1a",
+      "2600:1417:e800::17d9:b29"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "printify.com": {
+    "addresses": [
+      "104.18.19.167",
+      "104.18.18.167",
+      "2606:4700::6812:13a7",
+      "2606:4700::6812:12a7"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "replicate.com": {
+    "addresses": [
+      "104.18.3.60",
+      "104.18.2.60",
+      "2606:4700::6812:33c",
+      "2606:4700::6812:23c"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "replicatestatus.com": {
+    "addresses": [
+      "104.18.22.59",
+      "104.18.23.59",
+      "2606:4700::6812:173b",
+      "2606:4700::6812:163b"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "resend.com": {
+    "addresses": [
+      "76.76.21.22"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "rustdesk.com": {
+    "addresses": [
+      "172.66.167.80",
+      "104.20.19.94",
+      "2606:4700:10::6814:135e",
+      "2606:4700:10::ac42:a750"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "s3.staging.printful.com": {
+    "addresses": [
+      "34.241.102.46"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "saleor.io": {
+    "addresses": [
+      "76.76.21.21"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "snipcart.com": {
+    "addresses": [
+      "75.2.60.5"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "spoton.com": {
+    "addresses": [
+      "34.200.81.153",
+      "54.89.109.123"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "squareup.com": {
+    "addresses": [
+      "162.159.136.66",
+      "162.159.137.66"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "sso.teachable.com": {
+    "addresses": [
+      "104.17.82.54",
+      "104.17.83.54"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "support.freshbooks.com": {
+    "addresses": [
+      "34.54.86.117"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "support.zendesk.com": {
+    "addresses": [
+      "216.198.54.15",
+      "216.198.53.15"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "tdengine.com": {
+    "addresses": [
+      "20.124.239.6"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "tenderly.co": {
+    "addresses": [
+      "76.76.21.21"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "turso.tech": {
+    "addresses": [
+      "76.76.21.21"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "twitter.com": {
+    "addresses": [
+      "162.159.140.229"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "unkey.com": {
+    "addresses": [
+      "76.76.21.21"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "upstash.com": {
+    "addresses": [
+      "76.76.21.21"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "www.assemblyai.com": {
+    "addresses": [
+      "66.33.60.194",
+      "76.76.21.93"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "www.brevo.com": {
+    "addresses": [
+      "104.18.37.40",
+      "172.64.150.216",
+      "2606:4700:4401::6812:2528",
+      "2a06:98c1:310c::ac40:96d8"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "www.browserbase.com": {
+    "addresses": [
+      "66.33.60.194",
+      "76.76.21.93"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "www.bytebase.com": {
+    "addresses": [
+      "104.21.24.70",
+      "172.67.217.91",
+      "2606:4700:3031::ac43:d95b",
+      "2606:4700:3030::6815:1846"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "www.canvasmedical.com": {
+    "addresses": [
+      "76.76.21.21"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "www.cloudflare.com": {
+    "addresses": [
+      "104.16.123.96",
+      "104.16.124.96"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "www.copper.com": {
+    "addresses": [
+      "198.202.211.1",
+      "2620:cb:2000::1"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "www.emqx.com": {
+    "addresses": [
+      "27.159.90.83",
+      "27.159.90.82"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "www.facebook.com": {
+    "addresses": [
+      "57.144.14.1"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "www.inngest.com": {
+    "addresses": [
+      "66.33.60.35",
+      "76.76.21.123"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "www.juicefs.com": {
+    "addresses": [
+      "47.93.5.40"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "www.klaviyo.com": {
+    "addresses": [
+      "172.64.147.119",
+      "104.18.40.137",
+      "2606:4700:440c::6812:2889",
+      "2606:4700:440c::ac40:9377"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "www.linkedin.com": {
+    "addresses": [
+      "172.64.146.215",
+      "104.18.41.41",
+      "2a06:98c1:310b::ac40:92d7",
+      "2a06:98c1:3109::6812:2929"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "www.llamaindex.ai": {
+    "addresses": [
+      "66.33.60.35",
+      "76.76.21.123"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "www.medplum.com": {
+    "addresses": [
+      "99.84.152.118",
+      "99.84.152.85",
+      "99.84.152.105",
+      "99.84.152.75"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "www.minimax.io": {
+    "addresses": [
+      "23.58.144.209",
+      "23.58.144.194",
+      "2600:1417:e800::17d9:b3b",
+      "2600:1417:e800::17d9:b31"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "www.moonshot.ai": {
+    "addresses": [
+      "104.18.29.136",
+      "104.18.28.136",
+      "2606:4700::6812:1d88",
+      "2606:4700::6812:1c88"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "www.openstatus.dev": {
+    "addresses": [
+      "216.150.1.129",
+      "216.150.16.65"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "www.pingcap.com": {
+    "addresses": [
+      "65.8.54.66",
+      "65.8.54.107",
+      "65.8.54.17",
+      "65.8.54.30",
+      "2600:9000:20ee:6600:2:67d5:880:93a1",
+      "2600:9000:20ee:6800:2:67d5:880:93a1",
+      "2600:9000:20ee:8800:2:67d5:880:93a1",
+      "2600:9000:20ee:600:2:67d5:880:93a1",
+      "2600:9000:20ee:3a00:2:67d5:880:93a1",
+      "2600:9000:20ee:3e00:2:67d5:880:93a1",
+      "2600:9000:20ee:6200:2:67d5:880:93a1"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "www.pinterest.com": {
+    "addresses": [
+      "151.101.192.84",
+      "151.101.0.84",
+      "151.101.64.84",
+      "151.101.128.84"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "www.pipedrive.com": {
+    "addresses": [
+      "104.18.188.228",
+      "104.18.189.228",
+      "2606:4700::6812:bce4",
+      "2606:4700::6812:bde4"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "www.printful.com": {
+    "addresses": [
+      "104.18.7.241",
+      "104.18.6.241"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "www.shopify.com": {
+    "addresses": [
+      "104.18.42.163",
+      "172.64.145.93"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "www.swell.is": {
+    "addresses": [
+      "172.67.152.203",
+      "104.21.2.126",
+      "2606:4700:3031::ac43:98cb",
+      "2606:4700:3035::6815:27e"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "www.talkie-ai.com": {
+    "addresses": [
+      "23.52.171.155",
+      "23.45.176.165",
+      "23.52.171.120",
+      "23.45.176.172"
+    ],
+    "poisoned": false,
+    "resolver": "8.8.8.8"
+  },
+  "www.tinybird.co": {
+    "addresses": [
+      "216.150.1.193",
+      "216.150.16.65"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "www.unkey.com": {
+    "addresses": [
+      "76.76.21.22",
+      "66.33.60.129"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "www.voyageai.com": {
+    "addresses": [
+      "76.76.21.22",
+      "66.33.60.129"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "www.wix.com": {
+    "addresses": [
+      "34.149.87.45"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "x.com": {
+    "addresses": [
+      "172.66.0.227"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "xayn.com": {
+    "addresses": [
+      "116.203.64.159"
+    ],
+    "poisoned": false,
+    "resolver": "system"
   }
 }

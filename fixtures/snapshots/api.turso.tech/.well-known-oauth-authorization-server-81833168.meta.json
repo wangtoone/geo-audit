@@ -1,0 +1,29 @@
+{
+  "body_bytes": 450,
+  "body_file": "snapshots/api.turso.tech/.well-known-oauth-authorization-server-81833168.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://api.turso.tech/.well-known/oauth-authorization-server",
+  "handwritten": false,
+  "headers": {
+    "access-control-allow-headers": "*",
+    "access-control-allow-methods": "GET, OPTIONS",
+    "access-control-allow-origin": "*",
+    "alt-svc": "h3=\":443\"; ma=86400",
+    "connection": "keep-alive",
+    "content-length": "450",
+    "content-type": "application/json; charset=utf-8",
+    "date": "Mon, 07 Sep 2026 12:30:05 GMT",
+    "via": "1.1 91f9ae5c4c6ce22b44c67a0ef057a69c.cloudfront.net (CloudFront)",
+    "x-amz-cf-id": "8e6aPFvEiWpfabrVR2pL-kngTvPvYtEe6WpRMmF3aTUVFI9T6ARRvg==",
+    "x-amz-cf-pop": "FRA60-P12",
+    "x-cache": "Miss from cloudfront"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "e1a5d9521c666616502c0fe6fc05fee2",
+  "recorded_at": "2026-09-07T12:30:05Z",
+  "status": 200,
+  "stored_bytes": 450,
+  "transport_error": null,
+  "url": "https://api.turso.tech/.well-known/oauth-authorization-server"
+}

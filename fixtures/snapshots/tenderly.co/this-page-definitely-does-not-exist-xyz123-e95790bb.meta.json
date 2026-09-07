@@ -1,0 +1,25 @@
+{
+  "body_bytes": 32178,
+  "body_file": "snapshots/tenderly.co/this-page-definitely-does-not-exist-xyz123-e95790bb.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://tenderly.co/this-page-definitely-does-not-exist-xyz123",
+  "handwritten": false,
+  "headers": {
+    "cache-control": "private, no-store, max-age=0",
+    "content-type": "text/html; charset=utf-8",
+    "date": "Mon, 07 Sep 2026 12:34:40 GMT",
+    "server": "Vercel",
+    "transfer-encoding": "chunked",
+    "x-vercel-challenge-token": "2.1788784480.60.N2RmYjJlY2QzMzc4Zjg4OGI3MTljODNlN2QyMTQ1NGQ7ODdmOGMxYjk7ZTBjMGYzOTIzYzc4YmZkMzNhMjYyNWUyZmJlODYzM2ZlY2NhNGU5NTszOyu2XDc9P9kIp7ymqenPviCuvJgJvdGX8J/mILFcUI5zWKoedk2RN13NbKHYrQE=.ca1633c8593dd622f5443ad8e310e540",
+    "x-vercel-id": "sin1::1788784480-9HYV7ATuJTrqTaeAAIlLii7Cl66Qpkgk",
+    "x-vercel-mitigated": "challenge"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "1123ed7a7c399049369d87da5b7fdb62",
+  "recorded_at": "2026-09-07T12:34:40Z",
+  "status": 429,
+  "stored_bytes": 32178,
+  "transport_error": null,
+  "url": "https://tenderly.co/this-page-definitely-does-not-exist-xyz123"
+}

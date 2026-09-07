@@ -1,0 +1,30 @@
+{
+  "body_bytes": 36477,
+  "body_file": "snapshots/platform.kimi.ai/console-invoice-52a4bacd.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://platform.kimi.ai/console/invoice",
+  "handwritten": false,
+  "headers": {
+    "cache-control": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "cf-cache-status": "DYNAMIC",
+    "cf-ray": "a375c0cb3864f882-SIN",
+    "connection": "keep-alive",
+    "content-encoding": "gzip",
+    "content-type": "text/html; charset=utf-8",
+    "date": "Mon, 07 Sep 2026 12:35:24 GMT",
+    "server": "cloudflare",
+    "set-cookie": "INGRESSCOOKIE=ede4359c79e427e5544978bd4dad2dfe|d8fd5767e1490b664e887289fdf04f52; Path=/; Secure; HttpOnly",
+    "strict-transport-security": "max-age=31536000; includeSubDomains",
+    "transfer-encoding": "chunked",
+    "vary": "RSC, Next-Router-State-Tree, Next-Router-Prefetch, Accept-Encoding",
+    "x-powered-by": "Next.js"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "afcfe9ca5516bbc66e6ebd3ad49daf6b",
+  "recorded_at": "2026-09-07T12:35:24Z",
+  "status": 404,
+  "stored_bytes": 36477,
+  "transport_error": null,
+  "url": "https://platform.kimi.ai/console/invoice"
+}

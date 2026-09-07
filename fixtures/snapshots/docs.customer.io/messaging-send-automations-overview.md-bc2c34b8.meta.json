@@ -1,0 +1,32 @@
+{
+  "body_bytes": 20197,
+  "body_file": "snapshots/docs.customer.io/messaging-send-automations-overview.md-bc2c34b8.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://docs.customer.io/messaging/send/automations/overview.md",
+  "handwritten": false,
+  "headers": {
+    "accept-ranges": "bytes",
+    "access-control-allow-origin": "*",
+    "age": "1",
+    "cache-control": "public,max-age=0,must-revalidate",
+    "cache-status": "\"Netlify Edge\"; fwd=miss; fwd-status=200; stored",
+    "content-encoding": "gzip",
+    "content-type": "text/markdown; charset=UTF-8",
+    "date": "Mon, 07 Sep 2026 12:33:06 GMT",
+    "etag": "W/\"f29f701577f7234093fba33e9322eed3-ssl-df\"",
+    "link": "</messaging/llms.txt>; rel=\"describedby\"; type=\"text/plain\"",
+    "server": "Netlify",
+    "strict-transport-security": "max-age=31536000",
+    "transfer-encoding": "chunked",
+    "vary": "Accept-Encoding",
+    "x-nf-request-id": "01M1XXQ7Y40MSGYPX7V3P493QR"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "ec322a3d078bcf7bf860b3519b44f127",
+  "recorded_at": "2026-09-07T12:33:06Z",
+  "status": 200,
+  "stored_bytes": 20197,
+  "transport_error": null,
+  "url": "https://docs.customer.io/messaging/send/automations/overview.md"
+}

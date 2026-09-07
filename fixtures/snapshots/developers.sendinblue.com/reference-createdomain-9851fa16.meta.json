@@ -1,0 +1,26 @@
+{
+  "body_bytes": 528,
+  "body_file": "snapshots/developers.sendinblue.com/reference-createdomain-9851fa16.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://developers.sendinblue.com/reference/createdomain",
+  "handwritten": false,
+  "headers": {
+    "cf-ray": "a375c2d45e47f8fa-SIN",
+    "connection": "keep-alive",
+    "content-type": "text/html; charset=UTF-8",
+    "date": "Mon, 07 Sep 2026 12:36:47 GMT",
+    "location": "https://developers.brevo.com/reference/createdomain",
+    "server": "cloudflare",
+    "server-timing": "cfEdge;dur=15,cfOrigin;dur=0",
+    "transfer-encoding": "chunked",
+    "vary": "accept-encoding"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "71e477c1faad800108adcb1efdd3cff2",
+  "recorded_at": "2026-09-07T12:36:47Z",
+  "status": 301,
+  "stored_bytes": 528,
+  "transport_error": null,
+  "url": "https://developers.sendinblue.com/reference/createdomain"
+}

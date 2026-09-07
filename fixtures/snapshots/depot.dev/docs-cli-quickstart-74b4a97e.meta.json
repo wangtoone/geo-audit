@@ -1,0 +1,28 @@
+{
+  "body_bytes": 0,
+  "body_file": "snapshots/depot.dev/docs-cli-quickstart-74b4a97e.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://depot.dev/docs/cli/quickstart",
+  "handwritten": false,
+  "headers": {
+    "alt-svc": "h3=\":443\"; ma=86400",
+    "connection": "keep-alive",
+    "date": "Mon, 07 Sep 2026 12:40:14 GMT",
+    "link": "<https://depot.dev/llms.txt>; rel=\"describedby\"; type=\"text/plain\"",
+    "location": "/docs",
+    "transfer-encoding": "chunked",
+    "via": "1.1 b30b1c2659a3fb836783824fe37110ee.cloudfront.net (CloudFront)",
+    "x-amz-cf-id": "PRfK70pnE7KY1VgN9Jm2zr4gVL3mfIxpnue1-q7zcaKOdw1HT2kjzw==",
+    "x-amz-cf-pop": "FRA56-P5",
+    "x-cache": "Miss from cloudfront",
+    "x-powered-by": "Express"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "d41d8cd98f00b204e9800998ecf8427e",
+  "recorded_at": "2026-09-07T12:40:14Z",
+  "status": 302,
+  "stored_bytes": 0,
+  "transport_error": null,
+  "url": "https://depot.dev/docs/cli/quickstart"
+}

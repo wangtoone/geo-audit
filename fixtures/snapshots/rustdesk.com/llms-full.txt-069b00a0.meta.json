@@ -1,0 +1,33 @@
+{
+  "body_bytes": 2582,
+  "body_file": "snapshots/rustdesk.com/llms-full.txt-069b00a0.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://rustdesk.com/llms-full.txt",
+  "handwritten": false,
+  "headers": {
+    "cf-cache-status": "DYNAMIC",
+    "cf-ray": "a375b03f7867ce5e-SIN",
+    "connection": "keep-alive",
+    "content-encoding": "gzip",
+    "content-security-policy": "upgrade-insecure-requests",
+    "content-type": "text/plain",
+    "date": "Mon, 07 Sep 2026 12:24:06 GMT",
+    "etag": "W/\"6a827455-a16\"",
+    "last-modified": "Mon, 17 Aug 2026 02:39:17 GMT",
+    "permissions-policy": "geolocation=(), camera=(), microphone=(), autoplay=(), interest-cohort=()",
+    "server": "cloudflare",
+    "strict-transport-security": "max-age=31536000; includeSubDomains; preload",
+    "transfer-encoding": "chunked",
+    "vary": "Accept-Encoding",
+    "x-content-type-options": "nosniff",
+    "x-frame-options": "SAMEORIGIN"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "899171026b3f1c837ebdc0661ee521c8",
+  "recorded_at": "2026-09-07T12:24:06Z",
+  "status": 200,
+  "stored_bytes": 2582,
+  "transport_error": null,
+  "url": "https://rustdesk.com/llms-full.txt"
+}

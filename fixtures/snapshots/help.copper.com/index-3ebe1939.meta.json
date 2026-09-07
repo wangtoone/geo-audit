@@ -1,0 +1,16 @@
+{
+  "body_bytes": 0,
+  "body_file": null,
+  "body_storage": "full",
+  "canon_url": "https://help.copper.com/",
+  "handwritten": false,
+  "headers": {},
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "d41d8cd98f00b204e9800998ecf8427e",
+  "recorded_at": "2026-09-07T12:35:13Z",
+  "status": 0,
+  "stored_bytes": 0,
+  "transport_error": "ConnectError: [Errno 8] nodename nor servname provided, or not known",
+  "url": "https://help.copper.com/"
+}

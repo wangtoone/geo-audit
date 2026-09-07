@@ -1,0 +1,26 @@
+{
+  "body_bytes": 559,
+  "body_file": "snapshots/example.com/file_for_christmas_2022.jpg-8dbebf26.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://example.com/file_for_christmas_2022.jpg",
+  "handwritten": false,
+  "headers": {
+    "age": "6151",
+    "cf-cache-status": "HIT",
+    "cf-ray": "a375bf365f957980-SIN",
+    "connection": "keep-alive",
+    "content-encoding": "gzip",
+    "content-type": "text/html",
+    "date": "Mon, 07 Sep 2026 12:34:19 GMT",
+    "server": "cloudflare",
+    "transfer-encoding": "chunked"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "c35dafa74975d89a1236a2591acb3616",
+  "recorded_at": "2026-09-07T12:34:19Z",
+  "status": 404,
+  "stored_bytes": 559,
+  "transport_error": null,
+  "url": "https://example.com/file_for_christmas_2022.jpg"
+}

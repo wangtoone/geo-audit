@@ -1,0 +1,26 @@
+{
+  "body_bytes": 0,
+  "body_file": "snapshots/printify.com/wp-content-uploads-2024-12-Printify-Inc.-IRS-Form-8937.pdf-b61f717e.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://printify.com/wp-content/uploads/2024/12/Printify-Inc.-IRS-Form-8937.pdf",
+  "handwritten": false,
+  "headers": {
+    "alt-svc": "h3=\":443\"; ma=86400",
+    "cache-control": "public, max-age=2678400",
+    "cf-cache-status": "EXPIRED",
+    "cf-ray": "a375be9d1d7fab59-SIN",
+    "connection": "keep-alive",
+    "content-length": "0",
+    "date": "Mon, 07 Sep 2026 12:33:55 GMT",
+    "expires": "Thu, 08 Oct 2026 12:33:55 GMT",
+    "server": "cloudflare"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "d41d8cd98f00b204e9800998ecf8427e",
+  "recorded_at": "2026-09-07T12:33:54Z",
+  "status": 404,
+  "stored_bytes": 0,
+  "transport_error": null,
+  "url": "https://printify.com/wp-content/uploads/2024/12/Printify-Inc.-IRS-Form-8937.pdf"
+}

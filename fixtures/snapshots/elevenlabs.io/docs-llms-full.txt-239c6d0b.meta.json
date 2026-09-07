@@ -1,0 +1,31 @@
+{
+  "body_bytes": 15,
+  "body_file": "snapshots/elevenlabs.io/docs-llms-full.txt-239c6d0b.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://elevenlabs.io/docs/llms-full.txt",
+  "handwritten": false,
+  "headers": {
+    "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+    "cache-control": "public, max-age=0, must-revalidate",
+    "content-security-policy": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://app.buildwithfern.com https: blob:; style-src 'self' 'unsafe-inline' https://app.buildwithfern.com https:; img-src 'self' https://app.buildwithfern.com https: data: blob:; font-src 'self' https://app.buildwithfern.com https: data:; connect-src 'self' https://app.buildwithfern.com https: wss: ws: data: blob:; media-src 'self' https://app.buildwithfern.com https: data: blob:; object-src 'self' https://app.buildwithfern.com https: data: blob:; frame-src 'self' https://app.buildwithfern.com https: data: blob:; base-uri 'self'; form-action 'self' https://app.buildwithfern.com https:",
+    "content-type": "text/plain",
+    "date": "Mon, 07 Sep 2026 12:23:21 GMT",
+    "location": "https://elevenlabs.io/docs/llms.txt",
+    "permissions-policy": "camera=(self), microphone=(self), geolocation=()",
+    "referrer-policy": "strict-origin-when-cross-origin",
+    "server": "Vercel",
+    "strict-transport-security": "max-age=1800;",
+    "transfer-encoding": "chunked",
+    "via": "1.1 google",
+    "x-content-type-options": "nosniff",
+    "x-vercel-id": "sin1::5tgbk-1788783801424-af426d468832"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "42c939d0ba4bbdc4c7eab1b5c34aaf71",
+  "recorded_at": "2026-09-07T12:23:21Z",
+  "status": 301,
+  "stored_bytes": 15,
+  "transport_error": null,
+  "url": "https://elevenlabs.io/docs/llms-full.txt"
+}

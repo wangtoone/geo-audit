@@ -1,0 +1,30 @@
+{
+  "body_bytes": 167477,
+  "body_file": "snapshots/tdengine.com/llms.txt-d4cb92f0.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://tdengine.com/llms.txt",
+  "handwritten": false,
+  "headers": {
+    "cache-control": "no-cache, must-revalidate, max-age=0, no-store, private",
+    "connection": "keep-alive",
+    "content-encoding": "gzip",
+    "content-type": "text/html; charset=UTF-8",
+    "date": "Mon, 07 Sep 2026 12:22:37 GMT",
+    "expires": "Wed, 11 Jan 1984 05:00:00 GMT",
+    "link": "<https://tdengine.com/wp-json/>; rel=\"https://api.w.org/\"",
+    "server": "openresty/1.27.1.2",
+    "set-cookie": "swpm_session=6f735966058767e2b436e4126424b7ef; path=/; secure; HttpOnly",
+    "transfer-encoding": "chunked",
+    "vary": "Accept-Encoding",
+    "x-powered-by": "PHP/7.4.33",
+    "x-ua-compatible": "IE=edge"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "a13b14001a699fe04c80575731d6c309",
+  "recorded_at": "2026-09-07T12:22:38Z",
+  "status": 404,
+  "stored_bytes": 167477,
+  "transport_error": null,
+  "url": "https://tdengine.com/llms.txt"
+}

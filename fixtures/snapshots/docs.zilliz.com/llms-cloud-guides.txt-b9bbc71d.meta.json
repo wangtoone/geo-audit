@@ -1,0 +1,25 @@
+{
+  "body_bytes": 134890,
+  "body_file": "snapshots/docs.zilliz.com/llms-cloud-guides.txt-b9bbc71d.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://docs.zilliz.com/llms/cloud-guides.txt",
+  "handwritten": false,
+  "headers": {
+    "connection": "keep-alive",
+    "content-encoding": "gzip",
+    "content-type": "text/plain",
+    "date": "Mon, 07 Sep 2026 12:30:52 GMT",
+    "etag": "W/\"6a9a7079-20eea\"",
+    "last-modified": "Fri, 04 Sep 2026 07:17:13 GMT",
+    "server": "nginx/1.28.3",
+    "transfer-encoding": "chunked"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "2ac17eb28349dc65de2fc5c4ef257d65",
+  "recorded_at": "2026-09-07T12:30:52Z",
+  "status": 200,
+  "stored_bytes": 134890,
+  "transport_error": null,
+  "url": "https://docs.zilliz.com/llms/cloud-guides.txt"
+}

@@ -1,0 +1,27 @@
+{
+  "body_bytes": 139,
+  "body_file": "snapshots/www.tinybird.co/docs-forward-f3eb16a6.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://www.tinybird.co/docs/forward",
+  "handwritten": false,
+  "headers": {
+    "cache-control": "public, max-age=0, must-revalidate",
+    "content-type": "text/html",
+    "date": "Mon, 07 Sep 2026 12:40:02 GMT",
+    "location": "/docs/forward/quickstarts",
+    "refresh": "0;url=/docs/forward/quickstarts",
+    "server": "Vercel",
+    "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+    "transfer-encoding": "chunked",
+    "x-vercel-cache": "MISS",
+    "x-vercel-id": "sin1:sin1:sin1::hklnj-1788784802320-ab948a479c0c"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "138ba6ddd2cb84265e108f0b3ffa17ed",
+  "recorded_at": "2026-09-07T12:40:02Z",
+  "status": 308,
+  "stored_bytes": 139,
+  "transport_error": null,
+  "url": "https://www.tinybird.co/docs/forward"
+}

@@ -1,0 +1,26 @@
+{
+  "body_bytes": 169,
+  "body_file": "snapshots/developers.attio.com/llms.txt-63cfa653.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://developers.attio.com/llms.txt",
+  "handwritten": false,
+  "headers": {
+    "alt-svc": "h3=\":443\"; ma=86400",
+    "cf-ray": "a375aa373f80ce3f-SIN",
+    "connection": "keep-alive",
+    "content-type": "text/html; charset=UTF-8",
+    "date": "Mon, 07 Sep 2026 12:19:59 GMT",
+    "location": "https://docs.attio.com/",
+    "server": "cloudflare",
+    "strict-transport-security": "max-age=7776000; includeSubDomains; preload",
+    "transfer-encoding": "chunked"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "b684fc962e90e5b5a3403cf037de75a6",
+  "recorded_at": "2026-09-07T12:19:59Z",
+  "status": 308,
+  "stored_bytes": 169,
+  "transport_error": null,
+  "url": "https://developers.attio.com/llms.txt"
+}

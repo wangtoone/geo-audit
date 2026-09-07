@@ -1,0 +1,25 @@
+{
+  "body_bytes": 32177,
+  "body_file": "snapshots/tenderly.co/index-8af50ef2.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://tenderly.co/",
+  "handwritten": false,
+  "headers": {
+    "cache-control": "private, no-store, max-age=0",
+    "content-type": "text/html; charset=utf-8",
+    "date": "Mon, 07 Sep 2026 12:22:49 GMT",
+    "server": "Vercel",
+    "transfer-encoding": "chunked",
+    "x-vercel-challenge-token": "2.1788783769.60.N2RmYjJlY2QzMzc4Zjg4OGI3MTljODNlN2QyMTQ1NGQ7MDM2MjU2NDI7OWYzMGE1NzMyZjgyMjk1YWZiNTM5MWEzZDM1NmFkYTk3NTYwZjE1MDszO2e5jcsKaDnTmly8EtJZeNKBIslCp3KmgeYkNzocwmhoWL7QOLf1jLXvQiN0eOY=.bb603c7d02887d94265a6a32c29c9933",
+    "x-vercel-id": "sin1::1788783769-shJ8HCs1pnoifdSYk3CB7EXIS6hiY5U0",
+    "x-vercel-mitigated": "challenge"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "c420b3e11c4d9526ca2d6e705ffd68a4",
+  "recorded_at": "2026-09-07T12:22:49Z",
+  "status": 429,
+  "stored_bytes": 32177,
+  "transport_error": null,
+  "url": "https://tenderly.co/"
+}

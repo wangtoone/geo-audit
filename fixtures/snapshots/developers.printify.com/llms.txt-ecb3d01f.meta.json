@@ -1,0 +1,31 @@
+{
+  "body_bytes": 632328,
+  "body_file": "snapshots/developers.printify.com/llms.txt-ecb3d01f.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://developers.printify.com/llms.txt",
+  "handwritten": false,
+  "headers": {
+    "cache-control": "no-cache",
+    "cf-cache-status": "DYNAMIC",
+    "cf-ray": "a375a970dca46e7c-SIN",
+    "connection": "keep-alive",
+    "content-encoding": "gzip",
+    "content-signal": "ai-train=yes, search=yes, ai-input=yes",
+    "content-type": "text/markdown; charset=utf-8",
+    "date": "Mon, 07 Sep 2026 12:19:41 GMT",
+    "server": "cloudflare",
+    "set-cookie": "__cf_bm=NxzqkH.WI4uOfih3DfTaLiSsYwX5Uy.hkj1d7iyuanU-1788783567.5017593-1.0.1.1-SuAYYbP7uZa.F.GyA8h7VjfwSkZV0T_xFtEIiyFd5d5bYLlAV2yu1Nae6EUSM.SrntOeWz4GkY5XPMjU4zFFCPfeAQMYehqa7GwGtX8k_OVSVA6YDsmn8mnr4OahMSGL; HttpOnly; SameSite=None; Secure; Path=/; Domain=printify.com; Expires=Mon, 07 Sep 2026 12:49:27 GMT",
+    "transfer-encoding": "chunked",
+    "vary": "accept-encoding, accept",
+    "x-markdown-tokens": "158062",
+    "x-original-tokens": "105590"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "42eba6ff6c4b479bb0a18a29d3a42b4c",
+  "recorded_at": "2026-09-07T12:19:41Z",
+  "status": 200,
+  "stored_bytes": 632328,
+  "transport_error": null,
+  "url": "https://developers.printify.com/llms.txt"
+}

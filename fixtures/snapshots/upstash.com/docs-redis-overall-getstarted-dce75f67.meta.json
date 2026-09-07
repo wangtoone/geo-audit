@@ -1,0 +1,33 @@
+{
+  "body_bytes": 545846,
+  "body_file": "snapshots/upstash.com/docs-redis-overall-getstarted-dce75f67.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://upstash.com/docs/redis/overall/getstarted",
+  "handwritten": false,
+  "headers": {
+    "cache-control": "public, max-age=0, must-revalidate",
+    "cf-cache-status": "HIT",
+    "cf-ray": "a375c5303b886bab-SIN",
+    "content-encoding": "gzip",
+    "content-type": "text/html",
+    "date": "Mon, 07 Sep 2026 12:38:24 GMT",
+    "etag": "W/\"17bfa411767d0ee8658a5fbbb747b6a4\"",
+    "link": "<https://upstash.com/llms.txt>; rel=\"alternate\"; type=\"text/plain\"; title=\"LLM-friendly content index\", <https://upstash.com/ask?q=your+question>; rel=\"search\"; type=\"application/json\"; title=\"Upstash answer index\", <https://upstash.com/docs/devops/developer-api/openapi.yaml>; rel=\"service-desc\"; type=\"application/openapi+yaml\"; title=\"Upstash Developer API (OpenAPI)\", <https://upstash.com/docs/qstash/openapi.yaml>; rel=\"service-desc\"; type=\"application/openapi+yaml\"; title=\"QStash REST API (OpenAPI)\", <https://upstash.com/docs/workflow/openapi.yaml>; rel=\"service-desc\"; type=\"application/openapi+yaml\"; title=\"Upstash Workflow REST API (OpenAPI)\", </docs/redis/overall/getstarted.md>; rel=\"alternate\"; type=\"text/markdown\", </docs/llms.txt>; rel=\"describedby\"; type=\"text/plain\", </docs/llms-full.txt>; rel=\"describedby\"; type=\"text/plain\", </docs/.well-known/agent-skills/index.json>; rel=\"agent-skills\"; type=\"application/json\"",
+    "referrer-policy": "strict-origin-when-cross-origin",
+    "server": "Vercel",
+    "strict-transport-security": "max-age=31536000",
+    "transfer-encoding": "chunked",
+    "vary": "Accept",
+    "x-content-type-options": "nosniff",
+    "x-vercel-cache": "MISS",
+    "x-vercel-id": "sin1::v4r9t-1788784704020-d9edaaf15f9f"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "d33f3478a1c23ceb1ec9e19fcf23adbf",
+  "recorded_at": "2026-09-07T12:38:24Z",
+  "status": 200,
+  "stored_bytes": 545846,
+  "transport_error": null,
+  "url": "https://upstash.com/docs/redis/overall/getstarted"
+}

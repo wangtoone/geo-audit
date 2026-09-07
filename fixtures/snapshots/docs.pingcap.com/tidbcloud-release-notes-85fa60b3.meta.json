@@ -1,0 +1,29 @@
+{
+  "body_bytes": 85,
+  "body_file": "snapshots/docs.pingcap.com/tidbcloud-release-notes-85fa60b3.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://docs.pingcap.com/tidbcloud/release-notes/",
+  "handwritten": false,
+  "headers": {
+    "accept-ranges": "bytes",
+    "connection": "keep-alive",
+    "content-length": "85",
+    "content-type": "text/html",
+    "date": "Mon, 07 Sep 2026 12:38:21 GMT",
+    "eo-cache-status": "RefreshHit",
+    "eo-log-uuid": "17880339806089776157",
+    "etag": "\"38e2c4687b40a1b219de958646395c59\"",
+    "last-modified": "Sat, 14 Feb 2026 05:31:07 GMT",
+    "server": "tencent-cos",
+    "x-amz-hash-crc64ecma": "9885466130049086403",
+    "x-amz-request-id": "NmE5ZDhlYTZfOGRjZDZjMWVfYTQxNl8xMzdiMWRiMw=="
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "38e2c4687b40a1b219de958646395c59",
+  "recorded_at": "2026-09-07T12:38:21Z",
+  "status": 200,
+  "stored_bytes": 85,
+  "transport_error": null,
+  "url": "https://docs.pingcap.com/tidbcloud/release-notes/"
+}

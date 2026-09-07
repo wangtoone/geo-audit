@@ -1,0 +1,33 @@
+{
+  "body_bytes": 9922,
+  "body_file": "snapshots/www.voyageai.com/pricing-163c1006.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://www.voyageai.com/pricing",
+  "handwritten": false,
+  "headers": {
+    "access-control-allow-origin": "*",
+    "age": "458531",
+    "cache-control": "public, max-age=0, must-revalidate",
+    "content-disposition": "inline; filename=\"404\"",
+    "content-encoding": "gzip",
+    "content-type": "text/html; charset=utf-8",
+    "date": "Mon, 07 Sep 2026 12:41:37 GMT",
+    "etag": "W/\"9070ea38dcddbdd13f4b39ba67006b1e\"",
+    "last-modified": "Wed, 02 Sep 2026 05:19:26 GMT",
+    "server": "Vercel",
+    "strict-transport-security": "max-age=63072000",
+    "transfer-encoding": "chunked",
+    "x-matched-path": "/404",
+    "x-next-error-status": "404",
+    "x-vercel-cache": "HIT",
+    "x-vercel-id": "sin1::d2tfs-1788784897860-ced846344a2a"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "9070ea38dcddbdd13f4b39ba67006b1e",
+  "recorded_at": "2026-09-07T12:41:37Z",
+  "status": 404,
+  "stored_bytes": 9922,
+  "transport_error": null,
+  "url": "https://www.voyageai.com/pricing"
+}

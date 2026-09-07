@@ -1,0 +1,32 @@
+{
+  "body_bytes": 5031,
+  "body_file": "snapshots/docs.customer.io/ai-llms.txt-fc7ac18a.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://docs.customer.io/ai/llms.txt",
+  "handwritten": false,
+  "headers": {
+    "accept-ranges": "bytes",
+    "access-control-allow-origin": "*",
+    "age": "0",
+    "cache-control": "public,max-age=0,must-revalidate",
+    "cache-status": "\"Netlify Edge\"; fwd=miss; fwd-status=200; stored",
+    "content-encoding": "gzip",
+    "content-type": "text/plain; charset=UTF-8",
+    "date": "Mon, 07 Sep 2026 12:32:46 GMT",
+    "etag": "W/\"86c9bfecaaa058beec247d224cb7f1fd-ssl-df\"",
+    "link": "</ai/llms.txt>; rel=\"describedby\"; type=\"text/plain\"",
+    "server": "Netlify",
+    "strict-transport-security": "max-age=31536000",
+    "transfer-encoding": "chunked",
+    "vary": "Accept-Encoding",
+    "x-nf-request-id": "01M1XXPMRFYC5QBCQ2RTYDSP9T"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "d69ec2e7fe7184e24eafa1e928adef03",
+  "recorded_at": "2026-09-07T12:32:46Z",
+  "status": 200,
+  "stored_bytes": 5031,
+  "transport_error": null,
+  "url": "https://docs.customer.io/ai/llms.txt"
+}
