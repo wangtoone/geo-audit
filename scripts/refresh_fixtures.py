@@ -65,8 +65,13 @@ EXIT_OK = 0
 
 
 @dataclass(frozen=True, slots=True)
-class Finding:
-    """一条快照的新鲜度结论。"""
+class FreshnessFinding:
+    """一条快照的新鲜度结论。
+
+    ⚠️ 原名 ``Finding``，与 ``models.Finding``（报告层的发现）撞名 ——
+    A6 要求 ``class Finding`` 在 src/ 里只许出现 1 次。两者概念完全无关
+    （这个讲的是快照新鲜度，那个讲的是站点缺陷），所以改名而不是复用。
+    """
 
     canon_url: str
     #: "ok" | "drifted" | "unreachable" | "not_comparable"
@@ -87,29 +92,29 @@ def explain() -> int:
     return EXIT_OK
 
 
-def check_one(fetcher: Fetcher, store: FixtureStore, url: str) -> Finding:
+def check_one(fetcher: Fetcher, store: FixtureStore, url: str) -> FreshnessFinding:
     canon = canon_url(url)
     snap = store.get(canon)
     exp = store.expect(canon)
     if snap.transport_error:
-        return Finding(canon, "not_comparable", "冻结的是一次传输失败，没有可比的摘要")
+        return FreshnessFinding(canon, "not_comparable", "冻结的是一次传输失败，没有可比的摘要")
 
     expect_text = snap.content_type in ("", "text/plain", "text/markdown")
     resp = fetcher.fetch(canon, expect=Expect.TEXT_FILE if expect_text else Expect.ANY)
 
     if resp.status == 0:
-        return Finding(
+        return FreshnessFinding(
             canon,
             "unreachable",
             f"拿不到了：{resp.transport_error}",
             suggested_branch="unreachable",
         )
     if resp.status in (401, 403, 429) or resp.blocked:
-        return Finding(
+        return FreshnessFinding(
             canon, "unreachable", f"活网返回 {resp.status}（挑战页/限流）", "unreachable"
         )
     if resp.raw_md5 is None:
-        return Finding(
+        return FreshnessFinding(
             canon,
             "not_comparable",
             f"正文被 byte_cap 截断（{resp.byte_len:,} B），截断正文的哈希不可比",
@@ -117,8 +122,8 @@ def check_one(fetcher: Fetcher, store: FixtureStore, url: str) -> Finding:
 
     problems = store.check_expect(canon, raw_md5=resp.raw_md5, body_bytes=resp.byte_len)
     if not problems:
-        return Finding(canon, "ok", f"与 expect 一致（{exp.get('bytes', '?')} B）")
-    return Finding(
+        return FreshnessFinding(canon, "ok", f"与 expect 一致（{exp.get('bytes', '?')} B）")
+    return FreshnessFinding(
         canon,
         "drifted",
         "；".join(problems),
@@ -132,7 +137,7 @@ def run(args: argparse.Namespace) -> int:
     store = FixtureStore(args.fixtures_dir)
     targets = [canon_url(u) for u in args.url] if args.url else store.snapshots()
     cache_dir = Path(tempfile.mkdtemp(prefix="geo-audit-refresh-"))
-    findings: list[Finding] = []
+    findings: list[FreshnessFinding] = []
 
     with Fetcher(
         FetcherConfig(contact=args.contact, interval=args.rate),
@@ -142,7 +147,7 @@ def run(args: argparse.Namespace) -> int:
             try:
                 finding = check_one(fetcher, store, canon)
             except httpx.HTTPError as exc:
-                finding = Finding(
+                finding = FreshnessFinding(
                     canon, "unreachable", f"{type(exc).__name__}: {exc}", "unreachable"
                 )
             findings.append(finding)

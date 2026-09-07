@@ -512,6 +512,16 @@ class SiteMap:
     ai_path_probes: tuple[Probe, ...]
     robots: dict[str, RobotsInfo]
 
+    # ── §3.7 的 tier / 预算字段（§3.9 适配 #3）───────────────────────────────
+    # 第 7 步的写手被禁止改本文件，先用 discovery.TieredSiteMap 子类承载过。
+    # 现搬到正位：§8.5 的 gen_schema.py 从这些 dataclass 生成 JSON schema，
+    # 长在子类上的字段在 schema 里会**整个缺掉**，报告的对外契约就少了四项。
+    # 四个都有默认值，既有的 SiteMap(...) 构造调用一行不用改。
+    tiers_run: tuple[str, ...] = ()
+    requests_spent: int = 0
+    budget_exhausted: bool = False
+    skipped_by_budget: tuple[str, ...] = ()
+
 
 @dataclass(frozen=True, slots=True)
 class RobotsInfo:
