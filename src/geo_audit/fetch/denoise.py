@@ -33,11 +33,12 @@ import re
 from dataclasses import dataclass
 from urllib.parse import urlsplit
 
+from ..models import LinkContext
 from . import fingerprints as fp
 
 
 @dataclass(frozen=True, slots=True)
-class Exclusion:
+class EligibilityExclusion:
     rule_id: str
     reason: str
     #: "measured" -- multiple observed cases; "single_case" -- one observation,
@@ -45,27 +46,10 @@ class Exclusion:
     provenance: str = "measured"
 
 
-@dataclass(frozen=True, slots=True)
-class LinkContext:
-    """What the extractor knows about where a link came from.
-
-    ``surrounding_html`` is a window (recommended: 400 chars either side of the
-    anchor) used by the API-base-URL rule and the inline-display-none rule.
-    Both need context that a bare URL does not carry.
-    """
-
-    source_page: str
-    anchor_text: str = ""
-    anchor_html: str = ""
-    surrounding_html: str = ""
-    #: True when the link came from an llms.txt / llms-full.txt listing rather
-    #: than from an HTML page.  Those have no HTML context, so context-
-    #: dependent rules must not fire on them.
-    from_text_file: bool = False
-
-
-def classify_link_eligibility(url: str, ctx: LinkContext | None = None) -> Exclusion | None:
-    """Return an ``Exclusion`` when this URL must not be judged dead, else None.
+def classify_link_eligibility(
+    url: str, ctx: LinkContext | None = None
+) -> EligibilityExclusion | None:
+    """Return an ``EligibilityExclusion`` when this URL must not be judged dead, else None.
 
     Ordered so the cheapest and least ambiguous rules run first.
     """
@@ -74,7 +58,7 @@ def classify_link_eligibility(url: str, ctx: LinkContext | None = None) -> Exclu
     for rule_id, pattern, reason in fp.EXCLUDE_URL_RULES:
         if pattern.search(url):
             provenance = "single_case" if rule_id == "intellimize_endpoint" else "measured"
-            return Exclusion(rule_id, reason, provenance)
+            return EligibilityExclusion(rule_id, reason, provenance)
 
     # API endpoint: path shape AND a code-context signal.  Both halves are
     # required -- /api/ alone would exclude legitimate documentation pages
@@ -82,18 +66,21 @@ def classify_link_eligibility(url: str, ctx: LinkContext | None = None) -> Exclu
     # Observed false positives this prevents:
     #   enterprise.printful.com/api/pfy/public/v1/  (and /v2/)
     #   api.sendinblue.com/v3/emailCampaigns/{templateID}/sharedUrl -> 401
-    if fp.API_PATH_RE.search(urlsplit(url).path) and not ctx.from_text_file:
-        if fp.CODE_CONTEXT_RE.search(ctx.surrounding_html or ctx.anchor_html):
-            return Exclusion(
-                "api_endpoint_in_code_context",
-                "路径形如 API 端点且出现在代码块 / curl 示例语境中，裸 GET 返回 4xx 属正常",
-            )
+    if (
+        fp.API_PATH_RE.search(urlsplit(url).path)
+        and not ctx.from_text_file
+        and fp.CODE_CONTEXT_RE.search(ctx.surrounding_html or ctx.anchor_html)
+    ):
+        return EligibilityExclusion(
+            "api_endpoint_in_code_context",
+            "路径形如 API 端点且出现在代码块 / curl 示例语境中，裸 GET 返回 4xx 属正常",
+        )
 
     # Invisible anchor, narrowed to inline style only.
     if ctx.anchor_html and fp.INLINE_DISPLAY_NONE_RE.search(ctx.anchor_html):
-        return Exclusion(
+        return EligibilityExclusion(
             "inline_display_none_anchor",
-            "<a> 带内联 style=\"display:none\"，普通访客点不到。"
+            '<a> 带内联 style="display:none"，普通访客点不到。'
             "注意：该规则只来自 printify 一例，报告里标为「待人工确认」而不是静默丢弃",
             provenance="single_case",
         )
@@ -101,9 +88,7 @@ def classify_link_eligibility(url: str, ctx: LinkContext | None = None) -> Exclu
     return None
 
 
-_HOSTILE_SUFFIX_RE = re.compile(
-    "|".join(re.escape(s) + "$" for s in fp.KNOWN_BOT_HOSTILE_SUFFIXES)
-)
+_HOSTILE_SUFFIX_RE = re.compile("|".join(re.escape(s) + "$" for s in fp.KNOWN_BOT_HOSTILE_SUFFIXES))
 
 
 def is_known_bot_hostile(url: str) -> bool:

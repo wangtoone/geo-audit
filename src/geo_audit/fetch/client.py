@@ -39,21 +39,18 @@ Five separate empirical failures make the chain itself evidence:
 
 from __future__ import annotations
 
-import random
+import secrets
 import threading
 import time
 import urllib.robotparser
+from collections.abc import Callable, Iterable, Sequence
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
-from typing import Callable, Iterable, Sequence
 from urllib.parse import urljoin, urlsplit, urlunsplit
 
 import httpx
 
-from . import fingerprints as fp
-from .cache import HttpCache, MAX_CACHE_BODY
-from .classify import classify_response, looks_like_html
-from .models import (
+from ..models import (
     Classification,
     Expect,
     HostProfile,
@@ -62,11 +59,15 @@ from .models import (
     RedirectHop,
     RobotsInfo,
     Verdict,
+    finalize_response,
 )
+from . import fingerprints as fp
+from .cache import MAX_CACHE_BODY, HttpCache
+from .classify import classify_response, looks_like_html
 from .normalize import (
     NORM_BODY_CAP,
-    normalize_body,
     norm_sha256,
+    normalize_body,
     structural_fingerprint,
 )
 from .ratelimit import DomainLimiter, registrable_domain
@@ -117,10 +118,7 @@ def build_user_agent(contact: str) -> str:
             "必须提供联系邮箱（--contact 或 GEO_AUDIT_CONTACT）。"
             "抓取合规要求 User-Agent 里带真实联系方式，做成可选等于没有。"
         )
-    return (
-        f"geo-audit/{__version__} "
-        f"(+https://github.com/geo-audit/geo-audit; contact: {contact})"
-    )
+    return f"geo-audit/{__version__} (+https://github.com/geo-audit/geo-audit; contact: {contact})"
 
 
 class Fetcher:
@@ -131,12 +129,26 @@ class Fetcher:
         config: FetcherConfig,
         cache: HttpCache | None = None,
         limiter: DomainLimiter | None = None,
+        *,
+        transport: httpx.BaseTransport | None = None,
+        probe_url_provider: Callable[[str], str] | None = None,
     ) -> None:
+        """§3.9 适配 #4：加两个 keyword-only 注入点。
+
+        ``transport``           —— 生产代码与 fixture 回放都从这里塞 MockTransport，
+                                   不必像冻结测试那样直接赋私有属性 ``_client``
+                                   （那条测试仍然有效，这里只是给出正路）。
+        ``probe_url_provider``  —— 对照探针 URL 的来源（§3.3）。默认随机；
+                                   fixture 回放时注入确定性实现，否则每次跑出来的
+                                   对照 URL 都不一样，快照永远命不中。
+        """
         self.config = config
         self.user_agent = build_user_agent(config.contact)
         self.cache = cache or HttpCache(ua_profile=self.user_agent)
         self.limiter = limiter or DomainLimiter(config.interval)
+        self._probe_url_provider = probe_url_provider
         self._client = httpx.Client(
+            transport=transport,
             follow_redirects=False,  # followed manually; the chain is evidence
             timeout=httpx.Timeout(
                 connect=config.connect_timeout,
@@ -148,7 +160,7 @@ class Fetcher:
                 "User-Agent": self.user_agent,
                 "From": config.contact,
                 "Accept-Encoding": "gzip, deflate",  # pinned: target and control
-                "Accept-Language": "en",             # must be byte-identical
+                "Accept-Language": "en",  # must be byte-identical
             },
             verify=config.verify_tls,
             http2=False,
@@ -181,9 +193,12 @@ class Fetcher:
             request_url = urlunsplit((parts.scheme, netloc, parts.path, parts.query, ""))
             headers["Host"] = host
         try:
-            with self._client.stream("GET", request_url, headers=headers,
-                                     extensions={"sni_hostname": urlsplit(url).hostname}
-                                     if pinned_ip else None) as resp:
+            with self._client.stream(
+                "GET",
+                request_url,
+                headers=headers,
+                extensions={"sni_hostname": urlsplit(url).hostname} if pinned_ip else None,
+            ) as resp:
                 chunks: list[bytes] = []
                 total = 0
                 truncated = False
@@ -213,7 +228,11 @@ class Fetcher:
     @staticmethod
     def _error_response(url: str, err: str, started: float) -> HttpResponse:
         return HttpResponse(
-            url=url, final_url=url, status=0, headers={}, body=b"",
+            url=url,
+            final_url=url,
+            status=0,
+            headers={},
+            body=b"",
             elapsed_ms=int((time.monotonic() - started) * 1000),
             transport_error=err,
         )
@@ -249,8 +268,12 @@ class Fetcher:
         if delay:
             self.limiter.set_crawl_delay(host, delay)
         info = RobotsInfo(
-            host=host, fetched=resp.status == 200, status=resp.status,
-            crawl_delay=delay, sitemaps=sitemaps, raw=raw,
+            host=host,
+            fetched=resp.status == 200,
+            status=resp.status,
+            crawl_delay=delay,
+            sitemaps=sitemaps,
+            raw=raw,
         )
         with self._robots_lock:
             self._robots[host] = info
@@ -303,7 +326,9 @@ class Fetcher:
             host == s or host.endswith("." + s) for s in fp.KNOWN_BOT_HOSTILE_SUFFIXES
         ):
             resp = HttpResponse(
-                url=url, final_url=url, status=403,
+                url=url,
+                final_url=url,
+                status=403,
                 headers={"content-type": "text/plain"},
                 body=b"skipped: known bot-hostile vendor host",
             )
@@ -311,6 +336,10 @@ class Fetcher:
             return resp
 
         resp = self._fetch_chain(url, accept=accept, byte_cap=byte_cap)
+        # §3.9 适配 #5：读完 body 的这一刻一次性算好三个摘要再入缓存。
+        # liveness_only（64 KiB 上限的外链存活检查）不算 —— 截断正文的哈希
+        # 跟完整正文的哈希不同，那是测量假象不是发现。
+        resp = finalize_response(resp, want_digests=not liveness_only)
         self.cache.put(resp, accept)
         return resp
 
@@ -322,8 +351,13 @@ class Fetcher:
         for _ in range(MAX_REDIRECTS + 1):
             if current in seen:
                 return HttpResponse(
-                    url=url, final_url=current, status=0, headers={}, body=b"",
-                    redirects=tuple(hops), transport_error="redirect loop",
+                    url=url,
+                    final_url=current,
+                    status=0,
+                    headers={},
+                    body=b"",
+                    redirects=tuple(hops),
+                    transport_error="redirect loop",
                 )
             seen.add(current)
 
@@ -336,14 +370,23 @@ class Fetcher:
                 continue
 
             return HttpResponse(
-                url=url, final_url=current, status=resp.status,
-                headers=resp.headers, body=resp.body, redirects=tuple(hops),
-                elapsed_ms=resp.elapsed_ms, body_truncated=resp.body_truncated,
+                url=url,
+                final_url=current,
+                status=resp.status,
+                headers=resp.headers,
+                body=resp.body,
+                redirects=tuple(hops),
+                elapsed_ms=resp.elapsed_ms,
+                body_truncated=resp.body_truncated,
                 transport_error=resp.transport_error,
             )
 
         return HttpResponse(
-            url=url, final_url=current, status=0, headers={}, body=b"",
+            url=url,
+            final_url=current,
+            status=0,
+            headers={},
+            body=b"",
             redirects=tuple(hops),
             transport_error=f"too many redirects (>{MAX_REDIRECTS})",
         )
@@ -370,7 +413,9 @@ class Fetcher:
                 if resolution.ok and resolution.resolver != "system":
                     with self.limiter.hold(host):
                         pinned = self._raw_request(
-                            url, accept=accept, byte_cap=byte_cap,
+                            url,
+                            accept=accept,
+                            byte_cap=byte_cap,
                             pinned_ip=resolution.addresses[0],
                         )
                     if pinned.status:
@@ -413,13 +458,25 @@ class Fetcher:
         SPA router, so a bare probe would wrongly look "discriminating".
         """
         parts = urlsplit(url)
-        token = "".join(random.choices("0123456789abcdef", k=24))
+        # §3.9 适配 #6：原来是 random.choices(...) —— ruff S311（random 不适合
+        # 密码学用途）。换 secrets.token_hex(12)：同样 24 个 hex 字符，形状不变，
+        # 「两次调用结果不同」那条冻结断言照样过。确定性由 probe_url_provider
+        # 注入提供，不由本函数提供。
+        token = secrets.token_hex(12)
         path = parts.path
         suffix = ""
         if with_extension and "." in path.rsplit("/", 1)[-1]:
             suffix = "." + path.rsplit(".", 1)[-1]
         prefix = path.rsplit("/", 1)[0] or ""
-        return urlunsplit((parts.scheme, parts.netloc, f"{prefix}/geo-audit-probe-{token}{suffix}", "", ""))
+        return urlunsplit(
+            (parts.scheme, parts.netloc, f"{prefix}/geo-audit-probe-{token}{suffix}", "", "")
+        )
+
+    def _probe_url(self, url: str) -> str:
+        """对照探针 URL。有注入就用注入的，否则退回随机 control_url。"""
+        if self._probe_url_provider is not None:
+            return self._probe_url_provider(url)
+        return self.control_url(url)
 
     def host_profile(self, url: str, *, refresh: bool = False) -> HostProfile:
         """What does this host do with a path that cannot exist?
@@ -437,13 +494,18 @@ class Fetcher:
             if cached is not None:
                 return cached
 
-        probe = self.control_url(url)
+        probe = self._probe_url(url)
         resp = self.fetch(probe, expect=Expect.ANY, use_cache=False)
         body = resp.text
         ctype = resp.content_type
         blocked = classify_response(
-            resp.status, resp.headers, body, url=probe, expect=Expect.ANY,
-            final_url=resp.final_url, redirects=resp.redirects,
+            resp.status,
+            resp.headers,
+            body,
+            url=probe,
+            expect=Expect.ANY,
+            final_url=resp.final_url,
+            redirects=resp.redirects,
             transport_error=resp.transport_error,
         )
         usable = blocked.verdict not in (Verdict.BLOCKED, Verdict.UNKNOWN)
@@ -497,21 +559,30 @@ class Fetcher:
         """
         if not self.robots_allows(url):
             return Probe(
-                url, expect, None,
+                url,
+                expect,
+                None,
                 classify_response(0, {}, "", url=url, expect=expect, robots_disallowed=True),
             )
 
         resp = self.fetch(url, expect=expect, liveness_only=liveness_only)
         control = self.host_profile(url) if use_control else None
         cls = classify_response(
-            resp.status, resp.headers, resp.text, url=url, expect=expect,
-            final_url=resp.final_url, redirects=resp.redirects, control=control,
-            transport_error=resp.transport_error, body_truncated=resp.body_truncated,
+            resp.status,
+            resp.headers,
+            resp.text,
+            url=url,
+            expect=expect,
+            final_url=resp.final_url,
+            redirects=resp.redirects,
+            control=control,
+            transport_error=resp.transport_error,
+            body_truncated=resp.body_truncated,
         )
 
-        if (
-            cls.verdict is Verdict.SOFT404
-            and cls.reason in ("identical_to_control", "near_identical_to_control")
+        if cls.verdict is Verdict.SOFT404 and cls.reason in (
+            "identical_to_control",
+            "near_identical_to_control",
         ):
             cls = self._confirm_soft404(url, resp, expect, cls)
 
@@ -522,20 +593,31 @@ class Fetcher:
     ) -> Classification:
         fresh = self.host_profile(url, refresh=True)
         second = classify_response(
-            resp.status, resp.headers, resp.text, url=url, expect=expect,
-            final_url=resp.final_url, redirects=resp.redirects, control=fresh,
-            transport_error=resp.transport_error, body_truncated=resp.body_truncated,
+            resp.status,
+            resp.headers,
+            resp.text,
+            url=url,
+            expect=expect,
+            final_url=resp.final_url,
+            redirects=resp.redirects,
+            control=fresh,
+            transport_error=resp.transport_error,
+            body_truncated=resp.body_truncated,
         )
         if second.verdict is Verdict.SOFT404:
             return Classification(
-                Verdict.SOFT404, first.reason,
-                first.evidence + (f"已用第二次即时对照探测 {fresh.probe_url} 复核，结论一致",),
+                Verdict.SOFT404,
+                first.reason,
+                (*first.evidence, f"已用第二次即时对照探测 {fresh.probe_url} 复核，结论一致"),
                 naive_would_say=first.naive_would_say,
-                needs_js=first.needs_js, control_used=True, control_discriminates=False,
+                needs_js=first.needs_js,
+                control_used=True,
+                control_discriminates=False,
             )
         return Classification(
-            Verdict.UNKNOWN, "control_unavailable",
-            first.evidence + ("第二次对照探测结论不一致，判定不稳定，本位置计入「未能评估」",),
+            Verdict.UNKNOWN,
+            "control_unavailable",
+            (*first.evidence, "第二次对照探测结论不一致，判定不稳定，本位置计入「未能评估」"),
             control_used=True,
         )
 
@@ -563,8 +645,9 @@ class Fetcher:
 
         def run_group(batch: Iterable[str]) -> None:
             for u in batch:
-                p = self.probe(u, expect=expect, liveness_only=liveness_only,
-                               use_control=use_control)
+                p = self.probe(
+                    u, expect=expect, liveness_only=liveness_only, use_control=use_control
+                )
                 with lock:
                     results.append(p)
                 if on_result:
@@ -592,7 +675,7 @@ class Fetcher:
     def close(self) -> None:
         self._client.close()
 
-    def __enter__(self) -> "Fetcher":
+    def __enter__(self) -> Fetcher:
         return self
 
     def __exit__(self, *exc: object) -> None:
@@ -606,8 +689,13 @@ def _is_dns_error(err: str | None) -> bool:
     return any(
         token in e
         for token in (
-            "resolve", "nodename", "name or service", "servfail",
-            "getaddrinfo", "temporary failure in name resolution",
-            "connecterror", "no address associated",
+            "resolve",
+            "nodename",
+            "name or service",
+            "servfail",
+            "getaddrinfo",
+            "temporary failure in name resolution",
+            "connecterror",
+            "no address associated",
         )
     )

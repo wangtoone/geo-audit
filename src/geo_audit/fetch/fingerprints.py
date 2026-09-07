@@ -98,7 +98,10 @@ NOTFOUND_COPY_PATTERNS: tuple[tuple[str, re.Pattern[str]], ...] = (
     ("does_not_exist", re.compile(r"\b(?:page|this page)?\s*(?:does not|doesn'?t) exist\b", re.I)),
     ("no_longer_exists", re.compile(r"\bno longer exists\b", re.I)),
     ("nothing_here", re.compile(r"\b(?:nothing (?:to see )?here|there'?s nothing here)\b", re.I)),
-    ("cannot_be_found", re.compile(r"\b(?:could|couldn'?t|cannot|can'?t) (?:not )?be found\b", re.I)),
+    (
+        "cannot_be_found",
+        re.compile(r"\b(?:could|couldn'?t|cannot|can'?t) (?:not )?be found\b", re.I),
+    ),
     ("http_404_title", re.compile(r"\b404\b[^\d]{0,20}(?:not found|page not found|error)", re.I)),
     ("zh_page_missing", re.compile(r"页面不存在|找不到页面|页面未找到|页面已删除|无法找到该页面")),
 )
@@ -142,7 +145,10 @@ GENERIC_LANDING_PATHS: frozenset[str] = frozenset(
 #: Anchor: brevo.com apex serves Vercel's plaintext DEPLOYMENT_NOT_FOUND on
 #: /, /pricing/ and /blog/ while www + developers are healthy.
 PLATFORM_MISSING_PATTERNS: tuple[tuple[str, re.Pattern[str]], ...] = (
-    ("vercel_deployment_not_found", re.compile(r"DEPLOYMENT_NOT_FOUND|the deployment could not be found on vercel", re.I)),
+    (
+        "vercel_deployment_not_found",
+        re.compile(r"DEPLOYMENT_NOT_FOUND|the deployment could not be found on vercel", re.I),
+    ),
     ("github_pages_missing", re.compile(r"there isn'?t a github pages site here", re.I)),
     ("heroku_no_app", re.compile(r"no such app\b.{0,80}herokuapp", re.I | re.S)),
     ("netlify_missing", re.compile(r"not found\s*-\s*request id:\s*\w+", re.I)),
@@ -186,12 +192,16 @@ EXCLUDE_URL_RULES: tuple[tuple[str, re.Pattern[str], str], ...] = (
     ),
     (
         "reserved_example_domain",
-        re.compile(r"^https?://(?:[\w-]+\.)*(?:example\.(?:com|org|net)|example|test|invalid|localhost)(?:[:/]|$)"),
+        re.compile(
+            r"^https?://(?:[\w-]+\.)*(?:example\.(?:com|org|net)|example|test|invalid|localhost)(?:[:/]|$)"
+        ),
         "IANA 保留示例域名",
     ),
     (
         "url_template_placeholder",
-        re.compile(r"[{<\[](?:\s*)(?:[a-z_][a-z0-9_]*)(?:\s*)[}>\]]|%7B[a-z_]+%7D|:[a-z_]+Id(?:/|$)", re.I),
+        re.compile(
+            r"[{<\[](?:\s*)(?:[a-z_][a-z0-9_]*)(?:\s*)[}>\]]|%7B[a-z_]+%7D|:[a-z_]+Id(?:/|$)", re.I
+        ),
         "URL 里含未替换的模板占位符（{year}/{permalink}/{templateID}）",
     ),
     (
@@ -212,13 +222,13 @@ EXCLUDE_URL_RULES: tuple[tuple[str, re.Pattern[str], str], ...] = (
 #: The original rule ("API base URL") was uncodeable; this is the codeable
 #: form: path shape AND a code-context signal.
 API_PATH_RE = re.compile(r"/(?:api|v[0-9]+|graphql|rest)(?:/|$)", re.I)
-CODE_CONTEXT_RE = re.compile(r"</?(?:code|pre|kbd|samp)\b|\bcurl\b|\bfetch\(|\brequests\.(?:get|post)\b", re.I)
+CODE_CONTEXT_RE = re.compile(
+    r"</?(?:code|pre|kbd|samp)\b|\bcurl\b|\bfetch\(|\brequests\.(?:get|post)\b", re.I
+)
 
 #: Anchor-invisible links.  The original rule ("class contains hidden") is not
 #: decidable from static HTML -- Tailwind's md:hidden means visible on desktop.
 #: Narrowed to inline style only.  Provenance: single case (printify's IRS Form
 #: 8937 link), so anything it excludes is logged as "待人工确认", not silently
 #: dropped.
-INLINE_DISPLAY_NONE_RE = re.compile(
-    r"style\s*=\s*[\"'][^\"']*display\s*:\s*none", re.I
-)
+INLINE_DISPLAY_NONE_RE = re.compile(r"style\s*=\s*[\"'][^\"']*display\s*:\s*none", re.I)

@@ -24,11 +24,12 @@ Decisions
 
 from __future__ import annotations
 
+import contextlib
 import threading
 import time
+from collections.abc import Iterator
 from contextlib import contextmanager
 from dataclasses import dataclass, field
-from typing import Iterator
 
 #: Compliance floor.  Never configurable below this value.
 MIN_INTERVAL_SECONDS = 2.0
@@ -41,17 +42,50 @@ MAX_INTERVAL_SECONDS = 30.0
 # bucket), never to a wrong verdict, so a small table is enough.
 _MULTI_LABEL_SUFFIXES: frozenset[str] = frozenset(
     {
-        "co.uk", "org.uk", "ac.uk", "gov.uk", "me.uk",
-        "com.au", "net.au", "org.au", "edu.au",
-        "co.jp", "or.jp", "ne.jp", "ac.jp",
-        "com.br", "com.mx", "com.ar", "com.co",
-        "com.cn", "net.cn", "org.cn", "gov.cn", "edu.cn",
-        "co.in", "net.in", "org.in",
-        "co.nz", "co.za", "com.sg", "com.hk", "com.tw", "com.tr",
-        "co.kr", "or.kr",
-        "github.io", "gitlab.io", "vercel.app", "netlify.app",
-        "pages.dev", "workers.dev", "herokuapp.com", "readme.io",
-        "zendesk.com", "intercom.help", "usepylon.com",
+        "co.uk",
+        "org.uk",
+        "ac.uk",
+        "gov.uk",
+        "me.uk",
+        "com.au",
+        "net.au",
+        "org.au",
+        "edu.au",
+        "co.jp",
+        "or.jp",
+        "ne.jp",
+        "ac.jp",
+        "com.br",
+        "com.mx",
+        "com.ar",
+        "com.co",
+        "com.cn",
+        "net.cn",
+        "org.cn",
+        "gov.cn",
+        "edu.cn",
+        "co.in",
+        "net.in",
+        "org.in",
+        "co.nz",
+        "co.za",
+        "com.sg",
+        "com.hk",
+        "com.tw",
+        "com.tr",
+        "co.kr",
+        "or.kr",
+        "github.io",
+        "gitlab.io",
+        "vercel.app",
+        "netlify.app",
+        "pages.dev",
+        "workers.dev",
+        "herokuapp.com",
+        "readme.io",
+        "zendesk.com",
+        "intercom.help",
+        "usepylon.com",
     }
 )
 
@@ -96,9 +130,7 @@ class DomainLimiter:
 
     def __init__(self, base_interval: float = MIN_INTERVAL_SECONDS) -> None:
         if base_interval < MIN_INTERVAL_SECONDS:
-            raise ValueError(
-                f"base_interval {base_interval} 低于合规下限 {MIN_INTERVAL_SECONDS}s"
-            )
+            raise ValueError(f"base_interval {base_interval} 低于合规下限 {MIN_INTERVAL_SECONDS}s")
         self._base = base_interval
         self._buckets: dict[str, _Bucket] = {}
         self._registry_lock = threading.Lock()
@@ -127,10 +159,9 @@ class DomainLimiter:
             b.interval = min(b.interval * 2, MAX_INTERVAL_SECONDS)
             wait = b.interval
         if retry_after:
-            try:
+            # HTTP-date form raises ValueError; the doubled interval is enough there.
+            with contextlib.suppress(ValueError):
                 wait = max(wait, min(float(retry_after.strip()), 120.0))
-            except ValueError:
-                pass  # HTTP-date form; the doubled interval is enough
         return wait
 
     @contextmanager
