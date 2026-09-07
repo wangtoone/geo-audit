@@ -25,7 +25,7 @@ import threading
 import time
 from collections.abc import Callable, Iterator, Mapping, Sequence
 from contextlib import closing, contextmanager, suppress
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Literal, Protocol
@@ -230,6 +230,10 @@ class RunState:
     excluded: list[Exclusion] = field(default_factory=list)
     coverage_gaps: list[CoverageGap] = field(default_factory=list)
     index_reports: list[IndexLinkReport] = field(default_factory=list)
+    #: 第 4 段（索引内链）收集的死链实例，供根因归并用。第 6 段（可点击路径）
+    #: 的实例在 `_emit_dead_link_findings` 里自成一路，两段各归并自己的
+    #: —— 它们的 locus 口径不同（文本文件没有 DOM 容器）。
+    dead_instances: list[DeadInstance] = field(default_factory=list)
 
     requests_made: int = 0
     pages_fetched: int = 0
@@ -1110,6 +1114,31 @@ def _stage_index_links(
         findings = findings_from_index_report(
             report, domain=options.domain, user_agent=fetcher.user_agent
         )
+        # 死内链也要进根因归并。§6.1 的产品约束是「价值密度在位置和根因，不在条数」
+        # （实测：94 条死链里 66 条挤在 7 个域名上），而 mistral 的 75 条内链**全部
+        # 来自同一份 llms.txt 的同一次路径迁移** —— 报 75 条是把「改 1 处修 75 条」
+        # 拆成了 75 个待办。
+        # 原来 merge_root_causes 只接在第 6 段（可点击路径），第 4 段的 findings
+        # 直接 extend 进去、root_cause_id 全空。实测第一份真报告就是
+        # findings=75 / root_causes=0。
+        # source_page 用索引文件本身：这些链接确实"出现在"那个文件里，
+        # 而 container_sig 留空 —— 文本文件没有 DOM 容器，归并靠 path_shape。
+        if report.dead:
+            # finding_id 必须原样带过来：findings_from_index_report 用
+            # check_id="ai_path.index_links" 算的，而 DeadTarget.identity 的兜底
+            # 写死 DEAD_LINK_CHECK_ID —— 不传就是两套不交的 id，回填 0 条命中。
+            fid_by_url = {f.target.url: f.finding_id for f in findings}
+            st.dead_instances.extend(
+                DeadInstance(
+                    abs_url=link.abs_url,
+                    source_page=report.index_url,
+                    raw_href=link.abs_url,
+                    anchor_text=link.anchor_text or "",
+                    severity=report.severity,
+                    finding_id=fid_by_url.get(link.abs_url, ""),
+                )
+                for link in report.dead
+            )
         st.findings.extend(findings)
         st.excluded.extend(
             _exclusion(url, ex, found_on=report.index_url) for url, ex in report.excluded
@@ -1142,6 +1171,31 @@ def _stage_index_links(
             ),
         )
         prog.row(_progress_state(report.status), key, detail)
+    # 索引内链的根因归并（§5.4）。放在这一段的收尾：此时本段全部死链实例已收齐。
+    # mistral 的 75 条内链归成 1 条根因 —— 它们全部来自同一份 llms.txt 的同一次
+    # 路径迁移，报 75 条等于把「改 1 处修 75 条」拆成 75 个待办。
+    if st.dead_instances:
+        targets = fold_instances(st.dead_instances)
+        causes = merge_root_causes(targets, audited_domain=options.domain)
+        st.root_causes.extend(causes)
+        # 回填 root_cause_id / root_cause_summary / sibling_count。
+        # finding 的身份是 norm_url（rootcause.normalize_url 那一份唯一口径），
+        # 而 findings_from_index_report 用的 finding_id 也是从它算的，所以对得上。
+        by_fid = {fid: c for c in causes for fid in c.finding_ids}
+        if by_fid:
+            st.findings[:] = [
+                (
+                    replace(
+                        f,
+                        root_cause_id=by_fid[f.finding_id].root_cause_id,
+                        root_cause_summary=by_fid[f.finding_id].summary,
+                        sibling_count=by_fid[f.finding_id].unique_target_count,
+                    )
+                    if f.finding_id in by_fid
+                    else f
+                )
+                for f in st.findings
+            ]
     prog.stage(4, STAGE_LABEL[Stage.INDEX_LINKS], f"FAIL {total_dead} 死 / {total_alive} 活")
 
 

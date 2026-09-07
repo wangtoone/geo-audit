@@ -353,6 +353,14 @@ class DeadInstance:
     severity: Severity = Severity.MEDIUM
     #: 上游（标注文件 / dead_links.py）已经定了 defect 就填这里，检测直接跳过。
     defect: str = ""
+    #: 上游已经算好 finding_id 就填这里（``DeadTarget.identity`` 会优先用它）。
+    #:
+    #: 为什么必须能传：``identity`` 的兜底算法写死了 ``DEAD_LINK_CHECK_ID``
+    #: （``dead_links.*``），而 ``make_finding_id`` 把 check_id 算进哈希 ——
+    #: 于是索引内链（check_id = ``ai_path.index_links``）在两侧会算出**完全不交**
+    #: 的两套 id，根因回填 0 条命中。实测第一份真报告就是这样：
+    #: 75 条 finding、1 条根因、交集 0。
+    finding_id: str = ""
 
 
 @dataclass(frozen=True, slots=True)
@@ -425,6 +433,9 @@ def fold_instances(instances: Sequence[DeadInstance]) -> tuple[DeadTarget, ...]:
                 hrefs.append(inst.abs_url)
         out.append(
             DeadTarget(
+                # 上游的 finding_id 原样带过来，别让 identity 走兜底算法
+                # （兜底会用 DEAD_LINK_CHECK_ID，算出另一套 id）。
+                finding_id=head.finding_id,
                 norm_url=key,
                 abs_url=head.abs_url,
                 source_page=head.source_page,

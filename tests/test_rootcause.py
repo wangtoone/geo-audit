@@ -1190,3 +1190,54 @@ def test_nearest_sitemap_triple_ordering() -> None:
     assert nearest_sitemap_url(target, ()) is None
     # sitemap 里就是它自己 → 不当修复目标
     assert nearest_sitemap_url(target, (target,)) is None
+
+
+# ═════════════════════════════════════════════════════════════════════════════
+# finding_id 命名空间（跑真数据才发现的一个 bug）
+# ═════════════════════════════════════════════════════════════════════════════
+
+
+def test_dead_instance_finding_id_survives_folding() -> None:
+    """上游算好的 ``finding_id`` 必须原样穿过 ``fold_instances``。
+
+    实测第一份真报告（mistral.ai）暴露的问题：75 条 finding、1 条根因、
+    **回填 0 条命中** —— 两侧的 id 命名空间完全不交。
+
+    原因是 ``make_finding_id(check_id, url, found_on)`` 把 check_id 算进哈希：
+      * ``findings_from_index_report`` 用 ``ai_path.index_links``
+      * ``DeadTarget.identity`` 的兜底写死 ``DEAD_LINK_CHECK_ID``（``dead_links.*``）
+    于是同一条死链在两侧算出两个身份。单测里两侧各自自洽，只有跑通真数据才看得见。
+    """
+    upstream_fid = "GA-UPSTREAM01"
+    targets = fold_instances(
+        [
+            DeadInstance(
+                abs_url="https://docs.example.com/a.md",
+                source_page="https://docs.example.com/llms.txt",
+                finding_id=upstream_fid,
+            ),
+            DeadInstance(  # 同一个 norm_url 的第二个实例，只有 head 定身份
+                abs_url="https://docs.example.com/a.md",
+                source_page="https://docs.example.com/llms.txt",
+                finding_id=upstream_fid,
+            ),
+        ]
+    )
+    assert len(targets) == 1
+    assert targets[0].identity == upstream_fid, (
+        "上游 finding_id 被丢了，identity 走了兜底算法 —— 根因回填会 0 条命中"
+    )
+
+
+def test_dead_instance_without_finding_id_falls_back() -> None:
+    """没带 ``finding_id`` 时仍按 §2.10 的口径现算（原行为不变）。"""
+    targets = fold_instances(
+        [
+            DeadInstance(
+                abs_url="https://example.com/x",
+                source_page="https://example.com/",
+            )
+        ]
+    )
+    assert targets[0].identity.startswith("GA-")
+    assert targets[0].identity != ""
