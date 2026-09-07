@@ -1,0 +1,33 @@
+{
+  "body_bytes": 42813,
+  "body_file": "snapshots/rustdesk.com/team-6b343a07.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://rustdesk.com/team/",
+  "handwritten": false,
+  "headers": {
+    "cache-control": "public, max-age=86400, must-revalidate",
+    "cf-cache-status": "DYNAMIC",
+    "cf-ray": "a376b779691ccbaf-LAX",
+    "connection": "keep-alive",
+    "content-encoding": "gzip",
+    "content-security-policy": "upgrade-insecure-requests",
+    "content-type": "text/html",
+    "date": "Mon, 07 Sep 2026 15:23:48 GMT",
+    "last-modified": "Mon, 17 Aug 2026 02:39:37 GMT",
+    "permissions-policy": "geolocation=(), camera=(), microphone=(), autoplay=(), interest-cohort=()",
+    "server": "cloudflare",
+    "strict-transport-security": "max-age=31536000; includeSubDomains; preload",
+    "transfer-encoding": "chunked",
+    "vary": "Accept-Encoding",
+    "x-content-type-options": "nosniff",
+    "x-frame-options": "SAMEORIGIN"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "fb0c1a3b5d7fbf21d02b089db35cbd8c",
+  "recorded_at": "2026-09-07T15:23:49Z",
+  "status": 200,
+  "stored_bytes": 42813,
+  "transport_error": null,
+  "url": "https://rustdesk.com/team/"
+}

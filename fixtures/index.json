@@ -4071,6 +4071,24 @@
       "status": 308,
       "transport_error": null
     },
+    "https://docs.mistral.ai/llms-full.txt": {
+      "body_storage": "full",
+      "bytes": 992425,
+      "comment": "--url 补录",
+      "content_type": "text/plain",
+      "drift": null,
+      "expect": {
+        "bytes": 992425,
+        "raw_md5": "312558750262c2cb92815dc138d8e19c"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/llms-full.txt-66a44fe2",
+      "probe_for": null,
+      "raw_md5": "312558750262c2cb92815dc138d8e19c",
+      "recorded_at": "2026-09-07T14:43:20Z",
+      "status": 200,
+      "transport_error": null
+    },
     "https://docs.mistral.ai/llms.txt": {
       "body_storage": "full",
       "bytes": 14658,
@@ -4104,6 +4122,60 @@
       "probe_for": null,
       "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
       "recorded_at": "2026-09-07T12:41:37Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/sitemap-index.xml": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "--url 补录",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/sitemap-index.xml-5a5c837d",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-07T14:47:18Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/sitemap.xml": {
+      "body_storage": "full",
+      "bytes": 436277,
+      "comment": "--url 补录",
+      "content_type": "application/xml",
+      "drift": null,
+      "expect": {
+        "bytes": 436277,
+        "raw_md5": "61328d27497d20f8512a247f940c769e"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/sitemap.xml-af802e25",
+      "probe_for": null,
+      "raw_md5": "61328d27497d20f8512a247f940c769e",
+      "recorded_at": "2026-09-07T14:45:52Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/sitemap_index.xml": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "--url 补录",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/sitemap_index.xml-89b99298",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-07T14:46:37Z",
       "status": 404,
       "transport_error": null
     },
@@ -5367,6 +5439,78 @@
       "status": 404,
       "transport_error": null
     },
+    "https://github.com/rustdesk/rustdesk/wiki/": {
+      "body_storage": "full",
+      "bytes": 225486,
+      "comment": "画廊 · rustdesk 首页指向的站外文档（对照探针）",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 225486,
+        "raw_md5": "53a26628956866cc5e2c4e31319f1f07"
+      },
+      "handwritten": false,
+      "path": "snapshots/github.com/rustdesk-rustdesk-wiki-e0f937f7",
+      "probe_for": null,
+      "raw_md5": "53a26628956866cc5e2c4e31319f1f07",
+      "recorded_at": "2026-09-07T15:50:22Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://github.com/rustdesk/rustdesk/wiki/FAQ": {
+      "body_storage": "full",
+      "bytes": 713438,
+      "comment": "--url 补录",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 713438,
+        "raw_md5": "6d6310e88f61b2f201e37957f9d53fc2"
+      },
+      "handwritten": false,
+      "path": "snapshots/github.com/rustdesk-rustdesk-wiki-FAQ-b19c2e44",
+      "probe_for": null,
+      "raw_md5": "15c8c2c686b50eb04cafd82f1c3ab779",
+      "recorded_at": "2026-09-07T15:40:31Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://github.com/rustdesk/rustdesk/wiki/geo-audit-probe-38574629cca643a817e58a02": {
+      "body_storage": "full",
+      "bytes": 0,
+      "comment": null,
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 0,
+        "raw_md5": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      "handwritten": false,
+      "path": "snapshots/github.com/rustdesk-rustdesk-wiki-geo-audit-probe-38574629cca643a817e58a02-567b780b",
+      "probe_for": "https://github.com/rustdesk/rustdesk/wiki/FAQ",
+      "raw_md5": "d41d8cd98f00b204e9800998ecf8427e",
+      "recorded_at": "2026-09-07T15:40:33Z",
+      "status": 302,
+      "transport_error": null
+    },
+    "https://github.com/rustdesk/rustdesk/wiki/geo-audit-probe-4c81680ef416015f74fade85": {
+      "body_storage": "full",
+      "bytes": 0,
+      "comment": "画廊 · rustdesk 首页指向的站外文档（对照探针）",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 0,
+        "raw_md5": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      "handwritten": false,
+      "path": "snapshots/github.com/rustdesk-rustdesk-wiki-geo-audit-probe-4c81680ef416015f74fade85-add3a2d0",
+      "probe_for": "https://github.com/rustdesk/rustdesk/wiki/FAQ",
+      "raw_md5": "d41d8cd98f00b204e9800998ecf8427e",
+      "recorded_at": "2026-09-07T15:50:18Z",
+      "status": 302,
+      "transport_error": null
+    },
     "https://github.com/swellstores": {
       "body_storage": "full",
       "bytes": 281164,
@@ -5745,6 +5889,204 @@
       "status": 200,
       "transport_error": null
     },
+    "https://mistral.ai/": {
+      "body_storage": "full",
+      "bytes": 471900,
+      "comment": "--url 补录",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 471900,
+        "raw_md5": "fa14d128418e946583e74834c6de300b"
+      },
+      "handwritten": false,
+      "path": "snapshots/mistral.ai/index-1311389b",
+      "probe_for": null,
+      "raw_md5": "fa14d128418e946583e74834c6de300b",
+      "recorded_at": "2026-09-07T14:03:28Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://mistral.ai/docs/llms-full.txt": {
+      "body_storage": "full",
+      "bytes": 234928,
+      "comment": "--url 补录",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 234928,
+        "raw_md5": "30e5445e34b8abd7410be2210314bcfa"
+      },
+      "handwritten": false,
+      "path": "snapshots/mistral.ai/docs-llms-full.txt-3e079743",
+      "probe_for": null,
+      "raw_md5": "30e5445e34b8abd7410be2210314bcfa",
+      "recorded_at": "2026-09-07T14:43:57Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://mistral.ai/geo-audit-probe-c007bb0b05bdc7ab403946b6": {
+      "body_storage": "full",
+      "bytes": 234928,
+      "comment": "画廊 · apex 根路径（对照探针）",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 234928,
+        "raw_md5": "30e5445e34b8abd7410be2210314bcfa"
+      },
+      "handwritten": false,
+      "path": "snapshots/mistral.ai/geo-audit-probe-c007bb0b05bdc7ab403946b6-729f45c5",
+      "probe_for": "https://mistral.ai/",
+      "raw_md5": "30e5445e34b8abd7410be2210314bcfa",
+      "recorded_at": "2026-09-07T14:23:42Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://mistral.ai/geo-audit-probe-c01164cffffc3ae28097f6c3": {
+      "body_storage": "full",
+      "bytes": 234928,
+      "comment": "",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 234928,
+        "raw_md5": "30e5445e34b8abd7410be2210314bcfa"
+      },
+      "handwritten": false,
+      "path": "snapshots/mistral.ai/geo-audit-probe-c01164cffffc3ae28097f6c3-fbef4b98",
+      "probe_for": null,
+      "raw_md5": "30e5445e34b8abd7410be2210314bcfa",
+      "recorded_at": "2026-09-07T14:41:58Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://mistral.ai/llms-full.txt": {
+      "body_storage": "full",
+      "bytes": 234928,
+      "comment": "--url 补录",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 234928,
+        "raw_md5": "30e5445e34b8abd7410be2210314bcfa"
+      },
+      "handwritten": false,
+      "path": "snapshots/mistral.ai/llms-full.txt-3fe2ad38",
+      "probe_for": null,
+      "raw_md5": "30e5445e34b8abd7410be2210314bcfa",
+      "recorded_at": "2026-09-07T14:42:45Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://mistral.ai/llms.txt": {
+      "body_storage": "full",
+      "bytes": 5482,
+      "comment": "--url 补录",
+      "content_type": "text/plain",
+      "drift": null,
+      "expect": {
+        "bytes": 5482,
+        "raw_md5": "ca1369141608f83603ac0056c502a3cb"
+      },
+      "handwritten": false,
+      "path": "snapshots/mistral.ai/llms.txt-717f46ed",
+      "probe_for": null,
+      "raw_md5": "ca1369141608f83603ac0056c502a3cb",
+      "recorded_at": "2026-09-07T14:42:21Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://mistral.ai/pricing": {
+      "body_storage": "full",
+      "bytes": 98,
+      "comment": "--url 补录",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 98,
+        "raw_md5": "fb8339cbe9d63bb4ae63727914522705"
+      },
+      "handwritten": false,
+      "path": "snapshots/mistral.ai/pricing-b25022c8",
+      "probe_for": null,
+      "raw_md5": "fb8339cbe9d63bb4ae63727914522705",
+      "recorded_at": "2026-09-07T14:48:07Z",
+      "status": 301,
+      "transport_error": null
+    },
+    "https://mistral.ai/pricing/": {
+      "body_storage": "full",
+      "bytes": 478679,
+      "comment": "--url 补录",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 478679,
+        "raw_md5": "a15a1f7a7e9b6832d814d35235eaf8a8"
+      },
+      "handwritten": false,
+      "path": "snapshots/mistral.ai/pricing-a6e8715b",
+      "probe_for": null,
+      "raw_md5": "a15a1f7a7e9b6832d814d35235eaf8a8",
+      "recorded_at": "2026-09-07T14:48:09Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://mistral.ai/products/studio": {
+      "body_storage": "full",
+      "bytes": 98,
+      "comment": "--url 补录",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 98,
+        "raw_md5": "fb8339cbe9d63bb4ae63727914522705"
+      },
+      "handwritten": false,
+      "path": "snapshots/mistral.ai/products-studio-f0e043a2",
+      "probe_for": null,
+      "raw_md5": "fb8339cbe9d63bb4ae63727914522705",
+      "recorded_at": "2026-09-07T14:49:02Z",
+      "status": 301,
+      "transport_error": null
+    },
+    "https://mistral.ai/products/studio/": {
+      "body_storage": "full",
+      "bytes": 335448,
+      "comment": "--url 补录",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 335448,
+        "raw_md5": "ca8739e8f6745b03573d2e1e16278d34"
+      },
+      "handwritten": false,
+      "path": "snapshots/mistral.ai/products-studio-396d82b8",
+      "probe_for": null,
+      "raw_md5": "ca8739e8f6745b03573d2e1e16278d34",
+      "recorded_at": "2026-09-07T14:49:04Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://mistral.ai/products/vibe": {
+      "body_storage": "full",
+      "bytes": 0,
+      "comment": "--url 补录",
+      "content_type": "",
+      "drift": null,
+      "expect": {
+        "bytes": 0,
+        "raw_md5": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      "handwritten": false,
+      "path": "snapshots/mistral.ai/products-vibe-5e0b8e73",
+      "probe_for": null,
+      "raw_md5": "d41d8cd98f00b204e9800998ecf8427e",
+      "recorded_at": "2026-09-07T14:50:05Z",
+      "status": 0,
+      "transport_error": "ConnectTimeout: timed out"
+    },
     "https://mistral.ai/robots.txt": {
       "body_storage": "full",
       "bytes": 70,
@@ -5760,6 +6102,42 @@
       "probe_for": null,
       "raw_md5": "96f526f508db8b047034d44d1211e506",
       "recorded_at": "2026-09-07T12:41:34Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://mistral.ai/sitemap-0.xml": {
+      "body_storage": "full",
+      "bytes": 183034,
+      "comment": "--url 补录",
+      "content_type": "application/xml",
+      "drift": null,
+      "expect": {
+        "bytes": 183034,
+        "raw_md5": "c37174c26dd05067aa0a48ede514deb2"
+      },
+      "handwritten": false,
+      "path": "snapshots/mistral.ai/sitemap-0.xml-4d7b7d40",
+      "probe_for": null,
+      "raw_md5": "c37174c26dd05067aa0a48ede514deb2",
+      "recorded_at": "2026-09-07T14:45:15Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://mistral.ai/sitemap-index.xml": {
+      "body_storage": "full",
+      "bytes": 224,
+      "comment": "--url 补录",
+      "content_type": "application/xml",
+      "drift": null,
+      "expect": {
+        "bytes": 224,
+        "raw_md5": "8c40dc39c41e22a1e2226b639923d8a6"
+      },
+      "handwritten": false,
+      "path": "snapshots/mistral.ai/sitemap-index.xml-87aa4420",
+      "probe_for": null,
+      "raw_md5": "8c40dc39c41e22a1e2226b639923d8a6",
+      "recorded_at": "2026-09-07T14:44:35Z",
       "status": 200,
       "transport_error": null
     },
@@ -5781,6 +6159,474 @@
       "status": 200,
       "transport_error": null
     },
+    "https://modal.com/docs/examples/basic_web.md": {
+      "body_storage": "full",
+      "bytes": 10415,
+      "comment": "--url 补录",
+      "content_type": "text/markdown",
+      "drift": null,
+      "expect": {
+        "bytes": 10415,
+        "raw_md5": "2e77041c76773becb74e3e41746b6503"
+      },
+      "handwritten": false,
+      "path": "snapshots/modal.com/docs-examples-basic_web.md-e2ba1142",
+      "probe_for": null,
+      "raw_md5": "2e77041c76773becb74e3e41746b6503",
+      "recorded_at": "2026-09-07T15:18:12Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://modal.com/docs/guide": {
+      "body_storage": "full",
+      "bytes": 55652,
+      "comment": "--url 补录",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 55652,
+        "raw_md5": "7a706d001a8158353202f589228d641f"
+      },
+      "handwritten": false,
+      "path": "snapshots/modal.com/docs-guide-30b77008",
+      "probe_for": null,
+      "raw_md5": "7a706d001a8158353202f589228d641f",
+      "recorded_at": "2026-09-07T14:53:59Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://modal.com/docs/guide/apps.md": {
+      "body_storage": "full",
+      "bytes": 5123,
+      "comment": "--url 补录",
+      "content_type": "text/markdown",
+      "drift": null,
+      "expect": {
+        "bytes": 5123,
+        "raw_md5": "b78c44e096916f628d7319c5af2ad022"
+      },
+      "handwritten": false,
+      "path": "snapshots/modal.com/docs-guide-apps.md-3c5a8965",
+      "probe_for": null,
+      "raw_md5": "b78c44e096916f628d7319c5af2ad022",
+      "recorded_at": "2026-09-07T15:11:41Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://modal.com/docs/guide/dedicated-endpoints.md": {
+      "body_storage": "full",
+      "bytes": 3723,
+      "comment": "--url 补录",
+      "content_type": "text/markdown",
+      "drift": null,
+      "expect": {
+        "bytes": 3723,
+        "raw_md5": "619317b1552d6e4392bced327812cb88"
+      },
+      "handwritten": false,
+      "path": "snapshots/modal.com/docs-guide-dedicated-endpoints.md-6a4854be",
+      "probe_for": null,
+      "raw_md5": "619317b1552d6e4392bced327812cb88",
+      "recorded_at": "2026-09-07T15:08:10Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://modal.com/docs/guide/dynamic-function-config.md": {
+      "body_storage": "full",
+      "bytes": 4682,
+      "comment": "--url 补录",
+      "content_type": "text/markdown",
+      "drift": null,
+      "expect": {
+        "bytes": 4682,
+        "raw_md5": "5200f6373a7376d32cd4f002b995ab9d"
+      },
+      "handwritten": false,
+      "path": "snapshots/modal.com/docs-guide-dynamic-function-config.md-91045442",
+      "probe_for": null,
+      "raw_md5": "5200f6373a7376d32cd4f002b995ab9d",
+      "recorded_at": "2026-09-07T14:57:52Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://modal.com/docs/guide/endpoint-integrations.md": {
+      "body_storage": "full",
+      "bytes": 1762,
+      "comment": "--url 补录",
+      "content_type": "text/markdown",
+      "drift": null,
+      "expect": {
+        "bytes": 1762,
+        "raw_md5": "68a4e8515b78f65d2662e71baac56bc3"
+      },
+      "handwritten": false,
+      "path": "snapshots/modal.com/docs-guide-endpoint-integrations.md-71ab30eb",
+      "probe_for": null,
+      "raw_md5": "68a4e8515b78f65d2662e71baac56bc3",
+      "recorded_at": "2026-09-07T15:09:18Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://modal.com/docs/guide/endpoints.md": {
+      "body_storage": "full",
+      "bytes": 3094,
+      "comment": "--url 补录",
+      "content_type": "text/markdown",
+      "drift": null,
+      "expect": {
+        "bytes": 3094,
+        "raw_md5": "d43dd7e015894e105c5f701d9d2f424c"
+      },
+      "handwritten": false,
+      "path": "snapshots/modal.com/docs-guide-endpoints.md-57f00cb0",
+      "probe_for": null,
+      "raw_md5": "d43dd7e015894e105c5f701d9d2f424c",
+      "recorded_at": "2026-09-07T15:06:00Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://modal.com/docs/guide/function-invocation-methods.md": {
+      "body_storage": "full",
+      "bytes": 9559,
+      "comment": "--url 补录",
+      "content_type": "text/markdown",
+      "drift": null,
+      "expect": {
+        "bytes": 9559,
+        "raw_md5": "273028c3514ee253954a1324693ba06d"
+      },
+      "handwritten": false,
+      "path": "snapshots/modal.com/docs-guide-function-invocation-methods.md-61f87e84",
+      "probe_for": null,
+      "raw_md5": "273028c3514ee253954a1324693ba06d",
+      "recorded_at": "2026-09-07T14:55:08Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://modal.com/docs/guide/functions.md": {
+      "body_storage": "full",
+      "bytes": 18374,
+      "comment": "--url 补录",
+      "content_type": "text/markdown",
+      "drift": null,
+      "expect": {
+        "bytes": 18374,
+        "raw_md5": "eeb2caac59e398338a821239f82f8f62"
+      },
+      "handwritten": false,
+      "path": "snapshots/modal.com/docs-guide-functions.md-3417eb09",
+      "probe_for": null,
+      "raw_md5": "eeb2caac59e398338a821239f82f8f62",
+      "recorded_at": "2026-09-07T14:54:32Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://modal.com/docs/guide/images.md": {
+      "body_storage": "full",
+      "bytes": 14706,
+      "comment": "--url 补录",
+      "content_type": "text/markdown",
+      "drift": null,
+      "expect": {
+        "bytes": 14706,
+        "raw_md5": "1f439409dbc99738656c5da261d91ba7"
+      },
+      "handwritten": false,
+      "path": "snapshots/modal.com/docs-guide-images.md-5051660d",
+      "probe_for": null,
+      "raw_md5": "1f439409dbc99738656c5da261d91ba7",
+      "recorded_at": "2026-09-07T15:10:29Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://modal.com/docs/guide/lifecycle-functions.md": {
+      "body_storage": "full",
+      "bytes": 3824,
+      "comment": "--url 补录",
+      "content_type": "text/markdown",
+      "drift": null,
+      "expect": {
+        "bytes": 3824,
+        "raw_md5": "0cd798daf72b1e4f3305416e499c5870"
+      },
+      "handwritten": false,
+      "path": "snapshots/modal.com/docs-guide-lifecycle-functions.md-532e651f",
+      "probe_for": null,
+      "raw_md5": "0cd798daf72b1e4f3305416e499c5870",
+      "recorded_at": "2026-09-07T14:56:27Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://modal.com/docs/guide/local-data.md": {
+      "body_storage": "full",
+      "bytes": 1130,
+      "comment": "--url 补录",
+      "content_type": "text/markdown",
+      "drift": null,
+      "expect": {
+        "bytes": 1130,
+        "raw_md5": "1df51a41bbc0e62e112b8e8315a7c375"
+      },
+      "handwritten": false,
+      "path": "snapshots/modal.com/docs-guide-local-data.md-998a5248",
+      "probe_for": null,
+      "raw_md5": "1df51a41bbc0e62e112b8e8315a7c375",
+      "recorded_at": "2026-09-07T15:12:55Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://modal.com/docs/guide/parametrized-functions.md": {
+      "body_storage": "full",
+      "bytes": 4485,
+      "comment": "--url 补录",
+      "content_type": "text/markdown",
+      "drift": null,
+      "expect": {
+        "bytes": 4485,
+        "raw_md5": "e53edd0df8eb94e930b8a899737ab2b2"
+      },
+      "handwritten": false,
+      "path": "snapshots/modal.com/docs-guide-parametrized-functions.md-9974303f",
+      "probe_for": null,
+      "raw_md5": "e53edd0df8eb94e930b8a899737ab2b2",
+      "recorded_at": "2026-09-07T14:57:08Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://modal.com/docs/guide/preemption.md": {
+      "body_storage": "full",
+      "bytes": 1826,
+      "comment": "--url 补录",
+      "content_type": "text/markdown",
+      "drift": null,
+      "expect": {
+        "bytes": 1826,
+        "raw_md5": "a6ebd3eedd924509b060cb79a0f24180"
+      },
+      "handwritten": false,
+      "path": "snapshots/modal.com/docs-guide-preemption.md-11bbbad2",
+      "probe_for": null,
+      "raw_md5": "a6ebd3eedd924509b060cb79a0f24180",
+      "recorded_at": "2026-09-07T15:14:11Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://modal.com/docs/guide/restricted-access.md": {
+      "body_storage": "full",
+      "bytes": 5560,
+      "comment": "--url 补录",
+      "content_type": "text/markdown",
+      "drift": null,
+      "expect": {
+        "bytes": 5560,
+        "raw_md5": "99bdb5ff58100d0cbdd118ae6e536954"
+      },
+      "handwritten": false,
+      "path": "snapshots/modal.com/docs-guide-restricted-access.md-d6584466",
+      "probe_for": null,
+      "raw_md5": "99bdb5ff58100d0cbdd118ae6e536954",
+      "recorded_at": "2026-09-07T15:16:50Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://modal.com/docs/guide/saml-sso.md": {
+      "body_storage": "full",
+      "bytes": 2844,
+      "comment": "--url 补录",
+      "content_type": "text/markdown",
+      "drift": null,
+      "expect": {
+        "bytes": 2844,
+        "raw_md5": "c44eeecb708e8a512555bcb8eee323fd"
+      },
+      "handwritten": false,
+      "path": "snapshots/modal.com/docs-guide-saml-sso.md-9f8f6328",
+      "probe_for": null,
+      "raw_md5": "c44eeecb708e8a512555bcb8eee323fd",
+      "recorded_at": "2026-09-07T15:15:30Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://modal.com/docs/guide/sandbox-files.md": {
+      "body_storage": "full",
+      "bytes": 13512,
+      "comment": "--url 补录",
+      "content_type": "text/markdown",
+      "drift": null,
+      "expect": {
+        "bytes": 13512,
+        "raw_md5": "21035bd8fe767e76ee1d7febd1107603"
+      },
+      "handwritten": false,
+      "path": "snapshots/modal.com/docs-guide-sandbox-files.md-d25c757d",
+      "probe_for": null,
+      "raw_md5": "21035bd8fe767e76ee1d7febd1107603",
+      "recorded_at": "2026-09-07T15:01:10Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://modal.com/docs/guide/sandbox-networking.md": {
+      "body_storage": "full",
+      "bytes": 17379,
+      "comment": "--url 补录",
+      "content_type": "text/markdown",
+      "drift": null,
+      "expect": {
+        "bytes": 17379,
+        "raw_md5": "576acbb690cf987f4be948ff4fecc850"
+      },
+      "handwritten": false,
+      "path": "snapshots/modal.com/docs-guide-sandbox-networking.md-7fc82026",
+      "probe_for": null,
+      "raw_md5": "576acbb690cf987f4be948ff4fecc850",
+      "recorded_at": "2026-09-07T15:00:17Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://modal.com/docs/guide/sandbox-resources.md": {
+      "body_storage": "full",
+      "bytes": 4495,
+      "comment": "--url 补录",
+      "content_type": "text/markdown",
+      "drift": null,
+      "expect": {
+        "bytes": 4495,
+        "raw_md5": "1edfc3cbde4c9bd0505d1f2f58d6e346"
+      },
+      "handwritten": false,
+      "path": "snapshots/modal.com/docs-guide-sandbox-resources.md-5e447a73",
+      "probe_for": null,
+      "raw_md5": "1edfc3cbde4c9bd0505d1f2f58d6e346",
+      "recorded_at": "2026-09-07T15:03:00Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://modal.com/docs/guide/sandbox-sidecars.md": {
+      "body_storage": "full",
+      "bytes": 12470,
+      "comment": "--url 补录",
+      "content_type": "text/markdown",
+      "drift": null,
+      "expect": {
+        "bytes": 12470,
+        "raw_md5": "e57960482e80d7d31f39e287b520b613"
+      },
+      "handwritten": false,
+      "path": "snapshots/modal.com/docs-guide-sandbox-sidecars.md-b908b4d7",
+      "probe_for": null,
+      "raw_md5": "e57960482e80d7d31f39e287b520b613",
+      "recorded_at": "2026-09-07T15:04:58Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://modal.com/docs/guide/sandbox-snapshots.md": {
+      "body_storage": "full",
+      "bytes": 19758,
+      "comment": "--url 补录",
+      "content_type": "text/markdown",
+      "drift": null,
+      "expect": {
+        "bytes": 19758,
+        "raw_md5": "8b734f0e2f413b8f3b43137c1d2fea98"
+      },
+      "handwritten": false,
+      "path": "snapshots/modal.com/docs-guide-sandbox-snapshots.md-1e150897",
+      "probe_for": null,
+      "raw_md5": "8b734f0e2f413b8f3b43137c1d2fea98",
+      "recorded_at": "2026-09-07T15:02:04Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://modal.com/docs/guide/sandbox-spawn.md": {
+      "body_storage": "full",
+      "bytes": 4148,
+      "comment": "--url 补录",
+      "content_type": "text/markdown",
+      "drift": null,
+      "expect": {
+        "bytes": 4148,
+        "raw_md5": "b6a88dd7cc88833641c8ddc2182a04be"
+      },
+      "handwritten": false,
+      "path": "snapshots/modal.com/docs-guide-sandbox-spawn.md-4ee7bddd",
+      "probe_for": null,
+      "raw_md5": "b6a88dd7cc88833641c8ddc2182a04be",
+      "recorded_at": "2026-09-07T14:59:26Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://modal.com/docs/guide/sandboxes.md": {
+      "body_storage": "full",
+      "bytes": 38395,
+      "comment": "--url 补录",
+      "content_type": "text/markdown",
+      "drift": null,
+      "expect": {
+        "bytes": 38395,
+        "raw_md5": "94e852f2731ba8d67c350b5ae2981b95"
+      },
+      "handwritten": false,
+      "path": "snapshots/modal.com/docs-guide-sandboxes.md-a27a36c0",
+      "probe_for": null,
+      "raw_md5": "94e852f2731ba8d67c350b5ae2981b95",
+      "recorded_at": "2026-09-07T14:58:38Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://modal.com/docs/guide/shared-endpoints.md": {
+      "body_storage": "full",
+      "bytes": 1487,
+      "comment": "--url 补录",
+      "content_type": "text/markdown",
+      "drift": null,
+      "expect": {
+        "bytes": 1487,
+        "raw_md5": "2986c77bc229ee226520ac28034be3b4"
+      },
+      "handwritten": false,
+      "path": "snapshots/modal.com/docs-guide-shared-endpoints.md-b53bc7c6",
+      "probe_for": null,
+      "raw_md5": "2986c77bc229ee226520ac28034be3b4",
+      "recorded_at": "2026-09-07T15:07:03Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://modal.com/docs/guide/trigger-deployed-functions.md": {
+      "body_storage": "full",
+      "bytes": 10156,
+      "comment": "--url 补录",
+      "content_type": "text/markdown",
+      "drift": null,
+      "expect": {
+        "bytes": 10156,
+        "raw_md5": "6cf7cc945cb817b5c9b5481db73cf028"
+      },
+      "handwritten": false,
+      "path": "snapshots/modal.com/docs-guide-trigger-deployed-functions.md-cf27fe6b",
+      "probe_for": null,
+      "raw_md5": "6cf7cc945cb817b5c9b5481db73cf028",
+      "recorded_at": "2026-09-07T14:55:46Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://modal.com/docs/guide/vm-sandboxes.md": {
+      "body_storage": "full",
+      "bytes": 7697,
+      "comment": "--url 补录",
+      "content_type": "text/markdown",
+      "drift": null,
+      "expect": {
+        "bytes": 7697,
+        "raw_md5": "71aba256316dbb57ee5a25b9d6d4921f"
+      },
+      "handwritten": false,
+      "path": "snapshots/modal.com/docs-guide-vm-sandboxes.md-e912c22e",
+      "probe_for": null,
+      "raw_md5": "71aba256316dbb57ee5a25b9d6d4921f",
+      "recorded_at": "2026-09-07T15:03:58Z",
+      "status": 200,
+      "transport_error": null
+    },
     "https://modal.com/geo-audit-probe-2508566547c6252e1aac50b2.txt": {
       "body_storage": "full",
       "bytes": 57015,
@@ -5797,6 +6643,42 @@
       "raw_md5": "e37467ac2ff726545abe0076e53955d3",
       "recorded_at": "2026-09-07T12:41:50Z",
       "status": 404,
+      "transport_error": null
+    },
+    "https://modal.com/geo-audit-probe-a6c6b6b8db1be9b51fc6a8af": {
+      "body_storage": "full",
+      "bytes": 57015,
+      "comment": "画廊 · www 根路径（对照探针）",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 57015,
+        "raw_md5": "e1566c101544c4a34b82227e89900784"
+      },
+      "handwritten": false,
+      "path": "snapshots/modal.com/geo-audit-probe-a6c6b6b8db1be9b51fc6a8af-7bcc1018",
+      "probe_for": null,
+      "raw_md5": "e1566c101544c4a34b82227e89900784",
+      "recorded_at": "2026-09-07T14:23:51Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://modal.com/llms-full.txt": {
+      "body_storage": "truncated",
+      "bytes": 2292505,
+      "comment": "--url 补录",
+      "content_type": "text/plain",
+      "drift": null,
+      "expect": {
+        "bytes": 2292505,
+        "raw_md5": "329861ff92b9280b4aca2d46418eca1e"
+      },
+      "handwritten": false,
+      "path": "snapshots/modal.com/llms-full.txt-6785f91c",
+      "probe_for": null,
+      "raw_md5": "329861ff92b9280b4aca2d46418eca1e",
+      "recorded_at": "2026-09-07T14:52:15Z",
+      "status": 200,
       "transport_error": null
     },
     "https://modal.com/llms.txt": {
@@ -5851,6 +6733,114 @@
       "raw_md5": "851caf3ad0a491074faddd01304ecdd5",
       "recorded_at": "2026-09-07T12:41:53Z",
       "status": 200,
+      "transport_error": null
+    },
+    "https://modal.com/sitemap-index.xml": {
+      "body_storage": "full",
+      "bytes": 57015,
+      "comment": "--url 补录",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 57015,
+        "raw_md5": "41824ab7e41654c1185a438e60ee604a"
+      },
+      "handwritten": false,
+      "path": "snapshots/modal.com/sitemap-index.xml-289fc08c",
+      "probe_for": null,
+      "raw_md5": "41824ab7e41654c1185a438e60ee604a",
+      "recorded_at": "2026-09-07T14:53:27Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://modal.com/sitemap.xml": {
+      "body_storage": "full",
+      "bytes": 57015,
+      "comment": "--url 补录",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 57015,
+        "raw_md5": "64fff3b3d694cd65a8581964c70f90ee"
+      },
+      "handwritten": false,
+      "path": "snapshots/modal.com/sitemap.xml-e744c273",
+      "probe_for": null,
+      "raw_md5": "64fff3b3d694cd65a8581964c70f90ee",
+      "recorded_at": "2026-09-07T14:52:38Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://modal.com/sitemap_index.xml": {
+      "body_storage": "full",
+      "bytes": 57015,
+      "comment": "--url 补录",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 57015,
+        "raw_md5": "da4022ed0c89f1c173ad03fbda5204d6"
+      },
+      "handwritten": false,
+      "path": "snapshots/modal.com/sitemap_index.xml-d5153f99",
+      "probe_for": null,
+      "raw_md5": "da4022ed0c89f1c173ad03fbda5204d6",
+      "recorded_at": "2026-09-07T14:53:02Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://openstatus.dev/": {
+      "body_storage": "full",
+      "bytes": 141,
+      "comment": "--url 补录",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 141,
+        "raw_md5": "f5264fe5c4c7f10d66697ea5709a6743"
+      },
+      "handwritten": false,
+      "path": "snapshots/openstatus.dev/index-4a31f87d",
+      "probe_for": null,
+      "raw_md5": "f5264fe5c4c7f10d66697ea5709a6743",
+      "recorded_at": "2026-09-07T14:04:33Z",
+      "status": 308,
+      "transport_error": null
+    },
+    "https://openstatus.dev/geo-audit-probe-695299ca2c3bdb82d1fceb2f": {
+      "body_storage": "full",
+      "bytes": 181,
+      "comment": "画廊 · apex 根路径（对照探针）",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 181,
+        "raw_md5": "0c27e58c17b44ef0fc77b826f5d11fe7"
+      },
+      "handwritten": false,
+      "path": "snapshots/openstatus.dev/geo-audit-probe-695299ca2c3bdb82d1fceb2f-f6d1e738",
+      "probe_for": "https://openstatus.dev/",
+      "raw_md5": "0c27e58c17b44ef0fc77b826f5d11fe7",
+      "recorded_at": "2026-09-07T14:24:01Z",
+      "status": 308,
+      "transport_error": null
+    },
+    "https://openstatus.dev/robots.txt": {
+      "body_storage": "full",
+      "bytes": 15,
+      "comment": "--url 补录",
+      "content_type": "text/plain",
+      "drift": null,
+      "expect": {
+        "bytes": 15,
+        "raw_md5": "42c939d0ba4bbdc4c7eab1b5c34aaf71"
+      },
+      "handwritten": false,
+      "path": "snapshots/openstatus.dev/robots.txt-2ce7e567",
+      "probe_for": null,
+      "raw_md5": "42c939d0ba4bbdc4c7eab1b5c34aaf71",
+      "recorded_at": "2026-09-07T14:04:27Z",
+      "status": 308,
       "transport_error": null
     },
     "https://platform.kimi.ai/console": {
@@ -6375,6 +7365,132 @@
       "status": 200,
       "transport_error": null
     },
+    "https://rustdesk.com/blog": {
+      "body_storage": "full",
+      "bytes": 178,
+      "comment": "--url 补录",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 178,
+        "raw_md5": "bd2695f4b079c71dbddde3436286fb9c"
+      },
+      "handwritten": false,
+      "path": "snapshots/rustdesk.com/blog-60ea2e00",
+      "probe_for": null,
+      "raw_md5": "bd2695f4b079c71dbddde3436286fb9c",
+      "recorded_at": "2026-09-07T15:24:39Z",
+      "status": 301,
+      "transport_error": null
+    },
+    "https://rustdesk.com/blog/": {
+      "body_storage": "full",
+      "bytes": 56957,
+      "comment": "--url 补录",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 56957,
+        "raw_md5": "08dbeba2ca42af3a70d62860946e76f8"
+      },
+      "handwritten": false,
+      "path": "snapshots/rustdesk.com/blog-bd85d7a9",
+      "probe_for": null,
+      "raw_md5": "08dbeba2ca42af3a70d62860946e76f8",
+      "recorded_at": "2026-09-07T15:24:41Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://rustdesk.com/docs/de/sitemap.xml": {
+      "body_storage": "full",
+      "bytes": 76237,
+      "comment": "--url 补录",
+      "content_type": "text/xml",
+      "drift": null,
+      "expect": {
+        "bytes": 76237,
+        "raw_md5": "b8255d54155d90aae9bc3042d28a5b3e"
+      },
+      "handwritten": false,
+      "path": "snapshots/rustdesk.com/docs-de-sitemap.xml-8ce6ce77",
+      "probe_for": null,
+      "raw_md5": "b8255d54155d90aae9bc3042d28a5b3e",
+      "recorded_at": "2026-09-07T15:20:57Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://rustdesk.com/docs/en/sitemap.xml": {
+      "body_storage": "full",
+      "bytes": 76237,
+      "comment": "--url 补录",
+      "content_type": "text/xml",
+      "drift": null,
+      "expect": {
+        "bytes": 76237,
+        "raw_md5": "8b2989a4fd5f746094f43ed400210d42"
+      },
+      "handwritten": false,
+      "path": "snapshots/rustdesk.com/docs-en-sitemap.xml-8b6fac89",
+      "probe_for": null,
+      "raw_md5": "8b2989a4fd5f746094f43ed400210d42",
+      "recorded_at": "2026-09-07T15:19:36Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://rustdesk.com/docs/es/sitemap.xml": {
+      "body_storage": "full",
+      "bytes": 76237,
+      "comment": "--url 补录",
+      "content_type": "text/xml",
+      "drift": null,
+      "expect": {
+        "bytes": 76237,
+        "raw_md5": "95d99cdf9430b30b448250089d8b62c4"
+      },
+      "handwritten": false,
+      "path": "snapshots/rustdesk.com/docs-es-sitemap.xml-4cb7c4da",
+      "probe_for": null,
+      "raw_md5": "95d99cdf9430b30b448250089d8b62c4",
+      "recorded_at": "2026-09-07T15:20:01Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://rustdesk.com/docs/ro/sitemap.xml": {
+      "body_storage": "full",
+      "bytes": 76237,
+      "comment": "--url 补录",
+      "content_type": "text/xml",
+      "drift": null,
+      "expect": {
+        "bytes": 76237,
+        "raw_md5": "8995ae2da7ee9ee112898f8d3b701e0c"
+      },
+      "handwritten": false,
+      "path": "snapshots/rustdesk.com/docs-ro-sitemap.xml-34f732d3",
+      "probe_for": null,
+      "raw_md5": "8995ae2da7ee9ee112898f8d3b701e0c",
+      "recorded_at": "2026-09-07T15:20:28Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://rustdesk.com/docs/sitemap.xml": {
+      "body_storage": "full",
+      "bytes": 1510,
+      "comment": "--url 补录",
+      "content_type": "text/xml",
+      "drift": null,
+      "expect": {
+        "bytes": 1510,
+        "raw_md5": "62d4396d25ff401780688d6025f35c5d"
+      },
+      "handwritten": false,
+      "path": "snapshots/rustdesk.com/docs-sitemap.xml-f8fac87c",
+      "probe_for": null,
+      "raw_md5": "62d4396d25ff401780688d6025f35c5d",
+      "recorded_at": "2026-09-07T15:19:13Z",
+      "status": 200,
+      "transport_error": null
+    },
     "https://rustdesk.com/geo-audit-probe-3ef2323dbc30f201606a7e1a.txt": {
       "body_storage": "full",
       "bytes": 17260,
@@ -6429,6 +7545,78 @@
       "status": 200,
       "transport_error": null
     },
+    "https://rustdesk.com/open-source": {
+      "body_storage": "full",
+      "bytes": 178,
+      "comment": "--url 补录",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 178,
+        "raw_md5": "bd2695f4b079c71dbddde3436286fb9c"
+      },
+      "handwritten": false,
+      "path": "snapshots/rustdesk.com/open-source-ecd0d1f3",
+      "probe_for": null,
+      "raw_md5": "bd2695f4b079c71dbddde3436286fb9c",
+      "recorded_at": "2026-09-07T15:22:56Z",
+      "status": 301,
+      "transport_error": null
+    },
+    "https://rustdesk.com/open-source/": {
+      "body_storage": "full",
+      "bytes": 34404,
+      "comment": "--url 补录",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 34404,
+        "raw_md5": "7c8a53363de5b8a1b4c08c76ca4d8024"
+      },
+      "handwritten": false,
+      "path": "snapshots/rustdesk.com/open-source-34eebec6",
+      "probe_for": null,
+      "raw_md5": "7c8a53363de5b8a1b4c08c76ca4d8024",
+      "recorded_at": "2026-09-07T15:22:59Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://rustdesk.com/pricing": {
+      "body_storage": "full",
+      "bytes": 178,
+      "comment": "--url 补录",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 178,
+        "raw_md5": "bd2695f4b079c71dbddde3436286fb9c"
+      },
+      "handwritten": false,
+      "path": "snapshots/rustdesk.com/pricing-46745e39",
+      "probe_for": null,
+      "raw_md5": "bd2695f4b079c71dbddde3436286fb9c",
+      "recorded_at": "2026-09-07T15:21:29Z",
+      "status": 301,
+      "transport_error": null
+    },
+    "https://rustdesk.com/pricing/": {
+      "body_storage": "full",
+      "bytes": 111459,
+      "comment": "--url 补录",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 111459,
+        "raw_md5": "344c712a064e820f2d0a78693f17efd0"
+      },
+      "handwritten": false,
+      "path": "snapshots/rustdesk.com/pricing-937edc21",
+      "probe_for": null,
+      "raw_md5": "344c712a064e820f2d0a78693f17efd0",
+      "recorded_at": "2026-09-07T15:21:32Z",
+      "status": 200,
+      "transport_error": null
+    },
     "https://rustdesk.com/robots.txt": {
       "body_storage": "full",
       "bytes": 507,
@@ -6444,6 +7632,114 @@
       "probe_for": null,
       "raw_md5": "67157096db84d14ae86f58d2da4585eb",
       "recorded_at": "2026-09-07T12:41:55Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://rustdesk.com/sitemap-0.xml": {
+      "body_storage": "full",
+      "bytes": 47086,
+      "comment": "--url 补录",
+      "content_type": "text/xml",
+      "drift": null,
+      "expect": {
+        "bytes": 47086,
+        "raw_md5": "c4b1dbe365e6ebf3335d826d1f0b2382"
+      },
+      "handwritten": false,
+      "path": "snapshots/rustdesk.com/sitemap-0.xml-56770744",
+      "probe_for": null,
+      "raw_md5": "c4b1dbe365e6ebf3335d826d1f0b2382",
+      "recorded_at": "2026-09-07T15:18:52Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://rustdesk.com/sitemap-index.xml": {
+      "body_storage": "full",
+      "bytes": 183,
+      "comment": "--url 补录",
+      "content_type": "text/xml",
+      "drift": null,
+      "expect": {
+        "bytes": 183,
+        "raw_md5": "ab05184796ec3639490e6cf8d0b5111a"
+      },
+      "handwritten": false,
+      "path": "snapshots/rustdesk.com/sitemap-index.xml-1a1ddd65",
+      "probe_for": null,
+      "raw_md5": "ab05184796ec3639490e6cf8d0b5111a",
+      "recorded_at": "2026-09-07T15:18:31Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://rustdesk.com/support": {
+      "body_storage": "full",
+      "bytes": 178,
+      "comment": "--url 补录",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 178,
+        "raw_md5": "bd2695f4b079c71dbddde3436286fb9c"
+      },
+      "handwritten": false,
+      "path": "snapshots/rustdesk.com/support-b9fea541",
+      "probe_for": null,
+      "raw_md5": "bd2695f4b079c71dbddde3436286fb9c",
+      "recorded_at": "2026-09-07T15:22:11Z",
+      "status": 301,
+      "transport_error": null
+    },
+    "https://rustdesk.com/support/": {
+      "body_storage": "full",
+      "bytes": 41152,
+      "comment": "--url 补录",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 41152,
+        "raw_md5": "b7d0bdaf8c6f2dfdf141564ff6d2e224"
+      },
+      "handwritten": false,
+      "path": "snapshots/rustdesk.com/support-0705eb66",
+      "probe_for": null,
+      "raw_md5": "b7d0bdaf8c6f2dfdf141564ff6d2e224",
+      "recorded_at": "2026-09-07T15:22:15Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://rustdesk.com/team": {
+      "body_storage": "full",
+      "bytes": 178,
+      "comment": "--url 补录",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 178,
+        "raw_md5": "bd2695f4b079c71dbddde3436286fb9c"
+      },
+      "handwritten": false,
+      "path": "snapshots/rustdesk.com/team-45ff2f45",
+      "probe_for": null,
+      "raw_md5": "bd2695f4b079c71dbddde3436286fb9c",
+      "recorded_at": "2026-09-07T15:23:45Z",
+      "status": 301,
+      "transport_error": null
+    },
+    "https://rustdesk.com/team/": {
+      "body_storage": "full",
+      "bytes": 42813,
+      "comment": "--url 补录",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 42813,
+        "raw_md5": "fb0c1a3b5d7fbf21d02b089db35cbd8c"
+      },
+      "handwritten": false,
+      "path": "snapshots/rustdesk.com/team-6b343a07",
+      "probe_for": null,
+      "raw_md5": "fb0c1a3b5d7fbf21d02b089db35cbd8c",
+      "recorded_at": "2026-09-07T15:23:49Z",
       "status": 200,
       "transport_error": null
     },
@@ -9724,6 +11020,114 @@
       "status": 307,
       "transport_error": null
     },
+    "https://www.mistral.ai/": {
+      "body_storage": "full",
+      "bytes": 167,
+      "comment": "--url 补录",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 167,
+        "raw_md5": "0104c301c5e02bd6148b8703d19b3a73"
+      },
+      "handwritten": false,
+      "path": "snapshots/www.mistral.ai/index-043b9d91",
+      "probe_for": null,
+      "raw_md5": "0104c301c5e02bd6148b8703d19b3a73",
+      "recorded_at": "2026-09-07T14:26:49Z",
+      "status": 301,
+      "transport_error": null
+    },
+    "https://www.mistral.ai/geo-audit-probe-c01164cffffc3ae28097f6c3": {
+      "body_storage": "full",
+      "bytes": 167,
+      "comment": "",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 167,
+        "raw_md5": "0104c301c5e02bd6148b8703d19b3a73"
+      },
+      "handwritten": false,
+      "path": "snapshots/www.mistral.ai/geo-audit-probe-c01164cffffc3ae28097f6c3-85b6cd3e",
+      "probe_for": "https://www.mistral.ai/",
+      "raw_md5": "0104c301c5e02bd6148b8703d19b3a73",
+      "recorded_at": "2026-09-07T14:41:50Z",
+      "status": 301,
+      "transport_error": null
+    },
+    "https://www.mistral.ai/robots.txt": {
+      "body_storage": "full",
+      "bytes": 167,
+      "comment": "--url 补录",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 167,
+        "raw_md5": "0104c301c5e02bd6148b8703d19b3a73"
+      },
+      "handwritten": false,
+      "path": "snapshots/www.mistral.ai/robots.txt-f562c1ec",
+      "probe_for": null,
+      "raw_md5": "0104c301c5e02bd6148b8703d19b3a73",
+      "recorded_at": "2026-09-07T14:26:33Z",
+      "status": 301,
+      "transport_error": null
+    },
+    "https://www.modal.com/": {
+      "body_storage": "full",
+      "bytes": 0,
+      "comment": "--url 补录",
+      "content_type": "",
+      "drift": null,
+      "expect": {
+        "bytes": 0,
+        "raw_md5": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      "handwritten": false,
+      "path": "snapshots/www.modal.com/index-905dff90",
+      "probe_for": null,
+      "raw_md5": "d41d8cd98f00b204e9800998ecf8427e",
+      "recorded_at": "2026-09-07T14:03:50Z",
+      "status": 301,
+      "transport_error": null
+    },
+    "https://www.modal.com/geo-audit-probe-a6c6b6b8db1be9b51fc6a8af": {
+      "body_storage": "full",
+      "bytes": 0,
+      "comment": "画廊 · www 根路径（对照探针）",
+      "content_type": "",
+      "drift": null,
+      "expect": {
+        "bytes": 0,
+        "raw_md5": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      "handwritten": false,
+      "path": "snapshots/www.modal.com/geo-audit-probe-a6c6b6b8db1be9b51fc6a8af-f75b0087",
+      "probe_for": "https://www.modal.com/",
+      "raw_md5": "d41d8cd98f00b204e9800998ecf8427e",
+      "recorded_at": "2026-09-07T14:23:47Z",
+      "status": 301,
+      "transport_error": null
+    },
+    "https://www.modal.com/robots.txt": {
+      "body_storage": "full",
+      "bytes": 0,
+      "comment": "--url 补录",
+      "content_type": "",
+      "drift": null,
+      "expect": {
+        "bytes": 0,
+        "raw_md5": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      "handwritten": false,
+      "path": "snapshots/www.modal.com/robots.txt-324b3c66",
+      "probe_for": null,
+      "raw_md5": "d41d8cd98f00b204e9800998ecf8427e",
+      "recorded_at": "2026-09-07T14:03:39Z",
+      "status": 301,
+      "transport_error": null
+    },
     "https://www.moonshot.ai/": {
       "body_storage": "full",
       "bytes": 82414,
@@ -9814,6 +11218,24 @@
       "status": 403,
       "transport_error": null
     },
+    "https://www.openstatus.dev/": {
+      "body_storage": "full",
+      "bytes": 186740,
+      "comment": "--url 补录",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 186740,
+        "raw_md5": "8048cd3b99ea7a35948e559421acc8c4"
+      },
+      "handwritten": false,
+      "path": "snapshots/www.openstatus.dev/index-61e41695",
+      "probe_for": null,
+      "raw_md5": "8048cd3b99ea7a35948e559421acc8c4",
+      "recorded_at": "2026-09-07T14:04:35Z",
+      "status": 200,
+      "transport_error": null
+    },
     "https://www.openstatus.dev/docs": {
       "body_storage": "full",
       "bytes": 80552,
@@ -9830,6 +11252,24 @@
       "raw_md5": "b62be6385529faa5b917c717fe353652",
       "recorded_at": "2026-09-07T12:38:23Z",
       "status": 200,
+      "transport_error": null
+    },
+    "https://www.openstatus.dev/geo-audit-probe-695299ca2c3bdb82d1fceb2f": {
+      "body_storage": "full",
+      "bytes": 28193,
+      "comment": "画廊 · apex 根路径（对照探针）",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 28193,
+        "raw_md5": "04df75a7a25e011eea43f2678ba3ee73"
+      },
+      "handwritten": false,
+      "path": "snapshots/www.openstatus.dev/geo-audit-probe-695299ca2c3bdb82d1fceb2f-d5899e1c",
+      "probe_for": null,
+      "raw_md5": "04df75a7a25e011eea43f2678ba3ee73",
+      "recorded_at": "2026-09-07T14:24:09Z",
+      "status": 404,
       "transport_error": null
     },
     "https://www.openstatus.dev/llms-full.txt": {
@@ -9865,6 +11305,24 @@
       "probe_for": null,
       "raw_md5": "f11c8b6ace0e9205764703e9f9845e50",
       "recorded_at": "2026-09-07T12:22:26Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://www.openstatus.dev/robots.txt": {
+      "body_storage": "full",
+      "bytes": 485,
+      "comment": "--url 补录",
+      "content_type": "text/markdown",
+      "drift": null,
+      "expect": {
+        "bytes": 485,
+        "raw_md5": "d69c57246287c554f56097ed66505905"
+      },
+      "handwritten": false,
+      "path": "snapshots/www.openstatus.dev/robots.txt-05e03c82",
+      "probe_for": null,
+      "raw_md5": "d69c57246287c554f56097ed66505905",
+      "recorded_at": "2026-09-07T14:04:30Z",
       "status": 404,
       "transport_error": null
     },
@@ -10244,6 +11702,60 @@
       "raw_md5": "8683a9a79f17459855a4b86426d9735d",
       "recorded_at": "2026-09-07T12:36:42Z",
       "status": 404,
+      "transport_error": null
+    },
+    "https://www.rustdesk.com/": {
+      "body_storage": "full",
+      "bytes": 77843,
+      "comment": "--url 补录",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 77843,
+        "raw_md5": "8a7f9f61a161395ec15f6953d12999c5"
+      },
+      "handwritten": false,
+      "path": "snapshots/www.rustdesk.com/index-626ea1ab",
+      "probe_for": null,
+      "raw_md5": "8a7f9f61a161395ec15f6953d12999c5",
+      "recorded_at": "2026-09-07T14:04:18Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://www.rustdesk.com/geo-audit-probe-ad22a894030080734fdc7b35": {
+      "body_storage": "full",
+      "bytes": 17260,
+      "comment": "画廊 · www 根路径（对照探针）",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 17260,
+        "raw_md5": "13244361354e152ab13a6dc138aa276b"
+      },
+      "handwritten": false,
+      "path": "snapshots/www.rustdesk.com/geo-audit-probe-ad22a894030080734fdc7b35-a749a614",
+      "probe_for": "https://www.rustdesk.com/",
+      "raw_md5": "13244361354e152ab13a6dc138aa276b",
+      "recorded_at": "2026-09-07T14:23:55Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://www.rustdesk.com/robots.txt": {
+      "body_storage": "full",
+      "bytes": 507,
+      "comment": "--url 补录",
+      "content_type": "text/plain",
+      "drift": null,
+      "expect": {
+        "bytes": 507,
+        "raw_md5": "67157096db84d14ae86f58d2da4585eb"
+      },
+      "handwritten": false,
+      "path": "snapshots/www.rustdesk.com/robots.txt-c90e89bb",
+      "probe_for": null,
+      "raw_md5": "67157096db84d14ae86f58d2da4585eb",
+      "recorded_at": "2026-09-07T14:04:09Z",
+      "status": 200,
       "transport_error": null
     },
     "https://www.shopify.com/": {

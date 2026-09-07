@@ -1,0 +1,27 @@
+{
+  "body_bytes": 167,
+  "body_file": "snapshots/www.mistral.ai/geo-audit-probe-c01164cffffc3ae28097f6c3-85b6cd3e.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://www.mistral.ai/geo-audit-probe-c01164cffffc3ae28097f6c3",
+  "handwritten": false,
+  "headers": {
+    "alt-svc": "h3=\":443\"; ma=86400",
+    "cf-ray": "a3767a018fb5834e-SIN",
+    "connection": "keep-alive",
+    "content-length": "167",
+    "content-type": "text/html; charset=UTF-8",
+    "date": "Mon, 07 Sep 2026 14:41:50 GMT",
+    "location": "https://mistral.ai/geo-audit-probe-c01164cffffc3ae28097f6c3",
+    "server": "cloudflare",
+    "strict-transport-security": "max-age=15552000; includeSubDomains; preload",
+    "x-content-type-options": "nosniff"
+  },
+  "note": null,
+  "probe_for": "https://www.mistral.ai/",
+  "raw_md5": "0104c301c5e02bd6148b8703d19b3a73",
+  "recorded_at": "2026-09-07T14:41:50Z",
+  "status": 301,
+  "stored_bytes": 167,
+  "transport_error": null,
+  "url": "https://www.mistral.ai/geo-audit-probe-c01164cffffc3ae28097f6c3"
+}

@@ -1,0 +1,31 @@
+{
+  "body_bytes": 17260,
+  "body_file": "snapshots/www.rustdesk.com/geo-audit-probe-ad22a894030080734fdc7b35-a749a614.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://www.rustdesk.com/geo-audit-probe-ad22a894030080734fdc7b35",
+  "handwritten": false,
+  "headers": {
+    "cf-cache-status": "DYNAMIC",
+    "cf-ray": "a3765fc35aa88900-LAX",
+    "connection": "keep-alive",
+    "content-encoding": "gzip",
+    "content-security-policy": "upgrade-insecure-requests",
+    "content-type": "text/html",
+    "date": "Mon, 07 Sep 2026 14:23:55 GMT",
+    "permissions-policy": "geolocation=(), camera=(), microphone=(), autoplay=(), interest-cohort=()",
+    "server": "cloudflare",
+    "strict-transport-security": "max-age=31536000; includeSubDomains; preload",
+    "transfer-encoding": "chunked",
+    "vary": "Accept-Encoding",
+    "x-content-type-options": "nosniff",
+    "x-frame-options": "SAMEORIGIN"
+  },
+  "note": null,
+  "probe_for": "https://www.rustdesk.com/",
+  "raw_md5": "13244361354e152ab13a6dc138aa276b",
+  "recorded_at": "2026-09-07T14:23:55Z",
+  "status": 404,
+  "stored_bytes": 17260,
+  "transport_error": null,
+  "url": "https://www.rustdesk.com/geo-audit-probe-ad22a894030080734fdc7b35"
+}

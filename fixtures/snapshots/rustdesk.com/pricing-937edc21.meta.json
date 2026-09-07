@@ -1,0 +1,33 @@
+{
+  "body_bytes": 111459,
+  "body_file": "snapshots/rustdesk.com/pricing-937edc21.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://rustdesk.com/pricing/",
+  "handwritten": false,
+  "headers": {
+    "cache-control": "public, max-age=86400, must-revalidate",
+    "cf-cache-status": "DYNAMIC",
+    "cf-ray": "a376b4241e6a3050-LAX",
+    "connection": "keep-alive",
+    "content-encoding": "gzip",
+    "content-security-policy": "upgrade-insecure-requests",
+    "content-type": "text/html",
+    "date": "Mon, 07 Sep 2026 15:21:31 GMT",
+    "last-modified": "Mon, 17 Aug 2026 02:39:17 GMT",
+    "permissions-policy": "geolocation=(), camera=(), microphone=(), autoplay=(), interest-cohort=()",
+    "server": "cloudflare",
+    "strict-transport-security": "max-age=31536000; includeSubDomains; preload",
+    "transfer-encoding": "chunked",
+    "vary": "Accept-Encoding",
+    "x-content-type-options": "nosniff",
+    "x-frame-options": "SAMEORIGIN"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "344c712a064e820f2d0a78693f17efd0",
+  "recorded_at": "2026-09-07T15:21:32Z",
+  "status": 200,
+  "stored_bytes": 111459,
+  "transport_error": null,
+  "url": "https://rustdesk.com/pricing/"
+}

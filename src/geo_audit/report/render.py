@@ -223,6 +223,45 @@ def our_copy_corpus(report: Report) -> str:
     return "\n".join(parts)
 
 
+#: 只对整份产物跑的三条（`_FORBIDDEN` 的前三条）。它们不会被甲方 CSS 值误触发，
+#: 而且甲方数据里真出现 `<script src=...>` 是必须报的 —— 那不是「引用了外部
+#: 资源」，是我们的转义漏了。
+_EXTERNAL_REF = _FORBIDDEN[:3]
+
+
+def _our_markup(report: object = None) -> str:
+    """「我们自己写的那部分标记」= 模板源文 + CSS 源文。
+
+    与 `our_copy_corpus` 同一个定义方式：**源文才是我们写的字**，渲染结果里混着
+    甲方回显的数据。第一版试图用 `data-customer` 标记从产物里挖掉甲方区 ——
+    模板里那个标记根本不存在（`grep -c data-customer template.html.j2` = 0），
+    所以那版实现完全没生效。改成扫源文，判据确定且不需要动模板。
+
+    扫源文的另一个好处：`@import` 与 `url(http` 就算只出现在**未被渲染的分支**
+    里（比如某个 `{% if %}` 平时走不到），照样当场被挡。
+    """
+    del report  # 签名留一个位置，将来若要按报告内容收窄扫描面
+    files = res.files(_PACKAGE)
+    return (
+        files.joinpath("template.html.j2").read_text("utf-8")
+        + "\n"
+        + files.joinpath("report.css").read_text("utf-8")
+    )
+
+
+def assert_no_external_refs(html: str) -> None:
+    """对**整份产物**跑 `_FORBIDDEN` 的前三条（外链 stylesheet / script src / img src=http）。
+
+    这三条与后两条的区别：后两条（`@import` / `url(http`）会被甲方的 CSS 值
+    误触发，前三条不会 —— 而且甲方数据里真冒出一个 `<script src=...>`，
+    那不是「引用了外部资源」而是我们的转义漏了，必须当场红。
+    """
+    for pattern in _EXTERNAL_REF:
+        m = pattern.search(html)
+        if m is not None:
+            raise AssertionError(f"报告不自包含：命中 {pattern.pattern!r} —— {m.group(0)[:80]!r}")
+
+
 def _defang(html: str) -> str:
     """见模块 docstring 裁决二。渲染后跑一次，然后才做自包含校验。"""
     for pattern, repl in _DEFANG:
@@ -387,10 +426,26 @@ def render_html(report: Report) -> str:
         core_positions=max(report.counts.positions - report.counts.positions_na, 1),
         links_capped=_links_capped(report),
     )
-    html = _defang(html)
-    assert_selfcontained(html)  # 渲染即校验
+    # ── 顺序很要紧：**先校验、后 defang** ────────────────────────────────────
+    #
+    # 原来是 `_defang(html)` 再 `assert_selfcontained(html)`，那让闸门自己失效了：
+    # _defang 是对整份产物的全局无差别替换，跑完之后 _FORBIDDEN 的第 4 条
+    # （@import）与第 5 条（url(http）**结构性地不可能再触发** —— 不管那两个字节
+    # 序列来自甲方数据还是来自我们自己的疏漏。一个永远不会红的断言不是闸门。
+    #
+    # 现在的分工：
+    #   1. assert_selfcontained 扫**我们自己生成的那部分**（_our_markup），
+    #      甲方数据区被替换成占位后再扫 —— 于是我们在 CSS 里写一句 @import
+    #      当场被挡，甲方 inline_style 里的 url(https://cdn/hero.png) 零误伤。
+    #      这跟 assert_no_banned_words 的裁决是同一个思路（扫描面而非规则）。
+    #   2. 全份产物再扫一遍前三条（外链 stylesheet / script src / img src=http）
+    #      —— 这三条不会被甲方 CSS 值误触发，所以对整份跑是安全且必要的：
+    #      甲方数据里真出现 <script src=...> 是必须报的，那已经不是「引用」。
+    #   3. 最后才 defang，只为让浏览器端不去解析甲方 CSS 值里的 url()。
+    assert_selfcontained(_our_markup())
+    assert_no_external_refs(html)
     assert_no_banned_words(our_copy_corpus(report))  # 禁词表在渲染期生效
-    return html
+    return _defang(html)
 
 
 __all__ = [
@@ -403,6 +458,7 @@ __all__ = [
     "Report",
     "assert_counts_identity",
     "assert_no_banned_words",
+    "assert_no_external_refs",
     "assert_selfcontained",
     "group_by_root_cause",
     "our_copy_corpus",

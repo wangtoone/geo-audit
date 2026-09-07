@@ -1,0 +1,32 @@
+{
+  "body_bytes": 485,
+  "body_file": "snapshots/www.openstatus.dev/robots.txt-05e03c82.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://www.openstatus.dev/robots.txt",
+  "handwritten": false,
+  "headers": {
+    "age": "0",
+    "cache-control": "public, max-age=60",
+    "content-encoding": "gzip",
+    "content-security-policy": "frame-ancestors 'self' https://shoogle.dev",
+    "content-type": "text/markdown; charset=utf-8",
+    "date": "Mon, 07 Sep 2026 14:04:31 GMT",
+    "server": "Vercel",
+    "strict-transport-security": "max-age=63072000",
+    "transfer-encoding": "chunked",
+    "vary": "Accept, Accept-Encoding",
+    "x-content-source": "not-found",
+    "x-matched-path": "/api/markdown/[[...path]]",
+    "x-nextjs-rewritten-path": "/api/markdown/robots.txt",
+    "x-vercel-cache": "MISS",
+    "x-vercel-id": "sin1::sin1::chpk5-1788789869856-a78303d824ac"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "d69c57246287c554f56097ed66505905",
+  "recorded_at": "2026-09-07T14:04:30Z",
+  "status": 404,
+  "stored_bytes": 485,
+  "transport_error": null,
+  "url": "https://www.openstatus.dev/robots.txt"
+}

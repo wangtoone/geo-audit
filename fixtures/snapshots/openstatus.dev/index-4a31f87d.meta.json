@@ -1,0 +1,26 @@
+{
+  "body_bytes": 141,
+  "body_file": "snapshots/openstatus.dev/index-4a31f87d.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://openstatus.dev/",
+  "handwritten": false,
+  "headers": {
+    "cache-control": "public, max-age=0, must-revalidate",
+    "content-type": "text/html",
+    "date": "Mon, 07 Sep 2026 14:04:33 GMT",
+    "location": "https://www.openstatus.dev/",
+    "refresh": "0;url=https://www.openstatus.dev/",
+    "server": "Vercel",
+    "strict-transport-security": "max-age=63072000",
+    "transfer-encoding": "chunked",
+    "x-vercel-id": "sin1::gtfz2-1788789873720-a06c56933a59"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "f5264fe5c4c7f10d66697ea5709a6743",
+  "recorded_at": "2026-09-07T14:04:33Z",
+  "status": 308,
+  "stored_bytes": 141,
+  "transport_error": null,
+  "url": "https://openstatus.dev/"
+}

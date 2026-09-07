@@ -194,11 +194,15 @@ INTERRUPT_BANNER_TEMPLATE = (
 # --------------------------------------------------------------------------- #
 
 
-class Cancelled(Exception):  # noqa: N818 —— §7.5:3535 指名这个类名
+# ruff 的 N818 要求异常类名以 Error 结尾。这一条**只对 Cancelled 例外**：
+# 规格 §7.5:3545 逐字写的就是 `class Cancelled(Exception): ...`，而铁律 8 要求
+# 规格给了具体名字的照抄。姊妹类 DomainUnreachableError 没有这层背书，已按 N818 改名
+# （同轮的 json_out.py 遇到同一条规则也是选择改名成 SchemaMismatchError）。
+class Cancelled(Exception):  # noqa: N818 —— 规格 §7.5:3545 逐字指名，见上方注释
     """协作式取消：取消标志置起后，下一个请求发出前抛它。"""
 
 
-class DomainUnreachable(Exception):  # noqa: N818 —— 与 Cancelled 同款命名
+class DomainUnreachableError(Exception):
     """apex 与 www 都解析失败或连不上（退出码 3，**不生成报告**）。"""
 
 
@@ -921,7 +925,12 @@ def build_fetcher(
         read_timeout=options.timeout,
         respect_robots=not options.ignore_robots,
     )
-    inner: httpx.BaseTransport = store.transport() if store is not None else httpx.HTTPTransport()
+    # strict=False：站内抓到的链接是无穷集，缺快照返回 599 走 UNKNOWN。
+    # 探测集里的固定位置由 store.probe_url() / FixtureResolver 各自的 strict 检查守着，
+    # 那些缺了照样红 —— 区别是「我们 fixture 不全」还是「站内链接没录过」。
+    inner: httpx.BaseTransport = (
+        store.transport(strict=False) if store is not None else httpx.HTTPTransport()
+    )
     transport = StopTransport(inner, stop, before_request=before_request, counter=counter)
     cache = HttpCache(path=cache_path(options), ua_profile=build_user_agent(options.contact))
     return Fetcher(
@@ -929,7 +938,14 @@ def build_fetcher(
         cache,
         InterruptibleLimiter(options.interval, stop),
         transport=transport,
-        probe_url_provider=store.probe_url if store is not None else None,
+        # 宽容版：从没出现在实测里的子域缺对照探针是正常的，
+        # 那个位置判 UNKNOWN（control_unavailable），不该让整份报告产不出来。
+        probe_url_provider=store.probe_url_lenient if store is not None else None,
+        # **必须传**：Fetcher 在传输失败时自己会做一次 resolve.R1–R4 的 DNS 二次
+        # 确认，那条路径不经过 discover(resolver=...)。不传的话 --replay-fixtures
+        # 在离线下会撞断网闸（实测 mistral.ai 就是这么崩的）。
+        # 上一轮给 Fetcher 加了注入点、也给 fp_gate 接上了，唯独漏了这个生产调用侧。
+        resolver=store.resolver() if store is not None else None,
     )
 
 
@@ -1692,7 +1708,7 @@ def audit_domain(
     ``UNKNOWN(interrupted)`` → ``coverage.interrupted = True`` →
     ``verdict_kind = "unusable"`` → CLI 退出 130。
 
-    apex 与 www 都不可达 → 抛 :class:`DomainUnreachable`（退出码 3，不生成报告）。
+    apex 与 www 都不可达 → 抛 :class:`DomainUnreachableError`（退出码 3，不生成报告）。
     """
     st = state or RunState()
     prog = progress or NullProgress()
@@ -1765,7 +1781,9 @@ def _run_stages(
     )
     st.sitemap = sitemap
     if domain_unreachable(sitemap):
-        raise DomainUnreachable(f"{options.domain}：apex 与 www 都解析失败或连不上，不生成报告。")
+        raise DomainUnreachableError(
+            f"{options.domain}：apex 与 www 都解析失败或连不上，不生成报告。"
+        )
     st.controls = _controls_of(fetcher, sitemap)
     seed_pages = seed_page_urls(sitemap, options.seeds)
     # 骨架就位（先建后填）：这一步之后格数不再变化。
@@ -1827,7 +1845,7 @@ __all__ = [
     "Counts",
     "Coverage",
     "CoverageGap",
-    "DomainUnreachable",
+    "DomainUnreachableError",
     "Exclusion",
     "Fragility",
     "InterruptibleLimiter",

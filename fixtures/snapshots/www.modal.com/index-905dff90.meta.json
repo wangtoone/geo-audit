@@ -1,0 +1,27 @@
+{
+  "body_bytes": 0,
+  "body_file": "snapshots/www.modal.com/index-905dff90.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://www.modal.com/",
+  "handwritten": false,
+  "headers": {
+    "alt-svc": "h3=\":443\"; ma=86400",
+    "connection": "keep-alive",
+    "content-length": "0",
+    "date": "Mon, 07 Sep 2026 14:03:50 GMT",
+    "location": "https://modal.com/",
+    "server": "CloudFront",
+    "via": "1.1 520feb0cee3b19c4d035792d1e87781c.cloudfront.net (CloudFront)",
+    "x-amz-cf-id": "06Wf_W2ua6FZWnDCnkCEjMpeL2H19jwomtGgxaZt7amU8EVWNrNLAg==",
+    "x-amz-cf-pop": "SIN3-P1",
+    "x-cache": "FunctionGeneratedResponse from cloudfront"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "d41d8cd98f00b204e9800998ecf8427e",
+  "recorded_at": "2026-09-07T14:03:50Z",
+  "status": 301,
+  "stored_bytes": 0,
+  "transport_error": null,
+  "url": "https://www.modal.com/"
+}

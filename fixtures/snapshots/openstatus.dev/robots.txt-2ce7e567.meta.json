@@ -1,0 +1,26 @@
+{
+  "body_bytes": 15,
+  "body_file": "snapshots/openstatus.dev/robots.txt-2ce7e567.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://openstatus.dev/robots.txt",
+  "handwritten": false,
+  "headers": {
+    "cache-control": "public, max-age=0, must-revalidate",
+    "content-type": "text/plain",
+    "date": "Mon, 07 Sep 2026 14:04:27 GMT",
+    "location": "https://www.openstatus.dev/robots.txt",
+    "refresh": "0;url=https://www.openstatus.dev/robots.txt",
+    "server": "Vercel",
+    "strict-transport-security": "max-age=63072000",
+    "transfer-encoding": "chunked",
+    "x-vercel-id": "sin1::2n498-1788789867581-e69b556390c5"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "42c939d0ba4bbdc4c7eab1b5c34aaf71",
+  "recorded_at": "2026-09-07T14:04:27Z",
+  "status": 308,
+  "stored_bytes": 15,
+  "transport_error": null,
+  "url": "https://openstatus.dev/robots.txt"
+}

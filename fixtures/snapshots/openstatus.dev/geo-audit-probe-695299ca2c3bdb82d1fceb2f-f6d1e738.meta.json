@@ -1,0 +1,26 @@
+{
+  "body_bytes": 181,
+  "body_file": "snapshots/openstatus.dev/geo-audit-probe-695299ca2c3bdb82d1fceb2f-f6d1e738.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://openstatus.dev/geo-audit-probe-695299ca2c3bdb82d1fceb2f",
+  "handwritten": false,
+  "headers": {
+    "cache-control": "public, max-age=0, must-revalidate",
+    "content-type": "text/html",
+    "date": "Mon, 07 Sep 2026 14:24:01 GMT",
+    "location": "https://www.openstatus.dev/geo-audit-probe-695299ca2c3bdb82d1fceb2f",
+    "refresh": "0;url=https://www.openstatus.dev/geo-audit-probe-695299ca2c3bdb82d1fceb2f",
+    "server": "Vercel",
+    "strict-transport-security": "max-age=63072000",
+    "transfer-encoding": "chunked",
+    "x-vercel-id": "sin1::wvbf4-1788791041189-f28b1acb0cb6"
+  },
+  "note": null,
+  "probe_for": "https://openstatus.dev/",
+  "raw_md5": "0c27e58c17b44ef0fc77b826f5d11fe7",
+  "recorded_at": "2026-09-07T14:24:01Z",
+  "status": 308,
+  "stored_bytes": 181,
+  "transport_error": null,
+  "url": "https://openstatus.dev/geo-audit-probe-695299ca2c3bdb82d1fceb2f"
+}
