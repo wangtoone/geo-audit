@@ -1,0 +1,109 @@
+name: ci
+on:
+  push: { branches: [main] }
+  pull_request:
+permissions: { contents: read }
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+# 卡点 B17a：--contact 无条件必填，replay 模式也不豁免（"做成可选等于没有"这条
+# 约束不能因为跑 CI 就打折）。所以 CI 里显式传一个真实可达的项目邮箱。
+env:
+  GEO_AUDIT_CONTACT: ci@geo-audit.invalid
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v3
+        with: { enable-cache: true }
+      - run: uv sync --extra dev
+      - run: uv run ruff check .
+      - run: uv run ruff format --check .
+      - run: uv run mypy
+
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        python: ["3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v3
+        with: { enable-cache: true }
+      - run: uv sync --extra dev --python ${{ matrix.python }}
+      # 断网跑：任何一条测试想摸真网络（含 DNS）都会立刻失败，而不是悄悄通过
+      - name: pytest (offline)
+        run: uv run pytest -m "not live" --cov --cov-report=term-missing
+        env:
+          GEO_AUDIT_FORBID_NETWORK: "1"
+          GEO_AUDIT_FORBID_DNS: "1"      # 卡点 A8：DNS 不走 httpx，要单独一把闸
+
+  labels:
+    # 第 18 步打开（依赖 scripts/verify_labels.py 与 tests/data/*，第 5 步产出）
+    if: ${{ false }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v3
+      - run: uv sync --extra dev
+      # 每条 provenance=recorded 的标注 URL 必须能在 corpus/feature-raw.json 里搜到
+      - run: uv run python scripts/verify_labels.py
+
+  fp-gate:
+    # 第 12b 步打开（依赖 scripts/fp_gate.py 与 42 条 deadlink 标注）
+    if: ${{ false }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v3
+        with: { enable-cache: true }
+      - run: uv sync --extra dev
+      - name: 假阳性门禁（六条硬条件，见 §8.6）
+        run: uv run python scripts/fp_gate.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: fp-gate-report, path: fp-gate-report.json }
+
+  schema:
+    # 第 18 步打开（依赖 §8.5 的 schema 与 --replay-fixtures，第 15c/16 步产出）
+    if: ${{ false }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v3
+      - run: uv sync --extra dev
+      - run: >
+          uv run geo-audit --replay-fixtures mistral.ai
+          --contact ci@geo-audit.invalid --no-cache
+          --out /tmp/o --format json
+      - run: uv run check-jsonschema --schemafile schema/report-1.schema.json /tmp/o/mistral.ai.json
+
+  smoke-uvx:
+    # 第 18 步打开（验证 force-include 把 fixtures 带进了 wheel）
+    if: ${{ false }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v3
+      # 「一行可跑」必须被测到，不能只写在 README 里。装成 wheel 跑，验证
+      # force-include 把 fixtures 带进去了。
+      - run: >
+          uv tool run --from . geo-audit --replay-fixtures mistral.ai
+          --contact ci@geo-audit.invalid --no-cache
+          --out /tmp/r --format html
+      - name: 报告必须自包含且含 75/75 那条结论
+        run: |
+          python - <<'PY'
+          import pathlib, re
+          h = pathlib.Path('/tmp/r/mistral.ai.html').read_text(encoding='utf-8')
+          assert '75' in h, "缺少 mistral 75/75 结论"
+          for pat in (r'<link[^>]+rel=["\']?stylesheet', r'<script[^>]+\bsrc=',
+                      r'<img[^>]+\bsrc=["\']?https?:', r'@import', r'url\(\s*["\']?https?:'):
+              assert re.search(pat, h, re.I) is None, f"报告不自包含：{pat}"
+          assert len(h.encode()) < 2_000_000
+          PY
