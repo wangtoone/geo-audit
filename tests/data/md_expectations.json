@@ -1,0 +1,148 @@
+{
+  "_meta": {
+    "spec": "IMPLEMENTATION-v2.md §4.4（子检查四 .md 约定兑现，卡点 S11）",
+    "count": 7,
+    "count_note": "7 = §4.4 的可上报集合 4 条（depot.dev / bigcommerce / dev.wix.com + 外部样本 cloudflare.com）+ OUT_OF_SCOPE 3 条（resend / turso / assemblyai）。§1 目录树写的「md_expectations.json 7 条」与此吻合",
+    "reportable_ids": ["M01", "M02", "M03", "M04"],
+    "out_of_scope_ids": ["M05", "M06", "M07"],
+    "sample_budget": {"MD_SAMPLE_N": 3, "requests_per_sample": 2},
+    "verdicts": ["FULFILLED", "HARD_404", "SOFT_404_HTML", "SOFT_404_TEXT", "OPAQUE_ERROR", "OUT_OF_SCOPE", "UNDETERMINED"],
+    "scopes": ["ANY_URL", "ANY_PAGE", "PREFIX", "DOCS_ONLY", "IMPLICIT_INDEX", "HTML_SWAP", "ENUMERATED", "UNKNOWN"],
+    "b3_ruling": "不发 Accept: text/markdown 的协商探测请求（§4.4 B3）。只在响应头出现 Link: rel=alternate type=text/markdown 时加一句说明 + 记 CoverageGap"
+  },
+  "cases": [
+    {"id": "M01", "domain": "depot.dev", "source": "A_llms_txt",
+     "source_url": "https://depot.dev/llms.txt", "scope": "ANY_URL", "scope_prefix": "",
+     "stated_exception": false,
+     "declaration_text": "You can also append `.md` to any HTML URL on https://depot.dev to fetch its markdown source (for example https://depot.dev/docs/cli.md)",
+     "samples": [
+       {"html_url": "https://depot.dev/docs/container-builds/quickstart", "md_url": "https://depot.dev/docs/container-builds/quickstart.md", "in_scope": true, "verdict": "FULFILLED", "md_status": 200, "md_content_type": "text/markdown", "html_twin_status": 200},
+       {"html_url": "https://depot.dev/pricing", "md_url": "https://depot.dev/pricing.md", "in_scope": true, "verdict": "HARD_404", "md_status": 404, "md_content_type": null, "html_twin_status": 200},
+       {"html_url": "https://depot.dev/", "md_url": "https://depot.dev/index.md", "in_scope": true, "verdict": "HARD_404", "md_status": 404, "md_content_type": null, "html_twin_status": 200}
+     ],
+     "expect_suppressed_by": null, "expect_finding": true,
+     "expect_severity": "high", "counted_as_hit": true,
+     "note": "本轮最明确的「AI 路径声明没兑现」。承诺是 any HTML URL，实际只有被列进 llms.txt 的 /docs /blog /changelog /customers 兑现。_flagship 必须先返回 /pricing，否则抓不到这条"},
+
+    {"id": "M02", "domain": "bigcommerce.com", "source": "A_llms_txt",
+     "source_url": "https://docs.bigcommerce.com/llms.txt", "scope": "ANY_PAGE", "scope_prefix": "",
+     "stated_exception": false,
+     "declaration_text": "For clean Markdown of any page, append `.md` to the page URL",
+     "samples": [
+       {"html_url": "https://docs.bigcommerce.com/developer/docs/overview/quick-start", "md_url": "https://docs.bigcommerce.com/developer/docs/overview/quick-start.md", "in_scope": true, "verdict": "FULFILLED", "md_status": 200, "md_content_type": "text/plain", "md_bytes": 9369, "html_twin_status": 200},
+       {"html_url": "https://docs.bigcommerce.com/developer/docs/overview/api-fundamentals/integration-design", "md_url": "https://docs.bigcommerce.com/developer/docs/overview/api-fundamentals/integration-design.md", "in_scope": true, "verdict": "FULFILLED", "md_status": 200, "md_content_type": "text/plain", "md_bytes": 9113, "html_twin_status": 200},
+       {"html_url": "https://docs.bigcommerce.com/developer/changelog", "md_url": "https://docs.bigcommerce.com/developer/changelog.md", "in_scope": true, "verdict": "SOFT_404_TEXT", "md_status": 200, "md_content_type": "text/plain", "md_bytes": 298, "md_head": "# Page Not Found", "html_twin_status": 200}
+     ],
+     "expect_suppressed_by": null, "expect_finding": true,
+     "expect_severity": "high", "counted_as_hit": true,
+     "note": "soft404 陷阱出现在 .md 通道这一侧：200 + text/plain + 298 B「# Page Not Found」，还把自己列进 Similar pages。judge_md_sample 的 byte_len<2000 + find_notfound_copy 分支"},
+
+    {"id": "M03", "domain": "wix.com", "source": "A_llms_txt",
+     "source_url": "https://dev.wix.com/llms.txt", "scope": "PREFIX",
+     "scope_prefix": "https://dev.wix.com/docs/", "stated_exception": false,
+     "declaration_text": "Append `.md` to any URL under `https://dev.wix.com/docs/` to get the markdown version",
+     "samples": [
+       {"html_url": "https://dev.wix.com/docs/rest/business-solutions/stores/catalog-v3/products-v3/introduction", "md_url": "https://dev.wix.com/docs/rest/business-solutions/stores/catalog-v3/products-v3/introduction.md", "in_scope": true, "verdict": "FULFILLED", "md_status": 200, "md_content_type": "text/plain", "md_bytes": 8555, "html_twin_status": 200},
+       {"html_url": "https://dev.wix.com/docs/build-apps/troubleshooting", "md_url": "https://dev.wix.com/docs/build-apps/troubleshooting.md", "in_scope": true, "verdict": "FULFILLED", "md_status": 200, "md_content_type": "text/plain", "md_bytes": 3093, "html_twin_status": 200},
+       {"html_url": "https://dev.wix.com/docs/changelog", "md_url": "https://dev.wix.com/docs/changelog.md", "in_scope": true, "verdict": "HARD_404", "md_status": 404, "md_content_type": null, "html_twin_status": 200}
+     ],
+     "out_of_scope_samples": [
+       {"md_url": "https://dev.wix.com/docs.md", "md_status": 404, "in_scope": false, "verdict": "OUT_OF_SCOPE",
+        "note": "门户根不在声明范围内（前缀是 /docs/），实测原文明写「未计」"}
+     ],
+     "expect_suppressed_by": null, "expect_finding": true,
+     "expect_severity": "high", "counted_as_hit": true,
+     "note": "⚠️ products-v3/introduction 与 build-apps/troubleshooting 的完整 HTML 路径原文只记了末段（products-v3/introduction.md、troubleshooting.md），此处的完整 URL 是按 dev.wix.com/docs/ 结构补的 -> 待 fixture 回填"},
+
+    {"id": "M04", "domain": "cloudflare.com", "source": "A_llms_txt",
+     "source_url": "https://developers.cloudflare.com/llms.txt", "scope": "ANY_URL", "scope_prefix": "",
+     "stated_exception": false, "declaration_text": "",
+     "provenance": "spec_only",
+     "derived_from": "IMPLEMENTATION-v2.md §4.4「cloudflare 声明同型 -> /network.md 实测 12 B 的 404」+「可上报集合：… + cloudflare.com（外部样本，作为 ANY_URL scope 的回归用例）」",
+     "samples": [
+       {"html_url": "https://www.cloudflare.com/network", "md_url": "https://www.cloudflare.com/network.md", "in_scope": true, "verdict": "HARD_404", "md_status": 404, "md_content_type": null, "md_bytes": 12, "html_twin_status": 200}
+     ],
+     "expect_suppressed_by": null, "expect_finding": true,
+     "expect_severity": "high", "counted_as_hit": true,
+     "note": "外部样本，**不在 72 域内**，corpus/feature-raw.json 里没有它的原文（已核）。declaration_text 与 source_url、FULFILLED 样本全部待实测 —— 目前只有「/network.md 是 12 B 的 404」这一条来自方案正文"},
+
+    {"id": "M05", "domain": "resend.com", "source": "A_llms_txt",
+     "source_url": "https://resend.com/llms.txt", "scope": "DOCS_ONLY", "scope_prefix": "",
+     "stated_exception": false, "declaration_text": "",
+     "declaration_text_pending": true,
+     "samples": [
+       {"html_url": "https://resend.com/pricing", "md_url": "https://resend.com/pricing.md", "in_scope": false, "verdict": "OUT_OF_SCOPE", "md_status": 200, "md_content_type": "text/markdown", "html_twin_status": 200},
+       {"html_url": "https://resend.com/docs/introduction", "md_url": "https://resend.com/docs/introduction.md", "in_scope": true, "verdict": "FULFILLED", "md_status": 200, "md_content_type": "text/markdown", "html_twin_status": 200},
+       {"html_url": "https://resend.com/", "md_url": "https://resend.com/index.md", "in_scope": false, "verdict": "OUT_OF_SCOPE", "md_status": 404, "md_content_type": null, "html_twin_status": 200}
+     ],
+     "expect_suppressed_by": null, "expect_finding": false,
+     "expect_severity": null, "counted_as_hit": false,
+     "note": "§4.4 裁决：scope=DOCS_ONLY，/index.md 不在范围 -> 不算不兑现。实测报告自评这三条（resend/turso/assemblyai）「偏苛刻」，原文也写 llms.txt 只列了 blog.md / migrate.md / security/soc-2.md 这类页，没承诺首页有 .md。declaration_text 原文未记 -> 待实测"},
+
+    {"id": "M06", "domain": "turso.tech", "source": "A_llms_txt",
+     "source_url": "https://turso.tech/llms.txt", "scope": "DOCS_ONLY", "scope_prefix": "",
+     "stated_exception": false, "declaration_text": "", "declaration_text_pending": true,
+     "samples": [
+       {"html_url": "https://turso.tech/pricing", "md_url": "https://turso.tech/pricing.md", "in_scope": false, "verdict": "OUT_OF_SCOPE", "md_status": 200, "md_content_type": "text/markdown", "html_twin_status": 200},
+       {"html_url": "https://docs.turso.tech/quickstart", "md_url": "https://docs.turso.tech/quickstart.md", "in_scope": true, "verdict": "FULFILLED", "md_status": 200, "md_content_type": "text/markdown", "html_twin_status": 200},
+       {"html_url": "https://turso.tech/", "md_url": "https://turso.tech/index.md", "in_scope": false, "verdict": "OUT_OF_SCOPE", "md_status": 404, "md_content_type": null, "html_twin_status": 200}
+     ],
+     "expect_suppressed_by": null, "expect_finding": false,
+     "expect_severity": null, "counted_as_hit": false,
+     "note": "同 M05。turso 主域 llms.txt 全是裸 URL（见 index_link C07）"},
+
+    {"id": "M07", "domain": "assemblyai.com", "source": "B_page_signal",
+     "source_url": "https://www.assemblyai.com/docs/streaming/getting-started/transcribe-streaming-audio",
+     "scope": "DOCS_ONLY", "scope_prefix": "",
+     "stated_exception": false, "declaration_text": "", "declaration_text_pending": true,
+     "samples": [
+       {"html_url": "https://www.assemblyai.com/docs/streaming/multilingual-transcription", "md_url": "https://www.assemblyai.com/docs/streaming/multilingual-transcription.md", "in_scope": true, "verdict": "FULFILLED", "md_status": 200, "md_content_type": "text/markdown", "html_twin_status": 200},
+       {"html_url": "https://www.assemblyai.com/docs/pre-recorded-audio/universal-3-5-pro/prompting", "md_url": "https://www.assemblyai.com/docs/pre-recorded-audio/universal-3-5-pro/prompting.md", "in_scope": true, "verdict": "FULFILLED", "md_status": 200, "md_content_type": "text/markdown", "html_twin_status": 200},
+       {"html_url": "https://www.assemblyai.com/docs", "md_url": "https://www.assemblyai.com/docs.md", "in_scope": false, "verdict": "OUT_OF_SCOPE", "md_status": 404, "md_head": "The page could not be found  NOT_FOUND", "html_twin_status": 200}
+     ],
+     "expect_suppressed_by": null, "expect_finding": false,
+     "expect_severity": null, "counted_as_hit": false,
+     "note": "来源是 B（侧栏每页挂一个 .md 链接，机器可发现但没有成文声明），不是 A。实测原文：「约定不是在 llms.txt 头部声明，而是侧栏每页挂一个 .md 链接」。⚠️ 按 §4.4 的合并规则 B 的 MD_PATTERNS 全不命中就该是 scope=UNKNOWN -> suppressed_by=scope_unknown；§4.4 又把 assemblyai 列进 DOCS_ONLY 的 OUT_OF_SCOPE 三条里。两处冲突，见交付说明"}
+  ],
+
+  "suppressed_cases": [
+    {"id": "MS01", "domain": "mistral.ai", "scope": "DOCS_ONLY",
+     "expect_suppressed_by": "html_twin_also_404", "expect_finding": false,
+     "note": "§4.4 第三条佐证：.md 全 404 是因为 /docs/ 前缀整体废弃、HTML 版同样 404，所以只在内链检查里报一次（index_link C01 的 75/75），.md 侧不重复计"},
+    {"id": "MS02", "domain": "browserbase.com", "scope": "UNKNOWN",
+     "expect_suppressed_by": "scope_unknown", "expect_finding": false,
+     "samples": [
+       {"md_url": "https://docs.browserbase.com/welcome/introduction.md", "verdict": "FULFILLED", "md_status": 200, "md_content_type": "text/markdown"},
+       {"md_url": "https://www.browserbase.com/pricing.md", "verdict": "HARD_404", "md_status": 404},
+       {"md_url": "https://www.browserbase.com/index.md", "verdict": "SOFT_404_HTML", "md_status": 200, "md_content_type": "text/html"}
+     ],
+     "note": "声明原文没记下来 -> scope=UNKNOWN -> 一个样本都不抽、只标「需补测声明原文」。宁可漏报不假报。实测里它 1/3 且失败方式不一致（一个诚实 404、一个 soft404）"},
+    {"id": "MS03", "domain": "hookdeck.com", "scope": "ENUMERATED",
+     "stated_exception": true,
+     "declaration_text": "Many URLs on this site are available as markdown: send `Accept: text/markdown` on the page URL, or open the matching `.md` link below (docs, blog, pricing, products, legal; homepage at `/index.md`). Pages without a `.md` version return HTML.",
+     "expect_suppressed_by": null, "expect_finding": false,
+     "samples": [
+       {"md_url": "https://hookdeck.com/index.md", "verdict": "FULFILLED", "md_status": 200, "md_content_type": "text/markdown"},
+       {"md_url": "https://hookdeck.com/pricing.md", "verdict": "FULFILLED", "md_status": 200, "md_content_type": "text/markdown"},
+       {"md_url": "https://hookdeck.com/docs/limits.md", "verdict": "FULFILLED", "md_status": 200, "md_content_type": "text/markdown"}
+     ],
+     "note": "EXCEPTION_RE（「Pages without a `.md` version return HTML」）+ _one_per_category 的回归样本。实测 3/3 全兑现 -> 走 _ok 不是 _downgrade。⚠️ §4.4 的 _downgrade 分支（stated_exception 且 missed 全为 HARD_404）在实测里**没有活样本**，那条分支的断言待实测"},
+    {"id": "MS04", "domain": "inngest.com", "scope": null,
+     "expect_declaration": null, "expect_finding": false,
+     "note": "反例：声明的是 /docs-markdown/ 前缀路径，**不是 .md 后缀**，MD_PATTERNS 必须全不命中 -> 没有 MdDeclaration -> 不产生 finding。实测 .md 后缀 0/3（/index.md、/pricing.md、/docs.md 全 404），若误认成声明就会造一条假阳性"},
+    {"id": "MS05", "domain": "mailerlite.com", "scope": "ENUMERATED",
+     "expect_finding": false,
+     "declaration_text": "Scrape or vectorize the HTML pricing page for real-time data use. Use /pricing.md instead.",
+     "samples": [{"md_url": "https://www.mailerlite.com/pricing.md", "verdict": "FULFILLED", "md_status": 200, "md_content_type": "text/plain", "md_bytes": 27648}],
+     "note": "非全站约定：llms.txt 只单独声明了一个页面（第 63 行 + 第 433 行）。该页兑现 1/1。按全站约定误判则 0/3（/features.md、/integrations.md、/index.md 全 404）—— 这是「范围外一律不抽」的反例"},
+    {"id": "MS06", "domain": "pipedrive.com", "scope": "DOCS_ONLY",
+     "expect_finding": false,
+     "declaration_text": "Append .md to any documentation page URL to get its markdown version.",
+     "samples": [
+       {"md_url": "https://developers.pipedrive.com/docs/getting-started.md", "verdict": "FULFILLED", "md_status": 200, "md_content_type": "text/markdown"},
+       {"md_url": "https://developers.pipedrive.com/docs/core-api-concepts-rate-limiting.md", "verdict": "FULFILLED", "md_status": 200, "md_content_type": "text/markdown"},
+       {"md_url": "https://developers.pipedrive.com/docs/core-api-concepts-authentication.md", "verdict": "FULFILLED", "md_status": 200, "md_content_type": "text/markdown"}
+     ],
+     "note": "DOCS_ONLY 声明原文的正样本（MD_PATTERNS 第 4 条）。3/3 兑现 -> 无 finding。注意同 host 的 /llms.txt 是 soft404（A14）—— 两个子检查各判各的"}
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "body_bytes": 9002064,
+  "body_file": null,
+  "body_storage": "digest_only",
+  "canon_url": "https://huge-selftest.invalid/llms-full.txt",
+  "handwritten": true,
+  "headers": {
+    "content-type": "text/plain; charset=utf-8",
+    "server": "selftest"
+  },
+  "note": "手写，非实录",
+  "probe_for": null,
+  "raw_md5": "52aa0aa5a56db2859b122f08581ba78b",
+  "recorded_at": "2026-09-07T00:00:00Z",
+  "status": 200,
+  "stored_bytes": 0,
+  "transport_error": null,
+  "url": "https://huge-selftest.invalid/llms-full.txt"
+}

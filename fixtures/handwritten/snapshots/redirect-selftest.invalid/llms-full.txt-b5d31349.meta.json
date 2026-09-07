@@ -1,0 +1,20 @@
+{
+  "body_bytes": 0,
+  "body_file": "snapshots/redirect-selftest.invalid/llms-full.txt-b5d31349.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://redirect-selftest.invalid/llms-full.txt",
+  "handwritten": true,
+  "headers": {
+    "content-type": "text/plain; charset=utf-8",
+    "location": "https://target-selftest.invalid/",
+    "server": "selftest"
+  },
+  "note": "手写，非实录",
+  "probe_for": null,
+  "raw_md5": "d41d8cd98f00b204e9800998ecf8427e",
+  "recorded_at": "2026-09-07T00:00:00Z",
+  "status": 302,
+  "stored_bytes": 0,
+  "transport_error": null,
+  "url": "https://redirect-selftest.invalid/llms-full.txt"
+}

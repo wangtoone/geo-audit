@@ -1,0 +1,338 @@
+# fixtures/urls.txt · 录制于 2026-09-07 · 每行一个用途，改动请走 CONTRIBUTING 的 fixture 规程
+# 语法：
+#   <url>              # 注释            录一条快照
+#   @control <url>                       为 <url> 录同 host 对照探针（probe_for=<url>）
+#   @expand <url> <extractor> <limit>    从已录的 <url> 正文里展开链接并逐条录制
+#   @pair <index_url> <full_url>         llms.txt / llms-full.txt 配对，两条都录
+
+# ─────────────────────────────────────────────────────────────────────────
+# A 组 · 16 个确认软 404（A01–A16）。全部 expect=TEXT_FILE，
+#        15 条命中 html_where_text_expected、1 条（A16）命中 notfound_copy_in_body
+# ─────────────────────────────────────────────────────────────────────────
+https://www.medplum.com/llms.txt                      # A01 200 text/html 57,592 Docusaurus 壳
+@control https://www.medplum.com/llms.txt
+https://ed.link/llms.txt                              # A02 200 html 4,490 <title>Edlink Dashboard</title>
+@control https://ed.link/llms.txt
+https://developers.printify.com/llms.txt              # A03 200 html 425,692 文档站 SPA 兜底页
+@control https://developers.printify.com/llms.txt
+https://www.minimax.io/llms.txt                       # A04 200 html 384,052；对照同尺寸同骨架
+@control https://www.minimax.io/llms.txt
+https://www.moonshot.ai/llms.txt                      # A05 200 html 82,460；对照同尺寸同骨架
+@control https://www.moonshot.ai/llms.txt
+https://developers.attio.com/llms.txt                 # A06 302 -> docs.attio.com/docs/overview 225,877（字节可断言）
+@control https://developers.attio.com/llms.txt
+https://docs.gusto.com/llms-full.txt                  # A07 302 -> / -> 200 html 293,597
+@control https://docs.gusto.com/llms-full.txt
+https://support.freshbooks.com/llms.txt               # A08 307 -> /hc/en-us -> 200 html 35,749
+@control https://support.freshbooks.com/llms.txt
+https://developers.pinterest.com/llms-full.txt        # A09 302 -> / 19,652
+@control https://developers.pinterest.com/llms-full.txt
+https://business.pinterest.com/llms.txt               # A10 200 html 21,828
+@control https://business.pinterest.com/llms.txt
+https://api-docs.ecwid.com/llms.txt                   # A11 302 -> docs.ecwid.com/ 715,130（不断言字节，两处记录冲突）
+@control https://api-docs.ecwid.com/llms.txt
+https://www.browserbase.com/llms-full.txt             # A12 200 html 首页壳（质证时多一跳到 sign-in）
+@control https://www.browserbase.com/llms-full.txt
+https://docs.moderntreasury.com/llms-full.txt         # A13 302 -> /payments/docs/overview
+@control https://docs.moderntreasury.com/llms-full.txt
+https://developers.pipedrive.com/llms.txt             # A14 200 html 24,907（逐字节复现，字节可断言）
+@control https://developers.pipedrive.com/llms.txt
+https://www.canvasmedical.com/llms.txt                # A15 200 html 317,869 主站首页壳
+@control https://www.canvasmedical.com/llms.txt
+https://developers.brevo.com/docs/llms.txt            # A16 200 text/plain 44B「# Page Not Found」← 唯一非 HTML 变体
+@control https://developers.brevo.com/docs/llms.txt
+
+# ─────────────────────────────────────────────────────────────────────────
+# A' 组 · 同一批壳按 Expect.HTML_PAGE 判时必须走对照探测（identical_to_control）
+#         来源：原型 tests/fixtures/real_cases.py::CONTROL_ONLY_CASES
+# ─────────────────────────────────────────────────────────────────────────
+https://platform.kimi.ai/docs/changelog               # A'1 200 html 414,072 <title>Quickstart - Kimi API Platform</title>
+@control https://platform.kimi.ai/docs/changelog
+https://platform.kimi.ai/docs/overview                # A'2 与上一条完全一致，证明不是"changelog 恰好没了"
+https://www.minimax.io/                               # A'3 首页，用来证明 A04 的壳就是首页壳
+https://www.moonshot.ai/                              # A'4 同上
+
+# ─────────────────────────────────────────────────────────────────────────
+# B 组 · 18 条确认真文件（不得误判） + 2 条被 WAF 挡住的真文件
+#        challenge 原文：「反向验证：20 个被判『真文件』的…18 个是 200 text/plain +
+#        对照 404 html，确认真实；gusto.com 与 www.pipedrive.com 分别是 403/429」
+# ─────────────────────────────────────────────────────────────────────────
+https://docs.mistral.ai/llms.txt                      # B-01 200 text/plain 14,658 规范真文件（内链全死不影响它判 OK）
+@control https://docs.mistral.ai/llms.txt
+https://resend.com/llms.txt                           # B-02 200 text/plain 7,316
+@control https://resend.com/llms.txt
+https://close.com/llms.txt                            # B-03 200 text/plain 29,752 开头「Last Updated: August 2026」
+@control https://close.com/llms.txt
+https://developers.brevo.com/llms.txt                 # B-04 200 text/plain 48,852（同 host 的 /docs/ 是 44B 软 404）
+https://spoton.com/llms.txt                           # B-05 200 text/plain 7.3 KB（它的零发现来自 help 子域是纯 JS）
+@control https://spoton.com/llms.txt
+https://docs.canvasmedical.com/llms-full.txt          # B-06 200 text/plain 4.3 MB 真全文（读取上限的上界样本）
+https://docs.bigcommerce.com/llms.txt                 # B-07 200 text/plain **415 B** 真文件（堵「太小 = 假」）
+@control https://docs.bigcommerce.com/llms.txt
+https://saleor.io/llms.txt                            # B-08 200 2,043 B（报 864，字节数争议样本）
+@control https://saleor.io/llms.txt
+https://rustdesk.com/llms.txt                         # B-09 200 2,355 B 四类全零的域（零发现渲染样本）
+@control https://rustdesk.com/llms.txt
+https://upstash.com/llms.txt                          # B-10 200 5,833 B
+https://developers.deepgram.com/llms.txt              # B-11 200 73,878 B md5 e7475c34…
+https://elevenlabs.io/docs/llms.txt                   # B-12 200 206,764 B md5 b8b73517…
+https://dev.hume.ai/llms.txt                          # B-13 200 16,412 B md5 fd5cc659…
+https://factorialhr.com/llms-full.txt                 # B-14 200 861,887 B（含 Generated: 2026-04-01）
+https://www.printful.com/llms.txt                     # B-15 200 268,184 B（报 42,108，字节争议样本）
+https://docs.commercelayer.io/llms.txt                # B-16 200 9,051 B（报 3,598，字节争议样本）
+https://www.openstatus.dev/llms.txt                   # B-17 200 50,680 B
+https://platform.kimi.ai/docs/llms.txt                # B-18 200 15.6 KB ← moonshot 的真文件在别的注册域
+https://gusto.com/llms.txt                            # B-19 **403 Cloudflare「Just a moment...」**，真文件 8,217 B
+https://www.pipedrive.com/llms.txt                    # B-20 **429**，真文件 8,501 B
+https://platform.minimax.io/docs/llms.txt             # B-21 200 text/plain 24 KB ← minimax 的真文件（假阴锚点）
+https://platform.minimax.io/llms.txt                  # B-22 **真 404**（证明"根路径 404 但 /docs 有"这个形态）
+
+# ─────────────────────────────────────────────────────────────────────────
+# C 组 · 诚实 404（正文形态不参与判定）
+# ─────────────────────────────────────────────────────────────────────────
+https://snipcart.com/llms.txt                         # C-01 404 + Nuxt SPA 兜底页 -> REAL404
+https://docs.snipcart.com/llms.txt                    # C-02 同型
+https://www.llamaindex.ai/llms.txt                    # C-03 404 + 168 KB SPA HTML
+https://docs.dify.ai/llms-full.txt                    # C-04 404 + 97 KB 错误页
+https://tdengine.com/llms.txt                         # C-05 真 404 -> no_ai_channel 分支的样本
+https://www.juicefs.com/llms.txt                      # C-06 真 404
+https://docs.lawmatics.com/llms.txt                   # C-07 真 404（与它的 needs_js 分开判）
+https://gethealthie.com/llms.txt                      # C-08 真 404
+
+# ─────────────────────────────────────────────────────────────────────────
+# D 组 · BLOCKED / UNKNOWN（假零守卫）
+# ─────────────────────────────────────────────────────────────────────────
+https://developers.pinterest.com/llms.txt             # D-01 500 -> UNKNOWN(server_error)
+https://help.spoton.com/                              # D-02 正文一行「SpotOn Knowledge Base」-> needs_js
+https://docs.lawmatics.com/                           # D-03 Redoc，一行「Lawmatics OAuth API v1.22.0」-> needs_js
+https://api.factorialhr.com/en/users/sign_in          # D-04 403 -> login_required
+https://sso.teachable.com/secure/                     # D-05 403 -> login_wall（X09 的父样本）
+https://tenderly.co/                                  # D-06 429 + 32 KB 挑战页
+@control https://tenderly.co/                         # D-07 随机路径也 429 + 同挑战页 ← 整批作废的证据
+
+# ─────────────────────────────────────────────────────────────────────────
+# E 组 · 托管平台部署缺失页（brevo 裸域，platform_deployment_missing）
+# ─────────────────────────────────────────────────────────────────────────
+https://brevo.com/                                    # E-01 Vercel DEPLOYMENT_NOT_FOUND 纯文本
+https://brevo.com/pricing/                            # E-02 同上
+https://brevo.com/blog/                               # E-03 同上
+https://www.brevo.com/                                # E-04 正常 200（对照面，证明只有裸域坏）
+https://developers.brevo.com/                         # E-05 正常 200
+
+# ─────────────────────────────────────────────────────────────────────────
+# F 组 · llms-full 真伪：13 对（B01–B13 断言用）
+# ─────────────────────────────────────────────────────────────────────────
+@pair https://developers.deepgram.com/llms.txt https://developers.deepgram.com/llms-full.txt      # md5 相同 73,878
+@pair https://elevenlabs.io/docs/llms.txt https://elevenlabs.io/docs/llms-full.txt                # md5 相同 206,764
+@pair https://dev.hume.ai/llms.txt https://dev.hume.ai/llms-full.txt                              # md5 相同 16,412
+@pair https://upstash.com/llms.txt https://upstash.com/llms-full.txt                              # 5,833 -> 5,368（更小）
+@pair https://docs.bigcommerce.com/llms.txt https://docs.bigcommerce.com/llms-full.txt            # 302 回 llms.txt（415 B）
+@pair https://resend.com/llms.txt https://resend.com/llms-full.txt                                # 7,316 -> 8,056 = 1.10x（INFO，不进分子）
+@pair https://resend.com/docs/llms.txt https://resend.com/docs/llms-full.txt                      # 真全文 2,173,432 ← docs_llms_full_bytes
+@pair https://dev.wix.com/docs/llms.txt https://dev.wix.com/docs/llms-full.txt                    # 6,619 -> 9,002,064 = 1360x（digest_only）
+@pair https://docs.customer.io/llms.txt https://docs.customer.io/llms-full.txt                    # 4,259 -> 19,977,336 = 4691x（digest_only）
+@pair https://liveblocks.io/llms.txt https://liveblocks.io/llms-full.txt                          # 42,255 -> 3,564,760 = 84x（truncated）
+@pair https://developer.squareup.com/llms.txt https://developer.squareup.com/llms-full.txt         # 19,558 -> 1,217,592 = 62x（truncated）
+@pair https://docs.commercelayer.io/llms.txt https://docs.commercelayer.io/llms-full.txt          # 19,894 -> 147,170 = 7.4x
+@pair https://rustdesk.com/llms.txt https://rustdesk.com/llms-full.txt                            # 2,355 -> 2,662 = 1.13x（INFO 或 None）
+@pair https://www.openstatus.dev/llms.txt https://www.openstatus.dev/llms-full.txt                # 50,680 -> 82,656 = 1.63x（INFO 或 None）
+@pair https://platform.minimax.io/docs/llms.txt https://platform.minimax.io/docs/llms-full.txt     # 24 KB -> 725 KB 正常
+
+# ─────────────────────────────────────────────────────────────────────────
+# G 组 · 索引内链（C01–C12 断言用）。@expand 从已录正文里展开
+# ─────────────────────────────────────────────────────────────────────────
+@expand https://docs.mistral.ai/llms.txt markdown 75          # C01 75 条唯一 URL，75/75 全 404
+https://docs.mistral.ai/getting-started/platform-overview.md  # C02 200 -> mechanism_alive=True
+@expand https://www.inngest.com/llms.txt bare 8               # C11 含第 157/290/296 行的双 scheme 拼接 3 条
+@expand https://replicate.com/llms.txt markdown 10            # C10 6 条 /docs/topics/*/index 全 404
+https://replicate.com/docs/topics/billing                     # C10 去掉 /index 后 200（repair_probe_status）
+@expand https://www.pingcap.com/llms.txt markdown 10          # 10 条里 1 条死（/solutions/ecommerce/）
+https://www.pingcap.com/solutions/ecommerce/                  # 该死链本体，404
+@expand https://www.bytebase.com/llms.txt relative 60         # C08 正文里 504 条 /xxx.md（抽样判据看正文，不需要 504 条快照）；只录抽中的 60 条
+@expand https://turso.tech/llms.txt bare 20                   # C07 整份文件零 markdown 语法，只有裸 URL
+@expand https://docs.zilliz.com/llms.txt markdown 8           # C06 反引号伪影，真实 8/8 全活
+@expand https://attio.com/customers/llms.txt html_a 6         # 内嵌裸 HTML <a>
+@expand https://help.close.com/llms.txt html_a 6              # 同上 + presigned logo（X14）
+@expand https://developers.mailerlite.com/llms.txt relative 10 # 相对路径 /getting-started
+@expand https://www.pipedrive.com/llms.txt markdown 10        # C09 www 侧 10 条里 8 条 429
+@expand https://saleor.io/llms.txt markdown 8                 # C05 含 .../docs/{path}.mdx 占位符
+@expand https://developer.squareup.com/llms.txt markdown 10   # 7 个有死内链的域之一
+@expand https://docs.customer.io/llms.txt markdown 10         # 同上
+@expand https://factorialhr.com/llms.txt markdown 10          # 同上
+
+# ─────────────────────────────────────────────────────────────────────────
+# H 组 · 死链 ground truth（42 条电商批穷举标注，见 §8.4）
+#        provenance=recorded 的逐条列出；reconstructed 的由
+#        scripts/capture_fixtures.py --recover-h-group 在 live 模式下补录
+# ─────────────────────────────────────────────────────────────────────────
+https://saleor.io/                                    # H 源页：首页（hero CTA）
+https://saleor.io/pricing                             # H 源页：定价页（三张套餐卡）
+https://saleor.io/cloud/talk-to-us?cta=See+how+Saleor+fits&cta_page=%2F   # dead，<title>404 - Page not found
+https://saleor.io/cloud/pricing-page?cta=Talk+to+us&cta_page=%2Fpricing   # dead，同上
+https://saleor.io/contact                             # 200 ← sibling control + fix.after
+https://www.swell.is/changelog                        # H 源页：swell 12 条死链全在这页（104 条链接）
+https://github.com/swellstores/swell-sdk              # dead（deleted_third_party_repo）
+https://github.com/swellstores                        # 200 ← 组织页活着的对照
+https://printify.com/                                 # H 源页：首页
+https://printify.com/wp-content/uploads/2024/12/Printify-Inc.-IRS-Form-8937.pdf  # dead + needs_review（class 含 hidden）
+https://printify.com/cdn-cgi/l/email-protection       # fp: cloudflare_email_protection
+https://www.printful.com/                             # H 源页
+https://www.printful.com/docs                         # H 源页（API 示例的语境来源）
+https://api.printful.com/v2/orders/123/confirmation   # fp: api_endpoint_in_code_context
+https://enterprise.printful.com/api/pfy/public/v1/    # fp: 同上
+https://enterprise.printful.com/api/pfy/public/v2/    # fp: 同上
+https://example.com/image.jpg                         # fp: reserved_example_domain
+https://example.org/webhook/store                     # fp: 同上
+https://example.com/file_for_christmas_2022.jpg       # fp: 同上
+https://www.pinterest.com/_/_/policy/developer-guidelines  # fp: dns_retry_second_resolver（首轮 exit=6，重测 200）
+https://www.pinterest.com/_/_/about/                  # fp: 同上
+https://docs.commercelayer.io/                        # H 源页（Discord 挂在每个文档页顶栏）
+https://discord.com/commercelayer                     # dead（aria-label="Discord"，无锚文本）
+https://www.shopify.com/                              # H 源页（shopify 那 1 条死链的来源页）
+
+# ─────────────────────────────────────────────────────────────────────────
+# X 组 · 跨轮 fixture（X01–X14，规则覆盖率用，不进 42 的分母）
+# ─────────────────────────────────────────────────────────────────────────
+https://tenderly.co/this-page-definitely-does-not-exist-xyz123  # X01 429+挑战页（27 条全判 UNKNOWN 的依据）
+https://crates.io/crates/helius                       # X02 工具 UA 404 / 浏览器 UA 200 -> third_party_no_control
+https://crates.io/crates/serde                        # X02 同 host 200 对照（拿得到也不许判死，因为 UA 敏感）
+https://gumroad.com/                                  # X03 源页
+https://gumroad.com/{permalink}                       # X03 url_template_placeholder
+https://gumroad.com/{category}                        # X03 同上
+https://gumroad.com/{username}                        # X03 同上
+https://api.gumroad.com/v2/products/{product_id}      # X03 同上（第 4 条）
+https://www.klaviyo.com/sg/pricing                    # X04 geo_redirect 后 404
+https://support.zendesk.com/sg/hc/en-us               # X04 同上
+https://developers.attio.com/base-ui-disable-scrollbar   # X05 mintlify_injected_anchor
+https://developers.attio.com/base-ui-focus-guard         # X05 同上（第 2 条）
+https://developers.brevo.com/fern-scroll-area-viewport   # X05 fern_injected_anchor
+https://app.buildwithfern.com/                           # X05 fern_console_host（brevo/close 各 1）
+https://117340892.intellimizeio.com/                     # X05 intellimize_endpoint（copper 1）
+https://www.facebook.com/CopperInc                    # X06 400 但**写对的那条** -> hostile_400 -> UNKNOWN
+https://www.copper.com/                               # X06 对照：主站页脚四个社交链接写法是对的
+https://help.copper.com/                              # X06 源页：Intercom 帮助中心（双拼域名 4 条）
+https://www.linkedin.com/https://www.linkedin.com/company/copper-inc/  # url_concatenated_twice
+https://www.unkey.com/pricing                         # X07 源页
+https://unkey.com/docs/platform/workspaces/billing    # X07 链路 (308,308,404)；朴素首跳判 ALIVE
+https://platform.kimi.ai/console/invoice              # X08 DEAD（路由缺失，不是需登录）
+https://platform.kimi.ai/console/account              # X08 200 sibling 对照
+https://platform.kimi.ai/console/api-keys             # X08 200
+https://platform.kimi.ai/console                      # X08 200
+https://sso.teachable.com/secure/enroll               # X09 403（8 条同型，兄弟同样 403）
+https://app.moderntreasury.com/                       # X10 Auth0 跳转环（curl exit 47）
+http://next.js/                                       # X11 双 resolver NXDOMAIN -> DEAD（assemblyai 正文误自动链接）
+https://www.assemblyai.com/changelog                  # X11 源页
+https://cog.run/                                      # X12 本机 SERVFAIL / 8.8.8.8 有 A 记录 -> ALIVE
+https://www.talkie-ai.com/                            # X12b 本机解析 127.0.0.1 -> dns_poisoned
+https://s3.staging.printful.com/upload/deleted-file   # X13a network_timeout -> UNKNOWN
+https://help.close.com/llms.txt                       # X14 正文里的 AWS 预签名 logo（X-Amz-Expires=604800）
+https://github.com/daniliwoz                          # typo_vs_anchor_text（锚文本 @danilowoz）
+https://github.com/ctnicholas                         # 200 sibling 对照
+https://x.com/tinybirdco                              # renamed_social_handle，DEAD
+https://x.com/vercel                                  # 200 sibling 对照
+https://x.com/basetenco                               # renamed_social_handle，DEAD
+https://x.com/openai                                  # 200 sibling 对照
+https://x.com/deepgramai                              # 200 sibling 对照
+https://x.com/modal_labs                              # 200 sibling 对照
+https://twitter.com/tinybirdco                        # 双写都要探，两者都 404 才判死
+https://xayn.com/                                     # dead_third_party_site（根路径「404 page not found」）
+https://replicatestatus.com/feed                      # dead_third_party_site（根域 200）
+https://replicatestatus.com/                          # 200 对照
+https://developers.sendinblue.com/reference/createdomain  # legacy_brand_domain（5 条 404 之一）
+https://developers.sendinblue.com/                    # 200 ← 同 host 另有 15 条活着，不许整域判死
+https://manpages.ubuntu.com/                          # upstream_error 503
+https://twitter.com/pinterest/                        # upstream_error 520
+
+# ─────────────────────────────────────────────────────────────────────────
+# I 组 · 根因归并锚点（G 组断言用）
+# ─────────────────────────────────────────────────────────────────────────
+https://tdengine.com/                                 # 源页：首页连接器图标墙 8 个 <a>
+https://docs.tdengine.com/reference/connector/java/   # 8 条之一，404
+https://docs.tdengine.com/reference/connector/python/ # 404
+https://docs.tdengine.com/reference/connector/go/     # 404
+https://docs.tdengine.com/reference/connector/rust/   # 404
+https://docs.tdengine.com/reference/connector/csharp/ # 404
+https://docs.tdengine.com/reference/connector/cpp/    # 404
+https://docs.tdengine.com/reference/connector/node/   # 404
+https://docs.tdengine.com/reference/connector/r-lang/ # 404
+https://docs.tdengine.com/developer-guide/connectors-reference/  # 200 ← fix.after
+https://docs.tdengine.com/sitemap.xml                 # fixhint 候选 d) 的来源
+https://www.bytebase.com/changelog/                   # 源页：6 条 www 相对路径
+https://www.bytebase.com/introduction/what-is-bytebase   # 404
+https://docs.bytebase.com/introduction/what-is-bytebase  # 200 ← fix.after（wrong_host）
+https://docs.canvasmedical.com/product-updates/release-notes/   # 源页：9 条死链全在这
+https://docs.canvasmedical.com/product-updates/release-notes/sdk/layout-effect/   # 404 relative_path_prefixed
+https://docs.canvasmedical.com/product-updates/release-notes/sdk/effect-notes/    # 404 同族
+https://docs.canvasmedical.com/product-updates/release-notes/product-updates/commands-module/  # 404 同族
+https://docs.canvasmedical.com/sdk/layout-effect/     # 200 ← 证据句要用
+https://docs.canvasmedical.com/sdk/canvas-cli/        # 404 route_missing
+https://docs.canvasmedical.com/documentation/pdf-annotations/  # 404 route_missing（同 locus 同 defect -> 合 1）
+https://help.canvasmedical.com/articles/7998893827-managing-conditions           # 404 deleted_help_article
+https://canvas-medical.help.usepylon.com/articles/7998893827-managing-conditions # 404 同族（真身）
+https://github.com/canvas-medical/canvas-plugins/blob/main/example-plugins/example_patient_sync/README.md   # 404
+https://github.com/canvas-medical/canvas-plugins/blob/main/example-plugins/vitals_visualizer_plugin/README.md # 404
+https://github.com/canvas-medical/canvas-plugins      # 200 组织/仓库对照
+https://developers.brevo.com/changelog                # 源页：brevo 13/16 条在这页
+https://docs.pingcap.com/tidbcloud/mailto:support@pingcap.com/  # mailto_as_relative_path
+https://docs.pingcap.com/tidbcloud/release-notes      # 源页（5 处）
+https://www.openstatus.dev/docs                       # 源页（"Example repository" DOC_ENTRY）
+
+# ─────────────────────────────────────────────────────────────────────────
+# J 组 · 模板归并（upstash 那个坑）
+# ─────────────────────────────────────────────────────────────────────────
+https://upstash.com/docs/redis/overall/getstarted     # 源页：自带 898 条 Redis 命令导航
+@expand https://upstash.com/docs/redis/overall/getstarted html_a 40   # 只录 40 条，够验"探 5 次"
+@expand https://docs.lawmatics.com/ html_a 20         # 515 条 / 0 死链（大分母 0 发现；host 已在 D-03 录过）
+https://www.emqx.com/en/docs                          # 507 条 / 0 死链
+https://ed.link/docs                                  # 369 条 / 0 死链
+https://www.tinybird.co/docs                          # 373 条 / 1 死链
+
+# ─────────────────────────────────────────────────────────────────────────
+# K 组 · .md 通道（7 条断言）
+# ─────────────────────────────────────────────────────────────────────────
+https://depot.dev/llms.txt                            # 声明「append .md to any HTML URL on https://depot.dev」
+https://depot.dev/pricing                             # _flagship 命中，200
+https://depot.dev/pricing.md                          # **404** -> HARD_404，可上报
+https://depot.dev/docs/cli/quickstart                 # 200
+https://depot.dev/docs/cli/quickstart.md              # 200 -> FULFILLED（第二条佐证过关）
+https://depot.dev/index.md                            # 404（记录在案，但首页 HTML 是 200，所以不豁免）
+https://docs.bigcommerce.com/developer/changelog      # 200
+https://docs.bigcommerce.com/developer/changelog.md   # 200 text/plain 298 B「# Page Not Found」-> SOFT_404_TEXT
+https://dev.wix.com/docs/changelog                    # 200
+https://dev.wix.com/docs/changelog.md                 # 404 -> HARD_404
+https://www.cloudflare.com/llms.txt                   # 外部样本，ANY_URL scope 的回归用例
+https://www.cloudflare.com/network                    # 200
+https://www.cloudflare.com/network.md                 # 404，12 B
+https://resend.com/index.md                           # 404 但 scope=DOCS_ONLY -> OUT_OF_SCOPE
+https://turso.tech/index.md                           # 同上
+https://www.assemblyai.com/docs.md                    # 同上
+https://docs.mistral.ai/getting-started/quickstart.md  # 404 且 HTML 双胞胎也 404 -> html_twin_also_404
+https://docs.mistral.ai/getting-started/quickstart     # 404 ← 双胞胎证据
+https://www.browserbase.com/llms.txt                   # 声明原文没记 -> scope_unknown（宁可漏报）
+https://www.browserbase.com/index.md                   # 200 但是 HTML -> SOFT_404_HTML（被 scope_unknown 压住）
+https://hookdeck.com/llms.txt                          # 「many urls ... available as markdown」+ 自写例外条款
+https://unkey.com/docs/platform/workspaces/billing.md  # 404 + JSON 字面量 null（4 B）-> OPAQUE_ERROR
+https://developers.mailerlite.com/llms.txt             # 只兑现单页
+https://docs.emqx.com/en/emqx/latest/index.html        # HTML_SWAP scope 的样本
+https://docs.emqx.com/en/emqx/latest/index.md          # 换后缀后的结果
+
+# ─────────────────────────────────────────────────────────────────────────
+# L 组 · robots / sitemap / 定价页（发现层）
+# ─────────────────────────────────────────────────────────────────────────
+https://mistral.ai/robots.txt
+https://docs.mistral.ai/robots.txt
+https://www.voyageai.com/pricing                      # **真 404** -> pricing_url 必须是 None 之一
+https://squareup.com/us/en/pricing                    # 200（要 /us/en/ 前缀才找得到）
+https://www.wix.com/plans                             # 200（叫 /plans 不叫 /pricing）
+https://modal.com/pricing                             # 200（零发现样本的定价页）
+https://modal.com/                                    # 零发现样本首页
+https://modal.com/llms.txt                            # 零发现样本
+@control https://modal.com/llms.txt
+https://modal.com/robots.txt
+https://rustdesk.com/                                 # 零发现样本首页
+https://rustdesk.com/robots.txt
+https://gusto.com/                                    # unusable 样本首页（403）
+https://gusto.com/robots.txt
+https://docs.gusto.com/robots.txt
+https://tdengine.com/robots.txt
+https://docs.tdengine.com/robots.txt
