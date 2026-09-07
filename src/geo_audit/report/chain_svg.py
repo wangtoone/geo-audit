@@ -38,11 +38,13 @@ import html
 from collections.abc import Sequence
 from typing import TYPE_CHECKING
 
-from ..models import Stage, Status
-from .copy_zh import COPY_ZH, STAGE_LABEL, STATUS_CSS, STATUS_GLYPH, STATUS_LABEL
+# STAGE_LABEL 从 models 直取 —— 它的唯一定义处在那里（A6）。经 copy_zh 转口在
+# mypy strict 下会红（no_implicit_reexport 不认转口），而且多一跳没有任何好处。
+from ..models import STAGE_LABEL, Stage, Status
+from .copy_zh import COPY_ZH, STATUS_CSS, STATUS_GLYPH, STATUS_LABEL
 
-if TYPE_CHECKING:  # pragma: no cover - 仅类型；运行期不 import render，避免成环
-    from .render import Position
+if TYPE_CHECKING:  # pragma: no cover - 仅类型
+    from ..models import Position
 
 # --------------------------------------------------------------------------- #
 # 版面常量（单位：SVG 用户坐标 = px）

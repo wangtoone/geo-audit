@@ -33,7 +33,6 @@ import base64
 import dataclasses
 import json
 import types
-from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
 from typing import Any, Literal, Union, get_args, get_origin, get_type_hints
@@ -41,189 +40,16 @@ from typing import Any, Literal, Union, get_args, get_origin, get_type_hints
 from geo_audit.models import (
     SCHEMA_VERSION,
     VOLATILE_JSON_FIELDS,
-    ApexWwwResult,
-    Evidence,
-    Finding,
-    NaiveContrast,
-    Severity,
-    Stage,
-    Status,
+    Counts,
+    Coverage,
+    CoverageGap,
+    Exclusion,
+    Fragility,
+    Position,
+    Report,
 )
-from geo_audit.rootcause import RootCause
 
 # ═════════════════════════════════════════════════════════════════════════════
-# ╔═══════════════════════════════════════════════════════════════════════════╗
-# ║ 占位区 —— PLACEHOLDER BLOCK                                               ║
-# ║                                                                           ║
-# ║ 下面 7 个 dataclass **应搬入 models.py**（见 §2.6 Exclusion、§2.9         ║
-# ║ Position、§2.10 CoverageGap / Fragility / Coverage / Counts / Report）。   ║
-# ║ 它们现在在这里，只因为写本文件的 agent 被禁止改 models.py，而没有         ║
-# ║ ``Report`` 就既生成不出 schema、也序列化不出 JSON。字段名、顺序、默认值、  ║
-# ║ 注释全部逐字照抄 §2.6 / §2.9 / §2.10，搬的时候剪贴即可。                  ║
-# ║                                                                           ║
-# ║ 搬入步骤：                                                                ║
-# ║   1. 把本占位区整段剪到 models.py 的 ``PositionSeed`` 之后；              ║
-# ║   2. 本文件改成 ``from geo_audit.models import Counts, Position, Report``  ║
-# ║      （其余同理），删掉本区；                                             ║
-# ║   3. 重跑 ``python scripts/gen_schema.py`` 把 schema 重新生成一次 ——      ║
-# ║      生成器按「先在 geo_audit.models 里找，找不到才回落本文件」解析根类，  ║
-# ║      所以搬完**不需要改生成器一行**；schema 文件本身若字节不变，          ║
-# ║      ``--check`` 直接就是绿的。                                           ║
-# ║                                                                           ║
-# ║ 注意 A6：``class Exclusion`` 在 src/ 下必须恰好 1 处 —— 目前这一处就是。   ║
-# ║ 别的 agent 若也占位了同名类，搬入时以 models.py 为唯一定义处。            ║
-# ║ 先例：rootcause.py 的 ``RootCause``、extract.py 的 ``LinkTarget`` 同办法。 ║
-# ╚═══════════════════════════════════════════════════════════════════════════╝
-
-
-@dataclass(frozen=True, slots=True)
-class Exclusion:
-    """被去噪规则排除的一条链接（§2.6:1008）。必须逐条留痕。
-
-    ``fetch/denoise.py`` 里的 ``EligibilityExclusion``（rule_id / reason /
-    provenance 三字段）是判定期的轻版本，本类是报告层的富版本，由
-    ``checks/dead_links.py`` 升格而来。两者按 §2.6 的裁决并存。
-    """
-
-    url: str
-    rule_id: str
-    rule_desc: str
-    found_on: str | None = None
-    provenance: Literal["measured", "single_case"] = "measured"
-    #: v2 新增：class_hidden_anchor 这类「不排除但要人工确认」的规则走这里
-    disposition: Literal["excluded", "needs_review"] = "excluded"
-
-
-@dataclass(frozen=True, slots=True)
-class Position:
-    """报告状态账本里的一格（§2.9:1213）。它回答「AI 走到这里，通不通？」
-
-    **不是一次 HTTP 请求，也不是一条 finding。** 只能由
-    ``pipeline.build_positions()`` 产生（A7 有 grep 守着）。
-
-    ``naive`` 的类型是 ``NaiveContrast``（models.py 已有）而不是 §2.9 写的
-    ``NaiveRow``：``NaiveRow`` 在全项目里不存在，``NaiveContrast`` 是它的超集，
-    且 ``naive.py`` 产出的就是 ``NaiveContrast`` —— 再定义一个 ``NaiveRow``
-    就是第二份朴素对照契约。见交付说明 deviations。
-    """
-
-    position_id: str  # 稳定 id：f"{stage.value}:{key}"，key 见 §2.9 构造表
-    stage: Stage
-    label: str  # 中文，直接显示
-    probe_url: str  # 代表性 URL（聚合型取被聚合对象的入口 URL）
-    status: Status
-    detail: str
-    kind: Literal["probe", "aggregate"]  # v2：区分单探测格与聚合格
-    aggregate_of: int = 1  # v2：这一格背后有几个被聚合对象
-    unknown_reason: str | None = None  # Reason 的取值 | "interrupted"
-    unknown_remedy: str | None = None  # 每个 UNKNOWN 都必须有
-    evidence: Evidence | None = None
-    control: Evidence | None = None
-    naive: NaiveContrast | None = None
-    finding_ids: tuple[str, ...] = ()
-
-
-@dataclass(frozen=True, slots=True)
-class CoverageGap:
-    """§2.10:1236。"""
-
-    where: str
-    reason: str  # Reason 取值
-    detail: str
-    remedy: str
-
-
-@dataclass(frozen=True, slots=True)
-class Fragility:
-    """结构性脆弱点（§2.10:1244）。零发现报告的主体。
-
-    每条必须挂一个实测先例，否则就是编的。
-    """
-
-    fragility_id: str  # F1..F8
-    title: str
-    metric: str
-    why: str
-    precedent: str  # 实测先例，必填，非空有测试
-    watch_command: str  # 能直接放进 CI 的一条命令
-    severity: Severity = Severity.INFO
-
-
-@dataclass(frozen=True, slots=True)
-class Coverage:
-    """§2.10:1256。「我们看了哪些、没看哪些」。"""
-
-    checked: tuple[str, ...]
-    not_checked: tuple[str, ...]
-    positions_total: int
-    links_extracted: int = 0
-    links_excluded: int = 0
-    links_needs_review: int = 0  # v2：class_hidden_anchor 这类
-    links_verified: int = 0
-    links_unknown: int = 0
-    pages_fetched: int = 0
-    index_links_sampled: bool = False
-    sampling_note: str = ""
-    robots_respected: bool = True
-    requests_made: int = 0
-    budget_cap: int = 0
-    interrupted: bool = False  # v2：Ctrl-C（§7.5）
-
-
-@dataclass(frozen=True, slots=True)
-class Counts:
-    """§2.10:1275。首页四格与 A31 恒等式的唯一数据源。"""
-
-    positions: int
-    positions_pass: int
-    positions_fail: int
-    positions_unknown: int
-    positions_na: int
-    findings: int  # = len(report.findings)
-    findings_counted: int  # v2：counted_as_hit=True 的条数，首页分子用这个
-    occurrences: int  # v2：sum(f.occurrences)
-    root_causes: int
-    by_severity: dict[str, int]
-    naive_divergences: int
-    naive_dead_count: int = 0  # 朴素死链判定：首跳状态码 >= 400 即判死
-    audited_dead_instances: int = 0
-    llm_calls: int = 0  # v2：恒为 0，有断言（A22）
-
-
-@dataclass(frozen=True, slots=True)
-class Report:
-    """§2.10:1292。一次扫描的全部产出，也是对外契约的根。
-
-    §2.10 还给了一个 ``to_json()`` 方法（``asdict`` + ``default=str``）。这里
-    **故意不带**：序列化只有一处，就是本模块的 ``report_to_json``（见 §1.1 的
-    ``report/json_out.py``）。两份序列化器必然对不上，那正是删掉 ``FindingDict``
-    的理由。搬入 models.py 时若要保留 ``to_json``，让它 delegate 到本模块。
-    """
-
-    schema_version: str
-    tool_version: str
-    denoise_ruleset_version: str
-    domain: str
-    scanned_at: str
-    duration_s: float
-    contact: str
-    user_agent: str
-    headline: str
-    verdict_kind: Literal[
-        "has_fail", "zero_with_unknown", "zero_clean", "no_ai_channel", "unusable"
-    ]
-    positions: tuple[Position, ...]
-    findings: tuple[Finding, ...]
-    root_causes: tuple[RootCause, ...]
-    naive_table: tuple[NaiveContrast, ...]
-    fragilities: tuple[Fragility, ...]
-    coverage_gaps: tuple[CoverageGap, ...]
-    excluded: tuple[Exclusion, ...]
-    apex_www: ApexWwwResult | None
-    coverage: Coverage
-    counts: Counts
-
-
 # ╔═══════════════════════════════════════════════════════════════════════════╗
 # ║ 占位区结束 —— PLACEHOLDER BLOCK END                                       ║
 # ╚═══════════════════════════════════════════════════════════════════════════╝

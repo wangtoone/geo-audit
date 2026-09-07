@@ -446,7 +446,8 @@ def test_autoescape_is_on_for_strings_too() -> None:
 
 def test_every_stage_and_status_label_is_rendered_somewhere() -> None:
     """六格标签与四态标签都必须真的出现在报告里（页面上没有孤儿常量）。"""
-    from geo_audit.report.copy_zh import STAGE_LABEL, STATUS_LABEL
+    from geo_audit.models import STAGE_LABEL
+    from geo_audit.report.copy_zh import STATUS_LABEL
 
     html = render_html(build_page_one_sample())
     for stage in Stage:
