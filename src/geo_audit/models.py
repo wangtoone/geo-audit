@@ -22,6 +22,7 @@ false zero.
 
 from __future__ import annotations
 
+import hashlib
 import time
 from dataclasses import dataclass, field, replace
 from enum import Enum
@@ -561,3 +562,261 @@ class LinkContext:
     #: than from an HTML page.  Those have no HTML context, so context-
     #: dependent rules must not fire on them.
     from_text_file: bool = False
+
+
+# --------------------------------------------------------------------------- #
+# 报告层（§2.5–§2.9）
+#
+# 这一段原先是 checks/ai_path.py 里的**本地占位** —— 写它的 agent 被禁止改
+# models.py，所以先放在了 checks 层，并在占位横幅里写明了搬入步骤。
+# 现按验收标准 A6（`grep -rn "class Severity\|class PositionClass" src/` 必须
+# 恰好 1 处命中）搬到唯一定义处。ai_path.py 那一段已删除、改为 import。
+#
+# `Finding.naive` 与 `NaiveContrast` 是 checks 层新增的（§2.6 只有三个扁平的
+# naive_* 字段）。保留：产品的核心卖点「朴素实现会怎么读错」需要结构化承载，
+# 而三个扁平字段装不下 direction 的第四个取值 over_report。三个扁平字段照样在，
+# schema 不受影响。
+# --------------------------------------------------------------------------- #
+
+
+@dataclass(frozen=True, slots=True)
+class NaiveContrast:
+    """「一个只探根路径的工具会得出什么结论」——**一条 finding 一行**。
+
+    这不是文案，是同一批已抓响应上的两个读数：``naive_conclusion`` 只用
+    「跟完跳转的最终状态码」推，``actual_conclusion`` 是我们的判定。
+    ``extra_requests`` 记我们为了看出差别多打了几个请求（§4.5 表的最后一列）。
+
+    ``direction`` 比 §2.6 NaiveRow 多一个取值 ``over_report``：§4.5 的表里
+    「过报（我们按设计不报）」那一行（resend.com/index.md）既不是假阳也不是
+    假阴，是朴素实现多报了一条而我们按范围压住 —— NaiveRow 的三值枚举装不下
+    （见 spec_gaps）。
+    """
+
+    probe_url: str
+    in_naive_probe_set: bool
+    naive_method: str
+    naive_conclusion: str
+    actual_conclusion: str
+    diverges: bool
+    direction: Literal["false_positive", "false_negative", "over_report", "agree"]
+    extra_requests: int = 0
+    why: str = ""
+
+
+class Stage(str, Enum):
+    """AI 检索链路的六段（§2.5:858）。第一页的链路图就是这六格。"""
+
+    DISCOVERY = "discovery"  # ① 入口发现
+    INDEX_FILE = "index_file"  # ② llms.txt 是真文件还是软 404
+    FULLTEXT = "fulltext"  # ③ llms-full.txt 是真全文还是副本
+    INDEX_LINKS = "index_links"  # ④ 索引里列的链接活着几条
+    MD_CHANNEL = "md_channel"  # ⑤ 「任意页面加 .md」兑现了吗
+    HUMAN_PATH = "human_path"  # ⑥ 人和爬虫共用的可点击路径
+
+
+class Severity(str, Enum):
+    """§2.5:878。"""
+
+    CRITICAL = "critical"
+    HIGH = "high"
+    MEDIUM = "medium"
+    LOW = "low"
+    INFO = "info"
+
+
+class PositionClass(str, Enum):
+    """§2.5:886。AI 路径体检产出的 finding **一律** AI_CHANNEL。"""
+
+    SALES_PATH = "sales_path"
+    DOC_ENTRY = "doc_entry"
+    AI_CHANNEL = "ai_channel"
+    NAV = "nav"
+    BODY = "body"
+    FOOTER_SOCIAL = "footer_social"
+
+
+#: §2.5:940 冻结集合，多一个就让 v1 范围守门测试变红。
+FindingKind = Literal[
+    "soft_404",
+    "llms_full_fake",
+    "index_link_dead",
+    "md_unfulfilled",
+    "dead_link",
+]
+FINDING_KINDS: frozenset[str] = frozenset(
+    ("soft_404", "llms_full_fake", "index_link_dead", "md_unfulfilled", "dead_link")
+)
+
+
+@dataclass(frozen=True, slots=True)
+class Evidence:
+    """一次 HTTP 观测（§2.6:960）。``curl_repro`` 非空是硬要求（A35）。"""
+
+    url: str
+    http_status: int | None = None
+    content_type: str | None = None
+    bytes_len: int | None = None  # 只作展示，永不参与判定
+    norm_sha256: str | None = None
+    raw_md5: str | None = None
+    body_head: str | None = None
+    title: str | None = None
+    final_url: str | None = None
+    redirect_chain: tuple[str, ...] = ()
+    resolver_used: str | None = None
+    fetched_at: str = ""
+    error: str | None = None
+    curl_repro: str = ""
+
+
+@dataclass(frozen=True, slots=True)
+class FixHint:
+    """§2.6:979。``after`` 必须是我们实际请求过并返回 200 的地址，否则
+    ``verified_target=False`` 且报告写「我们没找到明显的正确目标」——绝不编一个。"""
+
+    action: str
+    open_this: str
+    locator: str
+    before: str | None
+    after: str | None
+    verified_target: bool
+
+
+@dataclass(frozen=True, slots=True)
+class Finding:
+    """§2.7:1060。字段名与顺序照抄规格；本文件只多一个 ``naive`` 字段。"""
+
+    finding_id: str
+    kind: FindingKind
+    check_id: str
+    title: str
+    severity: Severity
+    position_class: PositionClass
+    stage: Stage
+
+    target: Evidence
+    control: Evidence | None = None
+    found_on: str | None = None
+    anchor_text: str | None = None
+    html_snippet: str | None = None
+    source_hint: str | None = None
+
+    occurrences: int = 1
+    occurrence_pages: tuple[str, ...] = ()
+    occurrence_hrefs: tuple[str, ...] = ()
+
+    root_cause_id: str = ""
+    root_cause_summary: str = ""
+    sibling_count: int = 1
+
+    fix: FixHint | None = None
+
+    naive_conclusion: str = ""
+    naive_is_wrong: bool = False
+    actual_conclusion: str = ""
+
+    confidence: Literal["confirmed", "needs_review"] = "confirmed"
+    why_it_matters: str = ""
+    fp_guard: tuple[str, ...] = ()
+    fp_note: str | None = None
+    suppress_hint: str = ""
+    display_value: str = ""
+
+    detail: dict[str, str | int | float | bool] = field(default_factory=dict)
+    counted_as_hit: bool = True
+    severity_signals: dict[str, str] = field(default_factory=dict)
+    exposure_pages: tuple[str, ...] = ()
+
+    # ── 本文件新增（规格 §2.7 里没有这个字段）────────────────────────────
+    #: 「朴素实现会怎么读错」的整行结构化对照。§2.7 只给了三个扁平字段
+    #: （naive_conclusion / naive_is_wrong / actual_conclusion），装不下
+    #: 「我们比它多打了几个请求」「差异方向」「它用的方法」，而 §4.5 的对照表
+    #: 与 A34 恰恰要这三样。三个扁平字段照样填，所以 schema 不受影响。
+    naive: NaiveContrast | None = None
+
+
+def make_finding_id(check_id: str, target_url: str, found_on: str | None) -> str:
+    """§2.10:1333 逐字照抄。``target_url`` 传的是 **norm_url**。"""
+    raw = f"{check_id}|{target_url}|{found_on or ''}"
+    return "GA-" + hashlib.sha256(raw.encode()).hexdigest()[:10].upper()
+
+
+#: §2.8:1146。每条 UNKNOWN 都必须有补救办法，且要具体到可执行（A32）。
+#: 这里只抄本文件真正会用到的那些 reason —— 完整表（含 interrupted 等）由
+#: models.py 承接，A32 断言 ``set(UNKNOWN_REMEDY) >= NOT_EVALUATED_REASONS``。
+UNKNOWN_REMEDY: dict[str, str] = {
+    "waf_challenge_body": (
+        "你的 WAF 对 UA 含 geo-audit 的请求返回了挑战页。把这个 UA 加白名单后重跑即可。"
+        "实测参照：gusto.com 的 llms.txt 是真文件（浏览器过挑战后 200 text/plain 8,217 B），"
+        "但对纯 HTTP 客户端一律 403 —— 任何不带浏览器的工具都会把你这里报成「没有」。"
+    ),
+    "waf_status": (
+        "该位置返回了拦截型状态码，不是内容。被拦截 ≠ 不存在，本位置既不计死链也不计存活。"
+    ),
+    "rate_limited": (
+        "被限流（429）。用 --rate 0.2 调慢重跑。实测参照：www.pipedrive.com 的 llms.txt "
+        "是 8,501 B 的真文件，但对 curl 返回 429；同域 8 条内链也全被 429 挡住无法判定。"
+    ),
+    "login_required": "需要登录才能看。本工具只抓无登录公开页，这个位置我们不碰。",
+    "needs_js": (
+        "服务端 HTML 里正文不足 200 字符，正文由 JS 渲染。纯 HTTP 客户端在这类页面上会系统性低估。"
+        "实测参照：help.spoton.com 正文只有一行「SpotOn Knowledge Base」、"
+        "docs.lawmatics.com（Redoc）只有一行「Lawmatics OAuth API v1.22.0」——"
+        "它们的「零发现」是抓取能力问题，不是站点干净。"
+    ),
+    "server_error": (
+        "服务端错误（5xx），无法判定内容是否存在。"
+        "实测参照：developers.pinterest.com/llms.txt 返回 500。"
+    ),
+    "dns_unresolved": (
+        "两个独立 resolver 都解析不出。实测参照：cog.run 在本机 SERVFAIL 但 dig @8.8.8.8 有 A 记录 "
+        "104.18.17.10，所以单一 resolver 的失败我们一律不采信。"
+    ),
+    "dns_poisoned": (
+        "DNS 返回了本地/私有地址，判定为解析污染而非死链。"
+        "实测参照：www.talkie-ai.com 本机解析到 127.0.0.1。"
+    ),
+    "timeout": (
+        "超时。已重试 2 次。实测参照：app.close.com/download 第一次 curl exit 28、重测 200。"
+    ),
+    "network_error": "网络错误。",
+    "redirect_loop": (
+        "重定向成环（多为登录跳转环）。实测参照：app.moderntreasury.com 的 Auth0 跳转环。"
+    ),
+    "too_many_redirects": "重定向层数超过 10 跳。",
+    "robots_disallowed": (
+        "你的 robots.txt 禁止抓这个路径，我们遵守了。要检查请加 --ignore-robots。"
+        "「我们没被允许看」是真话，「这里没问题」是假话。"
+    ),
+    "control_unavailable": (
+        "同域对照探测自身不可用（被拦或出错），无法判定本响应是真文件还是兜底页。"
+        "判定作废，绝不退化成「没问题」。"
+    ),
+    "body_truncated": "响应体超过 8 MiB 读取上限被截断，不做指纹判定。",
+    "not_fetched": (
+        "超出本次预算上限（--max-requests / --max-links），本位置未验证。"
+        "用 --max-requests 0 取消上限重跑可以覆盖它。"
+    ),
+    # §7.5 的 Ctrl-C 路径。不是 Reason 的取值（Classification 里塞的是它，
+    # 但 NOT_EVALUATED_REASONS 不含它），所以 A32 的断言写成
+    # `set(UNKNOWN_REMEDY) >= NOT_EVALUATED_REASONS | {"interrupted"}`。
+    "interrupted": "扫描被 Ctrl-C 中断，本位置还没轮到。已完成的位置结论有效，这一格没有结论。",
+}
+
+
+@dataclass(frozen=True, slots=True)
+class PositionSeed:
+    """**Position 的原料，不是 Position**（验收 A7 只许 ``pipeline.build_positions()``
+    里出现 ``Position(``，而第 6 步 4429 又把「P2 构造」列成本步产出 —— 两条要求
+    冲突，见交付说明 spec_gaps）。裁决：本层只产出与 §2.9 构造表逐字段对齐的
+    seed，由第 16 步的 pipeline 一对一变成 ``Position``。"""
+
+    stage: Stage
+    key: str  # §2.9 构造表的 key 列；position_id = f"{stage.value}:{key}"
+    kind: Literal["probe", "aggregate"]
+    probe_url: str
+    status: Status
+    detail: str
+    unknown_reason: str | None = None
+    unknown_remedy: str | None = None
+    aggregate_of: int = 1
