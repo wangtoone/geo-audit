@@ -1,0 +1,67 @@
+{
+  "_default_absent": {
+    "addresses": [],
+    "error": "NXDOMAIN",
+    "poisoned": false,
+    "resolver": "none"
+  },
+  "_note": "手写的自检快照（第 4a 步）。**不是实录**：host 全是 .invalid 保留域，正文是造的，只用来让 tests/test_fixture_store.py 在没有真快照时也能真跑起来。真快照由第 4b 步录进 fixtures/ 根目录，与本目录互不影响。重新生成：python scripts/capture_fixtures.py --write-selftest-fixtures --fixtures-dir fixtures/handwritten",
+  "big-selftest.invalid": {
+    "addresses": [
+      "203.0.113.13"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "dead-selftest.invalid": {
+    "addresses": [],
+    "error": "NXDOMAIN on system/8.8.8.8/1.1.1.1",
+    "poisoned": false,
+    "resolver": "none"
+  },
+  "fixture-selftest.invalid": {
+    "addresses": [
+      "203.0.113.10"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "huge-selftest.invalid": {
+    "addresses": [
+      "203.0.113.14"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "poisoned-selftest.invalid": {
+    "addresses": [
+      "203.0.113.16"
+    ],
+    "poisoned": false,
+    "resolver": "8.8.8.8",
+    "system_answer": [
+      "127.0.0.1"
+    ]
+  },
+  "redirect-selftest.invalid": {
+    "addresses": [
+      "203.0.113.11"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "target-selftest.invalid": {
+    "addresses": [
+      "203.0.113.12"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "timeout-selftest.invalid": {
+    "addresses": [
+      "203.0.113.15"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  }
+}

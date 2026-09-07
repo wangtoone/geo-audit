@@ -1,0 +1,19 @@
+{
+  "body_bytes": 10,
+  "body_file": "snapshots/fixture-selftest.invalid/geo-audit-probe-0f1e2d3c4b5a69788796a5b4.txt-ada32d84.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://fixture-selftest.invalid/geo-audit-probe-0f1e2d3c4b5a69788796a5b4.txt",
+  "handwritten": true,
+  "headers": {
+    "content-type": "text/plain; charset=utf-8",
+    "server": "selftest"
+  },
+  "note": "手写，非实录",
+  "probe_for": "https://fixture-selftest.invalid/llms.txt",
+  "raw_md5": "47f9c22a1718fe9888fb7e536397774f",
+  "recorded_at": "2026-09-07T00:00:00Z",
+  "status": 404,
+  "stored_bytes": 10,
+  "transport_error": null,
+  "url": "https://fixture-selftest.invalid/geo-audit-probe-0f1e2d3c4b5a69788796a5b4.txt"
+}

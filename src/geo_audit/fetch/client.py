@@ -118,7 +118,7 @@ def build_user_agent(contact: str) -> str:
             "必须提供联系邮箱（--contact 或 GEO_AUDIT_CONTACT）。"
             "抓取合规要求 User-Agent 里带真实联系方式，做成可选等于没有。"
         )
-    return f"geo-audit/{__version__} (+https://github.com/geo-audit/geo-audit; contact: {contact})"
+    return f"geo-audit/{__version__} (+https://github.com/wangtoone/geo-audit; contact: {contact})"
 
 
 class Fetcher:

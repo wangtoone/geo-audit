@@ -1,0 +1,16 @@
+{
+  "body_bytes": 0,
+  "body_file": null,
+  "body_storage": "full",
+  "canon_url": "https://timeout-selftest.invalid/llms.txt",
+  "handwritten": true,
+  "headers": {},
+  "note": "手写，非实录",
+  "probe_for": null,
+  "raw_md5": "d41d8cd98f00b204e9800998ecf8427e",
+  "recorded_at": "2026-09-07T00:00:00Z",
+  "status": 0,
+  "stored_bytes": 0,
+  "transport_error": "timeout: ConnectTimeout('handwritten fixture')",
+  "url": "https://timeout-selftest.invalid/llms.txt"
+}

@@ -41,8 +41,8 @@ dev = [
 geo-audit = "geo_audit.cli:main"
 
 [project.urls]
-Homepage = "https://github.com/toonewang/geo-audit"
-Issues = "https://github.com/toonewang/geo-audit/issues"
+Homepage = "https://github.com/wangtoone/geo-audit"
+Issues = "https://github.com/wangtoone/geo-audit/issues"
 
 # ── wheel 必须带上 fixtures 与 corpus ─────────────────────────────────────
 # 卡点 B17b：smoke job 用 `uv tool run --from .` 装 wheel 后跑 --replay-fixtures，

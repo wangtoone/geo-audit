@@ -1,0 +1,149 @@
+{
+  "_meta": {
+    "spec": "IMPLEMENTATION-v2.md §5.4（缺陷指纹与根因归并，卡点 S5）+ §5.2 + A20",
+    "two_levels": ["目标身份折叠（normalize_url）", "源侧根因归并（并查集：source_locus / path_prefix / defect 三条轴）"],
+    "edge_rules": {
+      "E1": "defect 相同（且 != unknown）且（source_locus 相同 或 同 host 且公共前缀 >= 2 段）",
+      "E2": "source_locus 相同 且 公共前缀 >= 1 段 且 该 locus 内死目标数 >= 3"
+    },
+    "template_bug_totals": {"links": 37, "root_causes": 7},
+    "template_bug_totals_note": "是 37 -> 7，不是 38 -> 7，也不是作废的 44 -> 7（§0.7 更正 3）。saleor 占 2 个根因",
+    "two_sevens_note": "「66 条挤在 7 个域」与「37 条来自 7 个模板 bug」是两套不同的 7，报告必须同时出两张表并显式说明口径不同"
+  },
+
+  "template_bug_families": [
+    {"domain": "tdengine.com", "defect": "stale_path_after_migration", "links": 8, "root_causes": 1,
+     "evidence": "文档站已迁到 /developer-guide/connectors-reference/*，官网首页仍指旧路径",
+     "fix": "批量替换或加 301"},
+    {"domain": "bytebase.com", "defect": "wrong_host", "links": 6, "root_causes": 1,
+     "evidence": "www.bytebase.com/introduction/what-is-bytebase 404，docs.bytebase.com 同名路径全部 200",
+     "fix": "href 换成文档子域的绝对 URL"},
+    {"domain": "copper.com", "defect": "url_concatenated_twice", "links": 4, "root_causes": 1,
+     "evidence": "<a href=\"https://www.linkedin.com/https://www.linkedin.com/company/copper-inc/\">。根因是 Intercom 帮助中心后台社交链接字段填了完整 URL，模板又拼了一次前缀。对照组：主站 www.copper.com 页脚同四个链接写法是对的",
+     "fix": "后台字段改成 handle/路径，或去掉模板前缀",
+     "note": "4 是去噪后；去噪前 5（含 intellimize 那条）"},
+    {"domain": "canvasmedical.com", "defect": "relative_path_prefixed", "links": 3, "root_causes": 1,
+     "evidence": "/product-updates/release-notes/sdk/layout-effect/ 404 而 /sdk/layout-effect/ 200",
+     "fix": "改成绝对路径（以 / 开头）",
+     "note": "只是 canvasmedical 9 条里的第①区，不是全部 9 条"},
+    {"domain": "brevo.com", "defect": "markdown_link_not_rendered", "links": 6, "root_causes": 1,
+     "evidence": "https://developers.brevo.com/%5Bhttps:/developers.sendinblue.com/reference/createdomain%5D(...) —— 读的是服务端返回的 <a href> 属性，所以是他们渲染坏了，用户点得到",
+     "fix": "修 changelog 的 markdown 渲染",
+     "note": "只是 brevo 14 条里的 markdown 族 6 条"},
+    {"domain": "saleor.io", "defect": "route_missing", "links": 10, "root_causes": 2,
+     "evidence": "/cloud/talk-to-us 与 /cloud/pricing-page 两个唯一路径 x 10 个链接实例；裸路径也 404，而 /contact 200",
+     "fix": "补页面或改指到现存页",
+     "note": "10 个实例 -> 2 条 finding -> 2 个根因。不是 1 个，也不是 10 个"}
+  ],
+
+  "per_domain": [
+    {"domain": "tdengine.com", "dead_links": 8, "root_causes": 1, "pending": false,
+     "corpus_dead": 8, "defects": ["stale_path_after_migration"]},
+    {"domain": "bytebase.com", "dead_links": 6, "root_causes": 1, "pending": false,
+     "corpus_dead": 6, "defects": ["wrong_host"]},
+    {"domain": "copper.com", "dead_links": 4, "root_causes": 1, "pending": false,
+     "corpus_dead": 5, "dead_links_before_denoise": 5, "defects": ["url_concatenated_twice"],
+     "note": "5 是去噪前（含 117340892.intellimizeio.com），4 是去噪后。两处都对，报告里必须标清"},
+    {"domain": "brevo.com", "dead_links": 14, "root_causes": 4, "pending": true,
+     "corpus_dead": 16, "dead_links_before_denoise": 16,
+     "defects": ["markdown_link_not_rendered", "legacy_brand_domain"],
+     "sub_families": [{"defect": "markdown_link_not_rendered", "links": 6, "root_causes": 1},
+                      {"defect": "legacy_brand_domain", "links": 5, "root_causes": 1}],
+     "note": "待实测：4 个根因是 §5.4 的占位（第 13 步从 fixture 回填）。已确定的只有 markdown 族 6->1 与 legacy_brand_domain 族 5->1；legacy 族的关键约束是「同页另有 15 条 sendinblue 链接仍然 200」，不能整域名一刀切"},
+    {"domain": "saleor.io", "dead_links": 10, "root_causes": 2, "pending": false,
+     "corpus_dead": 10, "defects": ["route_missing"],
+     "unique_paths": 2,
+     "occurrences": {"https://saleor.io/cloud/talk-to-us": 7, "https://saleor.io/cloud/pricing-page": 3},
+     "occurrences_source": "corpus 原文给了「10 个链接实例」与 pricing 页「每个套餐卡片一个，共 3 处」，10 - 3 = 7 可推出；§5.4 把 7/3 标成「待实测」其实是可从原文推出的"},
+    {"domain": "canvasmedical.com", "dead_links": 9, "root_causes": 4, "pending": false,
+     "corpus_dead": 9,
+     "defects": ["relative_path_prefixed", "route_missing", "deleted_help_article", "deleted_third_party_repo"],
+     "instance_counts_sorted": [2, 2, 2, 3],
+     "partition": [
+       {"defect": "relative_path_prefixed", "links": 3,
+        "urls": ["https://www.canvasmedical.com/product-updates/release-notes/sdk/layout-effect/",
+                 "https://www.canvasmedical.com/product-updates/release-notes/sdk/effect-notes/",
+                 "https://www.canvasmedical.com/product-updates/release-notes/product-updates/commands-module/"],
+        "note": "URL 前缀由原文的三个末段（release-notes/sdk/layout-effect/、release-notes/sdk/effect-notes/、release-notes/product-updates/commands-module/）补全为绝对 URL -> 待 fixture 回填确认 host 与前缀"},
+       {"defect": "route_missing", "links": 2,
+        "urls": ["https://www.canvasmedical.com/sdk/canvas-cli/",
+                 "https://www.canvasmedical.com/documentation/pdf-annotations/"],
+        "note": "同 locus + 同 defect -> E1 连边 -> 归 1 个"},
+       {"defect": "deleted_help_article", "links": 2,
+        "urls": ["https://help.canvasmedical.com/articles/7998893827-managing-conditions",
+                 "https://canvas-medical.help.usepylon.com/articles/7998893827-managing-conditions"],
+        "note": "同一篇文章在原 host 与真身 host 上都 404。deleted_help_article 是 v2 新增指纹（v1 缺，导致这 2 条只能落进 route_missing，根因数算不对）"},
+       {"defect": "deleted_third_party_repo", "links": 2,
+        "url_shape": "https://github.com/canvas-medical/canvas-plugins/blob/main/example-plugins/*/README.md",
+        "note": "两个 example-plugins README。原文只给了形态没给两个具体路径 -> 待实测"}
+     ]},
+    {"domain": "swell.is", "dead_links": 12, "root_causes": 1, "pending": true,
+     "xfail": true,
+     "corpus_dead": 12,
+     "defects": ["deleted_third_party_repo"],
+     "note": "待实测：§5.4 写「只记录了 github.com/swellstores/swell-sdk 一条 URL，第 5 步补录后回填；先按 1 个根因写占位断言并标 xfail」。实际第 5 步从 corpus 又捞出 3 条完整 URL（hubspot / the-events-model / builder-io）与 8 条路径，见 deadlink_labels.jsonl H11–H22；12 条全在 https://www.swell.is/changelog 一页（该页 104 条链接，腐烂率 11.5%）。根因数仍待第 13 步回填"}
+  ],
+
+  "domains_66": {
+    "total": 66,
+    "note": "「66 条挤在 7 个域」——这七个数是**各批去噪前自报的死链数**，合计恰好 66。与去噪后的 63 是两个口径",
+    "by_domain": {"brevo.com": 16, "swell.is": 12, "saleor.io": 10, "canvasmedical.com": 9,
+                  "tdengine.com": 8, "bytebase.com": 6, "copper.com": 5},
+    "after_denoise_total": 63
+  },
+
+  "tool_vs_challenge": {
+    "note": "§5.3 卡点 S4 的口径差，必须写进报告，不许藏",
+    "rows": [
+      {"口径": "各批原始", "dead_links": 94, "domains": 28},
+      {"口径": "challenge（只算普通访客点得到的内容链接）", "dead_links": 86, "domains": 25,
+       "diff": "剔 attio 2 + brevo 2 + close 2 + copper 1 + printify 1 = 8"},
+      {"口径": "本工具实际", "dead_links": 87, "domains": 26,
+       "diff": "排掉前 7 条框架/机器产物；printify 那条按 class_hidden_anchor 只打 needs_review、仍计入分子"}
+    ],
+    "assert": "本工具 87 与 challenge 86 恰好差 printify 那 1 条"
+  },
+
+  "defect_fingerprints": [
+    {"defect": "url_concatenated_twice", "detect": "url.count(\"https://\") > 1", "anchor_domain": "copper.com", "links": 4},
+    {"defect": "markdown_link_not_rendered", "detect": "raw_href 含 `](` 或 `%5Bhttp`", "anchor_domain": "brevo.com", "links": 6},
+    {"defect": "mailto_as_relative_path", "detect": "path 里含 `mailto:`", "anchor_domain": "pingcap.com", "links": 5,
+     "anchor": "docs.pingcap.com/tidbcloud/mailto:support@pingcap.com/ 404，锚文本显示 support@pingcap.com，release notes 页 5 处"},
+    {"defect": "relative_path_prefixed", "detect": "剥掉当前页路径前缀后该 URL 返回 200", "anchor_domain": "canvasmedical.com", "links": 3},
+    {"defect": "wrong_host", "detect": "同名路径在兄弟 host（docs./developers./www./apex）上返回 200", "anchor_domain": "bytebase.com", "links": 6},
+    {"defect": "stale_path_after_migration", "detect": "sitemap.xml 里有同末段的现存路径", "anchor_domain": "tdengine.com", "links": 8},
+    {"defect": "suffix_artifact", "detect": "去掉 /index、.html、尾斜杠后返回 200", "anchor_domain": "replicate.com", "links": 6},
+    {"defect": "template_concat", "detect": "正则 https?://.+https?://", "anchor_domain": "inngest.com", "links": 3},
+    {"defect": "typo_vs_anchor_text", "detect": "路径末段与锚文本编辑距离 <= 2", "anchor_domain": "liveblocks.io", "links": 1,
+     "anchor": "github.com/daniliwoz vs 锚文本 @danilowoz"},
+    {"defect": "renamed_social_handle", "detect": "同社交 host 上营销站链的另一个 handle 200", "anchor_domain": "tinybird.co", "links": 2,
+     "anchor": "x.com/tinybirdco、x.com/basetenco（baseten 各 1）"},
+    {"defect": "deleted_third_party_repo", "detect": "GitHub/GitLab 组织页 200 但仓库路径 404", "anchor_domain": "swell.is", "links": null,
+     "anchor": "openstatus、swell（github.com/swellstores/swell-sdk）、gethealthie、canvasmedical（canvas-plugins 2 条）"},
+    {"defect": "deleted_help_article", "detect": "同一篇帮助中心文章在两个 host 上都 404（原 host + 真身 host）", "anchor_domain": "canvasmedical.com", "links": 2,
+     "note": "v2 新增指纹"},
+    {"defect": "dead_third_party_site", "detect": "该第三方 host 根路径也 404", "anchor_domain": "voyageai.com", "links": null,
+     "anchor": "voyageai -> xayn.com/ 根路径直接返回「404 page not found」；replicate -> replicatestatus.com/feed 404 而根域 200"},
+    {"defect": "legacy_brand_domain", "detect": "死目标的注册域 != 被审计域，且同 host 已确认 >= 3 条 200", "anchor_domain": "brevo.com", "links": 5,
+     "anchor": "developers.sendinblue.com 5 条 404，但同页另有 15 条 sendinblue 链接仍然 200 —— 不能整域名一刀切"},
+    {"defect": "route_missing", "detect": "兜底", "anchor_domain": "saleor.io", "links": null,
+     "anchor": "saleor /cloud/*、moonshot /console/invoice、canvasmedical /sdk/canvas-cli/ 与 /documentation/pdf-annotations/"}
+  ],
+
+  "fixhint_verified": [
+    {"domain": "bytebase.com", "candidate": "a) 换 host：www <-> docs <-> apex",
+     "before": "https://www.bytebase.com/introduction/what-is-bytebase",
+     "after": "https://docs.bytebase.com/introduction/what-is-bytebase", "after_status": 200},
+    {"domain": "canvasmedical.com", "candidate": "b) 剥掉重复的路径前缀",
+     "before": "https://www.canvasmedical.com/product-updates/release-notes/sdk/layout-effect/",
+     "after": "https://www.canvasmedical.com/sdk/layout-effect/", "after_status": 200},
+    {"domain": "brevo.com", "candidate": "c) 去掉最后一段",
+     "before": "https://developers.brevo.com/docs/api-clients/python",
+     "after": "https://developers.brevo.com/docs/api-clients", "after_status": 200},
+    {"domain": "tdengine.com", "candidate": "d) sitemap.xml 里最近似路径",
+     "before": null, "after_shape": "/developer-guide/connectors-reference/*", "after_status": 200},
+    {"domain": "saleor.io", "candidate": "sibling control + fix.after",
+     "before": "https://saleor.io/cloud/talk-to-us", "after": "https://saleor.io/contact", "after_status": 200,
+     "note": "corpus 原文：裸路径 /cloud/talk-to-us 与 /talk-to-us 都 404，而 /contact 200"}
+  ]
+}

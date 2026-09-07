@@ -1,0 +1,151 @@
+{
+  "_handwritten": true,
+  "_note": "手写的自检快照（第 4a 步）。**不是实录**：host 全是 .invalid 保留域，正文是造的，只用来让 tests/test_fixture_store.py 在没有真快照时也能真跑起来。真快照由第 4b 步录进 fixtures/ 根目录，与本目录互不影响。重新生成：python scripts/capture_fixtures.py --write-selftest-fixtures --fixtures-dir fixtures/handwritten",
+  "_schema": 1,
+  "snapshots": {
+    "https://big-selftest.invalid/llms-full.txt": {
+      "body_storage": "truncated",
+      "bytes": 2097152,
+      "comment": "自检 truncated 档：2 MiB，只落前 256 KiB + 全量 digest",
+      "content_type": "text/plain",
+      "drift": null,
+      "expect": {
+        "bytes": 2097152,
+        "raw_md5": "e94efd36f6d6f8156a42f0b9d1e65196"
+      },
+      "handwritten": true,
+      "path": "snapshots/big-selftest.invalid/llms-full.txt-006dcbc7",
+      "probe_for": null,
+      "raw_md5": "e94efd36f6d6f8156a42f0b9d1e65196",
+      "recorded_at": "2026-09-07T00:00:00Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://fixture-selftest.invalid/geo-audit-probe-0f1e2d3c4b5a69788796a5b4.txt": {
+      "body_storage": "full",
+      "bytes": 10,
+      "comment": "自检对照探针：probe_for 反查索引",
+      "content_type": "text/plain",
+      "drift": null,
+      "expect": {
+        "bytes": 10,
+        "raw_md5": "47f9c22a1718fe9888fb7e536397774f"
+      },
+      "handwritten": true,
+      "path": "snapshots/fixture-selftest.invalid/geo-audit-probe-0f1e2d3c4b5a69788796a5b4.txt-ada32d84",
+      "probe_for": "https://fixture-selftest.invalid/llms.txt",
+      "raw_md5": "47f9c22a1718fe9888fb7e536397774f",
+      "recorded_at": "2026-09-07T00:00:00Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://fixture-selftest.invalid/llms.txt": {
+      "body_storage": "full",
+      "bytes": 221,
+      "comment": "自检 full 档：完整正文 + expect 里的 md5/bytes",
+      "content_type": "text/plain",
+      "drift": null,
+      "expect": {
+        "bytes": 221,
+        "raw_md5": "6f4ea7109108bf00fb1ba2f691f487ad"
+      },
+      "handwritten": true,
+      "path": "snapshots/fixture-selftest.invalid/llms.txt-f36def7f",
+      "probe_for": null,
+      "raw_md5": "6f4ea7109108bf00fb1ba2f691f487ad",
+      "recorded_at": "2026-09-07T00:00:00Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://fixture-selftest.invalid/robots.txt": {
+      "body_storage": "full",
+      "bytes": 23,
+      "comment": "自检 robots.txt：probe() 会先问它",
+      "content_type": "text/plain",
+      "drift": null,
+      "expect": {
+        "bytes": 23,
+        "raw_md5": "5e0bd1c281a62a380d7a948085bfe2d1"
+      },
+      "handwritten": true,
+      "path": "snapshots/fixture-selftest.invalid/robots.txt-0bb1d870",
+      "probe_for": null,
+      "raw_md5": "5e0bd1c281a62a380d7a948085bfe2d1",
+      "recorded_at": "2026-09-07T00:00:00Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://huge-selftest.invalid/llms-full.txt": {
+      "body_storage": "digest_only",
+      "bytes": 9002064,
+      "comment": "自检 digest_only 档：9,002,064 B，正文不落盘",
+      "content_type": "text/plain",
+      "drift": null,
+      "expect": {
+        "bytes": 9002064,
+        "raw_md5": "52aa0aa5a56db2859b122f08581ba78b"
+      },
+      "handwritten": true,
+      "path": "snapshots/huge-selftest.invalid/llms-full.txt-46c50408",
+      "probe_for": null,
+      "raw_md5": "52aa0aa5a56db2859b122f08581ba78b",
+      "recorded_at": "2026-09-07T00:00:00Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://redirect-selftest.invalid/llms-full.txt": {
+      "body_storage": "full",
+      "bytes": 0,
+      "comment": "自检逐跳存：这一跳只有 Location，正文空",
+      "content_type": "text/plain",
+      "drift": null,
+      "expect": {
+        "bytes": 0,
+        "raw_md5": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      "handwritten": true,
+      "path": "snapshots/redirect-selftest.invalid/llms-full.txt-b5d31349",
+      "probe_for": null,
+      "raw_md5": "d41d8cd98f00b204e9800998ecf8427e",
+      "recorded_at": "2026-09-07T00:00:00Z",
+      "status": 302,
+      "transport_error": null
+    },
+    "https://target-selftest.invalid/": {
+      "body_storage": "full",
+      "bytes": 147,
+      "comment": "自检逐跳存：跳转终点，HTML 壳",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 147,
+        "raw_md5": "f78105293ead7bafc9093c9010c28339"
+      },
+      "handwritten": true,
+      "path": "snapshots/target-selftest.invalid/index-91c000e7",
+      "probe_for": null,
+      "raw_md5": "f78105293ead7bafc9093c9010c28339",
+      "recorded_at": "2026-09-07T00:00:00Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://timeout-selftest.invalid/llms.txt": {
+      "body_storage": "full",
+      "bytes": 0,
+      "comment": "自检传输失败：重放成 httpx.ConnectTimeout",
+      "content_type": "",
+      "drift": null,
+      "expect": {
+        "bytes": 0,
+        "raw_md5": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      "handwritten": true,
+      "path": "snapshots/timeout-selftest.invalid/llms.txt-6cf60c80",
+      "probe_for": null,
+      "raw_md5": "d41d8cd98f00b204e9800998ecf8427e",
+      "recorded_at": "2026-09-07T00:00:00Z",
+      "status": 0,
+      "transport_error": "timeout: ConnectTimeout('handwritten fixture')"
+    }
+  }
+}

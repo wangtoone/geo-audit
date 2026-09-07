@@ -1,0 +1,809 @@
+{
+  "_note": "录制于 2026-09-07。IP 会变，所以 resolved_ips 在 VOLATILE_JSON_FIELDS 里、不进确定性比对；这里冻结的是 ok / poisoned / resolver 三个决策位。带 _pending_capture 的条目只冻结决策位，addresses 由第 4b 步录制回填 —— IP 一律不许手写。urls.txt 里出现过的每个 host 都必须在此有条目（test_fixture_store.py 断言）；不在表里的 host 走 _default_absent。",
+  "docs.mistral.ai": {
+    "addresses": [
+      "104.18.7.90"
+    ],
+    "resolver": "system",
+    "poisoned": false
+  },
+  "platform.minimax.io": {
+    "addresses": [
+      "104.18.20.15"
+    ],
+    "resolver": "system",
+    "poisoned": false
+  },
+  "cog.run": {
+    "addresses": [
+      "104.18.17.10"
+    ],
+    "resolver": "8.8.8.8",
+    "poisoned": false
+  },
+  "www.talkie-ai.com": {
+    "addresses": [
+      "23.55.161.10"
+    ],
+    "resolver": "8.8.8.8",
+    "poisoned": false,
+    "system_answer": [
+      "127.0.0.1"
+    ]
+  },
+  "next.js": {
+    "addresses": [],
+    "resolver": "none",
+    "poisoned": false,
+    "error": "NXDOMAIN on system/8.8.8.8/1.1.1.1"
+  },
+  "117340892.intellimizeio.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "api-docs.ecwid.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "api.factorialhr.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "api.gumroad.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "api.printful.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "app.buildwithfern.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "app.moderntreasury.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "attio.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "brevo.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "business.pinterest.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "canvas-medical.help.usepylon.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "close.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "crates.io": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "depot.dev": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "dev.hume.ai": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "dev.wix.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "developer.squareup.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "developers.attio.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "developers.brevo.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "developers.deepgram.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "developers.mailerlite.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "developers.pinterest.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "developers.pipedrive.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "developers.printify.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "developers.sendinblue.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "discord.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "docs.bigcommerce.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "docs.bytebase.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "docs.canvasmedical.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "docs.commercelayer.io": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "docs.customer.io": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "docs.dify.ai": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "docs.emqx.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "docs.gusto.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "docs.lawmatics.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "docs.moderntreasury.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "docs.pingcap.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "docs.snipcart.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "docs.tdengine.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "docs.zilliz.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "ed.link": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "elevenlabs.io": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "enterprise.printful.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "example.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "example.org": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "factorialhr.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "gethealthie.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "github.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "gumroad.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "gusto.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "help.canvasmedical.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "help.close.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "help.copper.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "help.spoton.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "hookdeck.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "liveblocks.io": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "manpages.ubuntu.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "mistral.ai": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "modal.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "platform.kimi.ai": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "printify.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "replicate.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "replicatestatus.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "resend.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "rustdesk.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "s3.staging.printful.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "saleor.io": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "snipcart.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "spoton.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "squareup.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "sso.teachable.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "support.freshbooks.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "support.zendesk.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "tdengine.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "tenderly.co": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "turso.tech": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "twitter.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "unkey.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "upstash.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "www.assemblyai.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "www.brevo.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "www.browserbase.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "www.bytebase.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "www.canvasmedical.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "www.cloudflare.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "www.copper.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "www.emqx.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "www.facebook.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "www.inngest.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "www.juicefs.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "www.klaviyo.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "www.linkedin.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "www.llamaindex.ai": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "www.medplum.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "www.minimax.io": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "www.moonshot.ai": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "www.openstatus.dev": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "www.pingcap.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "www.pinterest.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。 urls.txt:187 记着首轮 curl exit=6、重测 200 (dns_retry_second_resolver)；哪个 resolver 最终给出答案规格未给，第 4b 步录制时一并确定。"
+  },
+  "www.pipedrive.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "www.printful.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "www.shopify.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "www.swell.is": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "www.tinybird.co": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "www.unkey.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "www.voyageai.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "www.wix.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "x.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "xayn.com": {
+    "addresses": [],
+    "_pending_capture": true,
+    "resolver": "system",
+    "poisoned": false,
+    "_note": "待实测：真实地址在第 4b 步 capture_fixtures.py 录制时回填。addresses 空 -> Resolution.ok 当前派生为 False。"
+  },
+  "_default_absent": {
+    "addresses": [],
+    "resolver": "none",
+    "poisoned": false,
+    "error": "NXDOMAIN"
+  }
+}
