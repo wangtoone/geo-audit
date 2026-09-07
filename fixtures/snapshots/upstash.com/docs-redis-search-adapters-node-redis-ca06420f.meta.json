@@ -1,0 +1,33 @@
+{
+  "body_bytes": 565589,
+  "body_file": "snapshots/upstash.com/docs-redis-search-adapters-node-redis-ca06420f.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://upstash.com/docs/redis/search/adapters/node-redis",
+  "handwritten": false,
+  "headers": {
+    "cache-control": "public, max-age=0, must-revalidate",
+    "cf-cache-status": "HIT",
+    "cf-ray": "a375c744eaa432e2-SIN",
+    "content-encoding": "gzip",
+    "content-type": "text/html",
+    "date": "Mon, 07 Sep 2026 12:39:49 GMT",
+    "etag": "W/\"79f49e2ff0af51c0a0ddd4bcf6f3fed7\"",
+    "link": "<https://upstash.com/llms.txt>; rel=\"alternate\"; type=\"text/plain\"; title=\"LLM-friendly content index\", <https://upstash.com/ask?q=your+question>; rel=\"search\"; type=\"application/json\"; title=\"Upstash answer index\", <https://upstash.com/docs/devops/developer-api/openapi.yaml>; rel=\"service-desc\"; type=\"application/openapi+yaml\"; title=\"Upstash Developer API (OpenAPI)\", <https://upstash.com/docs/qstash/openapi.yaml>; rel=\"service-desc\"; type=\"application/openapi+yaml\"; title=\"QStash REST API (OpenAPI)\", <https://upstash.com/docs/workflow/openapi.yaml>; rel=\"service-desc\"; type=\"application/openapi+yaml\"; title=\"Upstash Workflow REST API (OpenAPI)\", </docs/redis/search/adapters/node-redis.md>; rel=\"alternate\"; type=\"text/markdown\", </docs/llms.txt>; rel=\"describedby\"; type=\"text/plain\", </docs/llms-full.txt>; rel=\"describedby\"; type=\"text/plain\", </docs/.well-known/agent-skills/index.json>; rel=\"agent-skills\"; type=\"application/json\"",
+    "referrer-policy": "strict-origin-when-cross-origin",
+    "server": "Vercel",
+    "strict-transport-security": "max-age=31536000",
+    "transfer-encoding": "chunked",
+    "vary": "Accept",
+    "x-content-type-options": "nosniff",
+    "x-vercel-cache": "MISS",
+    "x-vercel-id": "sin1::pxvlt-1788784789249-7a3bc4750e2f"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "f30d90ae623408b9100e6ced40c3dbfe",
+  "recorded_at": "2026-09-07T12:39:49Z",
+  "status": 200,
+  "stored_bytes": 565589,
+  "transport_error": null,
+  "url": "https://upstash.com/docs/redis/search/adapters/node-redis"
+}

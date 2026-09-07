@@ -1,0 +1,33 @@
+{
+  "body_bytes": 641694,
+  "body_file": "snapshots/upstash.com/docs-redis-commands-sorted-set-zremrangebyscore-2cb6840b.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://upstash.com/docs/redis/commands/sorted-set/zremrangebyscore",
+  "handwritten": false,
+  "headers": {
+    "cache-control": "public, max-age=0, must-revalidate",
+    "cf-cache-status": "HIT",
+    "cf-ray": "a375c5fb8b9eeba1-SIN",
+    "content-encoding": "gzip",
+    "content-type": "text/html",
+    "date": "Mon, 07 Sep 2026 12:38:56 GMT",
+    "etag": "W/\"5a0cbd83cb8804b930be619680fb9698\"",
+    "link": "<https://upstash.com/llms.txt>; rel=\"alternate\"; type=\"text/plain\"; title=\"LLM-friendly content index\", <https://upstash.com/ask?q=your+question>; rel=\"search\"; type=\"application/json\"; title=\"Upstash answer index\", <https://upstash.com/docs/devops/developer-api/openapi.yaml>; rel=\"service-desc\"; type=\"application/openapi+yaml\"; title=\"Upstash Developer API (OpenAPI)\", <https://upstash.com/docs/qstash/openapi.yaml>; rel=\"service-desc\"; type=\"application/openapi+yaml\"; title=\"QStash REST API (OpenAPI)\", <https://upstash.com/docs/workflow/openapi.yaml>; rel=\"service-desc\"; type=\"application/openapi+yaml\"; title=\"Upstash Workflow REST API (OpenAPI)\", </docs/redis/commands/sorted-set/zremrangebyscore.md>; rel=\"alternate\"; type=\"text/markdown\", </docs/llms.txt>; rel=\"describedby\"; type=\"text/plain\", </docs/llms-full.txt>; rel=\"describedby\"; type=\"text/plain\", </docs/.well-known/agent-skills/index.json>; rel=\"agent-skills\"; type=\"application/json\"",
+    "referrer-policy": "strict-origin-when-cross-origin",
+    "server": "Vercel",
+    "strict-transport-security": "max-age=31536000",
+    "transfer-encoding": "chunked",
+    "vary": "Accept",
+    "x-content-type-options": "nosniff",
+    "x-vercel-cache": "MISS",
+    "x-vercel-id": "sin1::qn4xd-1788784736524-3f73ef89b35f"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "333ff3344e27d8d3b923b3c447780caa",
+  "recorded_at": "2026-09-07T12:38:56Z",
+  "status": 200,
+  "stored_bytes": 641694,
+  "transport_error": null,
+  "url": "https://upstash.com/docs/redis/commands/sorted-set/zremrangebyscore"
+}

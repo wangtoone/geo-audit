@@ -1,0 +1,31 @@
+{
+  "body_bytes": 168239,
+  "body_file": "snapshots/www.llamaindex.ai/llms.txt-307a1c96.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://www.llamaindex.ai/llms.txt",
+  "handwritten": false,
+  "headers": {
+    "access-control-allow-origin": "*",
+    "age": "105557",
+    "cache-control": "public, max-age=0, must-revalidate",
+    "content-disposition": "inline; filename=\"404.html\"",
+    "content-encoding": "gzip",
+    "content-type": "text/html; charset=utf-8",
+    "date": "Mon, 07 Sep 2026 12:22:35 GMT",
+    "etag": "W/\"fc9f689b99dd2c6ea25eb2c600b80256\"",
+    "last-modified": "Sun, 06 Sep 2026 07:03:17 GMT",
+    "server": "Vercel",
+    "strict-transport-security": "max-age=63072000",
+    "transfer-encoding": "chunked",
+    "x-vercel-cache": "HIT",
+    "x-vercel-id": "sin1::pss96-1788783755027-fdbe21fc9f6a"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "fc9f689b99dd2c6ea25eb2c600b80256",
+  "recorded_at": "2026-09-07T12:22:35Z",
+  "status": 404,
+  "stored_bytes": 168239,
+  "transport_error": null,
+  "url": "https://www.llamaindex.ai/llms.txt"
+}

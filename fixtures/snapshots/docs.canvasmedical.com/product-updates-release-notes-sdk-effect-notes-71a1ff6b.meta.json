@@ -1,0 +1,31 @@
+{
+  "body_bytes": 42115,
+  "body_file": "snapshots/docs.canvasmedical.com/product-updates-release-notes-sdk-effect-notes-71a1ff6b.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://docs.canvasmedical.com/product-updates/release-notes/sdk/effect-notes/",
+  "handwritten": false,
+  "headers": {
+    "alt-svc": "h3=\":443\"; ma=86400",
+    "connection": "keep-alive",
+    "content-encoding": "gzip",
+    "content-type": "text/html",
+    "date": "Mon, 07 Sep 2026 12:37:46 GMT",
+    "etag": "W/\"9ed6965883052f4febd8172d337fd940\"",
+    "last-modified": "Fri, 04 Sep 2026 23:44:55 GMT",
+    "server": "AmazonS3",
+    "transfer-encoding": "chunked",
+    "vary": "Accept-Encoding",
+    "via": "1.1 9b0280269b9d7aa3290eec3ea5fee604.cloudfront.net (CloudFront)",
+    "x-amz-cf-id": "eDnWt_ggk3qcSVPKXVBV2rZwC5RBN1wIafUCjGs7Y-pc2_in_Lk10w==",
+    "x-amz-cf-pop": "KIX82-P2",
+    "x-cache": "Error from cloudfront"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "9ed6965883052f4febd8172d337fd940",
+  "recorded_at": "2026-09-07T12:37:47Z",
+  "status": 404,
+  "stored_bytes": 42115,
+  "transport_error": null,
+  "url": "https://docs.canvasmedical.com/product-updates/release-notes/sdk/effect-notes/"
+}

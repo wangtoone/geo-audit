@@ -1,0 +1,29 @@
+{
+  "body_bytes": 381589,
+  "body_file": "snapshots/developers.mailerlite.com/api-groups-e3b9d8ab.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://developers.mailerlite.com/api/groups",
+  "handwritten": false,
+  "headers": {
+    "alt-svc": "h3=\":443\"; ma=86400",
+    "cache-control": "public, max-age=0, must-revalidate",
+    "cf-cache-status": "HIT",
+    "cf-ray": "a375bad1e9303d95-SIN",
+    "connection": "keep-alive",
+    "content-encoding": "gzip",
+    "content-type": "text/html",
+    "date": "Mon, 07 Sep 2026 12:31:19 GMT",
+    "etag": "W/\"f93d0d32c33c3a8396de6521f4a112ef\"",
+    "server": "cloudflare",
+    "transfer-encoding": "chunked",
+    "vary": "accept-encoding"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "061ddb6817626053269e470f0343f000",
+  "recorded_at": "2026-09-07T12:31:19Z",
+  "status": 200,
+  "stored_bytes": 381589,
+  "transport_error": null,
+  "url": "https://developers.mailerlite.com/api/groups"
+}

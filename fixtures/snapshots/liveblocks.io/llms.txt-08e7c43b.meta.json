@@ -1,0 +1,32 @@
+{
+  "body_bytes": 42255,
+  "body_file": "snapshots/liveblocks.io/llms.txt-08e7c43b.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://liveblocks.io/llms.txt",
+  "handwritten": false,
+  "headers": {
+    "access-control-allow-origin": "*",
+    "age": "376",
+    "cache-control": "public, max-age=0, must-revalidate",
+    "content-disposition": "inline",
+    "content-encoding": "gzip",
+    "content-type": "text/plain; charset=utf-8",
+    "date": "Mon, 07 Sep 2026 12:23:52 GMT",
+    "etag": "W/\"2c3f8a2cca323182a17fb31753493391\"",
+    "server": "Vercel",
+    "strict-transport-security": "max-age=63072000",
+    "transfer-encoding": "chunked",
+    "vary": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch",
+    "x-matched-path": "/llms.txt",
+    "x-vercel-cache": "HIT",
+    "x-vercel-id": "sin1::4t6tg-1788783832257-b67634b1cb11"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "dd791c9df79e5a89de5d0be44d2d0fc0",
+  "recorded_at": "2026-09-07T12:23:52Z",
+  "status": 200,
+  "stored_bytes": 42255,
+  "transport_error": null,
+  "url": "https://liveblocks.io/llms.txt"
+}

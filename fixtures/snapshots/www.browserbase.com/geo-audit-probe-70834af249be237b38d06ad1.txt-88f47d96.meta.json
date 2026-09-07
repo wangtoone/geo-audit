@@ -1,0 +1,28 @@
+{
+  "body_bytes": 220,
+  "body_file": "snapshots/www.browserbase.com/geo-audit-probe-70834af249be237b38d06ad1.txt-88f47d96.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://www.browserbase.com/geo-audit-probe-70834af249be237b38d06ad1.txt",
+  "handwritten": false,
+  "headers": {
+    "cache-control": "public, max-age=0, must-revalidate",
+    "content-type": "text/html",
+    "date": "Mon, 07 Sep 2026 12:20:54 GMT",
+    "location": "/sign-in?redirect=https%3A%2F%2Fwww.browserbase.com%2Fgeo-audit-probe-70834af249be237b38d06ad1.txt",
+    "server": "Vercel",
+    "strict-transport-security": "max-age=63072000",
+    "transfer-encoding": "chunked",
+    "x-clerk-auth-reason": "session-token-and-uat-missing",
+    "x-clerk-auth-status": "signed-out",
+    "x-clerk-redirect-to": "true",
+    "x-vercel-id": "sin1::qsvfj-1788783654444-bbb6b89cce88"
+  },
+  "note": null,
+  "probe_for": "https://www.browserbase.com/llms-full.txt",
+  "raw_md5": "effe3b81205ec4eff3b50002d8cbcb38",
+  "recorded_at": "2026-09-07T12:20:54Z",
+  "status": 307,
+  "stored_bytes": 220,
+  "transport_error": null,
+  "url": "https://www.browserbase.com/geo-audit-probe-70834af249be237b38d06ad1.txt"
+}

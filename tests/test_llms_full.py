@@ -409,6 +409,16 @@ def test_subdomain_positions_are_outside_the_naive_probe_set() -> None:
     assert f.naive.naive_conclusion == "未采纳（没探这个位置）"
 
 
+@pytest.mark.xfail(
+    strict=True,
+    reason=(
+        "§8.1 gone 分支（第 4b 步实录后发现）：developers.deepgram.com 的 "
+        "llms-full.txt 现在是 **301 跳转**，不再是 llms.txt 的字节副本 —— "
+        "B01 描述的现象已被站方修掉。规程说现象没了就不改断言、只留痕，"
+        "所以这里标 xfail 而不是把期望的 md5 改成今天的值（那等于悄悄删掉回归用例）。"
+        "strict=True 是绊线：哪天 deepgram 又退回副本，本条 XPASS 变红，回来重新裁决。"
+    ),
+)
 @real_index_needed
 def test_the_three_md5s_come_from_the_index_expect_block() -> None:
     """三个字节副本的 md5 必须与 ``fixtures/index.json`` 的 expect 块逐字相同。

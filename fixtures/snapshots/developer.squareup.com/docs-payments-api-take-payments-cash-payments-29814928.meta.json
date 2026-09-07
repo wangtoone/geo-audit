@@ -1,0 +1,32 @@
+{
+  "body_bytes": 228091,
+  "body_file": "snapshots/developer.squareup.com/docs-payments-api-take-payments-cash-payments-29814928.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://developer.squareup.com/docs/payments-api/take-payments/cash-payments",
+  "handwritten": false,
+  "headers": {
+    "cache-control": "public, s-maxage=300, stale-while-revalidate=86400",
+    "cf-cache-status": "DYNAMIC",
+    "cf-ray": "a375bc9cde6c0b9e-SIN",
+    "connection": "keep-alive",
+    "content-encoding": "gzip",
+    "content-type": "text/html; charset=utf-8",
+    "date": "Mon, 07 Sep 2026 12:32:33 GMT",
+    "server": "cloudflare",
+    "set-cookie": "squareGeo=DELETE; path=/; SameSite=Strict; Secure; max-age=0, squareGeo=SG-undefined; Domain=squareup.com; path=/; SameSite=Strict; Secure; max-age=2419200, _savt=11cc8532-e91e-4652-917f-a8f107a7cdba; Max-Age=126230400; Expires=Sat, 07 Sep 2030 12:32:33 GMT; Domain=squareup.com; Path=/; Secure; SameSite=None; Partitioned; Category=C0001;, __cf_bm=njWDAOt7sj6WwFOdemomwY2zc2flWfdNBYC0FTRqpck-1788784352.7723598-1.0.1.1-CR0clqhlPGsp8dpbnOh_YB3fi_MudG5Gpndm8EMkr.8ov4POS7KMha0yGGopgCI_olEVW_dWiVolFJ5bQ61Cst7Ljfm8DGdCLXCjm5QXtY3kXoMDMgt5lc50N_vm7itW; HttpOnly; SameSite=None; Secure; Path=/; Domain=developer.squareup.com; Expires=Mon, 07 Sep 2026 13:02:33 GMT",
+    "strict-transport-security": "max-age=631152000; includeSubDomains; preload",
+    "transfer-encoding": "chunked",
+    "vary": "Accept-Encoding",
+    "x-envoy-decorator-operation": "/docs/**",
+    "x-sq-dc": "aws",
+    "x-sq-region": "us-west-2"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "7d5a4795eece0f810e6f54040e58d711",
+  "recorded_at": "2026-09-07T12:32:33Z",
+  "status": 200,
+  "stored_bytes": 228091,
+  "transport_error": null,
+  "url": "https://developer.squareup.com/docs/payments-api/take-payments/cash-payments"
+}

@@ -1,0 +1,29 @@
+{
+  "body_bytes": 575866,
+  "body_file": "snapshots/developers.mailerlite.com/api-automations-66c31fd6.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://developers.mailerlite.com/api/automations",
+  "handwritten": false,
+  "headers": {
+    "alt-svc": "h3=\":443\"; ma=86400",
+    "cache-control": "public, max-age=0, must-revalidate",
+    "cf-cache-status": "HIT",
+    "cf-ray": "a375bab6cbc73d95-SIN",
+    "connection": "keep-alive",
+    "content-encoding": "gzip",
+    "content-type": "text/html",
+    "date": "Mon, 07 Sep 2026 12:31:15 GMT",
+    "etag": "W/\"2ba40fa340ffa496cf4a3bcae5e29fd2\"",
+    "server": "cloudflare",
+    "transfer-encoding": "chunked",
+    "vary": "accept-encoding"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "c8195e0e2b2791d61165d6d416907dd4",
+  "recorded_at": "2026-09-07T12:31:15Z",
+  "status": 200,
+  "stored_bytes": 575866,
+  "transport_error": null,
+  "url": "https://developers.mailerlite.com/api/automations"
+}

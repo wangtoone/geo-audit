@@ -1,0 +1,33 @@
+{
+  "body_bytes": 230928,
+  "body_file": "snapshots/hookdeck.com/llms.txt-02d579b2.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://hookdeck.com/llms.txt",
+  "handwritten": false,
+  "headers": {
+    "access-control-allow-origin": "*",
+    "age": "0",
+    "cache-control": "public, max-age=0, must-revalidate",
+    "content-disposition": "inline; filename=\"llms.txt\"",
+    "content-encoding": "gzip",
+    "content-security-policy": "frame-ancestors 'none';",
+    "content-type": "text/plain; charset=utf-8",
+    "date": "Mon, 07 Sep 2026 12:41:02 GMT",
+    "etag": "W/\"5a0984a9eb08f25115fcd58e2cf67b27\"",
+    "last-modified": "Mon, 07 Sep 2026 12:41:02 GMT",
+    "server": "Vercel",
+    "strict-transport-security": "max-age=63072000",
+    "transfer-encoding": "chunked",
+    "x-frame-options": "DENY",
+    "x-vercel-cache": "MISS",
+    "x-vercel-id": "sin1::rs8tl-1788784862463-fdd11a253494"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "5a0984a9eb08f25115fcd58e2cf67b27",
+  "recorded_at": "2026-09-07T12:41:02Z",
+  "status": 200,
+  "stored_bytes": 230928,
+  "transport_error": null,
+  "url": "https://hookdeck.com/llms.txt"
+}

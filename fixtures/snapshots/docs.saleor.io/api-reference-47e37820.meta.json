@@ -1,0 +1,31 @@
+{
+  "body_bytes": 23892,
+  "body_file": "snapshots/docs.saleor.io/api-reference-47e37820.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://docs.saleor.io/api-reference/",
+  "handwritten": false,
+  "headers": {
+    "access-control-allow-origin": "*",
+    "age": "6018",
+    "cache-control": "public, max-age=0, must-revalidate",
+    "content-disposition": "inline; filename=\"api-reference\"",
+    "content-encoding": "gzip",
+    "content-type": "text/html; charset=utf-8",
+    "date": "Mon, 07 Sep 2026 12:32:03 GMT",
+    "etag": "W/\"73fd0bead7893ddbcc41de54dff174de\"",
+    "last-modified": "Mon, 07 Sep 2026 10:51:45 GMT",
+    "server": "Vercel",
+    "strict-transport-security": "max-age=63072000",
+    "transfer-encoding": "chunked",
+    "x-vercel-cache": "HIT",
+    "x-vercel-id": "sin1::hklnj-1788784323791-37d8c654bc82"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "73fd0bead7893ddbcc41de54dff174de",
+  "recorded_at": "2026-09-07T12:32:03Z",
+  "status": 200,
+  "stored_bytes": 23892,
+  "transport_error": null,
+  "url": "https://docs.saleor.io/api-reference/"
+}

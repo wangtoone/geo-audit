@@ -1,0 +1,32 @@
+{
+  "body_bytes": 325539,
+  "body_file": "snapshots/developer.squareup.com/docs-web-payments-take-card-payment-8cd2541a.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://developer.squareup.com/docs/web-payments/take-card-payment",
+  "handwritten": false,
+  "headers": {
+    "cache-control": "public, s-maxage=300, stale-while-revalidate=86400",
+    "cf-cache-status": "DYNAMIC",
+    "cf-ray": "a375bccb2f1d0b9e-SIN",
+    "connection": "keep-alive",
+    "content-encoding": "gzip",
+    "content-type": "text/html; charset=utf-8",
+    "date": "Mon, 07 Sep 2026 12:32:40 GMT",
+    "server": "cloudflare",
+    "set-cookie": "squareGeo=DELETE; path=/; SameSite=Strict; Secure; max-age=0, squareGeo=SG-undefined; Domain=squareup.com; path=/; SameSite=Strict; Secure; max-age=2419200, _savt=52fcde75-2f3e-4b5c-ac4d-deb4c5c3cef8; Max-Age=126230400; Expires=Sat, 07 Sep 2030 12:32:40 GMT; Domain=squareup.com; Path=/; Secure; SameSite=None; Partitioned; Category=C0001;, __cf_bm=h5gcyVAc_N9wx3.wrmLwDr0aiZ4I60tcoNJfoAtU_kY-1788784360.1814065-1.0.1.1-MDJi9QL0H3QvDA2G4Dl15O039BuOQxVnLPnyhPnuLfrdSCJb7bVNfWq4wcSgNSf.Q5NwT4B6rtPOM29t7uMOMrCuGaZEtnF3IrObbaf2flc8ypVtjDfZtQz7PsPHqH6j; HttpOnly; SameSite=None; Secure; Path=/; Domain=developer.squareup.com; Expires=Mon, 07 Sep 2026 13:02:40 GMT",
+    "strict-transport-security": "max-age=631152000; includeSubDomains; preload",
+    "transfer-encoding": "chunked",
+    "vary": "Accept-Encoding",
+    "x-envoy-decorator-operation": "/docs/**",
+    "x-sq-dc": "aws",
+    "x-sq-region": "us-west-2"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "6b21daf0bbd00e7e0d1ab81875b097d9",
+  "recorded_at": "2026-09-07T12:32:40Z",
+  "status": 200,
+  "stored_bytes": 325539,
+  "transport_error": null,
+  "url": "https://developer.squareup.com/docs/web-payments/take-card-payment"
+}

@@ -1,0 +1,32 @@
+{
+  "body_bytes": 8907,
+  "body_file": "snapshots/docs.customer.io/integrations-api-customerio-apis.md-9486dc97.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://docs.customer.io/integrations/api/customerio-apis.md",
+  "handwritten": false,
+  "headers": {
+    "accept-ranges": "bytes",
+    "access-control-allow-origin": "*",
+    "age": "2",
+    "cache-control": "public,max-age=0,must-revalidate",
+    "cache-status": "\"Netlify Edge\"; fwd=miss; fwd-status=200; stored",
+    "content-encoding": "gzip",
+    "content-type": "text/markdown; charset=UTF-8",
+    "date": "Mon, 07 Sep 2026 12:32:59 GMT",
+    "etag": "W/\"742c768e08ee02dd019caf49d15242e0-ssl-df\"",
+    "link": "</integrations/llms.txt>; rel=\"describedby\"; type=\"text/plain\"",
+    "server": "Netlify",
+    "strict-transport-security": "max-age=31536000",
+    "transfer-encoding": "chunked",
+    "vary": "Accept-Encoding",
+    "x-nf-request-id": "01M1XXQ0SC4XHNXJDGQBDQNCCA"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "1b597bd1f529f07c6b58ae8d9018d0ac",
+  "recorded_at": "2026-09-07T12:32:58Z",
+  "status": 200,
+  "stored_bytes": 8907,
+  "transport_error": null,
+  "url": "https://docs.customer.io/integrations/api/customerio-apis.md"
+}

@@ -1,0 +1,27 @@
+{
+  "body_bytes": 0,
+  "body_file": "snapshots/api-docs.ecwid.com/geo-audit-probe-412e69a0274364c513acd397.txt-721ff2a2.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://api-docs.ecwid.com/geo-audit-probe-412e69a0274364c513acd397.txt",
+  "handwritten": false,
+  "headers": {
+    "alt-svc": "h3=\":443\"; ma=86400",
+    "connection": "keep-alive",
+    "content-length": "0",
+    "date": "Mon, 07 Sep 2026 12:20:47 GMT",
+    "location": "https://docs.ecwid.com",
+    "server": "CloudFront",
+    "via": "1.1 04b6d0a731d8e448d409f0f62d7aa250.cloudfront.net (CloudFront)",
+    "x-amz-cf-id": "ajS0oB_nF_HVTCPzFxfb3LoRVTqMeidc_gqqH4A8zG5aJDLQasjTOQ==",
+    "x-amz-cf-pop": "SIN3-P4",
+    "x-cache": "FunctionGeneratedResponse from cloudfront"
+  },
+  "note": null,
+  "probe_for": "https://api-docs.ecwid.com/llms.txt",
+  "raw_md5": "d41d8cd98f00b204e9800998ecf8427e",
+  "recorded_at": "2026-09-07T12:20:47Z",
+  "status": 302,
+  "stored_bytes": 0,
+  "transport_error": null,
+  "url": "https://api-docs.ecwid.com/geo-audit-probe-412e69a0274364c513acd397.txt"
+}

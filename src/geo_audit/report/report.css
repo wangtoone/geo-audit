@@ -1,0 +1,629 @@
+/* geo-audit 报告样式（§6.5:3262）。全部内联进单文件 HTML —— 零 webfont、零外部
+   请求、零 JS。折叠一律用原生 <details>。
+
+   四条硬要点：
+   1. 状态不靠颜色单独承载：四态各有字形（::before）+ 各有边框形态。
+      UNKNOWN 另加 45° 斜纹底 + 虚线边框，FAIL 是 3px 左实边，PASS 细灰边，
+      NOT_APPLICABLE 点线边 —— 黑白打印与色盲下都能分开（§6.4 R3）。
+   2. 宽内容自己滚（.wide{overflow-x:auto}），body 永不横向滚动。
+   3. 可打印：@page A4 + break-inside:avoid + 打印时强制展开全部折叠区 +
+      链接后追加真实 URL（attr(href)）。
+   4. 深浅色：:root 定完整浅色 token，@media (prefers-color-scheme: dark) 里
+      只改 token。 */
+
+:root {
+  color-scheme: light dark;
+  --bg: #fbfbfa;
+  --panel: #ffffff;
+  --ink: #16181d;
+  --ink-2: #4a5058;
+  --ink-3: #6d747d;
+  --line: #dcdfe4;
+  --line-2: #eceef1;
+  --pass: #1f7a4d;
+  --fail: #b32626;
+  --unknown: #7a5a12;
+  --na: #6d747d;
+  --hatch: rgba(122, 90, 18, 0.35);
+  --accent: #1d4ed8;
+  --code-bg: #f3f4f6;
+  --mark: #fff4c8;
+  --shadow: 0 1px 2px rgba(16, 18, 22, 0.06);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #14161a;
+    --panel: #1b1e23;
+    --ink: #e9ecf1;
+    --ink-2: #b6bcc6;
+    --ink-3: #8d949e;
+    --line: #333941;
+    --line-2: #262b31;
+    --pass: #5fd39b;
+    --fail: #ff8f85;
+    --unknown: #e6c56a;
+    --na: #9aa1ab;
+    --hatch: rgba(230, 197, 106, 0.32);
+    --accent: #8ab4ff;
+    --code-bg: #22262c;
+    --mark: #4a3f16;
+    --shadow: none;
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg: #14161a;
+  --panel: #1b1e23;
+  --ink: #e9ecf1;
+  --ink-2: #b6bcc6;
+  --ink-3: #8d949e;
+  --line: #333941;
+  --line-2: #262b31;
+  --pass: #5fd39b;
+  --fail: #ff8f85;
+  --unknown: #e6c56a;
+  --na: #9aa1ab;
+  --hatch: rgba(230, 197, 106, 0.32);
+  --accent: #8ab4ff;
+  --code-bg: #22262c;
+  --mark: #4a3f16;
+  --shadow: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--bg);
+}
+
+body {
+  margin: 0;
+  padding: 0 0 4rem;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: -apple-system, "Segoe UI", "Noto Sans CJK SC", "PingFang SC",
+    "Microsoft YaHei", sans-serif;
+  font-size: 15px;
+  line-height: 1.62;
+  overflow-x: hidden;
+}
+
+.skip {
+  position: absolute;
+  left: -9999px;
+}
+
+.skip:focus {
+  left: 8px;
+  top: 8px;
+  z-index: 9;
+  background: var(--panel);
+  padding: 6px 10px;
+  border: 1px solid var(--accent);
+}
+
+.shell {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* ── 页眉：域名 / 时间 / 版本 / UA / 去噪清单版本（A24 要印后者）─────────── */
+
+.head {
+  border-bottom: 1px solid var(--line);
+  padding: 14px 0 10px;
+  font-size: 12.5px;
+  color: var(--ink-3);
+}
+
+.head .dom {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-right: 10px;
+}
+
+.head .meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  word-break: break-all;
+}
+
+.head .note {
+  margin-top: 4px;
+  color: var(--unknown);
+}
+
+/* ── 区块与标题 ──────────────────────────────────────────────────────────── */
+
+section {
+  margin: 26px 0;
+}
+
+h1 {
+  font-size: 26px;
+  line-height: 1.45;
+  margin: 14px 0 12px;
+  letter-spacing: -0.01em;
+}
+
+h2 {
+  font-size: 17px;
+  margin: 0 0 10px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid var(--line);
+}
+
+h3 {
+  font-size: 14.5px;
+  margin: 14px 0 6px;
+}
+
+p {
+  margin: 8px 0;
+}
+
+.lead {
+  color: var(--ink-2);
+}
+
+.small {
+  font-size: 12.5px;
+  color: var(--ink-3);
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 14px 16px;
+  box-shadow: var(--shadow);
+}
+
+/* 通栏警示（中断 / 降级 / 抽样）。左边 4px 实边 + 斜纹底，与正文形态不同。 */
+.banner {
+  border: 1px dashed var(--unknown);
+  border-left: 4px solid var(--unknown);
+  background-image: repeating-linear-gradient(
+    45deg,
+    var(--hatch) 0,
+    var(--hatch) 2px,
+    transparent 2px,
+    transparent 7px
+  );
+  padding: 10px 14px;
+  margin: 12px 0;
+  white-space: pre-line;
+  color: var(--ink);
+}
+
+/* ── 四态：字形 + 边框形态 + 颜色，三重冗余编码 ─────────────────────────── */
+
+.st {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+  font-variant-numeric: tabular-nums;
+}
+
+.st::before {
+  font-weight: 700;
+}
+
+.st-pass::before {
+  content: "✓";
+}
+
+.st-fail::before {
+  content: "✕";
+}
+
+.st-unknown::before {
+  content: "?";
+}
+
+.st-na::before {
+  content: "–";
+}
+
+.st-pass {
+  color: var(--pass);
+}
+
+.st-fail {
+  color: var(--fail);
+}
+
+.st-unknown {
+  color: var(--unknown);
+}
+
+.st-na {
+  color: var(--na);
+}
+
+/* 计数条：永远四格，UNKNOWN 永不折算进任何一格（§6.4 R1）。 */
+.bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px 20px;
+  margin: 10px 0 6px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.bar .total {
+  font-size: 19px;
+}
+
+/* 块级状态形态：PASS 细灰边 / FAIL 3px 左实边 / UNKNOWN 斜纹 + 虚线边 /
+   NA 点线边。三者在黑白打印下仍可区分（§6.4 R3）。 */
+.box-pass {
+  border: 1px solid var(--line);
+}
+
+.box-fail {
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--fail);
+}
+
+.box-unknown {
+  border: 1px dashed var(--unknown);
+  background-image: repeating-linear-gradient(
+    45deg,
+    var(--hatch) 0,
+    var(--hatch) 2px,
+    transparent 2px,
+    transparent 7px
+  );
+}
+
+.box-na {
+  border: 1px dotted var(--na);
+}
+
+/* ── 链路图（内联 SVG）─────────────────────────────────────────────────── */
+
+.chain-wrap {
+  overflow-x: auto;
+}
+
+svg.chain {
+  display: block;
+  min-width: 1000px;
+  max-width: 100%;
+  height: auto;
+}
+
+svg.chain .cell-box {
+  fill: var(--panel);
+  stroke: var(--line-2);
+  stroke-width: 1;
+}
+
+svg.chain .sh {
+  fill: none;
+}
+
+svg.chain .sh-pass {
+  stroke: var(--pass);
+}
+
+svg.chain .sh-fail {
+  stroke: var(--fail);
+}
+
+svg.chain .sh-unknown {
+  stroke: var(--unknown);
+}
+
+svg.chain .sh-na {
+  stroke: var(--na);
+}
+
+svg.chain .hatch {
+  stroke: var(--unknown);
+}
+
+svg.chain .arrow {
+  fill: var(--ink-3);
+}
+
+svg.chain .link {
+  stroke: var(--ink-3);
+  stroke-width: 1.2;
+}
+
+svg.chain text {
+  font-family: inherit;
+  fill: var(--ink);
+  /* 放在 CSS 而不是逐个 <text> 上：26 个 text-anchor="middle" 就是 572 字节，
+     而 A26 只给首屏 4000 字符。 */
+  text-anchor: middle;
+}
+
+svg.chain .glyph {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+svg.chain .lab {
+  font-size: 12.5px;
+  font-weight: 600;
+}
+
+svg.chain .num {
+  font-size: 11.5px;
+  fill: var(--ink-2);
+}
+
+svg.chain .det {
+  font-size: 11px;
+  fill: var(--ink-3);
+}
+
+svg.chain .cell-pass .glyph {
+  fill: var(--pass);
+}
+
+svg.chain .cell-fail .glyph {
+  fill: var(--fail);
+}
+
+svg.chain .cell-unknown .glyph {
+  fill: var(--unknown);
+}
+
+svg.chain .cell-na .glyph {
+  fill: var(--na);
+}
+
+/* ── 表格：宽内容自己滚，body 永不横向滚动 ─────────────────────────────── */
+
+.wide {
+  overflow-x: auto;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 12.8px;
+}
+
+th,
+td {
+  border: 1px solid var(--line);
+  padding: 5px 8px;
+  text-align: left;
+  vertical-align: top;
+  word-break: break-word;
+}
+
+th {
+  background: var(--line-2);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+td.num,
+th.num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* ── finding 卡片（§6.2 五段，顺序固定）───────────────────────────────── */
+
+.finding,
+.fragility {
+  margin: 14px 0;
+  padding: 12px 14px;
+  border-radius: 8px;
+  background: var(--panel);
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+.f-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px 12px;
+  font-size: 12.5px;
+  color: var(--ink-3);
+}
+
+.f-sev {
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.sev-critical,
+.sev-high {
+  color: var(--fail);
+}
+
+.sev-medium {
+  color: var(--unknown);
+}
+
+.sev-low,
+.sev-info {
+  color: var(--ink-2);
+}
+
+.f-id {
+  margin-left: auto;
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+}
+
+.f-title {
+  font-size: 15.5px;
+  font-weight: 650;
+  margin: 6px 0 10px;
+  color: var(--ink);
+}
+
+.kv {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 2px 12px;
+  margin: 6px 0;
+  font-size: 13px;
+}
+
+.kv dt {
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+
+.kv dd {
+  margin: 0;
+  word-break: break-word;
+}
+
+.stack {
+  margin: 8px 0;
+  padding: 8px 10px;
+  background: var(--code-bg);
+  border-radius: 6px;
+  font-size: 12.5px;
+}
+
+code,
+pre,
+.mono {
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 12.2px;
+}
+
+pre {
+  margin: 6px 0;
+  padding: 8px 10px;
+  background: var(--code-bg);
+  border-radius: 6px;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.tag {
+  display: inline-block;
+  padding: 0 6px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  font-size: 11.5px;
+  color: var(--ink-2);
+  white-space: nowrap;
+}
+
+mark {
+  background: var(--mark);
+  color: inherit;
+}
+
+a {
+  color: var(--accent);
+}
+
+a.dead {
+  color: var(--fail);
+}
+
+/* safe_href 降级成 # 的 URL 以纯文本展示（A36）。 */
+.rawurl {
+  color: var(--ink-2);
+  word-break: break-all;
+}
+
+/* ── 折叠区（零 JS）──────────────────────────────────────────────────── */
+
+details {
+  margin: 8px 0;
+}
+
+summary {
+  cursor: pointer;
+  color: var(--ink-2);
+  font-size: 12.8px;
+}
+
+details > .panel {
+  margin-top: 8px;
+}
+
+ul.tight,
+ol.tight {
+  margin: 6px 0;
+  padding-left: 1.3em;
+}
+
+ul.tight li,
+ol.tight li {
+  margin: 2px 0;
+}
+
+.footer {
+  margin-top: 30px;
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+  font-size: 12px;
+  color: var(--ink-3);
+}
+
+/* ── 打印（§6.5:3266）──────────────────────────────────────────────────── */
+
+@page {
+  size: A4;
+  margin: 14mm;
+}
+
+@media print {
+  body {
+    background: #fff;
+    color: #000;
+    font-size: 10.5pt;
+  }
+
+  .shell {
+    max-width: none;
+    padding: 0;
+  }
+
+  .panel,
+  .finding,
+  .fragility {
+    box-shadow: none;
+  }
+
+  /* 强制展开全部折叠区 —— 打印出来不许有藏起来的证据。 */
+  details > * {
+    display: block !important;
+  }
+
+  details[open] > summary,
+  details > summary {
+    list-style: none;
+  }
+
+  /* 链接后追加真实 URL，纸上也能复现。 */
+  a[href^="http"]::after {
+    content: " ⟨" attr(href) "⟩";
+    font-size: 0.85em;
+    word-break: break-all;
+  }
+
+  .skip {
+    display: none;
+  }
+
+  svg.chain {
+    min-width: 0;
+  }
+}

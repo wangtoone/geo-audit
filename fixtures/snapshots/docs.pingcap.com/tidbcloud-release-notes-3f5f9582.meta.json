@@ -1,0 +1,29 @@
+{
+  "body_bytes": 432,
+  "body_file": "snapshots/docs.pingcap.com/tidbcloud-release-notes-3f5f9582.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://docs.pingcap.com/tidbcloud/release-notes",
+  "handwritten": false,
+  "headers": {
+    "connection": "keep-alive",
+    "content-length": "432",
+    "content-type": "text/html",
+    "date": "Mon, 07 Sep 2026 12:38:16 GMT",
+    "eo-cache-status": "MISS",
+    "eo-log-uuid": "13111970777031572047",
+    "location": "/tidbcloud/release-notes/",
+    "server": "tencent-cos",
+    "x-amz-error-code": "Found",
+    "x-amz-error-message": "Resource Found",
+    "x-amz-request-id": "NmE5ZWIwM2FfOGJiZjJkMWNfM2ExNjlfNmE5MTY2Zg==",
+    "x-amz-trace-id": "OGVmYzZiMmQzYjA2OWNhODk0NTRkMTBiOWVmMDAxODc0OWRkZjk0ZDM1NmI1M2E2MTRlY2MzZDhmNmI5MWI1OTQ5YWUxMjNkYTk3NzdjZmZlMDQzOTgxOThkOTNlOWFkNjU0MDk4ZDk2ZDdiMWQyNDJlMTk4NGQ3ZjE4MjFkOGE="
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "267dae7d28cfbfbcc2de9d76c076214c",
+  "recorded_at": "2026-09-07T12:38:18Z",
+  "status": 302,
+  "stored_bytes": 432,
+  "transport_error": null,
+  "url": "https://docs.pingcap.com/tidbcloud/release-notes"
+}

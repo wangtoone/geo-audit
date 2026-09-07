@@ -1,0 +1,32 @@
+{
+  "body_bytes": 483,
+  "body_file": "snapshots/www.openstatus.dev/llms.txt-9c01d8ed.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://www.openstatus.dev/llms.txt",
+  "handwritten": false,
+  "headers": {
+    "age": "0",
+    "cache-control": "public, max-age=60",
+    "content-encoding": "gzip",
+    "content-security-policy": "frame-ancestors 'self' https://shoogle.dev",
+    "content-type": "text/markdown; charset=utf-8",
+    "date": "Mon, 07 Sep 2026 12:22:26 GMT",
+    "server": "Vercel",
+    "strict-transport-security": "max-age=63072000",
+    "transfer-encoding": "chunked",
+    "vary": "Accept, Accept-Encoding",
+    "x-content-source": "not-found",
+    "x-matched-path": "/api/markdown/[[...path]]",
+    "x-nextjs-rewritten-path": "/api/markdown/llms.txt",
+    "x-vercel-cache": "MISS",
+    "x-vercel-id": "sin1::sin1::grd55-1788783746168-2e9fd8c0cd97"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "f11c8b6ace0e9205764703e9f9845e50",
+  "recorded_at": "2026-09-07T12:22:26Z",
+  "status": 404,
+  "stored_bytes": 483,
+  "transport_error": null,
+  "url": "https://www.openstatus.dev/llms.txt"
+}

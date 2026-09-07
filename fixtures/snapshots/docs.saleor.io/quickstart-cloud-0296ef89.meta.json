@@ -1,0 +1,31 @@
+{
+  "body_bytes": 46325,
+  "body_file": "snapshots/docs.saleor.io/quickstart-cloud-0296ef89.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://docs.saleor.io/quickstart/cloud",
+  "handwritten": false,
+  "headers": {
+    "access-control-allow-origin": "*",
+    "age": "0",
+    "cache-control": "public, max-age=0, must-revalidate",
+    "content-disposition": "inline; filename=\"cloud\"",
+    "content-encoding": "gzip",
+    "content-type": "text/html; charset=utf-8",
+    "date": "Mon, 07 Sep 2026 12:32:13 GMT",
+    "etag": "W/\"722273608e157733062dfdeb714c59b6\"",
+    "last-modified": "Mon, 07 Sep 2026 12:32:13 GMT",
+    "server": "Vercel",
+    "strict-transport-security": "max-age=63072000",
+    "transfer-encoding": "chunked",
+    "x-vercel-cache": "MISS",
+    "x-vercel-id": "sin1::kjjdz-1788784332842-90e11ef244de"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "722273608e157733062dfdeb714c59b6",
+  "recorded_at": "2026-09-07T12:32:13Z",
+  "status": 200,
+  "stored_bytes": 46325,
+  "transport_error": null,
+  "url": "https://docs.saleor.io/quickstart/cloud"
+}

@@ -1,0 +1,32 @@
+{
+  "body_bytes": 222490,
+  "body_file": "snapshots/developer.squareup.com/docs-in-app-payments-sdk-cookbook-disable-postal-code-037c9a1d.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://developer.squareup.com/docs/in-app-payments-sdk/cookbook/disable-postal-code",
+  "handwritten": false,
+  "headers": {
+    "cache-control": "public, s-maxage=300, stale-while-revalidate=86400",
+    "cf-cache-status": "DYNAMIC",
+    "cf-ray": "a375bc612dd20b9e-SIN",
+    "connection": "keep-alive",
+    "content-encoding": "gzip",
+    "content-type": "text/html; charset=utf-8",
+    "date": "Mon, 07 Sep 2026 12:32:23 GMT",
+    "server": "cloudflare",
+    "set-cookie": "squareGeo=DELETE; path=/; SameSite=Strict; Secure; max-age=0, squareGeo=SG-undefined; Domain=squareup.com; path=/; SameSite=Strict; Secure; max-age=2419200, _savt=f52d91eb-9bc7-43b0-8b60-afa740cd63a5; Max-Age=126230400; Expires=Sat, 07 Sep 2030 12:32:23 GMT; Domain=squareup.com; Path=/; Secure; SameSite=None; Partitioned; Category=C0001;, __cf_bm=nc6GYDk153gd.DRFIWTCVzY1Tc4pFFvNUxUwOquuq80-1788784343.2223237-1.0.1.1-eVeoCbWW9LiqC16ePmOIkIT5pqt9HYCXMHo2lrz6gsbDI5jdGkv0DBiPhqEwCeiTfaZaMhuiUV_bXy4ydrp8IwlogXlVgiQ69aCb1zzh0ytnVyfWgCDYO9g.wKje.JX.; HttpOnly; SameSite=None; Secure; Path=/; Domain=developer.squareup.com; Expires=Mon, 07 Sep 2026 13:02:23 GMT",
+    "strict-transport-security": "max-age=631152000; includeSubDomains; preload",
+    "transfer-encoding": "chunked",
+    "vary": "Accept-Encoding",
+    "x-envoy-decorator-operation": "/docs/**",
+    "x-sq-dc": "aws",
+    "x-sq-region": "us-west-2"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "0837f2a296dee3540afad99f18c4e9c7",
+  "recorded_at": "2026-09-07T12:32:23Z",
+  "status": 200,
+  "stored_bytes": 222490,
+  "transport_error": null,
+  "url": "https://developer.squareup.com/docs/in-app-payments-sdk/cookbook/disable-postal-code"
+}

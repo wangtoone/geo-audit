@@ -1,0 +1,572 @@
+{#
+  单文件 HTML 报告（§6.1 版面 + §6.2 finding 呈现 + §6.3 零发现四块 + §6.4 未能评估六规则）。
+
+  ⚠️ 三条纪律，改这个文件前先看：
+
+  1. **模板里不许写散装中文散文**，一律 {{ copy["key"] }}。理由：禁词表在渲染期
+     生效（§6.5:3250），而扫描面是 COPY_ZH + 本文件源文 —— 文案集中在 COPY_ZH 里，
+     禁词才能在一处挡住；散在模板里也挡得住（源文在扫描面里），但那样文案就有两个家。
+  2. **甲方数据一律不许 |safe。** 只有 {{ chain_svg|safe }} 与 {{ css|safe }} 例外，
+     理由分别是「我们自己生成且逐处 html.escape 过」与「autoescape 会把
+     details>* 变成 details&gt;*，四态形状与打印规则当场失效」。
+  3. **DOM 顺序 = 阅读顺序，id 是测试与深链的契约**（§6.1:3053）。
+     首页：#verdict → #root-causes → #unknown → #chain → #naive-demo → 覆盖披露；
+     第 2 页起：#findings → #review → #fragility → #evidence → #apex → #excluded
+     → #naive → #coverage → #method。
+     ⚠️ 与 §6.1 版面示例的三处偏离（见交付说明 deviations_from_spec）。
+        全部由**同一个原因**引起：A26:4505 要求 verdict / root-causes / unknown
+        三个 id 都在 <main> 后 4000 字符内，而六格内联链路图单块就 4.4 KB ——
+        示例那个顺序（headline → 计数条 → 链路图 → 差异化演示 → 根因 → 覆盖披露，
+        #unknown 排到第 2 页）里，root-causes 落在 5,003 字符处，A26 必红。
+        规格自己也点出了这个取舍没定（简报 spec_gaps「A26 的 4000 字符窗口与
+        内联 SVG 冲突」），裁决是**把三个锚点提到 SVG 之前**：
+       a. #root-causes 与 #unknown 移到 #chain 之前（示例把 #unknown 放第 2 页首）；
+          §6.4 R3 本来也要求 UNKNOWN 区排在发现之前，这一步与它同向。
+       b. #chain 变成首页第三块（示例里是第二块）。它仍在首页、仍在发现之前。
+       c. 差异化演示区与覆盖披露跟着排到 #chain 之后。
+  4. **第一页一格条目都不放。** 实测 20.8% 报不出条目、52.8% 只有 1–2 条 ——
+     第一页回答的是「六段里哪几段走不通」和「改哪几处」，不是条目列表。
+#}
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="generator" content="geo-audit {{ r.tool_version }}">
+<title>{% if zero_findings %}{{ copy["doc_title_zero"].format(domain=r.domain) }}{% else %}{{ copy["doc_title"].format(domain=r.domain) }}{% endif %}</title>
+<style>{{ css|safe }}</style>
+</head>
+<body>
+<a class="skip" href="#main">{{ copy["skip_to_main"] }}</a>
+
+{# ── 页眉：域名 / 时间 / 版本 / UA / 去噪清单版本（A24 要印最后这个）────── #}
+<header class="head">
+  <div class="shell">
+    <div class="meta">
+      <span class="dom">{{ copy["header_tool"] }} · {{ r.domain }}</span>
+      <span>{{ r.scanned_at }}</span>
+      <span>{{ r.tool_version }}</span>
+      <span>{{ copy["header_ua"] }}: {{ r.user_agent }}</span>
+      <span>{{ copy["header_denoise"] }}: {{ r.denoise_ruleset_version }}</span>
+      <span>schema {{ r.schema_version }}</span>
+    </div>
+    {% if cache_hits %}
+    <div class="note">{{ copy["header_cache_note"] }}</div>
+    {% endif %}
+  </div>
+</header>
+
+<main id="main" class="shell">
+
+{# ══════════════════════════════════════════════════════════════════════════
+   #verdict —— headline（唯一的大字）+ 四格计数条
+   ══════════════════════════════════════════════════════════════════════════ #}
+<section id="verdict">
+  <h2>{{ copy["verdict_title"] }}</h2>
+  {% if r.coverage.interrupted %}
+  <div class="banner">{{ copy["interrupt_banner"].format(done=r.counts.positions - r.counts.positions_unknown, todo=r.counts.positions_unknown, domain=r.domain) }}</div>
+  {% elif r.verdict_kind == "unusable" %}
+  <div class="banner">{{ copy["unusable_banner"].format(unknown=r.counts.positions_unknown, core=core_positions) }}</div>
+  {% endif %}
+  <h1>{{ r.headline }}</h1>
+  <div class="bar">
+    <span class="total">{{ copy["count_bar_positions"].format(positions=r.counts.positions|thousands) }}</span>
+    <span class="st st-pass">{{ r.counts.positions_pass|thousands }} {{ STATUS_LABEL["pass"] }}</span>
+    <span class="st st-fail">{{ r.counts.positions_fail|thousands }} {{ STATUS_LABEL["fail"] }}</span>
+    <span class="st st-unknown">{{ r.counts.positions_unknown|thousands }} {{ STATUS_LABEL["unknown"] }}</span>
+    <span class="st st-na">{{ r.counts.positions_na|thousands }} {{ STATUS_LABEL["not_applicable"] }}</span>
+  </div>
+  <p class="small">{{ copy["count_bar_note"] }}</p>
+  {% if sampled %}
+  <div class="banner">{{ copy["sampling_banner"].format(note=r.coverage.sampling_note or copy["coverage_sampling_none"]) }}</div>
+  {% endif %}
+  {% if zero_findings %}
+  <p class="lead">{{ copy["verdict_zero_intro"] }}</p>
+  {% endif %}
+</section>
+
+{# ══════ #root-causes —— 永远在条目列表之前（§6.1:3040）══════════════════ #}
+<section id="root-causes">
+  <h2>{{ copy["root_cause_title"] }}</h2>
+  {% if r.root_causes %}
+  <p><strong>{{ copy["root_cause_headline"].format(findings=r.counts.findings, root_causes=r.counts.root_causes) }}</strong></p>
+  <ul class="tight">
+    {% for rc in r.root_causes %}
+    <li>{{ copy["root_cause_line"].format(n=rc.unique_target_count, summary=rc.summary) }}</li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p>{{ copy["root_cause_none"] }}</p>
+  {% endif %}
+  <p class="small">{{ copy["root_cause_triple"].format(findings=r.counts.findings, root_causes=r.counts.root_causes, occurrences=r.counts.occurrences) }}</p>
+</section>
+
+{# ══════ #unknown —— **排在发现之前**（§6.1:3066 / §6.4 R3）═══════════════ #}
+<section id="unknown">
+  <h2>{{ copy["unknown_title"] }}</h2>
+  <p class="lead">{{ copy["unknown_intro"] }}</p>
+  {% if unknown_positions %}
+  {% for p in unknown_positions %}
+  <div class="panel box-unknown">
+    <div class="f-head">
+      <span class="st st-unknown">{{ STAGE_LABEL[p.stage] }}</span>
+      <span class="tag">{{ copy["unknown_reason_label"] }}: {{ p.unknown_reason or "—" }}</span>
+      <span class="f-id">{{ p.position_id }}</span>
+    </div>
+    <dl class="kv">
+      <dt>{{ copy["unknown_position_label"] }}</dt>
+      <dd><a href="{{ p.probe_url|safe_href }}">{{ p.probe_url }}</a></dd>
+      <dt>{{ copy["finding_actual_title"] }}</dt>
+      <dd>{{ p.detail }}</dd>
+      <dt>{{ copy["unknown_remedy_label"] }}</dt>
+      <dd>{{ remedy_for(p) }}</dd>
+    </dl>
+  </div>
+  {% endfor %}
+  {% else %}
+  <p>{{ copy["unknown_none"] }}</p>
+  {% endif %}
+</section>
+
+{# ══════ #chain —— 六格链路图。四态形状可区分，六格位置数之和 == positions ══ #}
+<section id="chain">
+  <h2>{{ copy["chain_title"] }}</h2>
+  <div class="chain-wrap">{{ chain_svg|safe }}</div>
+  <p class="lead">{{ copy["chain_footnote"] }}</p>
+</section>
+
+{# ══════ #naive-demo —— 差异化演示区。措辞固定（附录 B-1）═════════════════ #}
+<section id="naive-demo">
+  <h2>{{ copy["naive_demo_title"] }}</h2>
+  {% if naive_divergences %}
+  <p><strong>{{ copy["naive_demo_headline"].format(n=naive_divergences|length) }}</strong></p>
+  <div class="wide">
+    <table>
+      <thead><tr>{% for h in NAIVE_DEMO_COLUMNS %}<th>{{ h }}</th>{% endfor %}</tr></thead>
+      <tbody>
+        {% for row in naive_divergences %}
+        <tr>
+          <td><a href="{{ row.probe_url|safe_href }}">{{ row.probe_url }}</a></td>
+          <td>{{ row.naive_conclusion }}</td>
+          <td>{{ row.actual_conclusion }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <p>{{ copy["naive_demo_none"] }}</p>
+  {% endif %}
+  <p class="small">{{ copy["naive_demo_why"] }}</p>
+  <pre>{{ copy["naive_demo_footnote"].format(domain=r.domain) }}</pre>
+</section>
+
+{# ══════ 覆盖披露上首页，不藏附录（§6.1:3051）═════════════════════════════ #}
+<section id="disclosure">
+  <p class="lead">{{ copy["coverage_disclosure"] }}</p>
+</section>
+
+{# ══════════════════════════════════════════════════════════════════════════
+   #findings —— 按根因分组的发现（<details> 折叠，零 JS）
+   ══════════════════════════════════════════════════════════════════════════ #}
+<section id="findings">
+  <h2>{{ copy["findings_title"] }}</h2>
+  {% if not r.findings %}
+  <p>{{ copy["findings_none"] }}</p>
+  {% endif %}
+  {% for rc, items in grouped %}
+  <h3>
+    {% if rc %}{{ rc.summary }}{% else %}{{ copy["findings_group_ungrouped"] }}{% endif %}
+  </h3>
+  {% if rc %}
+  <p class="small">{{ copy["findings_group_line"].format(n=rc.unique_target_count, instances=rc.instance_count, severity=rc.max_severity.value|upper) }}
+    {% if rc.defect %}<span class="tag">{{ rc.defect }}</span>{% endif %}
+    {% for axis, val in rc.merge_axes.items() %}<span class="tag">{{ axis }}={{ val }}</span>{% endfor %}
+  </p>
+  {% endif %}
+  {% for f in items %}
+  <article class="finding box-fail">
+    {# ① 标题 = 位置 + 现象，不是规则名 #}
+    <div class="f-head">
+      <span class="f-sev sev-{{ f.severity.value }}">{{ f.severity.value|upper }}</span>
+      <span>·</span>
+      <span>{{ POSITION_LABEL[f.position_class] }}</span>
+      <span class="tag">{{ STAGE_LABEL[f.stage] }}</span>
+      <span class="tag">{{ f.kind }}</span>
+      {% if f.confidence == "needs_review" %}<span class="tag">needs_review</span>{% endif %}
+      {% if not f.counted_as_hit %}<span class="tag">{{ f.display_value or f.kind }}</span>{% endif %}
+      <span class="f-id">{{ f.finding_id }}</span>
+    </div>
+    <div class="f-title">{{ f.title }}</div>
+    {% if f.confidence == "needs_review" %}
+    <div class="banner">{{ copy["needs_review_banner"] }}</div>
+    {% endif %}
+
+    {# ② 去哪儿改 #}
+    <h4>{{ copy["finding_fix_title"] }}</h4>
+    {% if f.fix %}
+    <dl class="kv">
+      <dt>{{ copy["finding_fix_open"] }}</dt>
+      <dd><a href="{{ f.fix.open_this|safe_href }}">{{ f.fix.open_this }}</a></dd>
+      <dt>{{ copy["finding_fix_locator"] }}</dt>
+      <dd>{{ f.fix.locator }}</dd>
+      {% if f.fix.before %}
+      <dt>{{ copy["finding_fix_before"] }}</dt>
+      <dd><code>{{ f.fix.before }}</code></dd>
+      {% endif %}
+      {% if f.fix.after %}
+      <dt>{{ copy["finding_fix_after"] }}</dt>
+      <dd><code>{{ f.fix.after }}</code>
+        {% if f.fix.verified_target %}<span class="small">{{ copy["finding_fix_verified"] }}</span>
+        {% else %}<span class="small">{{ copy["finding_fix_unverified"] }}</span>{% endif %}
+      </dd>
+      {% else %}
+      <dt>{{ copy["finding_fix_after"] }}</dt>
+      <dd>{{ copy["finding_fix_missing"] }}</dd>
+      {% endif %}
+    </dl>
+    {% else %}
+    <p>{{ f.display_value or copy["finding_fix_missing"] }}</p>
+    {% endif %}
+
+    {# ③ 证据：目标 + 同域对照并排 + curl #}
+    <h4>{{ copy["finding_evidence_title"] }}</h4>
+    <div class="stack">
+      <div><strong>{{ copy["finding_evidence_target"] }}</strong>
+        <a class="dead" href="{{ f.target.url|safe_href }}">{{ f.target.url }}</a>
+        <span class="tag">{{ f.target.http_status if f.target.http_status is not none else "—" }}</span>
+        <span class="tag">{{ f.target.content_type or "—" }}</span>
+        {% if f.target.bytes_len is not none %}<span class="tag">{{ f.target.bytes_len|thousands }} B</span>{% endif %}
+      </div>
+      {% if f.target.title %}<div class="small mono">&lt;title&gt;{{ f.target.title }}&lt;/title&gt;</div>{% endif %}
+      {% if f.target.body_head %}<div class="small">{{ f.target.body_head|shorten(240) }}</div>{% endif %}
+      {% if f.control %}
+      <div><strong>{{ copy["finding_evidence_control"] }}</strong>
+        <a href="{{ f.control.url|safe_href }}">{{ f.control.url }}</a>
+        <span class="tag">{{ f.control.http_status if f.control.http_status is not none else "—" }}</span>
+        <span class="tag">{{ f.control.content_type or "—" }}</span>
+      </div>
+      <div class="small">{{ copy["finding_evidence_control_why"] }}</div>
+      {% else %}
+      <div class="small">{{ copy["finding_evidence_control_missing"] }}</div>
+      {% endif %}
+      <div><strong>{{ copy["finding_evidence_repro"] }}</strong></div>
+      <pre>{{ f.target.curl_repro }}</pre>
+    </div>
+
+    {# ④ 对照字段：那类实现会说什么（固定措辞，见 COPY_ZH）#}
+    {% if f.naive_conclusion %}
+    <p><strong>{{ copy["finding_naive_title"] }}：</strong>{{ f.naive_conclusion }}</p>
+    {% endif %}
+    {% if f.actual_conclusion %}
+    <p><strong>{{ copy["finding_actual_title"] }}：</strong>{{ f.actual_conclusion }}</p>
+    {% endif %}
+
+    {# ⑤ 根因 + 误报申诉 #}
+    {% if f.sibling_count > 1 %}
+    <p>{{ copy["finding_sibling_line"].format(n=f.sibling_count - 1) }}{% if f.root_cause_summary %} —— {{ f.root_cause_summary }}{% endif %}</p>
+    {% endif %}
+    {% if f.occurrences > 1 %}
+    <p class="small">{{ copy["finding_occurrence_line"].format(n=f.occurrences, pages=f.occurrence_pages|length) }}</p>
+    {% endif %}
+    {% if f.why_it_matters %}<p>{{ f.why_it_matters }}</p>{% endif %}
+    {% if f.fp_note %}
+    <p class="small"><strong>{{ copy["finding_fp_note_label"] }}：</strong>{{ f.fp_note }}</p>
+    {% endif %}
+    {% if f.fp_guard %}
+    <p class="small"><strong>{{ copy["finding_fp_guard_label"] }}：</strong>
+      {% for g in f.fp_guard %}<span class="tag">{{ g }}</span>{% endfor %}
+    </p>
+    {% endif %}
+    {% if f.severity_signals %}
+    <p class="small"><strong>{{ copy["finding_severity_signals_label"] }}：</strong>
+      {% for k, v in f.severity_signals.items() %}<span class="tag">{{ k }}={{ v }}</span>{% endfor %}
+    </p>
+    {% endif %}
+    {% if f.suppress_hint %}
+    <p class="small"><strong>{{ copy["finding_suppress_label"] }}：</strong><code>{{ f.suppress_hint }}</code></p>
+    {% endif %}
+
+    {# 「贴进工单」：零 JS，原生 details + pre，手选复制 #}
+    <details>
+      <summary>{{ copy["finding_plaintext_summary"] }}</summary>
+      <pre>{{ f.finding_id }} {{ f.severity.value|upper }} {{ POSITION_LABEL[f.position_class] }}
+{{ f.title }}
+{{ copy["finding_evidence_target"] }}: {{ f.target.url }} {{ f.target.http_status if f.target.http_status is not none else "-" }} {{ f.target.content_type or "-" }}
+{% if f.found_on %}{{ copy["finding_occurrence_line"].format(n=f.occurrences, pages=f.occurrence_pages|length) }} {{ f.found_on }}
+{% endif %}{{ f.target.curl_repro }}
+{{ f.suppress_hint }}</pre>
+    </details>
+
+    {% if f.occurrence_hrefs %}
+    <details>
+      <summary>{{ copy["finding_occurrence_line"].format(n=f.occurrences, pages=f.occurrence_pages|length) }}</summary>
+      <ul class="tight small">
+        {% for href in f.occurrence_hrefs %}
+        <li class="rawurl">{{ href }}</li>
+        {% endfor %}
+      </ul>
+    </details>
+    {% endif %}
+    {% if f.html_snippet %}
+    <details>
+      <summary>{{ copy["finding_kind_label"] }} · {{ f.kind }}</summary>
+      <pre>{{ f.html_snippet }}</pre>
+    </details>
+    {% endif %}
+  </article>
+  {% endfor %}
+  {% endfor %}
+</section>
+
+{# ══════ #review —— 待人工确认（needs_review 的 finding 与 Exclusion）═════ #}
+<section id="review">
+  <h2>{{ copy["review_title"] }}</h2>
+  <p class="lead">{{ copy["review_intro"] }}</p>
+  {% if review_findings or review_exclusions %}
+  <ul class="tight">
+    {% for f in review_findings %}
+    <li><code>{{ f.finding_id }}</code> {{ f.title }} — <span class="rawurl">{{ f.target.url }}</span></li>
+    {% endfor %}
+    {% for e in review_exclusions %}
+    <li><code>{{ e.rule_id }}</code> {{ e.rule_desc }} — <span class="rawurl">{{ e.url }}</span></li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p>{{ copy["review_none"] }}</p>
+  {% endif %}
+</section>
+
+{# ══════ #fragility —— C-3「下次会先坏在哪」（零发现报告至少 2 条）═════════ #}
+<section id="fragility">
+  <h2>{{ copy["fragility_title"] }}</h2>
+  <p class="lead">{{ copy["fragility_intro"] }}</p>
+  {% if r.fragilities %}
+  {% for fr in r.fragilities %}
+  <article class="fragility panel">
+    <div class="f-head">
+      <span class="f-sev sev-{{ fr.severity.value }}">{{ fr.severity.value|upper }}</span>
+      <span class="f-id">{{ fr.fragility_id }}</span>
+    </div>
+    <div class="f-title">{{ fr.title }}</div>
+    <dl class="kv">
+      <dt>{{ copy["fragility_metric"] }}</dt><dd>{{ fr.metric }}</dd>
+      <dt>{{ copy["fragility_why"] }}</dt><dd>{{ fr.why }}</dd>
+      <dt>{{ copy["fragility_precedent"] }}</dt><dd>{{ fr.precedent }}</dd>
+    </dl>
+    <div><strong>{{ copy["fragility_watch"] }}</strong></div>
+    <pre>{{ fr.watch_command }}</pre>
+  </article>
+  {% endfor %}
+  {% else %}
+  <p>{{ copy["fragility_none"] }}</p>
+  {% endif %}
+</section>
+
+{# ══════ #evidence —— C-1 证据存档表（逐 Position 一行）+ C-2 误判形态 ════ #}
+<section id="evidence">
+  <h2>{{ copy["evidence_title"] }}</h2>
+  <p class="lead">{{ copy["evidence_intro"] }}</p>
+  <p class="small">{{ copy["evidence_rows_note"].format(n=r.positions|length, positions=r.counts.positions) }}</p>
+  <div class="wide">
+    <table>
+      <thead><tr>{% for h in EVIDENCE_COLUMNS %}<th>{{ h }}</th>{% endfor %}</tr></thead>
+      <tbody>
+        {% for p in r.positions %}
+        <tr class="box-{{ STATUS_CSS[p.status.value] }}">
+          <td>{{ STAGE_LABEL[p.stage] }}</td>
+          <td><a href="{{ p.probe_url|safe_href }}">{{ p.probe_url }}</a></td>
+          <td class="num">{{ p.evidence.http_status if p.evidence and p.evidence.http_status is not none else "—" }}</td>
+          <td>{{ p.evidence.content_type if p.evidence and p.evidence.content_type else "—" }}</td>
+          <td class="num">{% if p.evidence and p.evidence.bytes_len is not none %}{{ p.evidence.bytes_len|thousands }}{% else %}—{% endif %}</td>
+          <td class="rawurl">{{ p.control.url if p.control else copy["evidence_control_none"] }}</td>
+          <td class="num">{{ p.control.http_status if p.control and p.control.http_status is not none else "—" }}</td>
+          <td>
+            <span class="st st-{{ STATUS_CSS[p.status.value] }}">{{ STATUS_LABEL[p.status.value] }}</span>
+            {{ p.detail }}
+            {% if p.evidence and p.evidence.curl_repro %}
+            <details><summary>{{ copy["evidence_curl_summary"] }}</summary><pre>{{ p.evidence.curl_repro }}</pre></details>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <h3>{{ copy["misread_title"] }}</h3>
+  <p class="lead">{{ copy["misread_intro"] }}</p>
+  <ol class="tight">
+    {% for head, body in MISREAD_FORMS %}
+    <li><strong>{{ head }}</strong>：{{ body }}</li>
+    {% endfor %}
+  </ol>
+</section>
+
+{# ══════ #apex —— 裸域/www 双向探测（标 single_case，不进首页计数）════════ #}
+<section id="apex">
+  <h2>{{ copy["apex_title"] }}</h2>
+  {% if r.apex_www %}
+  <dl class="kv">
+    <dt>{{ r.apex_www.apex_host }}</dt>
+    <dd>{{ r.apex_www.apex.verdict.value }} · {{ r.apex_www.apex.classification.reason }}</dd>
+    <dt>{{ r.apex_www.www_host }}</dt>
+    <dd>{{ r.apex_www.www.verdict.value }} · {{ r.apex_www.www.classification.reason }}</dd>
+    <dt>{{ copy["apex_outcome_label"] }}</dt>
+    <dd>{{ r.apex_www.outcome }} <span class="tag">{{ r.apex_www.evidence_strength }}</span></dd>
+  </dl>
+  {% else %}
+  <p>{{ copy["apex_none"] }}</p>
+  {% endif %}
+  <p class="small">{{ copy["apex_single_case"] }}</p>
+</section>
+
+{# ══════ #excluded —— 被去噪排除的链接清单（带 rule_id，A24）══════════════ #}
+<section id="excluded">
+  <h2>{{ copy["excluded_title"] }}</h2>
+  <p class="lead">{{ copy["excluded_intro"] }}</p>
+  {% if excluded_only %}
+  <div class="wide">
+    <table>
+      <thead><tr>{% for h in EXCLUDED_COLUMNS %}<th>{{ h }}</th>{% endfor %}</tr></thead>
+      <tbody>
+        {% for e in excluded_only %}
+        <tr>
+          <td class="rawurl">{{ e.url }}</td>
+          <td><code>{{ e.rule_id }}</code></td>
+          <td>{{ e.rule_desc }}</td>
+          <td class="rawurl">{{ e.found_on or "—" }}</td>
+          <td>{{ e.provenance }}</td>
+          <td>{{ e.disposition }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <p>{{ copy["excluded_none"] }}</p>
+  {% endif %}
+</section>
+
+{# ══════ #naive —— 朴素对照全表 ══════════════════════════════════════════ #}
+<section id="naive">
+  <h2>{{ copy["naive_title"] }}</h2>
+  <p class="lead">{{ copy["naive_intro"] }}</p>
+  <p class="small">{{ copy["naive_rows_note"] }}</p>
+  {% if r.naive_table %}
+  <p class="small">{{ copy["naive_diverge_count"].format(n=r.counts.naive_divergences) }}</p>
+  <div class="wide">
+    <table>
+      <thead><tr>{% for h in NAIVE_TABLE_COLUMNS %}<th>{{ h }}</th>{% endfor %}</tr></thead>
+      <tbody>
+        {% for row in r.naive_table %}
+        <tr>
+          <td class="rawurl">{{ row.probe_url }}</td>
+          <td>{{ row.naive_method }}</td>
+          <td>{{ row.naive_conclusion }}</td>
+          <td>{{ row.actual_conclusion }}</td>
+          <td>{{ "y" if row.diverges else "n" }}</td>
+          <td class="num">{{ row.extra_requests|thousands }}</td>
+          <td>{{ DIRECTION_LABEL[row.direction] }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <p>{{ copy["naive_none"] }}</p>
+  {% endif %}
+  <p>{{ copy["naive_dead_line"].format(naive=r.counts.naive_dead_count|thousands, ours=r.counts.audited_dead_instances|thousands) }}</p>
+</section>
+
+{# ══════ #coverage —— 覆盖披露（A24 的链接账本恒等式在这里印）═════════════ #}
+<section id="coverage">
+  <h2>{{ copy["coverage_title"] }}</h2>
+  <p>{{ copy["coverage_positions"].format(positions=r.counts.positions|thousands) }} ·
+     {{ copy["coverage_pages"].format(pages=r.coverage.pages_fetched|thousands) }} ·
+     {{ copy["coverage_requests"].format(made=r.coverage.requests_made|thousands, cap=r.coverage.budget_cap|thousands) }}</p>
+  <p class="small">{{ copy["coverage_identity"].format(extracted=r.coverage.links_extracted|thousands, excluded=r.coverage.links_excluded|thousands, needs_review=r.coverage.links_needs_review|thousands, verified=r.coverage.links_verified|thousands, unknown=r.coverage.links_unknown|thousands, capped=links_capped|thousands) }}</p>
+  {% if r.coverage.sampling_note %}
+  <p class="small">{{ copy["coverage_sampling"].format(note=r.coverage.sampling_note) }}</p>
+  {% else %}
+  <p class="small">{{ copy["coverage_sampling_none"] }}</p>
+  {% endif %}
+  <p class="small">{% if r.coverage.robots_respected %}{{ copy["coverage_robots_on"] }}{% else %}{{ copy["coverage_robots_off"] }}{% endif %}</p>
+  <p class="small">{{ copy["coverage_llm"].format(n=r.counts.llm_calls) }}</p>
+
+  <h3>{{ copy["coverage_checked"] }}</h3>
+  {% if r.coverage.checked %}
+  <ul class="tight">{% for item in r.coverage.checked %}<li>{{ item }}</li>{% endfor %}</ul>
+  {% endif %}
+  <h3>{{ copy["coverage_not_checked"] }}</h3>
+  {% if r.coverage.not_checked %}
+  <ul class="tight">{% for item in r.coverage.not_checked %}<li>{{ item }}</li>{% endfor %}</ul>
+  {% endif %}
+
+  <h3>{{ copy["coverage_gap_title"] }}</h3>
+  {% if r.coverage_gaps %}
+  <div class="wide">
+    <table>
+      <thead><tr>
+        <th>{{ copy["coverage_gap_where"] }}</th>
+        <th>{{ copy["coverage_gap_reason"] }}</th>
+        <th>{{ copy["finding_actual_title"] }}</th>
+        <th>{{ copy["coverage_gap_remedy"] }}</th>
+      </tr></thead>
+      <tbody>
+        {% for g in r.coverage_gaps %}
+        <tr class="box-unknown">
+          <td class="rawurl">{{ g.where }}</td>
+          <td><code>{{ g.reason }}</code></td>
+          <td>{{ g.detail }}</td>
+          <td>{{ g.remedy }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <p>{{ copy["coverage_gap_none"] }}</p>
+  {% endif %}
+</section>
+
+{# ══════ #method —— C-4「我们没查什么」= §0.3 那张八行表，逐字照抄 ════════ #}
+<section id="method">
+  <h2>{{ copy["method_title"] }}</h2>
+  <p class="lead">{{ copy["method_intro"] }}</p>
+  <p>{{ copy["method_positions_note"] }}</p>
+  <p>{{ copy["method_unknown_note"] }}</p>
+  <p>{{ copy["method_naive_note"] }}</p>
+
+  <h3>{{ copy["method_checked_title"] }}</h3>
+  <div class="wide">
+    <table>
+      <thead><tr><th>{{ copy["method_col_what"] }}</th><th>{{ copy["method_col_why"] }}</th></tr></thead>
+      <tbody>
+        {% for what, why in CHECKED_TABLE %}
+        <tr><td>{{ what }}</td><td>{{ why }}</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <h3>{{ copy["method_not_checked_title"] }}</h3>
+  <div class="wide">
+    <table>
+      <thead><tr><th>{{ copy["method_col_what"] }}</th><th>{{ copy["method_col_why"] }}</th></tr></thead>
+      <tbody>
+        {% for what, why in NOT_CHECKED_TABLE %}
+        <tr><td>{{ what }}</td><td>{{ why }}</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+
+</main>
+
+<footer class="footer">
+  <div class="shell">{{ copy["footer_note"] }} · {{ copy["header_tool"] }} {{ r.tool_version }} · {{ r.denoise_ruleset_version }} · {{ r.contact }}</div>
+</footer>
+</body>
+</html>

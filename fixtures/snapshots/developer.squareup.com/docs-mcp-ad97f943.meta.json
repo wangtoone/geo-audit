@@ -1,0 +1,32 @@
+{
+  "body_bytes": 297478,
+  "body_file": "snapshots/developer.squareup.com/docs-mcp-ad97f943.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://developer.squareup.com/docs/mcp",
+  "handwritten": false,
+  "headers": {
+    "cache-control": "public, s-maxage=300, stale-while-revalidate=86400",
+    "cf-cache-status": "DYNAMIC",
+    "cf-ray": "a375bc6fff260b9e-SIN",
+    "connection": "keep-alive",
+    "content-encoding": "gzip",
+    "content-type": "text/html; charset=utf-8",
+    "date": "Mon, 07 Sep 2026 12:32:25 GMT",
+    "server": "cloudflare",
+    "set-cookie": "squareGeo=DELETE; path=/; SameSite=Strict; Secure; max-age=0, squareGeo=SG-undefined; Domain=squareup.com; path=/; SameSite=Strict; Secure; max-age=2419200, _savt=f5230b9a-4664-43ae-b3f8-14da5b26f4c0; Max-Age=126230400; Expires=Sat, 07 Sep 2030 12:32:25 GMT; Domain=squareup.com; Path=/; Secure; SameSite=None; Partitioned; Category=C0001;, __cf_bm=pqbYSA7FD7ytt6EwpRZks.saRm25L_eGxS7wOwKRA6c-1788784345.5947921-1.0.1.1-1HsJyTHoZG_eES_ARSx6VGWEUB6sAdcJldk1VPs1PIpmt4MFMEnf.4lN2skexy3pxZGszMHzwTCpQgfzUqhD5ZFFG1dHOYeXRg7sszRN393ly2tUqe2l3_bTE5yc0dwD; HttpOnly; SameSite=None; Secure; Path=/; Domain=developer.squareup.com; Expires=Mon, 07 Sep 2026 13:02:25 GMT",
+    "strict-transport-security": "max-age=631152000; includeSubDomains; preload",
+    "transfer-encoding": "chunked",
+    "vary": "Accept-Encoding",
+    "x-envoy-decorator-operation": "/docs/**",
+    "x-sq-dc": "aws",
+    "x-sq-region": "us-west-2"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "85ad7824fef6da60c481f451f8fa4377",
+  "recorded_at": "2026-09-07T12:32:25Z",
+  "status": 200,
+  "stored_bytes": 297478,
+  "transport_error": null,
+  "url": "https://developer.squareup.com/docs/mcp"
+}

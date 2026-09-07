@@ -1,0 +1,33 @@
+{
+  "body_bytes": 495956,
+  "body_file": "snapshots/upstash.com/docs-redis-sdks-py-commands-scripts-script_flush-8162fe01.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://upstash.com/docs/redis/sdks/py/commands/scripts/script_flush",
+  "handwritten": false,
+  "headers": {
+    "cache-control": "public, max-age=0, must-revalidate",
+    "cf-cache-status": "HIT",
+    "cf-ray": "a375c68adc11eba1-SIN",
+    "content-encoding": "gzip",
+    "content-type": "text/html",
+    "date": "Mon, 07 Sep 2026 12:39:19 GMT",
+    "etag": "W/\"a835922610bbcf1e8333201e2ed93714\"",
+    "link": "<https://upstash.com/llms.txt>; rel=\"alternate\"; type=\"text/plain\"; title=\"LLM-friendly content index\", <https://upstash.com/ask?q=your+question>; rel=\"search\"; type=\"application/json\"; title=\"Upstash answer index\", <https://upstash.com/docs/devops/developer-api/openapi.yaml>; rel=\"service-desc\"; type=\"application/openapi+yaml\"; title=\"Upstash Developer API (OpenAPI)\", <https://upstash.com/docs/qstash/openapi.yaml>; rel=\"service-desc\"; type=\"application/openapi+yaml\"; title=\"QStash REST API (OpenAPI)\", <https://upstash.com/docs/workflow/openapi.yaml>; rel=\"service-desc\"; type=\"application/openapi+yaml\"; title=\"Upstash Workflow REST API (OpenAPI)\", </docs/redis/sdks/py/commands/scripts/script_flush.md>; rel=\"alternate\"; type=\"text/markdown\", </docs/llms.txt>; rel=\"describedby\"; type=\"text/plain\", </docs/llms-full.txt>; rel=\"describedby\"; type=\"text/plain\", </docs/.well-known/agent-skills/index.json>; rel=\"agent-skills\"; type=\"application/json\"",
+    "referrer-policy": "strict-origin-when-cross-origin",
+    "server": "Vercel",
+    "strict-transport-security": "max-age=31536000",
+    "transfer-encoding": "chunked",
+    "vary": "Accept",
+    "x-content-type-options": "nosniff",
+    "x-vercel-cache": "MISS",
+    "x-vercel-id": "sin1::2n498-1788784759466-312de2702fbd"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "ef8d9163a9d91c2696e88f1979470922",
+  "recorded_at": "2026-09-07T12:39:19Z",
+  "status": 200,
+  "stored_bytes": 495956,
+  "transport_error": null,
+  "url": "https://upstash.com/docs/redis/sdks/py/commands/scripts/script_flush"
+}

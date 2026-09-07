@@ -1,0 +1,32 @@
+{
+  "body_bytes": 211763,
+  "body_file": "snapshots/developer.squareup.com/docs-mobile-payments-sdk-ios-square-stand-480a2406.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://developer.squareup.com/docs/mobile-payments-sdk/ios/square-stand",
+  "handwritten": false,
+  "headers": {
+    "cache-control": "public, s-maxage=300, stale-while-revalidate=86400",
+    "cf-cache-status": "DYNAMIC",
+    "cf-ray": "a375bc8dedba0b9e-SIN",
+    "connection": "keep-alive",
+    "content-encoding": "gzip",
+    "content-type": "text/html; charset=utf-8",
+    "date": "Mon, 07 Sep 2026 12:32:30 GMT",
+    "server": "cloudflare",
+    "set-cookie": "squareGeo=DELETE; path=/; SameSite=Strict; Secure; max-age=0, squareGeo=SG-undefined; Domain=squareup.com; path=/; SameSite=Strict; Secure; max-age=2419200, _savt=2c47299b-a5c9-4e07-a00e-141199c12597; Max-Age=126230400; Expires=Sat, 07 Sep 2030 12:32:30 GMT; Domain=squareup.com; Path=/; Secure; SameSite=None; Partitioned; Category=C0001;, __cf_bm=OH6Lk_IQBvEQLBm_7pgOMbG4vzW3.IFlp6NLDJFXmlc-1788784350.3854544-1.0.1.1-53qicVlUU3Cs89FWwvxoaOWhZqt0SHXpCCmvwjm60fppVSgqZWsYw.1LtT5nI0NikaOwmbBbcq4Q6_aKCfo4nIIycRQjWyJwr7X.KS5UoIY_gXHNB5a_nvGmTfDpFSsZ; HttpOnly; SameSite=None; Secure; Path=/; Domain=developer.squareup.com; Expires=Mon, 07 Sep 2026 13:02:30 GMT",
+    "strict-transport-security": "max-age=631152000; includeSubDomains; preload",
+    "transfer-encoding": "chunked",
+    "vary": "Accept-Encoding",
+    "x-envoy-decorator-operation": "/docs/**",
+    "x-sq-dc": "aws",
+    "x-sq-region": "us-west-2"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "98475c6a3866ff8409a30b4e6621e863",
+  "recorded_at": "2026-09-07T12:32:30Z",
+  "status": 200,
+  "stored_bytes": 211763,
+  "transport_error": null,
+  "url": "https://developer.squareup.com/docs/mobile-payments-sdk/ios/square-stand"
+}

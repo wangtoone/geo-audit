@@ -1,0 +1,33 @@
+{
+  "body_bytes": 8501,
+  "body_file": "snapshots/www.pipedrive.com/llms.txt-2bb17b0a.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://www.pipedrive.com/llms.txt",
+  "handwritten": false,
+  "headers": {
+    "alt-svc": "h3=\":443\"; ma=86400",
+    "cache-control": "public, max-age=86",
+    "cf-cache-status": "DYNAMIC",
+    "cf-ray": "a375add2ddb0ce61-SIN",
+    "connection": "keep-alive",
+    "content-encoding": "gzip",
+    "content-type": "text/plain; charset=UTF-8",
+    "date": "Mon, 07 Sep 2026 12:22:27 GMT",
+    "etag": "W/\"2135-1a06c316e70\"",
+    "last-modified": "Fri, 04 Sep 2026 11:32:54 GMT",
+    "server": "cloudflare",
+    "strict-transport-security": "max-age=31536000; includeSubDomains",
+    "transfer-encoding": "chunked",
+    "vary": "accept-encoding",
+    "x-content-type-options": "nosniff",
+    "x-xss-protection": "1; mode=block"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "3a4dab1ce778cc3636b0acd5c0d05f34",
+  "recorded_at": "2026-09-07T12:22:27Z",
+  "status": 200,
+  "stored_bytes": 8501,
+  "transport_error": null,
+  "url": "https://www.pipedrive.com/llms.txt"
+}

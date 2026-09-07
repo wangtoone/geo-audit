@@ -1,0 +1,31 @@
+{
+  "body_bytes": 71305,
+  "body_file": "snapshots/depot.dev/llms.txt-0a42d76c.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://depot.dev/llms.txt",
+  "handwritten": false,
+  "headers": {
+    "alt-svc": "h3=\":443\"; ma=86400",
+    "cache-control": "public, max-age=3600",
+    "connection": "keep-alive",
+    "content-encoding": "gzip",
+    "content-type": "text/plain; charset=utf-8",
+    "date": "Mon, 07 Sep 2026 12:40:06 GMT",
+    "link": "<https://depot.dev/llms.txt>; rel=\"describedby\"; type=\"text/plain\"",
+    "transfer-encoding": "chunked",
+    "vary": "Accept-Encoding",
+    "via": "1.1 b30b1c2659a3fb836783824fe37110ee.cloudfront.net (CloudFront)",
+    "x-amz-cf-id": "0eIz5j1vDocekcnjlzItmQuPbAyR-tlqrVUN9C4Ceot4Qo7bjwcxUA==",
+    "x-amz-cf-pop": "FRA56-P5",
+    "x-cache": "Miss from cloudfront",
+    "x-powered-by": "Express"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "a55aa70cbd268c5078d0e366870fb5f2",
+  "recorded_at": "2026-09-07T12:40:06Z",
+  "status": 200,
+  "stored_bytes": 71305,
+  "transport_error": null,
+  "url": "https://depot.dev/llms.txt"
+}

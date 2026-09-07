@@ -1,0 +1,28 @@
+{
+  "body_bytes": 4715,
+  "body_file": "snapshots/printify.com/cdn-cgi-l-email-protection-7275894d.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://printify.com/cdn-cgi/l/email-protection",
+  "handwritten": false,
+  "headers": {
+    "cache-control": "private, max-age=0, no-store, no-cache, must-revalidate, post-check=0, pre-check=0",
+    "cf-ray": "a375beabf983ab59-SIN",
+    "connection": "keep-alive",
+    "content-encoding": "gzip",
+    "content-type": "text/html",
+    "date": "Mon, 07 Sep 2026 12:33:57 GMT",
+    "expires": "Thu, 01 Jan 1970 00:00:01 GMT",
+    "referrer-policy": "same-origin",
+    "server": "cloudflare",
+    "transfer-encoding": "chunked",
+    "x-frame-options": "DENY, SAMEORIGIN"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "e46160d4d1b7e496ab2c96ed04307825",
+  "recorded_at": "2026-09-07T12:33:57Z",
+  "status": 404,
+  "stored_bytes": 4715,
+  "transport_error": null,
+  "url": "https://printify.com/cdn-cgi/l/email-protection"
+}

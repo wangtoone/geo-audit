@@ -1,0 +1,29 @@
+{
+  "body_bytes": 425692,
+  "body_file": "snapshots/developers.printify.com/geo-audit-probe-9e7a3d8433cd4f7ee7a3f708.txt-d08a692f.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://developers.printify.com/geo-audit-probe-9e7a3d8433cd4f7ee7a3f708.txt",
+  "handwritten": false,
+  "headers": {
+    "alt-svc": "h3=\":443\"; ma=86400",
+    "cache-control": "no-cache",
+    "cf-cache-status": "DYNAMIC",
+    "cf-ray": "a375a9d3e8f36e7c-SIN",
+    "connection": "keep-alive",
+    "content-encoding": "gzip",
+    "content-type": "text/html",
+    "date": "Mon, 07 Sep 2026 12:19:43 GMT",
+    "last-modified": "Fri, 04 Sep 2026 12:34:04 GMT",
+    "server": "cloudflare",
+    "transfer-encoding": "chunked",
+    "vary": "accept-encoding"
+  },
+  "note": null,
+  "probe_for": "https://developers.printify.com/llms.txt",
+  "raw_md5": "5e778861b64a3fe0b3accb762f9794ec",
+  "recorded_at": "2026-09-07T12:19:43Z",
+  "status": 200,
+  "stored_bytes": 425692,
+  "transport_error": null,
+  "url": "https://developers.printify.com/geo-audit-probe-9e7a3d8433cd4f7ee7a3f708.txt"
+}

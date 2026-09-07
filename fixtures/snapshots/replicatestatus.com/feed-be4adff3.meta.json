@@ -1,0 +1,24 @@
+{
+  "body_bytes": 167,
+  "body_file": "snapshots/replicatestatus.com/feed-be4adff3.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://replicatestatus.com/feed",
+  "handwritten": false,
+  "headers": {
+    "cf-ray": "a375c2a3dd038350-SIN",
+    "connection": "keep-alive",
+    "content-type": "text/html; charset=UTF-8",
+    "date": "Mon, 07 Sep 2026 12:36:39 GMT",
+    "location": "https://www.replicatestatus.com/feed",
+    "server": "cloudflare",
+    "transfer-encoding": "chunked"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "0104c301c5e02bd6148b8703d19b3a73",
+  "recorded_at": "2026-09-07T12:36:39Z",
+  "status": 301,
+  "stored_bytes": 167,
+  "transport_error": null,
+  "url": "https://replicatestatus.com/feed"
+}

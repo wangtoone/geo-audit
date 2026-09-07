@@ -1,0 +1,32 @@
+{
+  "body_bytes": 91087,
+  "body_file": "snapshots/developer.squareup.com/docs-payments-scenarios-simple-sales-report-c2222626.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://developer.squareup.com/docs/payments/scenarios/simple-sales-report",
+  "handwritten": false,
+  "headers": {
+    "cache-control": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "cf-cache-status": "DYNAMIC",
+    "cf-ray": "a375bcad5c900b9e-SIN",
+    "connection": "keep-alive",
+    "content-encoding": "gzip",
+    "content-type": "text/html; charset=utf-8",
+    "date": "Mon, 07 Sep 2026 12:32:35 GMT",
+    "server": "cloudflare",
+    "set-cookie": "squareGeo=DELETE; path=/; SameSite=Strict; Secure; max-age=0, squareGeo=SG-undefined; Domain=squareup.com; path=/; SameSite=Strict; Secure; max-age=2419200, _savt=71407530-a81a-4fe1-9a47-ee44738af90b; Max-Age=126230400; Expires=Sat, 07 Sep 2030 12:32:35 GMT; Domain=squareup.com; Path=/; Secure; SameSite=None; Partitioned; Category=C0001;, __cf_bm=JF.aiHiTnoybg7DM3BAyR_g4VOuQ7RcS8.zoud7SpT4-1788784355.4251287-1.0.1.1-wHcOCfkXzz0IHT7rEzdbIGFOOxI5AHAdQIkbzENtjl_UI7jTATzqhn7yR0XRDLLRRjc5np8MstXEOPqvPo9Tug9Ioh27XR_5TcSS0RfA8veR9a0lZ9loa08_ypIzseQB; HttpOnly; SameSite=None; Secure; Path=/; Domain=developer.squareup.com; Expires=Mon, 07 Sep 2026 13:02:35 GMT",
+    "strict-transport-security": "max-age=631152000; includeSubDomains; preload",
+    "transfer-encoding": "chunked",
+    "vary": "Accept-Encoding",
+    "x-envoy-decorator-operation": "/docs/**",
+    "x-sq-dc": "aws",
+    "x-sq-region": "us-west-2"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "ee2925094c1423fb78d083eb42ba1085",
+  "recorded_at": "2026-09-07T12:32:35Z",
+  "status": 404,
+  "stored_bytes": 91087,
+  "transport_error": null,
+  "url": "https://developer.squareup.com/docs/payments/scenarios/simple-sales-report"
+}

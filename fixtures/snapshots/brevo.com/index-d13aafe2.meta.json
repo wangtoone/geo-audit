@@ -1,0 +1,25 @@
+{
+  "body_bytes": 528,
+  "body_file": "snapshots/brevo.com/index-d13aafe2.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://brevo.com/",
+  "handwritten": false,
+  "headers": {
+    "cf-ray": "a375ae7a4a6199c8-CDG",
+    "connection": "keep-alive",
+    "content-type": "text/html; charset=UTF-8",
+    "date": "Mon, 07 Sep 2026 12:22:53 GMT",
+    "location": "https://www.brevo.com/",
+    "server": "cloudflare",
+    "server-timing": "cfEdge;dur=6,cfOrigin;dur=0",
+    "transfer-encoding": "chunked"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "e490e3a508d2638d14817a4de19a4285",
+  "recorded_at": "2026-09-07T12:22:53Z",
+  "status": 301,
+  "stored_bytes": 528,
+  "transport_error": null,
+  "url": "https://brevo.com/"
+}

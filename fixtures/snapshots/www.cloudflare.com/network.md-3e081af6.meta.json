@@ -1,0 +1,33 @@
+{
+  "body_bytes": 12,
+  "body_file": "snapshots/www.cloudflare.com/network.md-3e081af6.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://www.cloudflare.com/network.md",
+  "handwritten": false,
+  "headers": {
+    "alt-svc": "h3=\":443\"; ma=86400",
+    "cf-ray": "a375c8abd9267abd-SIN",
+    "connection": "keep-alive",
+    "content-length": "12",
+    "content-type": "text/plain; charset=UTF-8",
+    "date": "Mon, 07 Sep 2026 12:40:46 GMT",
+    "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
+    "permissions-policy": "geolocation=(), camera=(), microphone=()",
+    "referrer-policy": "strict-origin-when-cross-origin",
+    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=IvzRCAKOYmtRTnlVV8gmn7%2BzxDxdPwD2Pz6KBYt2vhMeV1ltuSgPjs1fvfGe%2B847AVHEFBUKJnUQzjkQySspmIok%2FIZVw5aw77xpFxJ5J3W9K51D5mn2BQ0PBjcWk%2BX5o4puqA%3D%3D\"}]}",
+    "server": "cloudflare",
+    "strict-transport-security": "max-age=31536000; includeSubDomains",
+    "vary": "accept-encoding",
+    "x-content-type-options": "nosniff",
+    "x-frame-options": "SAMEORIGIN",
+    "x-xss-protection": "1; mode=block"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "4a725a4f73a5024f5cf2d2a401c5838d",
+  "recorded_at": "2026-09-07T12:40:46Z",
+  "status": 404,
+  "stored_bytes": 12,
+  "transport_error": null,
+  "url": "https://www.cloudflare.com/network.md"
+}

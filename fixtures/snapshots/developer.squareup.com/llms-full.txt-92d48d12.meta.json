@@ -1,0 +1,24 @@
+{
+  "body_bytes": 167,
+  "body_file": "snapshots/developer.squareup.com/llms-full.txt-92d48d12.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://developer.squareup.com/llms-full.txt",
+  "handwritten": false,
+  "headers": {
+    "cf-ray": "a375b00b2e4f5fe7-SIN",
+    "connection": "keep-alive",
+    "content-type": "text/html; charset=UTF-8",
+    "date": "Mon, 07 Sep 2026 12:23:57 GMT",
+    "location": "https://developer.squareup.com/docs/llms-full.txt",
+    "server": "cloudflare",
+    "transfer-encoding": "chunked"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "0104c301c5e02bd6148b8703d19b3a73",
+  "recorded_at": "2026-09-07T12:23:57Z",
+  "status": 301,
+  "stored_bytes": 167,
+  "transport_error": null,
+  "url": "https://developer.squareup.com/llms-full.txt"
+}

@@ -1,0 +1,31 @@
+{
+  "body_bytes": 1945901,
+  "body_file": "snapshots/docs.customer.io/files-journeys-track.json-f1522f62.body.gz",
+  "body_storage": "truncated",
+  "canon_url": "https://docs.customer.io/files/journeys-track.json",
+  "handwritten": false,
+  "headers": {
+    "accept-ranges": "bytes",
+    "access-control-allow-origin": "*",
+    "age": "12611",
+    "cache-control": "public,max-age=604800,stale-while-revalidate=86400",
+    "cache-status": "\"Netlify Edge\"; hit; ttl=31523389",
+    "content-encoding": "gzip",
+    "content-type": "application/json",
+    "date": "Mon, 07 Sep 2026 12:32:53 GMT",
+    "etag": "W/\"4680eeea5e014d6d240e5b3f84355325-ssl-df\"",
+    "server": "Netlify",
+    "strict-transport-security": "max-age=31536000",
+    "transfer-encoding": "chunked",
+    "vary": "Accept-Encoding",
+    "x-nf-request-id": "01M1XXPVZ7Q66SCP91SCVYZXBM"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "ca3b353fdd77f8d9eb70cf3b4e92c80e",
+  "recorded_at": "2026-09-07T12:32:54Z",
+  "status": 200,
+  "stored_bytes": 262144,
+  "transport_error": null,
+  "url": "https://docs.customer.io/files/journeys-track.json"
+}

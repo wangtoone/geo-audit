@@ -1,0 +1,23 @@
+{
+  "body_bytes": 110,
+  "body_file": "snapshots/spoton.com/geo-audit-probe-39a62ac9300eee41f95a414e.txt-7f872202.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://spoton.com/geo-audit-probe-39a62ac9300eee41f95a414e.txt",
+  "handwritten": false,
+  "headers": {
+    "connection": "keep-alive",
+    "content-length": "110",
+    "content-type": "text/html",
+    "date": "Mon, 07 Sep 2026 12:22:00 GMT",
+    "location": "https://www.spoton.com:443/geo-audit-probe-39a62ac9300eee41f95a414e.txt",
+    "server": "awselb/2.0"
+  },
+  "note": null,
+  "probe_for": "https://spoton.com/llms.txt",
+  "raw_md5": "f366e0e18b589cb6f243bf43ce75e83c",
+  "recorded_at": "2026-09-07T12:22:00Z",
+  "status": 302,
+  "stored_bytes": 110,
+  "transport_error": null,
+  "url": "https://spoton.com/geo-audit-probe-39a62ac9300eee41f95a414e.txt"
+}

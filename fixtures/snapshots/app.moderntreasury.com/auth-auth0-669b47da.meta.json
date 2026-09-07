@@ -1,0 +1,28 @@
+{
+  "body_bytes": 332,
+  "body_file": "snapshots/app.moderntreasury.com/auth-auth0-669b47da.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://app.moderntreasury.com/auth/auth0",
+  "handwritten": false,
+  "headers": {
+    "cache-control": "no-cache",
+    "connection": "keep-alive",
+    "content-length": "332",
+    "content-security-policy": "script-src 'strict-dynamic' 'unsafe-inline' 'self' https: 'nonce-+oOAoqp3LiZjwnyD8MzNPQ=='; object-src 'none'; base-uri 'none'; frame-ancestors 'self' https://app.coast.io/ https://coast.moderntreasury.com/; report-uri https://sentry.io/api/1244199/security/?sentry_key=63e01c5b9ec44918be59cc3272db7d24&sentry_release=316225&sentry_environment=production",
+    "date": "Mon, 07 Sep 2026 12:35:34 GMT",
+    "feature-policy": "camera 'none'; gyroscope 'none'; microphone 'none'; usb 'none'",
+    "location": "https://auth.moderntreasury.com/authorize?client_id=IdAxBDkXxeqce3MmSjmNQzT7mKJx2yG7&leeway=60&nonce=eb513ea838e3c2d02dd43ab7a4d457a1&redirect_uri=https%3A%2F%2Fapp.moderntreasury.com%2Fauth%2Fauth0%2Fcallback&response_type=code&scope=openid%20email%20profile&state=e6d0f74edf4d2164e1557593f056be7131153d02fc850526",
+    "set-cookie": "AWSALBTG=+nRtWD6HowwLtJx0v1VSwiVMmgWVrgkkXxwCZWO2uBLubdv3SENG4f6/XJgkw1H9DXsEooRLWbk5AaC//EdbzGdxgHR1qGjsxIBzU5VVvNNuGyD4q+7PpgPpLUp7CsnabCM6SzPw9AXCMOaKLnkBRqopS6Eg+cvCDmSzojpShWV9g9VXrG0=; Expires=Mon, 14 Sep 2026 12:35:34 GMT; Path=/, AWSALBTGCORS=+nRtWD6HowwLtJx0v1VSwiVMmgWVrgkkXxwCZWO2uBLubdv3SENG4f6/XJgkw1H9DXsEooRLWbk5AaC//EdbzGdxgHR1qGjsxIBzU5VVvNNuGyD4q+7PpgPpLUp7CsnabCM6SzPw9AXCMOaKLnkBRqopS6Eg+cvCDmSzojpShWV9g9VXrG0=; Expires=Mon, 14 Sep 2026 12:35:34 GMT; Path=/; SameSite=None; Secure, _modern_treasury=0tRyhzdyPMg7UpNxbaJJEk2MrKeY9lsxqYIP9P3GD9r4I3ME0VziY%2Fcgf3PCVAT8Z9eQUFpKoi%2BDLrWTEVfBPK7qXhKhS51ytPiuLGA19IAmGA1xcNZez2%2FXE9U1IOCM7uiPQN%2FD31zD0kXYJnO0jRjopS47Ut39mwJKjRcG5LchYsRJK579o8upjH9wYjp1Iqzp%2FxgI7L2Vb4GBKA17buNfnWT2zvR9ThrALLWFPusRvdGSi8v%2B%2B3j3tpez1I2FvK0aXsrgqkAxZcWqXtBlKDPhwiL9NN6csbEMet7a%2BqxD3IJY2cKWbL0K%2FMsrtLbWpfredtlHz%2FT9F%2FWucFb6nVN65kO97mmMlXAneORwoErPHNCeZE6K1ZEt7auIxgDg2%2Bls0VwuECiswZc1t8s2T5v3IvJpjPUp0oZTqvPp8%2BWK8%2FP1MvE3Gg1qg1nrucW94tYEXHrRG3fnymywkoAh1W6tTKPHq3relwjmjwuqZYPSjmuj2DQbg7AkXus9PZJbeGYY%2FFM96kTwDp%2FZZG%2B%2B0IfMpaxycKQDyvo8yQIhbn1Wi%2FfpfHnbsMbf4gvFwdFH4%2F5tun3OMxfrlpsQDdF%2BnFnlesiHqLnkK92apOImmzhvmgsm4DNYgbSnVF%2Fvprh7Q%2FDy7KdCFqI78NsMZFam95Nyeqe%2Bs5sDEKHY9jDQM4dFEHhCYcJRTgC5r5q3s1hC551FQ8zNndEI8bLIRDHFy2s1076iAor55RcnUc%2BGPXQyAqKH7ZNtZrXV--1zIr4PMhuhgkSV9m--hO%2BimvxL8wwzCPvQzapdeQ%3D%3D; path=/; expires=Mon, 07 Sep 2026 13:35:34 GMT; secure; httponly; samesite=none",
+    "strict-transport-security": "max-age=63072000; includeSubDomains",
+    "x-request-id": "1-6a9eaf96-093b9dfb0e6a18eb0b50e6fe",
+    "x-runtime": "0.001857"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "25cbcd65dafef362672ed4bc67bdfb7f",
+  "recorded_at": "2026-09-07T12:35:34Z",
+  "status": 302,
+  "stored_bytes": 332,
+  "transport_error": null,
+  "url": "https://app.moderntreasury.com/auth/auth0"
+}

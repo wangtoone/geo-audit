@@ -1,0 +1,28 @@
+{
+  "body_bytes": 506,
+  "body_file": "snapshots/www.moonshot.ai/geo-audit-probe-87dd541ef9be9d48eeaffbb5.txt-f80b78cd.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://www.moonshot.ai/geo-audit-probe-87dd541ef9be9d48eeaffbb5.txt",
+  "handwritten": false,
+  "headers": {
+    "cf-cache-status": "DYNAMIC",
+    "cf-ray": "a375aa2908e35856-SIN",
+    "connection": "keep-alive",
+    "content-type": "text/html",
+    "date": "Mon, 07 Sep 2026 12:19:56 GMT",
+    "location": "/",
+    "server": "cloudflare",
+    "server-timing": "cfCacheStatus;desc=\"DYNAMIC\", cfEdge;dur=10,cfOrigin;dur=3",
+    "strict-transport-security": "max-age=31536000; includeSubDomains",
+    "transfer-encoding": "chunked",
+    "x-robots-tag": "noindex"
+  },
+  "note": null,
+  "probe_for": "https://www.moonshot.ai/llms.txt",
+  "raw_md5": "6b099d7e15eb61929869d67f644d7eb0",
+  "recorded_at": "2026-09-07T12:19:56Z",
+  "status": 302,
+  "stored_bytes": 506,
+  "transport_error": null,
+  "url": "https://www.moonshot.ai/geo-audit-probe-87dd541ef9be9d48eeaffbb5.txt"
+}

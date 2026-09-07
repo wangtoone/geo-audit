@@ -1,0 +1,32 @@
+{
+  "body_bytes": 15,
+  "body_file": "snapshots/dev.hume.ai/llms-full.txt-455d9478.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://dev.hume.ai/llms-full.txt",
+  "handwritten": false,
+  "headers": {
+    "cache-control": "public, max-age=0, must-revalidate",
+    "cf-cache-status": "DYNAMIC",
+    "cf-ray": "a375af420abd9b96-SIN",
+    "connection": "keep-alive",
+    "content-security-policy": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://app.buildwithfern.com https: blob:; style-src 'self' 'unsafe-inline' https://app.buildwithfern.com https:; img-src 'self' https://app.buildwithfern.com https: data: blob:; font-src 'self' https://app.buildwithfern.com https: data:; connect-src 'self' https://app.buildwithfern.com https: wss: ws: data: blob:; media-src 'self' https://app.buildwithfern.com https: data: blob:; object-src 'self' https://app.buildwithfern.com https: data: blob:; frame-src 'self' https://app.buildwithfern.com https: data: blob:; base-uri 'self'; form-action 'self' https://app.buildwithfern.com https:",
+    "content-type": "text/plain",
+    "date": "Mon, 07 Sep 2026 12:23:25 GMT",
+    "location": "https://dev.hume.ai/llms.txt",
+    "permissions-policy": "camera=(self), microphone=(self), geolocation=()",
+    "referrer-policy": "strict-origin-when-cross-origin",
+    "server": "cloudflare",
+    "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+    "transfer-encoding": "chunked",
+    "x-content-type-options": "nosniff",
+    "x-vercel-id": "sin1::fpk6b-1788783805794-1634902739b2"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "42c939d0ba4bbdc4c7eab1b5c34aaf71",
+  "recorded_at": "2026-09-07T12:23:25Z",
+  "status": 301,
+  "stored_bytes": 15,
+  "transport_error": null,
+  "url": "https://dev.hume.ai/llms-full.txt"
+}

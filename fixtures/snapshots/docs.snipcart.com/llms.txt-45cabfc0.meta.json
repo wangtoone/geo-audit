@@ -1,0 +1,29 @@
+{
+  "body_bytes": 3918,
+  "body_file": "snapshots/docs.snipcart.com/llms.txt-45cabfc0.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://docs.snipcart.com/llms.txt",
+  "handwritten": false,
+  "headers": {
+    "age": "0",
+    "cache-control": "public,max-age=0,must-revalidate",
+    "cache-status": "\"Netlify Edge\"; fwd=miss; fwd-status=404; stored",
+    "content-encoding": "gzip",
+    "content-type": "text/html; charset=utf-8",
+    "date": "Mon, 07 Sep 2026 12:22:34 GMT",
+    "etag": "1548267464-ssl-df",
+    "server": "Netlify",
+    "strict-transport-security": "max-age=31536000",
+    "transfer-encoding": "chunked",
+    "vary": "Accept-Encoding",
+    "x-nf-request-id": "01M1XX3Z0N3YKQNYKB0YZK452K"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "cbcbe85fe14c6833b1d64480f66bf929",
+  "recorded_at": "2026-09-07T12:22:34Z",
+  "status": 404,
+  "stored_bytes": 3918,
+  "transport_error": null,
+  "url": "https://docs.snipcart.com/llms.txt"
+}

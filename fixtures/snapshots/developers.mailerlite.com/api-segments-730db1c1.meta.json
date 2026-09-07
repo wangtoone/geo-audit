@@ -1,0 +1,29 @@
+{
+  "body_bytes": 213657,
+  "body_file": "snapshots/developers.mailerlite.com/api-segments-730db1c1.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://developers.mailerlite.com/api/segments",
+  "handwritten": false,
+  "headers": {
+    "alt-svc": "h3=\":443\"; ma=86400",
+    "cache-control": "public, max-age=0, must-revalidate",
+    "cf-cache-status": "HIT",
+    "cf-ray": "a375badf7c8b3d95-SIN",
+    "connection": "keep-alive",
+    "content-encoding": "gzip",
+    "content-type": "text/html",
+    "date": "Mon, 07 Sep 2026 12:31:21 GMT",
+    "etag": "W/\"60a42df56922586f0a5c9933c522db50\"",
+    "server": "cloudflare",
+    "transfer-encoding": "chunked",
+    "vary": "accept-encoding"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "3476e118ca60f6efecc553c19776d3ea",
+  "recorded_at": "2026-09-07T12:31:21Z",
+  "status": 200,
+  "stored_bytes": 213657,
+  "transport_error": null,
+  "url": "https://developers.mailerlite.com/api/segments"
+}

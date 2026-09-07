@@ -1,0 +1,23 @@
+{
+  "body_bytes": 178,
+  "body_file": "snapshots/www.juicefs.com/llms.txt-4c9e3e53.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://www.juicefs.com/llms.txt",
+  "handwritten": false,
+  "headers": {
+    "connection": "keep-alive",
+    "content-length": "178",
+    "content-type": "text/html",
+    "date": "Mon, 07 Sep 2026 12:22:38 GMT",
+    "location": "https://juicefs.com/llms.txt",
+    "server": "nginx/1.18.0 (Ubuntu)"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "bd2695f4b079c71dbddde3436286fb9c",
+  "recorded_at": "2026-09-07T12:22:38Z",
+  "status": 301,
+  "stored_bytes": 178,
+  "transport_error": null,
+  "url": "https://www.juicefs.com/llms.txt"
+}

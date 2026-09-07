@@ -1,0 +1,33 @@
+{
+  "body_bytes": 513188,
+  "body_file": "snapshots/upstash.com/docs-redis-commands-scripting-overview-602f04a6.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://upstash.com/docs/redis/commands/scripting/overview",
+  "handwritten": false,
+  "headers": {
+    "cache-control": "public, max-age=0, must-revalidate",
+    "cf-cache-status": "HIT",
+    "cf-ray": "a375c594fe156bab-SIN",
+    "content-encoding": "gzip",
+    "content-type": "text/html",
+    "date": "Mon, 07 Sep 2026 12:38:40 GMT",
+    "etag": "W/\"31509f5de0610f834af82215a2477f2f\"",
+    "link": "<https://upstash.com/llms.txt>; rel=\"alternate\"; type=\"text/plain\"; title=\"LLM-friendly content index\", <https://upstash.com/ask?q=your+question>; rel=\"search\"; type=\"application/json\"; title=\"Upstash answer index\", <https://upstash.com/docs/devops/developer-api/openapi.yaml>; rel=\"service-desc\"; type=\"application/openapi+yaml\"; title=\"Upstash Developer API (OpenAPI)\", <https://upstash.com/docs/qstash/openapi.yaml>; rel=\"service-desc\"; type=\"application/openapi+yaml\"; title=\"QStash REST API (OpenAPI)\", <https://upstash.com/docs/workflow/openapi.yaml>; rel=\"service-desc\"; type=\"application/openapi+yaml\"; title=\"Upstash Workflow REST API (OpenAPI)\", </docs/redis/commands/scripting/overview.md>; rel=\"alternate\"; type=\"text/markdown\", </docs/llms.txt>; rel=\"describedby\"; type=\"text/plain\", </docs/llms-full.txt>; rel=\"describedby\"; type=\"text/plain\", </docs/.well-known/agent-skills/index.json>; rel=\"agent-skills\"; type=\"application/json\"",
+    "referrer-policy": "strict-origin-when-cross-origin",
+    "server": "Vercel",
+    "strict-transport-security": "max-age=31536000",
+    "transfer-encoding": "chunked",
+    "vary": "Accept",
+    "x-content-type-options": "nosniff",
+    "x-vercel-cache": "MISS",
+    "x-vercel-id": "sin1::j54t6-1788784720110-8e219c043f3e"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "5ac00a646139fe6285ef3931d8815a0b",
+  "recorded_at": "2026-09-07T12:38:40Z",
+  "status": 200,
+  "stored_bytes": 513188,
+  "transport_error": null,
+  "url": "https://upstash.com/docs/redis/commands/scripting/overview"
+}

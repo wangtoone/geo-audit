@@ -1,0 +1,32 @@
+{
+  "body_bytes": 17112,
+  "body_file": "snapshots/www.browserbase.com/llms.txt-e87417be.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://www.browserbase.com/llms.txt",
+  "handwritten": false,
+  "headers": {
+    "access-control-allow-origin": "*",
+    "age": "297744",
+    "cache-control": "public, max-age=0, must-revalidate",
+    "content-disposition": "inline; filename=\"llms.txt\"",
+    "content-encoding": "gzip",
+    "content-type": "text/plain; charset=utf-8",
+    "date": "Mon, 07 Sep 2026 12:40:57 GMT",
+    "etag": "W/\"f57fa70924d0be1441844f65caef959d\"",
+    "last-modified": "Fri, 04 Sep 2026 01:58:32 GMT",
+    "server": "Vercel",
+    "strict-transport-security": "max-age=63072000",
+    "transfer-encoding": "chunked",
+    "x-matched-path": "/llms.txt",
+    "x-vercel-cache": "HIT",
+    "x-vercel-id": "sin1::5dxbc-1788784857124-55565633536c"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "f57fa70924d0be1441844f65caef959d",
+  "recorded_at": "2026-09-07T12:40:57Z",
+  "status": 200,
+  "stored_bytes": 17112,
+  "transport_error": null,
+  "url": "https://www.browserbase.com/llms.txt"
+}

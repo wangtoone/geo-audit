@@ -1,0 +1,29 @@
+{
+  "body_bytes": 208221,
+  "body_file": "snapshots/developers.mailerlite.com/ecommerce-categories-products-7e46fa79.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://developers.mailerlite.com/ecommerce/categories-products",
+  "handwritten": false,
+  "headers": {
+    "alt-svc": "h3=\":443\"; ma=86400",
+    "cache-control": "public, max-age=0, must-revalidate",
+    "cf-cache-status": "HIT",
+    "cf-ray": "a375bafa7add3d95-SIN",
+    "connection": "keep-alive",
+    "content-encoding": "gzip",
+    "content-type": "text/html",
+    "date": "Mon, 07 Sep 2026 12:31:25 GMT",
+    "etag": "W/\"ebfdfeafd8140f9e91ed17ce57073a86\"",
+    "server": "cloudflare",
+    "transfer-encoding": "chunked",
+    "vary": "accept-encoding"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "4820bde6fe0a7b9d7153610675e64fa3",
+  "recorded_at": "2026-09-07T12:31:25Z",
+  "status": 200,
+  "stored_bytes": 208221,
+  "transport_error": null,
+  "url": "https://developers.mailerlite.com/ecommerce/categories-products"
+}

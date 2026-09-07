@@ -1,0 +1,32 @@
+{
+  "body_bytes": 104903,
+  "body_file": "snapshots/docs.canvasmedical.com/sdk-layout-effect-6fcffc62.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://docs.canvasmedical.com/sdk/layout-effect/",
+  "handwritten": false,
+  "headers": {
+    "alt-svc": "h3=\":443\"; ma=86400",
+    "cache-control": "public, max-age=0, s-maxage=31536000",
+    "connection": "keep-alive",
+    "content-encoding": "gzip",
+    "content-type": "text/html",
+    "date": "Mon, 07 Sep 2026 12:37:52 GMT",
+    "etag": "W/\"762119bc9d066df9e82e8f7909bb4d71\"",
+    "last-modified": "Fri, 04 Sep 2026 23:44:55 GMT",
+    "server": "AmazonS3",
+    "transfer-encoding": "chunked",
+    "vary": "Accept-Encoding",
+    "via": "1.1 9b0280269b9d7aa3290eec3ea5fee604.cloudfront.net (CloudFront)",
+    "x-amz-cf-id": "4QLQBygVU-Z0AUHerBlgHTr3xGzrZzUG8C7YXXEg6IUE57IrGMGVuA==",
+    "x-amz-cf-pop": "KIX82-P2",
+    "x-cache": "Miss from cloudfront"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "762119bc9d066df9e82e8f7909bb4d71",
+  "recorded_at": "2026-09-07T12:37:53Z",
+  "status": 200,
+  "stored_bytes": 104903,
+  "transport_error": null,
+  "url": "https://docs.canvasmedical.com/sdk/layout-effect/"
+}

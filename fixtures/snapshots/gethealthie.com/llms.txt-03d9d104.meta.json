@@ -1,0 +1,29 @@
+{
+  "body_bytes": 166,
+  "body_file": "snapshots/gethealthie.com/llms.txt-03d9d104.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://gethealthie.com/llms.txt",
+  "handwritten": false,
+  "headers": {
+    "alt-svc": "h3=\":443\"; ma=86400",
+    "cache-control": "private",
+    "cf-cache-status": "BYPASS",
+    "cf-ray": "a375ae2fccd7ad69-SIN",
+    "connection": "keep-alive",
+    "content-length": "166",
+    "content-type": "text/html",
+    "date": "Mon, 07 Sep 2026 12:22:42 GMT",
+    "location": "https://www.gethealthie.com/llms.txt",
+    "server": "cloudflare",
+    "set-cookie": "_cfuvid=OMKeKO0ggiKuhDJkEzSJt2.36AEg8gdPqvrpNX5mvRM-1788783761.881705-1.0.1.1-TosXD8PtNDVaOamg40nsKhcJSfyUFIMXUwDpuZR5www; HttpOnly; SameSite=None; Secure; Path=/; Domain=gethealthie.com",
+    "x-wf-region": "us-east-1"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "3ea1c8d079b38532a6e01a96216ba5e2",
+  "recorded_at": "2026-09-07T12:22:42Z",
+  "status": 301,
+  "stored_bytes": 166,
+  "transport_error": null,
+  "url": "https://gethealthie.com/llms.txt"
+}
