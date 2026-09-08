@@ -167,6 +167,22 @@ class HttpCache:
     def __exit__(self, *exc: object) -> None:
         self.close()
 
+    def __del__(self) -> None:
+        """兜底关连接。**显式 close() 仍然是正路**，这里只是最后一道网。
+
+        为什么需要兜底：全仓 22 个 HttpCache 构造点（测试、fp_gate、
+        capture_fixtures…），逐个改成 with 语句既啰嗦又必然漏。而漏掉的代价在
+        Python 3.13 上不是「多占一个 fd」——``sqlite3.Connection`` 析构时发的
+        ``ResourceWarning`` 撞上 ``filterwarnings = error``，整条测试红，
+        且报错指向**用到它的那条测试**而不是漏关的地方，极难定位。
+        实测：只在 Fetcher.close() 里关，3.13 上仍有 7 条测试挂在这上面。
+
+        ``__del__`` 里不许抛：解释器会把异常打到 stderr 再忽略，而那又是一条
+        ``unraisable``，等于用一个警告换另一个警告。
+        """
+        with suppress(Exception):
+            self.close()
+
     def key(self, method: str, url: str, accept: str) -> str:
         raw = f"{method.upper()}\n{url}\n{accept}\n{self.ua_profile}"
         return hashlib.sha256(raw.encode("utf-8")).hexdigest()

@@ -75,10 +75,24 @@ jobs:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v3
       - run: uv sync --extra dev
-      - run: >
-          uv run geo-audit --replay-fixtures mistral.ai
-          --contact ci@geo-audit.invalid --no-cache
-          --out /tmp/o --format json
+      # ⚠️ mistral.ai **有发现**（1 个位置读错），所以 CLI 按 §7.1 退出码 1 ——
+      # 那是「扫描完成，有发现」，不是失败。规格给的 CI 片段没接这个语义，
+      # 于是 schema 与 smoke-uvx 两个 job 第一次真跑就红了。
+      # 只把 4（用法错）/ 3（域不可达）/ 130（中断）当失败。
+      - name: 产出 JSON 报告（退出码 1 = 有发现，是预期结果）
+        run: |
+          set +e
+          uv run geo-audit --replay-fixtures mistral.ai \
+            --contact ci@geo-audit.invalid --no-cache \
+            --out /tmp/o --format json
+          code=$?
+          set -e
+          echo "geo-audit 退出码 $code"
+          case "$code" in
+            0|1|2) : ;;
+            *) echo "::error::CLI 退出码 $code（4=用法错 / 3=不可达 / 130=中断）"; exit 1 ;;
+          esac
+          test -s /tmp/o/mistral.ai.json
       - run: uv run check-jsonschema --schemafile schema/report-1.schema.json /tmp/o/mistral.ai.json
 
   smoke-uvx:
@@ -89,10 +103,21 @@ jobs:
       - uses: astral-sh/setup-uv@v3
       # 「一行可跑」必须被测到，不能只写在 README 里。装成 wheel 跑，验证
       # force-include 把 fixtures 带进去了。
-      - run: >
-          uv tool run --from . geo-audit --replay-fixtures mistral.ai
-          --contact ci@geo-audit.invalid --no-cache
-          --out /tmp/r --format html
+      # 同上：退出码 1 是「有发现」。见 schema job 的注释。
+      - name: 装成 wheel 跑（退出码 1 = 有发现，是预期结果）
+        run: |
+          set +e
+          uv tool run --from . geo-audit --replay-fixtures mistral.ai \
+            --contact ci@geo-audit.invalid --no-cache \
+            --out /tmp/r --format html
+          code=$?
+          set -e
+          echo "geo-audit 退出码 $code"
+          case "$code" in
+            0|1|2) : ;;
+            *) echo "::error::CLI 退出码 $code"; exit 1 ;;
+          esac
+          test -s /tmp/r/mistral.ai.html
       - name: 报告必须自包含且含 75/75 那条结论
         run: |
           python - <<'PY'
