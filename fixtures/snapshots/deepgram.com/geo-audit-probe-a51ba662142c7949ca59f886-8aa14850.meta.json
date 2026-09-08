@@ -1,0 +1,33 @@
+{
+  "body_bytes": 74213,
+  "body_file": "snapshots/deepgram.com/geo-audit-probe-a51ba662142c7949ca59f886-8aa14850.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://deepgram.com/geo-audit-probe-a51ba662142c7949ca59f886",
+  "handwritten": false,
+  "headers": {
+    "age": "0",
+    "cache-control": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "content-encoding": "gzip",
+    "content-type": "text/html; charset=utf-8",
+    "cross-origin-opener-policy": "same-origin-allow-popups",
+    "date": "Tue, 08 Sep 2026 03:55:00 GMT",
+    "link": "</_next/static/media/3703c28dcda155b1-s.p.woff2?dpl=dpl_BMhhxwRVycSvGohQ9dKEWkz7vVtb>; rel=preload; as=\"font\"; crossorigin=\"\"; type=\"font/woff2\", </_next/static/media/85a34e4473a5211b-s.p.woff?dpl=dpl_BMhhxwRVycSvGohQ9dKEWkz7vVtb>; rel=preload; as=\"font\"; crossorigin=\"\"; type=\"font/woff\", </_next/static/media/94b6e65608830c16-s.p.woff2?dpl=dpl_BMhhxwRVycSvGohQ9dKEWkz7vVtb>; rel=preload; as=\"font\"; crossorigin=\"\"; type=\"font/woff2\", </_next/static/media/e4af272ccee01ff0-s.p.woff2?dpl=dpl_BMhhxwRVycSvGohQ9dKEWkz7vVtb>; rel=preload; as=\"font\"; crossorigin=\"\"; type=\"font/woff2\", </_next/static/css/258039ebb3583429.css?dpl=dpl_BMhhxwRVycSvGohQ9dKEWkz7vVtb>; rel=preload; as=\"style\", </_next/static/css/71902f884ba8a70e.css?dpl=dpl_BMhhxwRVycSvGohQ9dKEWkz7vVtb>; rel=preload; as=\"style\", </_next/static/css/788949853f68dac6.css?dpl=dpl_BMhhxwRVycSvGohQ9dKEWkz7vVtb>; rel=preload; as=\"style\", </_next/static/css/e8324de5ca816b6a.css?dpl=dpl_BMhhxwRVycSvGohQ9dKEWkz7vVtb>; rel=preload; as=\"style\", </_next/static/css/a362450a0119d105.css?dpl=dpl_BMhhxwRVycSvGohQ9dKEWkz7vVtb>; rel=preload; as=\"style\", </_next/static/css/223da4b110dfeed6.css?dpl=dpl_BMhhxwRVycSvGohQ9dKEWkz7vVtb>; rel=preload; as=\"style\", </_next/static/css/b0618389154195a8.css?dpl=dpl_BMhhxwRVycSvGohQ9dKEWkz7vVtb>; rel=preload; as=\"style\", </_next/static/css/f95312db88bdf459.css?dpl=dpl_BMhhxwRVycSvGohQ9dKEWkz7vVtb>; rel=preload; as=\"style\"",
+    "server": "Vercel",
+    "strict-transport-security": "max-age=15768000",
+    "transfer-encoding": "chunked",
+    "vary": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch",
+    "x-content-type-options": "nosniff",
+    "x-matched-path": "/[[...slug]]",
+    "x-powered-by": "Next.js",
+    "x-vercel-cache": "MISS",
+    "x-vercel-id": "sin1::iad1::7f7nh-1788839699582-11f3bb10225a"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "524a5fb5b09719764082ab143a1d47d1",
+  "recorded_at": "2026-09-08T03:55:00Z",
+  "status": 404,
+  "stored_bytes": 74213,
+  "transport_error": null,
+  "url": "https://deepgram.com/geo-audit-probe-a51ba662142c7949ca59f886"
+}

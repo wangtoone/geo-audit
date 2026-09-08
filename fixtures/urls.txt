@@ -362,3 +362,20 @@ https://www.mistral.ai/                               # 画廊 · www 侧（apex
 @control https://www.mistral.ai/
 https://github.com/rustdesk/rustdesk/wiki/FAQ         # 画廊 · rustdesk 首页指向的站外文档
 @control https://github.com/rustdesk/rustdesk/wiki/FAQ
+https://minimax.io/                            # 画廊 · DNS 与对照探针
+@control https://minimax.io/
+https://deepgram.com/                            # 画廊 · DNS 与对照探针
+@control https://deepgram.com/
+https://www.deepgram.com/                            # 画廊 · DNS 与对照探针
+@control https://www.deepgram.com/
+@control https://tdengine.com/
+https://www.tdengine.com/                            # 画廊 · DNS 与对照探针
+@control https://www.tdengine.com/
+@control https://saleor.io/
+https://www.saleor.io/                            # 画廊 · DNS 与对照探针
+@control https://www.saleor.io/
+https://docs.saleor.io/                            # 画廊 · DNS 与对照探针
+@control https://docs.saleor.io/
+@control https://gusto.com/
+https://www.gusto.com/                            # 画廊 · DNS 与对照探针
+@control https://www.gusto.com/

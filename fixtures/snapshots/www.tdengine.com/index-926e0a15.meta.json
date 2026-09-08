@@ -1,0 +1,26 @@
+{
+  "body_bytes": 0,
+  "body_file": "snapshots/www.tdengine.com/index-926e0a15.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://www.tdengine.com/",
+  "handwritten": false,
+  "headers": {
+    "connection": "keep-alive",
+    "content-type": "text/html; charset=UTF-8",
+    "date": "Tue, 08 Sep 2026 03:55:10 GMT",
+    "location": "https://tdengine.com/",
+    "server": "openresty/1.27.1.2",
+    "transfer-encoding": "chunked",
+    "x-powered-by": "PHP/7.4.33",
+    "x-redirect-by": "WordPress",
+    "x-ua-compatible": "IE=edge"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "d41d8cd98f00b204e9800998ecf8427e",
+  "recorded_at": "2026-09-08T03:55:10Z",
+  "status": 301,
+  "stored_bytes": 0,
+  "transport_error": null,
+  "url": "https://www.tdengine.com/"
+}

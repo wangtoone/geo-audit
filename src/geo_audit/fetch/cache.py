@@ -34,6 +34,7 @@ import os
 import sqlite3
 import threading
 import time
+from contextlib import suppress
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -120,6 +121,10 @@ class HttpCache:
             path = d / "http.sqlite3"
         self.path = Path(path)
         self._local = threading.local()
+        # threading.local 只让**本线程**拿得到自己的连接，close() 却要关掉全部 ——
+        # 所以另存一份总账。
+        self._all_conns: list[sqlite3.Connection] = []
+        self._all_lock = threading.Lock()
         with self._conn() as conn:
             conn.executescript(_SCHEMA)
 
@@ -132,7 +137,35 @@ class HttpCache:
             conn.execute("PRAGMA journal_mode=WAL")
             conn.execute("PRAGMA synchronous=NORMAL")
             self._local.conn = conn
+            with self._all_lock:
+                self._all_conns.append(conn)
         return conn
+
+    def close(self) -> None:
+        """关掉本实例开过的**全部**连接（含其他线程开的）。
+
+        **为什么必须有这个方法**：连接存在 ``threading.local`` 里，线程池的每个
+        worker 各开一条，原来全靠 GC 回收。Python 3.13 起 ``sqlite3.Connection``
+        在析构时会发 ``ResourceWarning``，而 pyproject 的 ``filterwarnings = error``
+        把它升成错误 —— CI 上 3.13 的 24 条测试就是这么挂的
+        （``Exception ignored in: <sqlite3.Connection object>``，不是断言错）。
+        本地 3.12 不报，所以只有跑 CI 才看得见。
+
+        幂等：重复调用无副作用。关不掉的连接（别的线程正在用）忽略异常 ——
+        close 的语义是「尽力释放」，不该因为清理失败而让调用方崩。
+        """
+        with self._all_lock:
+            conns, self._all_conns = self._all_conns, []
+        for conn in conns:
+            with suppress(sqlite3.Error):
+                conn.close()
+        self._local = threading.local()
+
+    def __enter__(self) -> HttpCache:
+        return self
+
+    def __exit__(self, *exc: object) -> None:
+        self.close()
 
     def key(self, method: str, url: str, accept: str) -> str:
         raw = f"{method.upper()}\n{url}\n{accept}\n{self.ua_profile}"

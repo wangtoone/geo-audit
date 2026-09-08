@@ -1,0 +1,26 @@
+{
+  "body_bytes": 132,
+  "body_file": "snapshots/www.saleor.io/index-a70eb744.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://www.saleor.io/",
+  "handwritten": false,
+  "headers": {
+    "cache-control": "public, max-age=0, must-revalidate",
+    "content-type": "text/html",
+    "date": "Tue, 08 Sep 2026 03:55:22 GMT",
+    "location": "https://saleor.io/",
+    "refresh": "0;url=https://saleor.io/",
+    "server": "Vercel",
+    "strict-transport-security": "max-age=63072000",
+    "transfer-encoding": "chunked",
+    "x-vercel-id": "sin1::mpm72-1788839722250-63b573c2f23a"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "6fe7bba4a1bb05c41f1a80f3097a9b01",
+  "recorded_at": "2026-09-08T03:55:22Z",
+  "status": 308,
+  "stored_bytes": 132,
+  "transport_error": null,
+  "url": "https://www.saleor.io/"
+}

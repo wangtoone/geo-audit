@@ -300,13 +300,18 @@ def test_dead_link_rules_have_a_single_definition_point() -> None:
 
 
 def _class_defs() -> dict[str, list[str]]:
-    """``src/`` 下每个类名 → 定义它的文件（相对路径）列表。AST，不是 grep。"""
+    """``src/`` 下每个类名 → 定义它的文件（相对路径）列表。AST，不是 grep。
+
+    路径一律用 ``as_posix()``：Windows 上 ``str(Path)`` 给反斜杠，跟断言里硬编码的
+    ``"src/geo_audit/models.py"`` 对不上。CI 上 windows-latest 的三个 Python 版本
+    全挂在这个上 —— 类型定义的位置是对的，是**断言的路径比对**错了。
+    """
     out: dict[str, list[str]] = {}
     for path in sorted(SRC.rglob("*.py")):
         tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
         for node in ast.walk(tree):
             if isinstance(node, ast.ClassDef):
-                out.setdefault(node.name, []).append(str(path.relative_to(REPO)))
+                out.setdefault(node.name, []).append(path.relative_to(REPO).as_posix())
     return out
 
 

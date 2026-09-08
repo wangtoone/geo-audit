@@ -975,11 +975,27 @@ def test_unknown_region_precedes_findings_and_carries_a_remedy() -> None:
 
 
 def test_unknown_never_collapses_into_pass() -> None:
-    """A32：有 UNKNOWN 的报告 HTML 不含「全部通过」。"""
+    """A32：有 UNKNOWN 的报告不许出现**肯定式**的「全部通过」。
+
+    A32 的真实意思是「不许把 UNKNOWN 折算成 PASS」，判据**不能**是纯子串匹配
+    「全部通过」—— `make_headline` 在 `zero_with_unknown` 分支印的是 §6.1:3098 的
+    逐字原文「…所以这不能算『全部通过』」，那句话的意思恰恰是**不能算**。
+    纯子串会把这句正确的措辞也判成违规。
+
+    验收时曾把这判成「15a 与 16 做了相反裁决」。实测两者都对：
+    `make_headline` 的分支互斥且有序，「N 个位置全部通过」只出现在最后的
+    `zero_clean` 分支，那时 `positions_unknown` 必然为 0。
+
+    所以判据改成：**不许出现「肯定式的全部通过」**，即
+    「<数字> 个位置全部通过」这个形态；带「不能算」前缀的引用形态放行。
+    """
     for build in (build_page_one_sample, build_unusable_report, build_interrupted_report):
         report = build()
         assert report.counts.positions_unknown > 0
-        assert "全部通过" not in render_html(report)
+        html = render_html(report)
+        assert not re.search(r"\d+\s*个位置全部通过", html), (
+            "有 UNKNOWN 却印了肯定式的「N 个位置全部通过」—— UNKNOWN 被折算成 PASS 了"
+        )
 
 
 def test_unusable_report_is_degraded_with_a_banner() -> None:
