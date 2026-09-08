@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="generator" content="geo-audit 0.1.0 build_gallery.py">
+<title>geo-audit · 真实站点报告画廊</title>
+<style>
+:root {
+  color-scheme: light dark;
+  --bg: #fbfbfa; --panel: #ffffff; --ink: #16181d; --ink-2: #4a5058;
+  --ink-3: #6d747d; --line: #dcdfe4; --line-2: #eceef1;
+  --pass: #1f7a4d; --fail: #b32626; --unknown: #7a5a12; --na: #6d747d;
+  --accent: #1d4ed8; --code-bg: #f3f4f6;
+  --shadow: 0 1px 2px rgba(16, 18, 22, 0.06);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #14161a; --panel: #1b1e23; --ink: #e9ecf1; --ink-2: #b6bcc6;
+    --ink-3: #8d949e; --line: #333941; --line-2: #262b31;
+    --pass: #5fd39b; --fail: #ff8f85; --unknown: #e6c56a; --na: #9aa1ab;
+    --accent: #8ab4ff; --code-bg: #22262c; --shadow: none;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #14161a; --panel: #1b1e23; --ink: #e9ecf1; --ink-2: #b6bcc6;
+  --ink-3: #8d949e; --line: #333941; --line-2: #262b31;
+  --pass: #5fd39b; --fail: #ff8f85; --unknown: #e6c56a; --na: #9aa1ab;
+  --accent: #8ab4ff; --code-bg: #22262c; --shadow: none;
+}
+* { box-sizing: border-box; }
+html { background: var(--bg); }
+body {
+  margin: 0; padding: 0 0 4rem; background: var(--bg); color: var(--ink);
+  font-family: -apple-system, "Segoe UI", "Noto Sans CJK SC", "PingFang SC",
+    "Microsoft YaHei", sans-serif;
+  font-size: 15px; line-height: 1.62;
+}
+.wrap { max-width: 62rem; margin: 0 auto; padding: 2.5rem 1.25rem 0; }
+h1 { font-size: 1.6rem; margin: 0 0 .35rem; letter-spacing: -.01em; }
+h2 { font-size: 1.05rem; margin: 2.5rem 0 .75rem; }
+.lede { color: var(--ink-2); margin: 0 0 .4rem; max-width: 46rem; }
+.meta { color: var(--ink-3); font-size: .86rem; margin: .9rem 0 0; max-width: 46rem; }
+code, .mono {
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  font-size: .88em;
+}
+code { background: var(--code-bg); padding: .1em .32em; border-radius: 3px; }
+a { color: var(--accent); }
+.row {
+  display: block; background: var(--panel); border: 1px solid var(--line);
+  border-radius: 6px; padding: .9rem 1.1rem; margin: 0 0 .6rem;
+  box-shadow: var(--shadow); text-decoration: none; color: inherit;
+}
+a.row:hover { border-color: var(--accent); }
+.row-top {
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: .55rem .8rem;
+}
+.dom { font-weight: 600; font-size: 1.02rem; }
+.badge {
+  font-size: .74rem; letter-spacing: .02em; padding: .1rem .45rem;
+  border: 1px solid var(--line); border-radius: 999px; color: var(--ink-2);
+  white-space: nowrap;
+}
+.badge.b-fail { color: var(--fail); border-color: var(--fail); }
+.badge.b-unknown { color: var(--unknown); border-color: var(--unknown); }
+.badge.b-pass { color: var(--pass); border-color: var(--pass); }
+.open { margin-left: auto; font-size: .84rem; color: var(--accent); }
+.head { margin: .45rem 0 .1rem; color: var(--ink); }
+.fix { margin: .3rem 0 0; color: var(--ink-2); font-size: .9rem; }
+.cells {
+  display: flex; flex-wrap: wrap; gap: .4rem; margin: .7rem 0 0;
+  list-style: none; padding: 0;
+}
+.cells li {
+  font-size: .8rem; border: 1px solid var(--line-2); border-radius: 4px;
+  padding: .12rem .5rem; color: var(--ink-2); white-space: nowrap;
+}
+.cells li b { font-variant-numeric: tabular-nums; color: var(--ink); }
+.cells li.c-fail { border-color: var(--fail); }
+.cells li.c-unknown { border-color: var(--unknown); border-style: dashed; }
+.cells li.c-pass { border-color: var(--pass); }
+.cells li.c-na { border-style: dotted; }
+.skip {
+  background: var(--panel); border: 1px dashed var(--line); border-radius: 6px;
+  padding: .8rem 1.1rem; margin: 0 0 .6rem;
+}
+.skip ul { margin: .45rem 0 0; padding-left: 1.2rem; color: var(--ink-2); font-size: .9rem; }
+.skip .dom { color: var(--ink-3); }
+.wide { overflow-x: auto; }
+footer { color: var(--ink-3); font-size: .84rem; margin: 3rem 0 0; }
+</style>
+</head>
+<body>
+<main class="wrap">
+<h1>geo-audit · 真实站点报告画廊</h1>
+<p class="lede">下面每一份都是<strong>真实站点的真实抓取结果</strong>：HTTP 响应（含 headers、
+逐跳分开）在 <strong>2026-09-07</strong> 从这些站点上抓下来冻结进
+<code>fixtures/</code>，本页的报告由同一套判定重放那些字节产出，判定一个字节都没改。
+不是实时扫描，也不是构造出来的样例站。</p>
+<p class="lede">先看报告，再决定要不要装。报告是单个 HTML 文件，零外部请求，
+可离线转发、可直接打印、可贴进工单。</p>
+<p class="meta">四格计数里「无法判断」是独立的一态，
+永不折算进「通过」。位置数与条数是两个数：
+一条根因可以对应很多条实例。</p>
+
+<h2>报告（4 份）</h2>
+<a class="row" href="reports/mistral.ai.html"><span class="row-top"><span class="dom mono">mistral.ai</span><span class="badge b-fail">有位置被读错</span><span class="open">打开报告 →</span></span><p class="head">你的 AI 检索链路上有 1 个位置会被读错，另有 5 个位置我们无法判断。</p><p class="fix">根因：<span class="mono">改 1 处 → 修 75 条（75 个链接实例）：补页面或改指到现存页</span>（75 处）</p><ul class="cells"><li>位置 <b>18</b></li><li class="c-fail">读错 <b>1</b></li><li class="c-unknown">无法判断 <b>5</b></li><li class="c-pass">通过 <b>9</b></li><li class="c-na">不适用 <b>3</b></li><li>条数 <b>76</b></li><li>根因 <b>1</b></li></ul></a><a class="row" href="reports/modal.com.html"><span class="row-top"><span class="dom mono">modal.com</span><span class="badge b-pass">零发现</span><span class="open">打开报告 →</span></span><p class="head">9 个位置全部通过，每一条都附对照证据和可复现命令。</p><ul class="cells"><li>位置 <b>13</b></li><li class="c-fail">读错 <b>0</b></li><li class="c-unknown">无法判断 <b>0</b></li><li class="c-pass">通过 <b>9</b></li><li class="c-na">不适用 <b>4</b></li><li>条数 <b>1</b></li><li>根因 <b>0</b></li></ul></a><a class="row" href="reports/rustdesk.com.html"><span class="row-top"><span class="dom mono">rustdesk.com</span><span class="badge b-pass">零发现</span><span class="open">打开报告 →</span></span><p class="head">8 个位置全部通过，每一条都附对照证据和可复现命令。</p><ul class="cells"><li>位置 <b>13</b></li><li class="c-fail">读错 <b>0</b></li><li class="c-unknown">无法判断 <b>0</b></li><li class="c-pass">通过 <b>8</b></li><li class="c-na">不适用 <b>5</b></li><li>条数 <b>1</b></li><li>根因 <b>0</b></li></ul></a><a class="row" href="reports/openstatus.dev.html"><span class="row-top"><span class="dom mono">openstatus.dev</span><span class="badge b-pass">零发现</span><span class="open">打开报告 →</span></span><p class="head">8 个位置全部通过，每一条都附对照证据和可复现命令。</p><ul class="cells"><li>位置 <b>14</b></li><li class="c-fail">读错 <b>0</b></li><li class="c-unknown">无法判断 <b>0</b></li><li class="c-pass">通过 <b>8</b></li><li class="c-na">不适用 <b>6</b></li><li>条数 <b>2</b></li><li>根因 <b>0</b></li></ul></a>
+<h2>清单里暂时没有报告的域</h2><p class='lede'>这些域在语料里，但 <code>fixtures/</code> 的快照不足以产出一份不撒谎的报告。补齐要真网络重录一次（<code>scripts/capture_fixtures.py</code>）。在那之前它们**没有报告**，而不是有一份半真半假的。</p><div class="skip"><span class="dom mono">deepgram.com</span> · 没有报告，因为快照不全：<ul><li><span class='mono'>DNS: deepgram.com</span> —— dns.json 里没有条目，replay 会判 NXDOMAIN —— 那是我们没录，不是站点的事实</li><li><span class='mono'>DNS: www.deepgram.com</span> —— dns.json 里没有条目，replay 会判 NXDOMAIN —— 那是我们没录，不是站点的事实</li><li><span class='mono'>对照探针: deepgram.com</span> —— apex/www/文档子域上一条对照探针都没录过，AI 路径判定会全退成「无法判断」</li></ul></div><div class="skip"><span class="dom mono">minimax.io</span> · 没有报告，因为快照不全：<ul><li><span class='mono'>DNS: minimax.io</span> —— dns.json 里没有条目，replay 会判 NXDOMAIN —— 那是我们没录，不是站点的事实</li></ul></div><div class="skip"><span class="dom mono">saleor.io</span> · 没有报告，因为快照不全：<ul><li><span class='mono'>DNS: www.saleor.io</span> —— dns.json 里没有条目，replay 会判 NXDOMAIN —— 那是我们没录，不是站点的事实</li><li><span class='mono'>DNS: docs.saleor.io</span> —— docs.saleor.io 有快照但没 DNS 条目，会被判 NXDOMAIN，快照一条都用不上</li></ul></div><div class="skip"><span class="dom mono">tdengine.com</span> · 没有报告，因为快照不全：<ul><li><span class='mono'>DNS: www.tdengine.com</span> —— dns.json 里没有条目，replay 会判 NXDOMAIN —— 那是我们没录，不是站点的事实</li><li><span class='mono'>对照探针: tdengine.com</span> —— apex/www/文档子域上一条对照探针都没录过，AI 路径判定会全退成「无法判断」</li></ul></div><div class="skip"><span class="dom mono">gusto.com</span> · 没有报告，因为快照不全：<ul><li><span class='mono'>DNS: www.gusto.com</span> —— dns.json 里没有条目，replay 会判 NXDOMAIN —— 那是我们没录，不是站点的事实</li></ul></div>
+
+<footer>geo-audit 0.1.0 · 本页由 <code>scripts/build_gallery.py</code>
+于 2026-09-07 17:18 UTC 生成 · 快照录制于 2026-09-07</footer>
+</main>
+</body>
+</html>

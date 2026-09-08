@@ -16,8 +16,7 @@ permissions: { contents: read }
 
 jobs:
   audit:
-    # 第 18 步打开（依赖完整 CLI，第 16 步产出）
-    if: ${{ false }}
+    # 第 18 步已打开（完整 CLI 在位）
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

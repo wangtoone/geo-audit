@@ -1,0 +1,88 @@
+name: pages
+# 把 docs/ 发到 GitHub Pages —— README 第一屏指向的那个真实报告画廊（§7.4(c)）。
+#
+# **每次都重跑一遍 build_gallery.py，不直接发仓库里那份 HTML。** 理由：仓库里的
+# docs/ 是给 review 用的（diff 能看出报告里的数字变了），而线上那份必须由当前
+# 代码 + 当前 fixtures 现产 —— 否则「改了判定忘了重跑画廊」这件事会静默发生，
+# 而画廊是我们唯一对外展示判定的地方。
+#
+# ⚠️ 这个 job 是 replay 的（零网络、零 DNS），所以它能抓到的是
+# 「渲染/判定坏了」，**抓不到「站点变了、报告里的数字烂了」** —— 后者是
+# fixture-freshness.yml 每周对活网 diff 的事，两件事别混。
+on:
+  push:
+    branches: [main]
+    paths:
+      - "docs/**"
+      - "scripts/build_gallery.py"
+      - "src/**"
+      - "fixtures/**"
+      - "README.md"
+      - "CONTRIBUTING.md"
+      - ".github/workflows/pages.yml"
+  schedule: [{ cron: "23 4 1 * *" }] # 每月 1 日 04:23 UTC，§7.4(c) 的「每月重跑」
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v3
+        with: { enable-cache: true }
+      - run: uv sync --extra dev
+      # 断网跑：画廊只许用冻结快照。任何一条想摸真网络（含 DNS）的路径都会立刻失败。
+      - name: 跑画廊（replay，零网络）
+        run: uv run python scripts/build_gallery.py
+        env:
+          GEO_AUDIT_FORBID_NETWORK: "1"
+          GEO_AUDIT_FORBID_DNS: "1"
+          GEO_AUDIT_CONTACT: ci@geo-audit.invalid
+      - name: 每份报告与索引页都必须自包含
+        run: |
+          python - <<'PY'
+          import pathlib, re
+          pages = sorted(pathlib.Path('docs').glob('*.html')) + \
+                  sorted(pathlib.Path('docs/reports').glob('*.html'))
+          assert pages, 'docs/ 下一份 HTML 都没有'
+          for p in pages:
+              h = p.read_text(encoding='utf-8')
+              for pat in (r'<link[^>]+rel=["\']?stylesheet', r'<script[^>]+\bsrc=',
+                          r'<img[^>]+\bsrc=["\']?https?:', r'@import',
+                          r'url\(\s*["\']?https?:'):
+                  assert re.search(pat, h, re.I) is None, f'{p} 不自包含：{pat}'
+              assert len(h.encode()) < 2_000_000, f'{p} 超过 2 MB'
+              print(p, len(h.encode()) // 1024, 'KB')
+          PY
+      - name: README 第一屏的报告链接必须都存在
+        run: |
+          python - <<'PY'
+          import pathlib, re
+          readme = pathlib.Path('README.md').read_text(encoding='utf-8')
+          missing = [m for m in re.findall(r'docs/reports/([A-Za-z0-9.\-]+\.html)', readme)
+                     if not pathlib.Path('docs/reports', m).exists()]
+          assert not missing, f'README 指到不存在的报告：{missing}'
+          print('README 里的报告链接全部存在')
+          PY
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with: { path: docs }
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - id: deploy
+        uses: actions/deploy-pages@v4

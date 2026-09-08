@@ -8,8 +8,7 @@ permissions: { contents: read, issues: write }
 
 jobs:
   diff:
-    # 第 18 步打开（依赖 scripts/refresh_fixtures.py，第 4a 步产出）
-    if: ${{ false }}
+    # 第 18 步已打开（scripts/refresh_fixtures.py 在位）
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
