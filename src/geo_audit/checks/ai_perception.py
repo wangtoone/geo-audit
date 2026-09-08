@@ -65,12 +65,20 @@ class PerceptionStatus(str, Enum):
     UNSTABLE = "unstable"
 
 
-#: 从回答正文里抽 URL。刻意不收尾部标点与右括号 —— 模型爱把 URL 包在
-#: 括号或句号里，连着抽会造出一条「带句号的 URL」，然后和死链集永远比不上。
-_URL_RE = re.compile(r"https?://[^\s<>\"'`)\]},；。，]+")
+#: 从回答正文里抽 URL。刻意不收尾部标点、右括号与 Markdown 强调符 ——
+#: 模型爱把 URL 包在括号、句号或 `**` 里，连着抽会造出一条「带 ** 的 URL」，
+#: 然后和死链集永远比不上。
+#:
+#: **`*` 这一条是真数据抓出来的，不是我想到的。** 第一版只排除了句读和右括号，
+#: 实测 15 份回答里模型写的是
+#:     **https://docs.mistral.ai/studio-api/agents/agents-api**
+#: 于是同一条 URL 被拆成两个「不同 URL」：多数票从 5 稀释到 4、
+#: n_distinct_urls 虚报成 2、而且带 ** 的串跟检索结果里的干净 URL 匹配不上，
+#: 把 `cited` 误判成 `stated_only`。一个 bug 三个症状。
+_URL_RE = re.compile(r"https?://[^\s<>\"'`)\]},*；。，]+")
 
-#: 比对前要削掉的尾部字符（Markdown 链接、句读）。
-_TRAILING = ".,;:!?)]}'\"`>"
+#: 比对前要削掉的尾部字符（Markdown 链接与强调、句读）。
+_TRAILING = ".,;:!?)]}'\"`>*_"
 
 
 def extract_urls(text: str) -> tuple[str, ...]:
