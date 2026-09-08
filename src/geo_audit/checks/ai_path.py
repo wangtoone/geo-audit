@@ -202,6 +202,10 @@ def _finding(
     counted_as_hit: bool = True,
     detail: dict[str, str | int | float | bool] | None = None,
     found_on: str | None = None,
+    # 索引文件列这条链接时给的人类可读标签。**必须传上来**：一份说「这条链接死了」
+    # 的报告，读的人要知道索引把它标成了什么（「Agents and conversations」），
+    # 否则只剩一串 URL。IndexLink 一路带着它，原来在这里被丢掉了。
+    anchor_text: str | None = None,
     occurrences: int = 1,
     occurrence_hrefs: tuple[str, ...] = (),
     fp_guard: tuple[str, ...] = (),
@@ -239,6 +243,7 @@ def _finding(
         target=target,
         control=control,
         found_on=found_on,
+        anchor_text=anchor_text,
         occurrences=occurrences,
         occurrence_hrefs=occurrence_hrefs,
         fix=None,
@@ -1304,6 +1309,7 @@ def findings_from_index_report(
                 norm_url=link.norm_url,
                 domain=domain,
                 found_on=report.index_url,
+                anchor_text=link.anchor_text,
                 why_it_matters=(
                     "AI 顺着你的索引往下爬，爬到的是 404。索引里的死链等于把 AI 引到空页面上。"
                 ),
