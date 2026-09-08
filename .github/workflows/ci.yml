@@ -69,8 +69,7 @@ jobs:
         with: { name: fp-gate-report, path: fp-gate-report.json }
 
   schema:
-    # 第 18 步打开（依赖 §8.5 的 schema 与 --replay-fixtures，第 15c/16 步产出）
-    if: ${{ false }}
+    # 第 18 步已打开（§8.5 的 schema 与 --replay-fixtures 都在位）
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -83,8 +82,7 @@ jobs:
       - run: uv run check-jsonschema --schemafile schema/report-1.schema.json /tmp/o/mistral.ai.json
 
   smoke-uvx:
-    # 第 18 步打开（验证 force-include 把 fixtures 带进了 wheel）
-    if: ${{ false }}
+    # 第 18 步已打开（验证 force-include 把 fixtures 带进了 wheel）
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -100,7 +98,10 @@ jobs:
           python - <<'PY'
           import pathlib, re
           h = pathlib.Path('/tmp/r/mistral.ai.html').read_text(encoding='utf-8')
-          assert '75' in h, "缺少 mistral 75/75 结论"
+          # '75' in h 太弱：任何含数字 75 的报告都能过。现在有真报告了，
+          # 断言那条**具体结论**的形态 —— 索引内链 75 条全死、且收敛成 1 处根因。
+          assert '75/75' in h, "缺少 mistral 的 75/75 结论（索引内链全死）"
+          assert '改 1 处 → 修 75 条' in h, "缺少根因归并的结论（75 条应收敛成 1 处）"
           for pat in (r'<link[^>]+rel=["\']?stylesheet', r'<script[^>]+\bsrc=',
                       r'<img[^>]+\bsrc=["\']?https?:', r'@import', r'url\(\s*["\']?https?:'):
               assert re.search(pat, h, re.I) is None, f"报告不自包含：{pat}"
