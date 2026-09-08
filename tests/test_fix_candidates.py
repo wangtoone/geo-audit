@@ -171,3 +171,41 @@ def test_mechanical_candidates_never_starve_the_model_candidate() -> None:
     assert r.source == "model", f"模型候选被机械候选饿死了：tried={r.tried}"
     assert r.fix.verified_target is True
     assert MAX_MODEL_TRIES >= 1
+
+
+# --------------------------------------------------------------------------- #
+# 上限与规则集由实测定，不由「多试几个总没坏处」定
+# --------------------------------------------------------------------------- #
+
+
+def test_cap_is_the_measured_number() -> None:
+    """全量 75 条实测：38 条命中全部来自前两条规则，第三条 0/37。
+
+    所以上限是 2。这条测试的作用不是防止改动，是**逼下一次改动带上新数字** ——
+    先前抽样 10 条得 7/10、据此外推「大部分」，全量一跑是 38/75，砍掉一半。
+    """
+    assert MAX_MECHANICAL_TRIES == 2
+    assert [t.rule_id for t in TRANSFORMS][:2] == ["drop_both", "drop_docs_prefix"]
+
+
+def test_drop_md_is_not_a_separate_rule_because_it_is_redundant() -> None:
+    """``drop_md`` 不在规则集里，而且**是构造上必然的冗余**，不只是零命中。
+
+    ``_drop_both`` 在没有 /docs 前缀时会回落成 drop_md 的结果，所以单列
+    drop_md 永远产不出不同的候选 —— 一定被 apply_transforms 的去重吃掉。
+    """
+    assert "drop_md" not in [t.rule_id for t in TRANSFORMS]
+
+    # 没有 /docs 前缀时，drop_both 的产出就等于「只去 .md」
+    no_prefix = "https://x.invalid/guides/evaluation.md"
+    both = next(t for t in TRANSFORMS if t.rule_id == "drop_both")
+    assert both.fn(no_prefix) == "https://x.invalid/guides/evaluation"
+
+
+def test_drop_both_handles_prefix_and_suffix_together() -> None:
+    """实测这一条吃掉 38 里的 37，所以它排第一、且必须两件事一起做。"""
+    both = next(t for t in TRANSFORMS if t.rule_id == "drop_both")
+    assert (
+        both.fn("https://docs.mistral.ai/docs/guides/evaluation.md")
+        == "https://docs.mistral.ai/guides/evaluation"
+    )
