@@ -1014,6 +1014,49 @@ def _stage_ai_path(
     sitemap = st.sitemap
     if sitemap is None:
         return
+
+    # 根路径判不了的 host 会整片掉出探测集，**那必须记成覆盖缺口。**
+    #
+    # `discovery.host_is_live` 是 `verdict in (OK, BLOCKED)` —— UNKNOWN 不在里面。
+    # 于是根路径判 UNKNOWN 的 host 从 `live_hosts` 掉出去：AI 路径不探、
+    # robots 不读、sitemap 不读，账本上只剩一格 UNKNOWN，下游整片静默消失。
+    #
+    # 那段函数自己的注释就在反驳这个结果：它说 BLOCKED 的 host 必须留着，
+    # 因为「把它们丢掉就是软 404 让采纳率虚高的**反向孪生错误 —— 虚低**」。
+    # 根路径 UNKNOWN 是同一种情形（我们不知道），丢掉同样是虚低。
+    #
+    # 这里不改 `host_is_live`：`timeout` / `network_error` 那类 UNKNOWN 继续探
+    # 只会把预算烧在一个真的连不上的 host 上。改的是**披露** —— 报告必须说出
+    # 「这个 host 我们发现了、但没能探它的 AI 路径」，而不是写「没有额外的覆盖缺口」。
+    #
+    # 实测：developers.deepgram.com 的对照探针没录 → 根路径判
+    # UNKNOWN(control_unavailable) → 它的 llms.txt 里 383 条内链一条没查，
+    # 而覆盖披露照旧写「没有额外的覆盖缺口」。
+    probed_hosts = {(urlsplit(pr.url).hostname or "").lower() for pr in sitemap.ai_path_probes}
+    for dh in sitemap.hosts:
+        if dh.reason in ("dns_unresolved", "dns_poisoned"):
+            continue  # DNS 都没过，一个请求都没花，按 P1 本来就不进账本
+        if verdict_to_status(dh.verdict) is not Status.UNKNOWN:
+            continue
+        if dh.host.lower() in probed_hosts:
+            continue  # 探到了，不是盲区
+        st.coverage_gaps.append(
+            CoverageGap(
+                where=f"① 入口发现 · https://{dh.host}/",
+                reason=dh.reason,
+                detail=(
+                    f"这个 host 解析通了、根路径也请求了，但判不了"
+                    f"（{dh.reason}），于是它的 AI 路径（llms.txt / llms-full.txt /"
+                    f" .md 通道）一条都没探，robots.txt 与 sitemap.xml 也没读。"
+                    "这不是「这个 host 没问题」，是「我们没能看」。"
+                ),
+                remedy=UNKNOWN_REMEDY.get(
+                    dh.reason,
+                    "先让这个 host 的根路径能判定，它下面的位置才进得了账本。",
+                ),
+            )
+        )
+
     rules = enabled_rules(options, "ai_path")
     seeds = ai_path_position_seeds(sitemap.ai_path_probes)
     by_probe = {p.url: p for p in sitemap.ai_path_probes}
@@ -1086,6 +1129,45 @@ def _stage_index_links(
     sitemap = st.sitemap
     if sitemap is None or "index_links" not in enabled_rules(options, "ai_path"):
         return
+
+    # 上游判不了 → 这份索引的内链整批不查，**而那必须记成覆盖缺口。**
+    #
+    # 为什么单列这一段：``index_file_probes`` 按 P3 只收 verdict 为 OK 的索引
+    # （规格原文「每个**判为真文件且解析出 ≥1 条链接的索引文件**各一格」）。
+    # 剪枝本身是对的 —— 分不清真文件和一壳打天下的时候，「文件里的链接」很可能
+    # 根本不是一份链接清单。但剪掉之后报告若仍写「没有额外的覆盖缺口」，
+    # 就等于把一个假 PASS 换成一个没披露的盲区，那比误判更隐蔽。
+    #
+    # 实测：developers.deepgram.com/llms.txt 的对照探针没录，判定从 OK 变成
+    # UNKNOWN(control_unavailable) 之后，它里面 383 条内链一条都不查了，
+    # 而那份报告的覆盖披露照旧写着「没有额外的覆盖缺口」。
+    #
+    # 判据刻意只收 UNKNOWN：判成 SOFT404 是**有结论**（那格是 FAIL），
+    # 不是盲区；REAL404 的索引本来也解析不出链接。
+    for probe in sitemap.ai_path_probes:
+        resp = probe.response
+        if probe.verdict is not Verdict.UNKNOWN or resp is None:
+            continue
+        if "llms-full" in urlsplit(probe.url).path.lower():
+            continue
+        n_links = len(parse_index_links(resp.text, resp.final_url))
+        if n_links == 0:
+            continue
+        st.coverage_gaps.append(
+            CoverageGap(
+                where=f"④ 索引内链存活 · {probe.url}",
+                reason=probe.classification.reason,
+                detail=(
+                    f"这份索引解析出 {n_links} 条内链，但我们没能判定它本身是不是真文件"
+                    f"（{probe.classification.reason}），所以这 {n_links} 条一条都没查。"
+                ),
+                remedy=UNKNOWN_REMEDY.get(
+                    probe.classification.reason,
+                    "先让这份索引本身能判定，它的内链才有意义。",
+                ),
+            )
+        )
+
     total_dead = 0
     total_alive = 0
     for probe in index_file_probes(sitemap):

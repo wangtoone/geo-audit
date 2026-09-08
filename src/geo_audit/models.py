@@ -170,6 +170,7 @@ Reason = Literal[
     "needs_js",
     "body_truncated",
     "not_fetched",
+    "unexpected_status",
 ]
 
 #: Which reason codes mean "we could not evaluate this position".  Report
@@ -192,6 +193,7 @@ NOT_EVALUATED_REASONS: frozenset[str] = frozenset(
         "needs_js",
         "body_truncated",
         "not_fetched",
+        "unexpected_status",
     }
 )
 
@@ -794,6 +796,12 @@ UNKNOWN_REMEDY: dict[str, str] = {
     "server_error": (
         "服务端错误（5xx），无法判定内容是否存在。"
         "实测参照：developers.pinterest.com/llms.txt 返回 500。"
+    ),
+    "unexpected_status": (
+        "该位置返回了本工具没有判据的状态码（既不是 2xx，也不落在我们逐条实测过的"
+        "404/410/403/429/5xx 名单里）。这种情况我们不猜：不认定通过，也不认定失败。"
+        "如果你知道这个码在你这儿的含义（比如自建网关的自定义码），"
+        "把它的语义告诉我们，我们补一条判据；在那之前它留在「未能评估」里。"
     ),
     "dns_unresolved": (
         "两个独立 resolver 都解析不出。实测参照：cog.run 在本机 SERVFAIL 但 dig @8.8.8.8 有 A 记录 "

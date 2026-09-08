@@ -122,6 +122,20 @@ def _control_from(spec: dict[str, object] | None) -> HostProfile | None:
     )
 
 
+#: 为什么这些行没有冻结样本 —— 说实话，别写「待第 4b 步实录」。
+#: 4b 早已完成（fixtures/ 里 703 份实录快照），写「待实录」会让读的人以为这是
+#: 待办。真实原因是 real_cases.py 按 A4 冻结（与原型逐字节相同），这些 B/C 行
+#: 原型里从来没有，也不会补进去。它们的响应快照在 fixtures/ 里都有，所以真实
+#: 断言改由文件末尾那条走生产侧取数路径的测试承担。
+_NO_FROZEN_CASE_REASON = (
+    "real_cases.py 里没有它的冻结样本 —— 那个文件按 A4 与原型逐字节冻结，"
+    "这些用例不会补进去。真实断言在 "
+    "test_rows_without_frozen_case_go_through_the_real_fetch_path"
+    "（走 fixtures/ 实录快照 + Fetcher.probe 的生产路径）。"
+    "与「第 4b 步实录」无关：4b 已完成 703 份快照。"
+)
+
+
 def _case_of(row: dict[str, Any]) -> rc.Case | None:
     name = row.get("real_cases_case")
     return BY_NAME.get(str(name)) if name else None
@@ -301,7 +315,7 @@ def test_specificity_no_real_file_flagged() -> None:
     for row in reals:
         case = _case_of(row)
         if case is None:
-            pytest.skip(f"{row['id']} 的冻结样本待第 4b 步实录（real_cases.py 里没有它）")
+            pytest.skip(f"{row['id']}：" + _NO_FROZEN_CASE_REASON)
         cls, _ = _classify_row(row)
         assert cls.verdict is Verdict.OK, f"{row['id']}：{row['note']}"
     for row in blocked:
@@ -357,7 +371,7 @@ def test_has_ai_channel_needs_only_one_real_file() -> None:
 def test_c_table(row: dict[str, Any]) -> None:
     case = _case_of(row)
     if case is None:
-        pytest.skip(f"{row['id']} 的冻结样本待第 4b 步实录（real_cases.py 里没有它）")
+        pytest.skip(f"{row['id']}：" + _NO_FROZEN_CASE_REASON)
     cls, _ = _classify_row(row)
     assert cls.verdict.value == row["expect_verdict"], f"{row['id']}：{row['note']}"
     assert cls.reason == row["expect_rule"]
@@ -369,7 +383,7 @@ def test_real404_all_positions_means_no_ai_channel() -> None:
     """C04 tdengine：全 REAL404 → 没有 AI 通道，headline 走 ``no_ai_channel``。"""
     rows = [r for r in C_TABLE if _case_of(r) is not None]
     if not rows:
-        pytest.skip("C 表的冻结样本待第 4b 步实录")
+        pytest.skip("C 表在 real_cases.py 里一条冻结样本都没有：" + _NO_FROZEN_CASE_REASON)
     probes = [_probe_of(r) for r in rows]
     assert has_ai_channel(probes) is False
     seeds = ai_path_position_seeds(probes)
@@ -393,7 +407,7 @@ def test_byte_count_never_affects_verdict(row: dict[str, Any]) -> None:
     """
     case = _case_of(row)
     if case is None:
-        pytest.skip(f"{row['id']} 的冻结样本待第 4b 步实录")
+        pytest.skip(f"{row['id']}：" + _NO_FROZEN_CASE_REASON)
     before, _ = _classify_row(row)
     after, _ = _classify_row(row, body=case.body + " " * (50 * 1024))
     assert (before.verdict, before.reason) == (after.verdict, after.reason), row["id"]
@@ -552,3 +566,84 @@ def test_drift_log_is_visible() -> None:
     assert len(_DRIFT_LOG) <= len(EXPECT_BYTES_ALLOWLIST)
     for line in _DRIFT_LOG:
         assert " 字节 " in line and " -> " in line
+
+
+# --------------------------------------------------------------------------- #
+# 没有冻结样本的行：走**生产侧真实取数路径**补上断言
+# --------------------------------------------------------------------------- #
+#
+# 为什么要专门加这一段：B 表就是「18 个真文件判 OK、零误判」这条特异性判据，
+# 而其中 12 行以前是 skip 的 —— 也就是说项目最核心的那个 claim 有三分之二没跑过。
+# 原因不是数据缺失，是**查错了地方**：``_case_of()`` 查 ``real_cases.py``
+# （A4 冻结文件，这些用例原型里从来没有，永远不会出现），而 16 行对应的响应
+# 快照在 ``fixtures/`` 里全都有。
+#
+# 这里刻意**不手拼 Case**。快照只记 status / content_type / 正文，不记 headers
+# 全表、不记 redirects、不记 final_url —— 手拼等于拿「我编的输入」去断言，
+# 而这正是本项目一直在防的东西。所以走 ``Fetcher.probe()``：真 redirects、
+# 真 headers、真对照推导，全部来自实录。
+#
+# 跑不了的行**如实说跑不了**，而不是写「待第 4b 步实录」—— 4b 早已完成
+# （703 份快照），那句话会让读的人以为这是待办。
+
+
+def _fixture_fetcher(store: object, tmp_path: Path) -> object:
+    """按生产侧 ``pipeline.build_fetcher()`` 的装配造一个 replay Fetcher（strict）。"""
+    import threading
+
+    from geo_audit.fetch.cache import HttpCache
+    from geo_audit.fetch.client import Fetcher, FetcherConfig, build_user_agent
+    from geo_audit.fetch.ratelimit import DomainLimiter
+    from geo_audit.pipeline import StopTransport
+
+    contact = "ci@geo-audit.invalid"
+    return Fetcher(
+        FetcherConfig(contact=contact, interval=2.0, respect_robots=False),
+        HttpCache(tmp_path / "soft404.sqlite3", ua_profile=build_user_agent(contact)),
+        DomainLimiter(2.0),
+        # strict=True：这些是探测集里的固定位置，缺快照必须红（是我们 fixture 不全），
+        # 不能悄悄回落成 UNKNOWN 那种「站点的事实」。
+        transport=StopTransport(store.transport(strict=True), threading.Event()),  # type: ignore[attr-defined]
+        probe_url_provider=store.probe_url,  # type: ignore[attr-defined]
+        resolver=store.resolver(),  # type: ignore[attr-defined]
+    )
+
+
+_NO_FROZEN_CASE = [r for r in B_TABLE + C_TABLE + C_UNKNOWN if not r.get("real_cases_case")]
+
+
+@real_index_needed
+@pytest.mark.parametrize("row", _NO_FROZEN_CASE, ids=lambda r: str(r["id"]))
+def test_rows_without_frozen_case_go_through_the_real_fetch_path(
+    row: dict[str, Any], tmp_path: Path
+) -> None:
+    """实测 5 条能跑通：B07 / B08 / B09 / B18 判 ok、C04 判 real404。
+
+    剩下 11 条卡在「该 host 没录对照探针」上。那不是我们跳过它，是
+    ``probe_url()`` 自己抛的 —— 它的报错原文就写着「对照探测是软 404 判据的
+    一半，缺了它整条判定都不成立」。补录方式在那句报错里也写了。
+    """
+    from geo_audit.fixtures import FixtureMissing, FixtureStore
+
+    store = FixtureStore.default()
+    fetcher = _fixture_fetcher(store, tmp_path)
+    try:
+        try:
+            probe = fetcher.probe(  # type: ignore[attr-defined]
+                row["url"], expect=_EXPECT_MAP[row.get("expect", "text_file")]
+            )
+        except FixtureMissing as exc:
+            pytest.skip(
+                f"{row['id']}：{exc}".split("\n")[0]
+                + "（注意：这与「第 4b 步实录」无关，4b 已完成 703 份快照；"
+                "缺的是这个 host 的**对照探针**）"
+            )
+        cls = probe.classification
+        assert cls.verdict.value == row["expect_verdict"], (
+            f"{row['id']} {row['url']}：判 {cls.verdict.value}/{cls.reason}，"
+            f"期望 {row['expect_verdict']}。{row['note']}"
+        )
+        if row.get("expect_rule") is not None:
+            assert cls.reason == row["expect_rule"], f"{row['id']}：{row['note']}"
+    finally:
+        fetcher.close()  # type: ignore[attr-defined]

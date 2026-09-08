@@ -643,9 +643,9 @@ ol.tight li {
   <div class="shell">
     <div class="meta">
       <span class="dom">geo-audit · rustdesk.com</span>
-      <span>2026-09-08 04:42 UTC</span>
+      <span>2026-09-08 09:38 UTC</span>
       <span>0.1.0</span>
-      <span>UA: geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: gallery@geo-audit.invalid)</span>
+      <span>UA: geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: ci@geo-audit.invalid)</span>
       <span>去噪清单: denoise/2026-09-07.1</span>
       <span>schema geo-audit/report/1</span>
     </div>
@@ -728,7 +728,7 @@ ol.tight li {
       </div>
       <div class="small">同域对照返回正常，所以这不是整站反爬。</div>
       <div><strong>复现</strong></div>
-      <pre>curl -sSL -A &#39;geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: gallery@geo-audit.invalid)&#39; &#39;https://www.rustdesk.com/llms-full.txt&#39;</pre>
+      <pre>curl -sSL -A &#39;geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: ci@geo-audit.invalid)&#39; &#39;https://www.rustdesk.com/llms-full.txt&#39;</pre>
     </div>
 
     <p><strong>只探根路径、不做对照探测的实现会说：</strong>未采纳（599 服务端错误）</p>
@@ -744,7 +744,7 @@ ol.tight li {
 llms-full.txt 与 llms.txt 是同一份字节（一个字正文都没有）
 目标: https://www.rustdesk.com/llms-full.txt 599 text/plain
 这个目标在站上出现 1 次（0 个页面） https://www.rustdesk.com/llms.txt
-curl -sSL -A &#39;geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: gallery@geo-audit.invalid)&#39; &#39;https://www.rustdesk.com/llms-full.txt&#39;
+curl -sSL -A &#39;geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: ci@geo-audit.invalid)&#39; &#39;https://www.rustdesk.com/llms-full.txt&#39;
 geo-audit rustdesk.com --ignore GA-17C3C7BF62</pre>
     </details>
 
@@ -835,7 +835,7 @@ geo-audit rustdesk.com --ignore GA-17C3C7BF62</pre>
           <td>
             <span class="st st-pass">通过</span>
             对照探测 https://rustdesk.com/geo-audit-probe-3ef2323dbc30f201606a7e1a.txt 返回 HTTP 404 / text/html，与本响应可区分，判为真实内容
-            <details><summary>curl</summary><pre>curl -sSL -A &#39;geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: gallery@geo-audit.invalid)&#39; &#39;https://rustdesk.com/llms.txt&#39;</pre></details>
+            <details><summary>curl</summary><pre>curl -sSL -A &#39;geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: ci@geo-audit.invalid)&#39; &#39;https://rustdesk.com/llms.txt&#39;</pre></details>
           </td>
         </tr>
         <tr class="box-pass">
@@ -849,7 +849,7 @@ geo-audit rustdesk.com --ignore GA-17C3C7BF62</pre>
           <td>
             <span class="st st-pass">通过</span>
             对照探测 https://rustdesk.com/geo-audit-probe-3ef2323dbc30f201606a7e1a.txt 返回 HTTP 404 / text/html，与本响应可区分，判为真实内容
-            <details><summary>curl</summary><pre>curl -sSL -A &#39;geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: gallery@geo-audit.invalid)&#39; &#39;https://rustdesk.com/llms-full.txt&#39;</pre></details>
+            <details><summary>curl</summary><pre>curl -sSL -A &#39;geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: ci@geo-audit.invalid)&#39; &#39;https://rustdesk.com/llms-full.txt&#39;</pre></details>
           </td>
         </tr>
         <tr class="box-pass">
@@ -863,7 +863,7 @@ geo-audit rustdesk.com --ignore GA-17C3C7BF62</pre>
           <td>
             <span class="st st-pass">通过</span>
             对照探测 https://www.rustdesk.com/geo-audit-probe-ad22a894030080734fdc7b35 返回 HTTP 404 / text/html，与本响应可区分，判为真实内容
-            <details><summary>curl</summary><pre>curl -sSL -A &#39;geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: gallery@geo-audit.invalid)&#39; &#39;https://www.rustdesk.com/llms.txt&#39;</pre></details>
+            <details><summary>curl</summary><pre>curl -sSL -A &#39;geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: ci@geo-audit.invalid)&#39; &#39;https://www.rustdesk.com/llms.txt&#39;</pre></details>
           </td>
         </tr>
         <tr class="box-pass">
@@ -877,7 +877,7 @@ geo-audit rustdesk.com --ignore GA-17C3C7BF62</pre>
           <td>
             <span class="st st-pass">通过</span>
             对照探测 https://www.rustdesk.com/geo-audit-probe-ad22a894030080734fdc7b35 返回 HTTP 404 / text/html，与本响应可区分，判为真实内容
-            <details><summary>curl</summary><pre>curl -sSL -A &#39;geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: gallery@geo-audit.invalid)&#39; &#39;https://www.rustdesk.com/llms-full.txt&#39;</pre></details>
+            <details><summary>curl</summary><pre>curl -sSL -A &#39;geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: ci@geo-audit.invalid)&#39; &#39;https://www.rustdesk.com/llms-full.txt&#39;</pre></details>
           </td>
         </tr>
         <tr class="box-pass">
@@ -891,7 +891,7 @@ geo-audit rustdesk.com --ignore GA-17C3C7BF62</pre>
           <td>
             <span class="st st-pass">通过</span>
             10 条内链：7 活 / 0 死 / 3 判不了
-            <details><summary>curl</summary><pre>curl -sSL -A &#39;geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: gallery@geo-audit.invalid)&#39; &#39;https://rustdesk.com/llms.txt&#39;</pre></details>
+            <details><summary>curl</summary><pre>curl -sSL -A &#39;geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: ci@geo-audit.invalid)&#39; &#39;https://rustdesk.com/llms.txt&#39;</pre></details>
           </td>
         </tr>
         <tr class="box-na">
@@ -917,7 +917,7 @@ geo-audit rustdesk.com --ignore GA-17C3C7BF62</pre>
           <td class="num">—</td>
           <td>
             <span class="st st-pass">通过</span>
-            50 条可点击链接全部活着
+            41 条可点击链接全部活着
           </td>
         </tr>
         <tr class="box-na">
@@ -1078,7 +1078,7 @@ geo-audit rustdesk.com --ignore GA-17C3C7BF62</pre>
   <p>位置数 13 ·
      抓到的页面 5 个 ·
      请求 65 / 上限 120</p>
-  <p class="small">链接账本：抽取 39 = 排除 0 + 待人工 0 + 已验证 32 + 无法判断 7 + 被封顶截掉 0</p>
+  <p class="small">链接账本：抽取 39 = 排除 0 + 待人工 0 + 已验证 28 + 无法判断 11 + 被封顶截掉 0</p>
   <p class="small">本次未触发抽样。</p>
   <p class="small">robots.txt 的 Disallow 我们遵守了：命中的路径零请求，判「无法判断（robots_disallowed）」。「我们没被允许看」是真话。</p>
   <p class="small">LLM 调用 0 次（这个工具零 LLM、零 API key，所以它恒为 0）。</p>
@@ -1131,7 +1131,7 @@ geo-audit rustdesk.com --ignore GA-17C3C7BF62</pre>
 </main>
 
 <footer class="footer">
-  <div class="shell">本报告为单文件 HTML，无任何外部请求，可离线转发与打印。 · geo-audit 0.1.0 · denoise/2026-09-07.1 · gallery@geo-audit.invalid</div>
+  <div class="shell">本报告为单文件 HTML，无任何外部请求，可离线转发与打印。 · geo-audit 0.1.0 · denoise/2026-09-07.1 · ci@geo-audit.invalid</div>
 </footer>
 </body>
 </html>
