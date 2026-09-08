@@ -2,17 +2,25 @@
 
 ## 为什么这一层先做、且不需要 AI
 
-实测 mistral 的 75 条死链，抽样 10 条套一条机械规则（`/docs/X.md` → `/X`），
-**7 条直接 200**。也就是说这批死链的修复目标大部分推得出来，一个 LLM 都不用。
+mistral 的 75 条死链，**全量实测：机械命中 38 / 75**，一个 LLM 都不用。
+按规则拆开（166 个验证请求）：
 
-    ✓ 200  /agents/connectors/websearch          原 /docs/agents/connectors/websearch.md
-    ✓ 200  /deployment/cloud/ibm-watsonx         原 /docs/deployment/cloud/ibm-watsonx.md
-    ✗ 404  /agents/agents_and_conversations      原 /docs/agents/agents_and_conversations.md
+    drop_both              37 命中   ← 一条吃掉 38 里的 37
+    drop_docs_prefix        1 命中
+    underscore_to_hyphen    0 命中
 
-没中的那 3 条正是文档被真重组过的（模型说 Agents & Conversations 现在在
-`/studio-api/agents/agents-api`，实测 200 —— 那是机械规则推不出来的）。
+**先前抽样 10 条得到 7/10，我据此外推「大部分」，全量一跑砍掉一半。**
+留这句在这里：抽样外推在这个项目里已经错过两次（另一次是闸门 B 的
+6.3% → 2.5%），下次先跑全量再下结论。
 
-**于是 AI 层的价值变成可测量的**：它是机械基线之上的增量，而不是一句
+没中的 37 条是文档被**真重组**过的，机械规则推不出来。而那正是 AI 层挣钱的
+地方：实测问过的 3 题里有 2 题的死链落在这 37 条内，模型两条都给出了验证过
+200 的目标：
+
+    /docs/agents/agents_and_conversations.md       机械 ✗ → /studio-api/agents/agents-api  200
+    /docs/capabilities/audio_and_transcription.md  机械 ✗ → /studio/audio/overview         200
+
+**于是 AI 层的价值是可测量的增量**（机械基线之上多修好几条），而不是一句
 「有了 AI 就更好」。这与 v1 的朴素对照是同一套口径。
 
 ## 判定权不外借
@@ -42,9 +50,13 @@ __all__ = [
     "find_fix_candidate",
 ]
 
-#: 每条死链最多试几个**机械**候选。必须有上限：75 条死链 × 5 个候选 = 375 个
-#: 请求，按 0.5 req/s 是 12 分钟，会把默认请求预算整个吃掉。
-MAX_MECHANICAL_TRIES = 3
+#: 每条死链最多试几个**机械**候选。**这个数由实测定，不是猜的。**
+#:
+#: 全量 75 条实测：命中 38 条全部来自前两条规则（drop_both 37 + drop_docs_prefix 1），
+#: 第三条 underscore_to_hyphen 是 0/37。所以设 2 —— 拿到 38/38 的命中，
+#: 而请求量从 4 次/条砍到 2 次（166 → 约 90）。
+#: 想调大要先拿新语料的实测数字，别凭「多试几个总没坏处」。
+MAX_MECHANICAL_TRIES = 2
 
 #: 模型候选**单独一个预算**，不与机械候选共享。
 #:
@@ -109,14 +121,18 @@ def _underscore_to_hyphen(url: str) -> str | None:
     return _rebuild(scheme, netloc, f"{head}/{tail.replace('_', '-')}")
 
 
-#: 按先验命中率排序。实测 mistral：``drop_both`` 一条就吃掉 7/10。
+#: 按**实测**命中率排序（全量 75 条）：drop_both 37 / drop_docs_prefix 1 /
+#: underscore_to_hyphen 0。
+#:
+#: ``drop_md`` 已删 —— 它零命中，而且**是构造上必然的**：``_drop_both`` 在没有
+#: /docs 前缀时会回落成 drop_md 的结果，所以它永远产不出**不同的**候选，
+#: 一定被 apply_transforms 的去重吃掉。那不是「没测到」，是冗余。
 TRANSFORMS: tuple[Transform, ...] = (
     Transform(
         "drop_both",
         "llms.txt 惯例是给机器列 .md 变体，且这里多了一层 /docs 前缀；两个一起去掉",
         _drop_both,
     ),
-    Transform("drop_md", "只去掉给机器用的 .md 后缀", _drop_md),
     Transform("drop_docs_prefix", "只去掉多出来的 /docs 前缀", _drop_docs_prefix),
     Transform(
         "underscore_to_hyphen",
