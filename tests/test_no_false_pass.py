@@ -276,3 +276,85 @@ def test_host_dropped_at_discovery_is_disclosed_as_a_coverage_gap() -> None:
         g for g in st.coverage_gaps if alive.host in g.where and dropped.host not in g.where
     ]
     assert misfired == [], f"判 OK 的 host 被误记成盲区：{misfired}"
+
+
+# --------------------------------------------------------------------------- #
+# 第五条：实录的对照探针不许被判定改动悄悄作废
+# --------------------------------------------------------------------------- #
+#
+# 对照探测是软 404 判据的一半（`probe_url` 的报错原文）。42 条实录探针里
+# **22 条的索引状态码是 3xx**（301/302/307/308）—— 如果哪次改动让 3xx 变成
+# 「不可用对照」，一半的判据会静默失效，而位置只会变成 UNKNOWN，看起来像
+# 「站点变谨慎了」而不是「我们的判据坏了」。
+#
+# 写这条测试的由头：加 L4b（非 2xx 不许判 OK）之后，我拿
+# `classify_response(301, ..., redirects=())` 单测了一遍，得出「22 条对照全部
+# 失效」的结论 —— **那是假警报**。索引里记的是**首跳**状态码，生产侧 fetcher
+# 会跟完跳转，终态是 200，对照照常可用。人造输入喂出来的结论不算数，所以这条
+# 测试走的是生产路径（`Fetcher.host_profile`）。
+#
+# 允许不可用的三条是白名单而不是豁免：名单外任何一条变不可用都要红。
+
+#: 实测本来就不可用、且不可用是**正确**结论的对照探针。
+#: 403/429 在 L4b 之前就判 blocked，与那次改动无关。
+_CONTROL_UNUSABLE_OK = {
+    "https://gusto.com/": "Cloudflare 挑战页 403 —— 这正是 gusto.com 那份报告的招牌案例",
+    "https://www.gusto.com/": "301 跳到 403，同上",
+    "https://tenderly.co/": "429 限流",
+}
+
+
+def test_recorded_3xx_control_probes_stay_usable(tmp_path: Path) -> None:
+    """3xx 对照探针必须仍然可用。
+
+    **只取 3xx，不跑全部 42 条**：3xx 才是这次改动的风险类别（200/404 不可能以
+    这种方式回归），而全量要 53 秒 —— 乘 CI 的九个 job 就是多出八分钟。
+    同时断言语料里 3xx 探针的条数没被削，免得「样本恰好都没了所以全绿」。
+    """
+    import json
+
+    from geo_audit.fixtures import FixtureStore
+
+    store = FixtureStore.default()
+    index = json.loads((store.root / "index.json").read_text(encoding="utf-8"))["snapshots"]
+    three_xx = sorted(
+        {e["probe_for"] for e in index.values() if e.get("probe_for") and 300 <= e["status"] < 400}
+    )
+    assert len(three_xx) >= 15, (
+        f"3xx 对照探针只剩 {len(three_xx)} 条（实录是 22 条）—— 样本被削光的话，"
+        "这条测试会「恰好全绿」。"
+    )
+
+    # 取一条 301 / 一条 302 / 一条 308，够钉住机制；限速让每条都要等，别贪多。
+    by_status: dict[int, str] = {}
+    for entry in index.values():
+        target = entry.get("probe_for")
+        if target and 300 <= entry["status"] < 400 and target not in _CONTROL_UNUSABLE_OK:
+            by_status.setdefault(entry["status"], target)
+    sample = [by_status[st] for st in sorted(by_status)][:3]
+    assert sample, "取不到 3xx 样本"
+
+    fetcher = Fetcher(
+        FetcherConfig(contact=CONTACT, interval=2.0, respect_robots=False),
+        HttpCache(tmp_path / "controls.sqlite3", ua_profile=build_user_agent(CONTACT)),
+        DomainLimiter(2.0),
+        transport=StopTransport(store.transport(strict=False), threading.Event()),
+        probe_url_provider=store.probe_url_lenient,
+        resolver=store.resolver(),
+    )
+    unusable: list[str] = []
+    try:
+        for target in sample:
+            profile = fetcher.host_profile(target)
+            if not profile.usable:
+                unusable.append(f"{target}（终态 {profile.status}）")
+    finally:
+        fetcher.close()
+
+    assert unusable == [], (
+        "这些 3xx 对照探针变成了不可用对照：\n  "
+        + "\n  ".join(unusable)
+        + "\n索引里记的是**首跳**状态码，生产侧会跟完跳转（实测终态都是 200）。"
+        "对照失效之后位置只会变 UNKNOWN —— 看起来像「站点变谨慎了」，"
+        "其实是我们的判据坏了。"
+    )
