@@ -17,23 +17,27 @@
 
 ## 先看报告，再决定要不要装
 
-四份真实站点的真实扫描结果。**打开看，别看我怎么形容它。**
+九份真实站点的真实扫描结果。**打开看，别看我怎么形容它。**
 索引页：[docs/index.html](docs/index.html)（GitHub Pages 上的画廊入口）。
 
 | 报告 | 这个站发生了什么 |
 |---|---|
 | [mistral.ai](docs/reports/mistral.ai.html) | `docs.mistral.ai/llms.txt` 是规范的真文件，里面的链接 **75 条死 / 0 条活**；76 条 finding 收敛成 **1 处根因**。另有 5 个位置「无法判断」（撞上默认请求预算，报告写明了怎么重跑） |
+| [gusto.com](docs/reports/gusto.com.html) | **报告主动否定自己：**「这次扫描不可信：18 个核心位置里有 17 个我们没能评估。下面的结论不要当结论用。」Cloudflare 挡掉了几乎所有位置 —— 而它的 llms.txt 其实是真文件 |
+| [minimax.io](docs/reports/minimax.io.html) | 同上那种「不可信」判决，另加 2 个真读错的位置。8 个核心位置里 6 个没能评估 |
 | [modal.com](docs/reports/modal.com.html) | **零发现。** 9 个位置全部通过、每条附对照证据。这种报告长什么样、值不值这个页数，你自己看 |
 | [rustdesk.com](docs/reports/rustdesk.com.html) | **零发现。** llms.txt 与 llms-full.txt 都是真文件、内容不同 —— 「llms-full 是 llms.txt 的字节副本」这个常见毛病它没有 |
-| [openstatus.dev](docs/reports/openstatus.dev.html) | **零发现。** apex 308 跳到 www，两边都测；`www.openstatus.dev/llms.txt` 是**诚实的 404**（不是伪装成 200 的空壳） |
+| [saleor.io](docs/reports/saleor.io.html) | **零发现。** 12 个位置全部通过 |
+| [deepgram.com](docs/reports/deepgram.com.html) | 一个位置都没读错，**但也不算「全部通过」**：`developers.deepgram.com` 的对照探测做不成，那个 host 下面的 AI 路径我们一条都没看 —— 覆盖披露里逐条写着没看什么 |
+| [tdengine.com](docs/reports/tdengine.com.html) | 同上形态：0 读错、1 个位置没能评估 |
+| [openstatus.dev](docs/reports/openstatus.dev.html) | apex 308 跳到 www，两边都测；`www.openstatus.dev/llms.txt` 是**诚实的 404**（不是伪装成 200 的空壳）。同样有 1 个位置没能评估，所以也不算「全部通过」 |
 
-四份里三份是零发现。这不是挑样挑偏了：72 个域的实测分布是
+九份里三份是零发现（modal / rustdesk / saleor）。这不是挑样挑偏了：72 个域的实测分布是
 **20.8% 一条都报不出来、52.8% 只有 1–2 条、只有 26.4% 能报 3 条以上**。
 
-**画廊还缺 5 个域**（deepgram.com / minimax.io / saleor.io / tdengine.com /
-gusto.com）—— 形态最难看的几种都在里面。它们的快照缺 apex/www 的 DNS 答案或对照
-探针，补齐要真网络重录一次。缺什么、缺哪条 URL，`docs/index.html` 里逐条写着。
-**我们不拿半真半假的报告凑数。**
+**「不算全部通过」这四个字是这个工具的重点。** 一个位置没能评估，首屏就不许写
+「全部通过」—— `Status.UNKNOWN` 永不折算成通过。九份报告里四种判决形态各有活案例：
+读错、零发现、有未评估所以不算通过、以及**扫描本身不可信**。
 
 ## 跑一次
 
