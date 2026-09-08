@@ -513,6 +513,35 @@ def classify_response(
                 needs_js=True,
             )
 
+    # ---- L4b  认不出的状态码不许当通过 ------------------------------------
+    if not (200 <= status < 300):
+        # 走到这里说明**前面每一条规则都没命中** —— 我们对这个状态码没有判据。
+        # 以前这里直接掉进下面的 L5 OK，于是任何认不出的状态码都变成「通过」。
+        # 实测扫过 100–599 全空间：400 / 406 / 408 / 409 / 411–428 / 430–499、
+        # 501 / 505 / 506 / 509–519 / 528 / 529 / 531–599 全判 ok。
+        # `_SERVER_ERROR` 是一张显式白名单（收了 Cloudflare 的 520–530），
+        # 名单外的 5xx 就从这儿漏成通过。
+        #
+        # 对一个卖点是「绝不制造假通过」的工具，这是最坏的默认值。而它还有一个
+        # 更近的出口：fixture 层缺对照探针时合成的 `599 + x-geo-audit-fixture:
+        # missing` 也走这条 —— 于是 host_profile 拿到 usable=True、
+        # status_discriminates=True，把「我们没有这份快照」读成「这个 host 能区分」
+        # 的正面证据，位置从 UNKNOWN 塌成 OK。那正是 §7 明令禁止的
+        # 「UNKNOWN 绝不塌成 PASS」，也正是 gusto.com 那份报告存在的意义。
+        #
+        # 3xx 落到这里说明跳转链没能收敛（跳数用尽）—— 也没拿到终态资源，
+        # 同样不该算通过；真正的环/超跳有 redirect_loop / too_many_redirects 各自的分支。
+        return Classification(
+            Verdict.UNKNOWN,
+            "unexpected_status",
+            (
+                f"HTTP {status}：没有对应判据，既不认定通过也不认定失败"
+                f"（content-type: {content_type or '未声明'}）",
+            ),
+            control_used=control is not None,
+            control_discriminates=(control.status_discriminates if control else None),
+        )
+
     # ---- L5  ok ----------------------------------------------------------
     return Classification(
         Verdict.OK,

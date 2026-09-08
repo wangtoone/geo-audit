@@ -643,9 +643,9 @@ ol.tight li {
   <div class="shell">
     <div class="meta">
       <span class="dom">geo-audit · modal.com</span>
-      <span>2026-09-08 04:41 UTC</span>
+      <span>2026-09-08 09:36 UTC</span>
       <span>0.1.0</span>
-      <span>UA: geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: gallery@geo-audit.invalid)</span>
+      <span>UA: geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: ci@geo-audit.invalid)</span>
       <span>去噪清单: denoise/2026-09-07.1</span>
       <span>schema geo-audit/report/1</span>
     </div>
@@ -729,7 +729,7 @@ ol.tight li {
       </div>
       <div class="small">同域对照返回正常，所以这不是整站反爬。</div>
       <div><strong>复现</strong></div>
-      <pre>curl -sSL -A &#39;geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: gallery@geo-audit.invalid)&#39; &#39;https://www.modal.com/llms-full.txt&#39;</pre>
+      <pre>curl -sSL -A &#39;geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: ci@geo-audit.invalid)&#39; &#39;https://www.modal.com/llms-full.txt&#39;</pre>
     </div>
 
     <p><strong>只探根路径、不做对照探测的实现会说：</strong>未采纳（599 服务端错误）</p>
@@ -745,7 +745,7 @@ ol.tight li {
 llms-full.txt 与 llms.txt 是同一份字节（一个字正文都没有）
 目标: https://www.modal.com/llms-full.txt 599 text/plain
 这个目标在站上出现 1 次（0 个页面） https://www.modal.com/llms.txt
-curl -sSL -A &#39;geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: gallery@geo-audit.invalid)&#39; &#39;https://www.modal.com/llms-full.txt&#39;
+curl -sSL -A &#39;geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: ci@geo-audit.invalid)&#39; &#39;https://www.modal.com/llms-full.txt&#39;
 geo-audit modal.com --ignore GA-001BFC9E30</pre>
     </details>
 
@@ -836,7 +836,7 @@ geo-audit modal.com --ignore GA-001BFC9E30</pre>
           <td>
             <span class="st st-pass">通过</span>
             对照探测 https://modal.com/geo-audit-probe-2508566547c6252e1aac50b2.txt 返回 HTTP 404 / text/html，与本响应可区分，判为真实内容
-            <details><summary>curl</summary><pre>curl -sSL -A &#39;geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: gallery@geo-audit.invalid)&#39; &#39;https://modal.com/llms.txt&#39;</pre></details>
+            <details><summary>curl</summary><pre>curl -sSL -A &#39;geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: ci@geo-audit.invalid)&#39; &#39;https://modal.com/llms.txt&#39;</pre></details>
           </td>
         </tr>
         <tr class="box-pass">
@@ -850,7 +850,7 @@ geo-audit modal.com --ignore GA-001BFC9E30</pre>
           <td>
             <span class="st st-pass">通过</span>
             对照探测 https://modal.com/geo-audit-probe-2508566547c6252e1aac50b2.txt 返回 HTTP 404 / text/html，与本响应可区分，判为真实内容
-            <details><summary>curl</summary><pre>curl -sSL -A &#39;geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: gallery@geo-audit.invalid)&#39; &#39;https://modal.com/llms-full.txt&#39;</pre></details>
+            <details><summary>curl</summary><pre>curl -sSL -A &#39;geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: ci@geo-audit.invalid)&#39; &#39;https://modal.com/llms-full.txt&#39;</pre></details>
           </td>
         </tr>
         <tr class="box-pass">
@@ -864,7 +864,7 @@ geo-audit modal.com --ignore GA-001BFC9E30</pre>
           <td>
             <span class="st st-pass">通过</span>
             对照探测 https://www.modal.com/geo-audit-probe-a6c6b6b8db1be9b51fc6a8af 返回 HTTP 404 / text/html，与本响应可区分，判为真实内容
-            <details><summary>curl</summary><pre>curl -sSL -A &#39;geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: gallery@geo-audit.invalid)&#39; &#39;https://www.modal.com/llms.txt&#39;</pre></details>
+            <details><summary>curl</summary><pre>curl -sSL -A &#39;geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: ci@geo-audit.invalid)&#39; &#39;https://www.modal.com/llms.txt&#39;</pre></details>
           </td>
         </tr>
         <tr class="box-pass">
@@ -878,7 +878,7 @@ geo-audit modal.com --ignore GA-001BFC9E30</pre>
           <td>
             <span class="st st-pass">通过</span>
             对照探测 https://www.modal.com/geo-audit-probe-a6c6b6b8db1be9b51fc6a8af 返回 HTTP 404 / text/html，与本响应可区分，判为真实内容
-            <details><summary>curl</summary><pre>curl -sSL -A &#39;geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: gallery@geo-audit.invalid)&#39; &#39;https://www.modal.com/llms-full.txt&#39;</pre></details>
+            <details><summary>curl</summary><pre>curl -sSL -A &#39;geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: ci@geo-audit.invalid)&#39; &#39;https://www.modal.com/llms-full.txt&#39;</pre></details>
           </td>
         </tr>
         <tr class="box-pass">
@@ -892,7 +892,7 @@ geo-audit modal.com --ignore GA-001BFC9E30</pre>
           <td>
             <span class="st st-pass">通过</span>
             308 条内链：59 活 / 0 死 / 1 判不了
-            <details><summary>curl</summary><pre>curl -sSL -A &#39;geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: gallery@geo-audit.invalid)&#39; &#39;https://modal.com/llms.txt&#39;</pre></details>
+            <details><summary>curl</summary><pre>curl -sSL -A &#39;geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: ci@geo-audit.invalid)&#39; &#39;https://modal.com/llms.txt&#39;</pre></details>
           </td>
         </tr>
         <tr class="box-pass">
@@ -1132,7 +1132,7 @@ geo-audit modal.com --ignore GA-001BFC9E30</pre>
 </main>
 
 <footer class="footer">
-  <div class="shell">本报告为单文件 HTML，无任何外部请求，可离线转发与打印。 · geo-audit 0.1.0 · denoise/2026-09-07.1 · gallery@geo-audit.invalid</div>
+  <div class="shell">本报告为单文件 HTML，无任何外部请求，可离线转发与打印。 · geo-audit 0.1.0 · denoise/2026-09-07.1 · ci@geo-audit.invalid</div>
 </footer>
 </body>
 </html>

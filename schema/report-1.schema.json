@@ -958,7 +958,8 @@
         "control_unavailable",
         "needs_js",
         "body_truncated",
-        "not_fetched"
+        "not_fetched",
+        "unexpected_status"
       ]
     },
     "RedirectHop": {
