@@ -189,3 +189,53 @@ def test_finding_carries_absolute_numbers_only() -> None:
     assert not any(isinstance(getattr(f, name), float) for name in f.__slots__), (
         "对账结果里出现了浮点数 —— 那通常意味着有人算了个比率"
     )
+
+
+# --------------------------------------------------------------------------- #
+# 真数据抓出来的：Markdown 强调符
+# --------------------------------------------------------------------------- #
+
+
+@pytest.mark.parametrize(
+    "text",
+    [
+        "**https://a.invalid/x**",
+        "Here it is:\n\n**https://a.invalid/x**\n\nThat's the page.",
+        "见 __https://a.invalid/x__",
+        "*https://a.invalid/x*",
+    ],
+)
+def test_markdown_emphasis_is_stripped_from_urls(text: str) -> None:
+    """第一版漏了 `*`，真数据一跑就露了。
+
+    实测 15 份回答里模型写的是 ``**https://docs.mistral.ai/studio-api/agents/agents-api**``，
+    于是同一条 URL 被拆成两个「不同 URL」：多数票从 5 稀释到 4、
+    n_distinct_urls 虚报成 2、而且带 ** 的串跟检索结果里的干净 URL 匹配不上，
+    把 cited 误判成 stated_only。**一个 bug 三个症状，全是静默的。**
+    """
+    assert extract_urls(text) == ("https://a.invalid/x",)
+
+
+def test_emphasis_does_not_split_the_majority_vote() -> None:
+    """同一条 URL 有的样本带 **、有的不带，必须算同一票。"""
+    f = reconcile(
+        QUESTION,
+        _answers(f"**{DEAD}**", f"{DEAD}", f"see **{DEAD}**", f"{DEAD}.", f"**{DEAD}**"),
+        dead_urls=DEAD_SET,
+        alive_urls=ALIVE_SET,
+    )
+    assert f.n_distinct_urls == 1, f"同一条 URL 被拆成 {f.n_distinct_urls} 个：{f.distinct_urls}"
+    assert f.n_votes_for_model_url == 5
+    assert f.status is PerceptionStatus.CITES_DEAD
+
+
+def test_emphasis_does_not_break_citation_matching() -> None:
+    """正文里带 ** 的 URL 要能和结构化引用里的干净 URL 对上，否则 cited 变 stated_only。"""
+    f = reconcile(
+        QUESTION,
+        _answers(*[f"**{DEAD}**"] * 5, citations=(DEAD,)),
+        dead_urls=DEAD_SET,
+        alive_urls=ALIVE_SET,
+    )
+    assert f.evidence_kind == "cited"
+    assert f.n_cited == 5
