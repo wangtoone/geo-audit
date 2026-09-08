@@ -615,6 +615,60 @@
       "status": 200,
       "transport_error": null
     },
+    "https://deepgram.com/": {
+      "body_storage": "full",
+      "bytes": 429161,
+      "comment": "画廊 · DNS 与对照探针",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 429161,
+        "raw_md5": "6a533dbf9afdfcc826e507c9d8da56b0"
+      },
+      "handwritten": false,
+      "path": "snapshots/deepgram.com/index-22a335fb",
+      "probe_for": null,
+      "raw_md5": "6a533dbf9afdfcc826e507c9d8da56b0",
+      "recorded_at": "2026-09-08T03:54:47Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://deepgram.com/geo-audit-probe-12e78ba47a1548b38a7ae237": {
+      "body_storage": "full",
+      "bytes": 74213,
+      "comment": "画廊 · DNS 与对照探针（对照探针）",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 74213,
+        "raw_md5": "9ea87e55490a190479ba3063cce06792"
+      },
+      "handwritten": false,
+      "path": "snapshots/deepgram.com/geo-audit-probe-12e78ba47a1548b38a7ae237-75302998",
+      "probe_for": "https://deepgram.com/",
+      "raw_md5": "9ea87e55490a190479ba3063cce06792",
+      "recorded_at": "2026-09-08T03:54:50Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://deepgram.com/geo-audit-probe-a51ba662142c7949ca59f886": {
+      "body_storage": "full",
+      "bytes": 74213,
+      "comment": "画廊 · DNS 与对照探针（对照探针）",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 74213,
+        "raw_md5": "524a5fb5b09719764082ab143a1d47d1"
+      },
+      "handwritten": false,
+      "path": "snapshots/deepgram.com/geo-audit-probe-a51ba662142c7949ca59f886-8aa14850",
+      "probe_for": null,
+      "raw_md5": "524a5fb5b09719764082ab143a1d47d1",
+      "recorded_at": "2026-09-08T03:55:00Z",
+      "status": 404,
+      "transport_error": null
+    },
     "https://depot.dev/docs": {
       "body_storage": "full",
       "bytes": 227344,
@@ -4341,6 +4395,24 @@
       "status": 200,
       "transport_error": null
     },
+    "https://docs.saleor.io/": {
+      "body_storage": "full",
+      "bytes": 73128,
+      "comment": "画廊 · DNS 与对照探针",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 73128,
+        "raw_md5": "1c9026f05e55c808f414b364e3fd76d6"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.saleor.io/index-b9462674",
+      "probe_for": null,
+      "raw_md5": "1c9026f05e55c808f414b364e3fd76d6",
+      "recorded_at": "2026-09-08T03:55:32Z",
+      "status": 200,
+      "transport_error": null
+    },
     "https://docs.saleor.io/api-reference/": {
       "body_storage": "full",
       "bytes": 23892,
@@ -4375,6 +4447,24 @@
       "raw_md5": "901df8bb95b4e742b6dd4f4f4caba80c",
       "recorded_at": "2026-09-07T12:32:06Z",
       "status": 200,
+      "transport_error": null
+    },
+    "https://docs.saleor.io/geo-audit-probe-93f34e0b9638461bd78bddbf": {
+      "body_storage": "full",
+      "bytes": 9404,
+      "comment": "画廊 · DNS 与对照探针（对照探针）",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 9404,
+        "raw_md5": "d1fc520eedd9b043d295158123cc5d7d"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.saleor.io/geo-audit-probe-93f34e0b9638461bd78bddbf-d8992f56",
+      "probe_for": "https://docs.saleor.io/",
+      "raw_md5": "d1fc520eedd9b043d295158123cc5d7d",
+      "recorded_at": "2026-09-08T03:55:35Z",
+      "status": 404,
       "transport_error": null
     },
     "https://docs.saleor.io/overview/why-saleor/graphql": {
@@ -5673,6 +5763,42 @@
       "status": 403,
       "transport_error": null
     },
+    "https://gusto.com/geo-audit-probe-500aff090aeb8c6b04df4000": {
+      "body_storage": "full",
+      "bytes": 5883,
+      "comment": "画廊 · DNS 与对照探针（对照探针）",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 5883,
+        "raw_md5": "8a2a583886a7ccac4b5ecd8a60e493b8"
+      },
+      "handwritten": false,
+      "path": "snapshots/gusto.com/geo-audit-probe-500aff090aeb8c6b04df4000-5bee7fa9",
+      "probe_for": "https://gusto.com/",
+      "raw_md5": "8a2a583886a7ccac4b5ecd8a60e493b8",
+      "recorded_at": "2026-09-08T03:55:37Z",
+      "status": 403,
+      "transport_error": null
+    },
+    "https://gusto.com/geo-audit-probe-760059904629825fe36153ed": {
+      "body_storage": "full",
+      "bytes": 5883,
+      "comment": "画廊 · DNS 与对照探针（对照探针）",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 5883,
+        "raw_md5": "887acd1df9fa94ad2af74ac2d3451a1b"
+      },
+      "handwritten": false,
+      "path": "snapshots/gusto.com/geo-audit-probe-760059904629825fe36153ed-0948faec",
+      "probe_for": null,
+      "raw_md5": "887acd1df9fa94ad2af74ac2d3451a1b",
+      "recorded_at": "2026-09-08T03:55:44Z",
+      "status": 403,
+      "transport_error": null
+    },
     "https://gusto.com/llms.txt": {
       "body_storage": "full",
       "bytes": 5744,
@@ -5887,6 +6013,42 @@
       "raw_md5": "9fe1721eda00d02d598f183d0c1fd9dd",
       "recorded_at": "2026-09-07T12:36:55Z",
       "status": 200,
+      "transport_error": null
+    },
+    "https://minimax.io/": {
+      "body_storage": "full",
+      "bytes": 152,
+      "comment": "画廊 · DNS 与对照探针",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 152,
+        "raw_md5": "eb994271a12b57fbf591953ae1d64ec8"
+      },
+      "handwritten": false,
+      "path": "snapshots/minimax.io/index-f82df0d6",
+      "probe_for": null,
+      "raw_md5": "eb994271a12b57fbf591953ae1d64ec8",
+      "recorded_at": "2026-09-08T03:54:37Z",
+      "status": 302,
+      "transport_error": null
+    },
+    "https://minimax.io/geo-audit-probe-54c87f774312a501703355d3": {
+      "body_storage": "full",
+      "bytes": 152,
+      "comment": "画廊 · DNS 与对照探针（对照探针）",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 152,
+        "raw_md5": "eb994271a12b57fbf591953ae1d64ec8"
+      },
+      "handwritten": false,
+      "path": "snapshots/minimax.io/geo-audit-probe-54c87f774312a501703355d3-e735abcd",
+      "probe_for": "https://minimax.io/",
+      "raw_md5": "eb994271a12b57fbf591953ae1d64ec8",
+      "recorded_at": "2026-09-08T03:54:42Z",
+      "status": 302,
       "transport_error": null
     },
     "https://mistral.ai/": {
@@ -7851,6 +8013,24 @@
       "status": 200,
       "transport_error": null
     },
+    "https://saleor.io/geo-audit-probe-643b565871fabbb1eeb9acdb": {
+      "body_storage": "full",
+      "bytes": 38951,
+      "comment": "画廊 · DNS 与对照探针（对照探针）",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 38951,
+        "raw_md5": "79feb1e7286d97fb799bc6ad21b8bca0"
+      },
+      "handwritten": false,
+      "path": "snapshots/saleor.io/geo-audit-probe-643b565871fabbb1eeb9acdb-64c2d1d5",
+      "probe_for": null,
+      "raw_md5": "79feb1e7286d97fb799bc6ad21b8bca0",
+      "recorded_at": "2026-09-08T03:55:29Z",
+      "status": 404,
+      "transport_error": null
+    },
     "https://saleor.io/geo-audit-probe-65cc6bb7ddae2bbb51a694ed.txt": {
       "body_storage": "full",
       "bytes": 38975,
@@ -8101,6 +8281,42 @@
       "raw_md5": "02d6cea88426cd0b8b85348c4bf9ac21",
       "recorded_at": "2026-09-07T12:37:02Z",
       "status": 200,
+      "transport_error": null
+    },
+    "https://tdengine.com/geo-audit-probe-66f4d44b4351a089655845e9": {
+      "body_storage": "full",
+      "bytes": 167477,
+      "comment": "画廊 · DNS 与对照探针（对照探针）",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 167477,
+        "raw_md5": "81e964377b86cd8510479bd18fa3513d"
+      },
+      "handwritten": false,
+      "path": "snapshots/tdengine.com/geo-audit-probe-66f4d44b4351a089655845e9-6441bd75",
+      "probe_for": null,
+      "raw_md5": "81e964377b86cd8510479bd18fa3513d",
+      "recorded_at": "2026-09-08T03:55:19Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://tdengine.com/geo-audit-probe-8e2c549ffd08f4f7804c8068": {
+      "body_storage": "full",
+      "bytes": 167477,
+      "comment": "画廊 · DNS 与对照探针（对照探针）",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 167477,
+        "raw_md5": "81e964377b86cd8510479bd18fa3513d"
+      },
+      "handwritten": false,
+      "path": "snapshots/tdengine.com/geo-audit-probe-8e2c549ffd08f4f7804c8068-9ae25767",
+      "probe_for": "https://tdengine.com/",
+      "raw_md5": "81e964377b86cd8510479bd18fa3513d",
+      "recorded_at": "2026-09-08T03:55:04Z",
+      "status": 404,
       "transport_error": null
     },
     "https://tdengine.com/llms.txt": {
@@ -10641,6 +10857,42 @@
       "status": 200,
       "transport_error": null
     },
+    "https://www.deepgram.com/": {
+      "body_storage": "full",
+      "bytes": 135,
+      "comment": "画廊 · DNS 与对照探针",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 135,
+        "raw_md5": "47426e2f328ac364d8132e729db18426"
+      },
+      "handwritten": false,
+      "path": "snapshots/www.deepgram.com/index-8c85a2b5",
+      "probe_for": null,
+      "raw_md5": "47426e2f328ac364d8132e729db18426",
+      "recorded_at": "2026-09-08T03:54:53Z",
+      "status": 308,
+      "transport_error": null
+    },
+    "https://www.deepgram.com/geo-audit-probe-a51ba662142c7949ca59f886": {
+      "body_storage": "full",
+      "bytes": 175,
+      "comment": "画廊 · DNS 与对照探针（对照探针）",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 175,
+        "raw_md5": "692cd8827e9feba7c6dcfbaa9f71692a"
+      },
+      "handwritten": false,
+      "path": "snapshots/www.deepgram.com/geo-audit-probe-a51ba662142c7949ca59f886-8c227260",
+      "probe_for": "https://www.deepgram.com/",
+      "raw_md5": "692cd8827e9feba7c6dcfbaa9f71692a",
+      "recorded_at": "2026-09-08T03:54:57Z",
+      "status": 308,
+      "transport_error": null
+    },
     "https://www.emqx.com/en/docs": {
       "body_storage": "full",
       "bytes": 20388,
@@ -10694,6 +10946,42 @@
       "raw_md5": "24c097ac04a18cc248346b4bcaed74ea",
       "recorded_at": "2026-09-07T12:22:44Z",
       "status": 404,
+      "transport_error": null
+    },
+    "https://www.gusto.com/": {
+      "body_storage": "full",
+      "bytes": 5660,
+      "comment": "画廊 · DNS 与对照探针",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 5660,
+        "raw_md5": "2d6b3b4008716b21e52a4a30c70b3a79"
+      },
+      "handwritten": false,
+      "path": "snapshots/www.gusto.com/index-4eedcead",
+      "probe_for": null,
+      "raw_md5": "2d6b3b4008716b21e52a4a30c70b3a79",
+      "recorded_at": "2026-09-08T03:55:39Z",
+      "status": 403,
+      "transport_error": null
+    },
+    "https://www.gusto.com/geo-audit-probe-760059904629825fe36153ed": {
+      "body_storage": "full",
+      "bytes": 169,
+      "comment": "画廊 · DNS 与对照探针（对照探针）",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 169,
+        "raw_md5": "4e81ccade4a7771ffb16cf8f89017ce6"
+      },
+      "handwritten": false,
+      "path": "snapshots/www.gusto.com/geo-audit-probe-760059904629825fe36153ed-91a2e05a",
+      "probe_for": "https://www.gusto.com/",
+      "raw_md5": "4e81ccade4a7771ffb16cf8f89017ce6",
+      "recorded_at": "2026-09-08T03:55:42Z",
+      "status": 301,
       "transport_error": null
     },
     "https://www.inngest.com/docs-markdown/ai-patterns/cli-for-coding-agents": {
@@ -10982,6 +11270,24 @@
       "raw_md5": "f922afb29fea13576c10c20ca9c21cb7",
       "recorded_at": "2026-09-07T12:19:47Z",
       "status": 200,
+      "transport_error": null
+    },
+    "https://www.minimax.io/geo-audit-probe-54c87f774312a501703355d3": {
+      "body_storage": "full",
+      "bytes": 18017,
+      "comment": "画廊 · DNS 与对照探针（对照探针）",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 18017,
+        "raw_md5": "da01ba0fea45a2d6f419b6bf28208b9f"
+      },
+      "handwritten": false,
+      "path": "snapshots/www.minimax.io/geo-audit-probe-54c87f774312a501703355d3-c97cb8a6",
+      "probe_for": null,
+      "raw_md5": "da01ba0fea45a2d6f419b6bf28208b9f",
+      "recorded_at": "2026-09-08T03:54:44Z",
+      "status": 307,
       "transport_error": null
     },
     "https://www.minimax.io/geo-audit-probe-f791b588bc92b4991341620c.txt": {
@@ -11758,6 +12064,42 @@
       "status": 200,
       "transport_error": null
     },
+    "https://www.saleor.io/": {
+      "body_storage": "full",
+      "bytes": 132,
+      "comment": "画廊 · DNS 与对照探针",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 132,
+        "raw_md5": "6fe7bba4a1bb05c41f1a80f3097a9b01"
+      },
+      "handwritten": false,
+      "path": "snapshots/www.saleor.io/index-a70eb744",
+      "probe_for": null,
+      "raw_md5": "6fe7bba4a1bb05c41f1a80f3097a9b01",
+      "recorded_at": "2026-09-08T03:55:22Z",
+      "status": 308,
+      "transport_error": null
+    },
+    "https://www.saleor.io/geo-audit-probe-643b565871fabbb1eeb9acdb": {
+      "body_storage": "full",
+      "bytes": 172,
+      "comment": "画廊 · DNS 与对照探针（对照探针）",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 172,
+        "raw_md5": "b2977895b2dbbfa89821203cd06f6084"
+      },
+      "handwritten": false,
+      "path": "snapshots/www.saleor.io/geo-audit-probe-643b565871fabbb1eeb9acdb-3bcd487d",
+      "probe_for": "https://www.saleor.io/",
+      "raw_md5": "b2977895b2dbbfa89821203cd06f6084",
+      "recorded_at": "2026-09-08T03:55:26Z",
+      "status": 308,
+      "transport_error": null
+    },
     "https://www.shopify.com/": {
       "body_storage": "full",
       "bytes": 677123,
@@ -11847,6 +12189,42 @@
       "recorded_at": "2026-09-07T12:35:48Z",
       "status": 0,
       "transport_error": "ConnectError: [Errno 61] Connection refused"
+    },
+    "https://www.tdengine.com/": {
+      "body_storage": "full",
+      "bytes": 0,
+      "comment": "画廊 · DNS 与对照探针",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 0,
+        "raw_md5": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      "handwritten": false,
+      "path": "snapshots/www.tdengine.com/index-926e0a15",
+      "probe_for": null,
+      "raw_md5": "d41d8cd98f00b204e9800998ecf8427e",
+      "recorded_at": "2026-09-08T03:55:10Z",
+      "status": 301,
+      "transport_error": null
+    },
+    "https://www.tdengine.com/geo-audit-probe-66f4d44b4351a089655845e9": {
+      "body_storage": "full",
+      "bytes": 0,
+      "comment": "画廊 · DNS 与对照探针（对照探针）",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 0,
+        "raw_md5": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      "handwritten": false,
+      "path": "snapshots/www.tdengine.com/geo-audit-probe-66f4d44b4351a089655845e9-74f0a06b",
+      "probe_for": "https://www.tdengine.com/",
+      "raw_md5": "d41d8cd98f00b204e9800998ecf8427e",
+      "recorded_at": "2026-09-08T03:55:15Z",
+      "status": 301,
+      "transport_error": null
     },
     "https://www.tinybird.co/docs": {
       "body_storage": "full",

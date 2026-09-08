@@ -343,7 +343,9 @@ def test_zero_finding_report_has_none_of_the_three_bans() -> None:
     for word in ("恭喜", "没有问题", "一切正常", "完美", "满分"):
         assert word not in html
     html_unknown = render_html(build_unusable_report())
-    assert "全部通过" not in html_unknown
+    # 判据是「肯定式的 N 个位置全部通过」，不是纯子串 —— 见
+    # tests/test_report_shape.py::test_unknown_never_collapses_into_pass 的说明。
+    assert not re.search(r"\d+\s*个位置全部通过", html_unknown)
 
 
 def test_unknown_is_never_rendered_as_ok() -> None:

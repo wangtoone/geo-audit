@@ -1,0 +1,30 @@
+{
+  "body_bytes": 169,
+  "body_file": "snapshots/www.gusto.com/geo-audit-probe-760059904629825fe36153ed-91a2e05a.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://www.gusto.com/geo-audit-probe-760059904629825fe36153ed",
+  "handwritten": false,
+  "headers": {
+    "alt-svc": "h3=\":443\"; ma=86400",
+    "cf-cache-status": "DYNAMIC",
+    "cf-ray": "a37b04e6a9b6fcf3-SIN",
+    "connection": "keep-alive",
+    "content-type": "text/html",
+    "date": "Tue, 08 Sep 2026 03:55:42 GMT",
+    "location": "https://gusto.com/geo-audit-probe-760059904629825fe36153ed",
+    "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.01,\"max_age\":604800}",
+    "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=FPzqx%2BQa%2FGlflJJ7%2FCN1pb9cEpsg8gTfpLgja4%2BUp4%2Fc1f1SNNS2EoGWvFjafWTJFnLnNO2zsPtcSUi%2FlAzpKM2mHCI6Yzd6NiCGEKQCDutKQJ2BWsYuYVEHV8wlmbY%3D\"}]}",
+    "server": "cloudflare",
+    "strict-transport-security": "max-age=31536000; includeSubDomains; preload",
+    "transfer-encoding": "chunked",
+    "x-envoy-upstream-service-time": "1"
+  },
+  "note": null,
+  "probe_for": "https://www.gusto.com/",
+  "raw_md5": "4e81ccade4a7771ffb16cf8f89017ce6",
+  "recorded_at": "2026-09-08T03:55:42Z",
+  "status": 301,
+  "stored_bytes": 169,
+  "transport_error": null,
+  "url": "https://www.gusto.com/geo-audit-probe-760059904629825fe36153ed"
+}

@@ -421,7 +421,7 @@ def test_no_bypass_machinery_in_code() -> None:
     绕过去拿到的数据，甲方自己的 AI 爬虫也拿不到，报告就不成立了。
     """
     hits = [
-        (str(path.relative_to(REPO)), marker)
+        (path.relative_to(REPO).as_posix(), marker)
         for path in _src_files()
         for marker in BYPASS_MARKERS
         if marker in _code_only(path).lower()
@@ -437,7 +437,7 @@ def test_proxy_configuration_is_absent_from_the_http_client() -> None:
     """
     http_layer = sorted((SRC / "geo_audit" / "fetch").rglob("*.py"))
     hits = [
-        str(path.relative_to(REPO))
+        path.relative_to(REPO).as_posix()
         for path in http_layer
         for needle in ("proxies=", "proxy=", "proxy_mounts", "trust_env=True")
         if needle in _code_only(path)

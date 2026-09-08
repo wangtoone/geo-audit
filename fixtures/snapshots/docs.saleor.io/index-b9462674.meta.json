@@ -1,0 +1,31 @@
+{
+  "body_bytes": 73128,
+  "body_file": "snapshots/docs.saleor.io/index-b9462674.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://docs.saleor.io/",
+  "handwritten": false,
+  "headers": {
+    "access-control-allow-origin": "*",
+    "age": "63006",
+    "cache-control": "public, max-age=0, must-revalidate",
+    "content-disposition": "inline",
+    "content-encoding": "gzip",
+    "content-type": "text/html; charset=utf-8",
+    "date": "Tue, 08 Sep 2026 03:55:33 GMT",
+    "etag": "W/\"1c9026f05e55c808f414b364e3fd76d6\"",
+    "last-modified": "Mon, 07 Sep 2026 10:25:26 GMT",
+    "server": "Vercel",
+    "strict-transport-security": "max-age=63072000",
+    "transfer-encoding": "chunked",
+    "x-vercel-cache": "HIT",
+    "x-vercel-id": "sin1::hc6zc-1788839733116-eb48530016db"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "1c9026f05e55c808f414b364e3fd76d6",
+  "recorded_at": "2026-09-08T03:55:32Z",
+  "status": 200,
+  "stored_bytes": 73128,
+  "transport_error": null,
+  "url": "https://docs.saleor.io/"
+}

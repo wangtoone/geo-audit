@@ -1,0 +1,26 @@
+{
+  "body_bytes": 172,
+  "body_file": "snapshots/www.saleor.io/geo-audit-probe-643b565871fabbb1eeb9acdb-3bcd487d.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://www.saleor.io/geo-audit-probe-643b565871fabbb1eeb9acdb",
+  "handwritten": false,
+  "headers": {
+    "cache-control": "public, max-age=0, must-revalidate",
+    "content-type": "text/html",
+    "date": "Tue, 08 Sep 2026 03:55:26 GMT",
+    "location": "https://saleor.io/geo-audit-probe-643b565871fabbb1eeb9acdb",
+    "refresh": "0;url=https://saleor.io/geo-audit-probe-643b565871fabbb1eeb9acdb",
+    "server": "Vercel",
+    "strict-transport-security": "max-age=63072000",
+    "transfer-encoding": "chunked",
+    "x-vercel-id": "sin1::44mq4-1788839726363-84fde2416fbe"
+  },
+  "note": null,
+  "probe_for": "https://www.saleor.io/",
+  "raw_md5": "b2977895b2dbbfa89821203cd06f6084",
+  "recorded_at": "2026-09-08T03:55:26Z",
+  "status": 308,
+  "stored_bytes": 172,
+  "transport_error": null,
+  "url": "https://www.saleor.io/geo-audit-probe-643b565871fabbb1eeb9acdb"
+}

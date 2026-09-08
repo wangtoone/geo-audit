@@ -1,0 +1,26 @@
+{
+  "body_bytes": 175,
+  "body_file": "snapshots/www.deepgram.com/geo-audit-probe-a51ba662142c7949ca59f886-8c227260.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://www.deepgram.com/geo-audit-probe-a51ba662142c7949ca59f886",
+  "handwritten": false,
+  "headers": {
+    "cache-control": "public, max-age=0, must-revalidate",
+    "content-type": "text/html",
+    "date": "Tue, 08 Sep 2026 03:54:57 GMT",
+    "location": "https://deepgram.com/geo-audit-probe-a51ba662142c7949ca59f886",
+    "refresh": "0;url=https://deepgram.com/geo-audit-probe-a51ba662142c7949ca59f886",
+    "server": "Vercel",
+    "strict-transport-security": "max-age=63072000",
+    "transfer-encoding": "chunked",
+    "x-vercel-id": "sin1::fc4f9-1788839697324-100879db7c78"
+  },
+  "note": null,
+  "probe_for": "https://www.deepgram.com/",
+  "raw_md5": "692cd8827e9feba7c6dcfbaa9f71692a",
+  "recorded_at": "2026-09-08T03:54:57Z",
+  "status": 308,
+  "stored_bytes": 175,
+  "transport_error": null,
+  "url": "https://www.deepgram.com/geo-audit-probe-a51ba662142c7949ca59f886"
+}

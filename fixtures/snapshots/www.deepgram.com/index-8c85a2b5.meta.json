@@ -1,0 +1,26 @@
+{
+  "body_bytes": 135,
+  "body_file": "snapshots/www.deepgram.com/index-8c85a2b5.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://www.deepgram.com/",
+  "handwritten": false,
+  "headers": {
+    "cache-control": "public, max-age=0, must-revalidate",
+    "content-type": "text/html",
+    "date": "Tue, 08 Sep 2026 03:54:53 GMT",
+    "location": "https://deepgram.com/",
+    "refresh": "0;url=https://deepgram.com/",
+    "server": "Vercel",
+    "strict-transport-security": "max-age=63072000",
+    "transfer-encoding": "chunked",
+    "x-vercel-id": "sin1::t9qx2-1788839693202-9a795237d4e2"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "47426e2f328ac364d8132e729db18426",
+  "recorded_at": "2026-09-08T03:54:53Z",
+  "status": 308,
+  "stored_bytes": 135,
+  "transport_error": null,
+  "url": "https://www.deepgram.com/"
+}

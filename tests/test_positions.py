@@ -15,6 +15,8 @@ tests/test_subdomain_discovery.py 的注入式 Fetcher 写法）。
 from __future__ import annotations
 
 import ast
+import dataclasses
+import re
 import threading
 from collections.abc import Callable, Iterator
 from pathlib import Path
@@ -157,7 +159,7 @@ def _position_calls(path: Path) -> list[int]:
 def test_position_is_only_constructed_in_pipeline() -> None:
     """A7：``Position(...)`` 的调用只许出现在 ``pipeline.py`` 里。"""
     hits = {
-        str(path.relative_to(SRC)): _position_calls(path)
+        path.relative_to(SRC).as_posix(): _position_calls(path)
         for path in sorted(SRC.rglob("*.py"))
         if path.name != "pipeline.py" and _position_calls(path)
     }
@@ -529,3 +531,58 @@ def test_human_path_cell_per_seed_page_and_dead_link_finding(
     assert dead[0].suppress_hint.endswith(dead[0].finding_id)
     assert c.findings == 1
     assert c.positions != c.findings
+
+
+# ═════════════════════════════════════════════════════════════════════════════
+# A32 · make_headline 的分支互斥（验收时被误判成「两个写手裁决冲突」的那条）
+# ═════════════════════════════════════════════════════════════════════════════
+
+
+def test_all_pass_headline_only_when_unknown_is_zero() -> None:
+    """**肯定式**的「N 个位置全部通过」只许在 `positions_unknown == 0` 时出现。
+
+    这是 A32 的真实不变量。原来的断言是「HTML 不含『全部通过』」——
+    纯子串匹配，会把 `zero_with_unknown` 分支那句正确的
+    「…所以这不能算『全部通过』」也判成违规，于是没人敢让它真咬。
+
+    这条直接测 `make_headline`，两个方向都覆盖：
+      * unknown == 0  -> 必须是 zero_clean，且印肯定式
+      * unknown > 0   -> 不许印肯定式，且 verdict_kind 必须是 zero_with_unknown
+    """
+    affirmative = re.compile(r"\d+\s*个位置全部通过")
+
+    clean, kind_clean = make_headline(
+        _headline_counts(positions=9, positions_pass=9),
+        has_ai_channel=True,
+        sampled_ratio=1.0,
+        interrupted=False,
+    )
+    assert kind_clean == "zero_clean"
+    assert affirmative.search(clean), "零 UNKNOWN 时该印肯定式的全部通过"
+
+    with_unknown, kind_unknown = make_headline(
+        _headline_counts(positions=9, positions_pass=8, positions_unknown=1),
+        has_ai_channel=True,
+        sampled_ratio=1.0,
+        interrupted=False,
+    )
+    assert kind_unknown == "zero_with_unknown"
+    assert not affirmative.search(with_unknown), (
+        "有 UNKNOWN 却印了肯定式的「N 个位置全部通过」—— UNKNOWN 被折算成 PASS"
+    )
+    # 而那句「不能算『全部通过』」是**该有**的（§6.1:3098 逐字原文）
+    assert "不能算" in with_unknown
+
+
+def _headline_counts(**over: int) -> Counts:
+    """填满 Counts 的必填字段，只覆盖关心的那几个。
+
+    刻意不叫 `_counts` —— 本文件第 234 行已有一个同名函数（从 positions 算计数），
+    重名会静默覆盖它，而被覆盖的那个还有别的测试在用（踩过一次）。
+    """
+    kw: dict[str, object] = {}
+    for f in dataclasses.fields(Counts):
+        if f.default is dataclasses.MISSING and f.default_factory is dataclasses.MISSING:
+            kw[f.name] = {} if "severity" in f.name else 0
+    kw.update(over)
+    return Counts(**kw)  # type: ignore[arg-type]

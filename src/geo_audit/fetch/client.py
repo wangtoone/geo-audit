@@ -680,6 +680,9 @@ class Fetcher:
 
     def close(self) -> None:
         self._client.close()
+        # 连 cache 的 sqlite 连接一起关：3.13 起未关的连接在 GC 里发
+        # ResourceWarning，而 filterwarnings=error 把它升成错误（CI 上挂了 24 条）。
+        self.cache.close()
 
     def __enter__(self) -> Fetcher:
         return self

@@ -1,0 +1,29 @@
+{
+  "body_bytes": 167477,
+  "body_file": "snapshots/tdengine.com/geo-audit-probe-8e2c549ffd08f4f7804c8068-9ae25767.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://tdengine.com/geo-audit-probe-8e2c549ffd08f4f7804c8068",
+  "handwritten": false,
+  "headers": {
+    "cache-control": "no-cache, must-revalidate, max-age=0, no-store, private",
+    "connection": "keep-alive",
+    "content-encoding": "gzip",
+    "content-type": "text/html; charset=UTF-8",
+    "date": "Tue, 08 Sep 2026 03:55:04 GMT",
+    "expires": "Wed, 11 Jan 1984 05:00:00 GMT",
+    "link": "<https://tdengine.com/wp-json/>; rel=\"https://api.w.org/\"",
+    "server": "openresty/1.27.1.2",
+    "transfer-encoding": "chunked",
+    "vary": "Accept-Encoding",
+    "x-powered-by": "PHP/7.4.33",
+    "x-ua-compatible": "IE=edge"
+  },
+  "note": null,
+  "probe_for": "https://tdengine.com/",
+  "raw_md5": "81e964377b86cd8510479bd18fa3513d",
+  "recorded_at": "2026-09-08T03:55:04Z",
+  "status": 404,
+  "stored_bytes": 167477,
+  "transport_error": null,
+  "url": "https://tdengine.com/geo-audit-probe-8e2c549ffd08f4f7804c8068"
+}
