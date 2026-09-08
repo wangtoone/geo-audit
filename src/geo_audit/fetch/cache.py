@@ -103,6 +103,27 @@ class CachePolicy:
     offline: bool = False
 
 
+# --------------------------------------------------------------------------- #
+# 全局连接登记表：把「谁漏了连接」变成一条能红的断言
+# --------------------------------------------------------------------------- #
+# **为什么要有这个**：漏关的 sqlite 连接在 Python 3.13 上会在 GC 时发
+# ResourceWarning，撞上 filterwarnings=error 变成错误 —— 但 pytest 把它算在
+# 「GC 恰好触发时正在跑的那条测试」头上。实测被连坐的是三条纯扫源文、
+# 一个请求都不发的测试，顺着报错的文件名（coverage/collector.py、
+# httpx/_models.py）根本找不到病因，白烧了两轮 CI。
+#
+# 有了这张表，conftest 里的 autouse 闸就能在**每条测试结束时**比对开着的连接
+# 数，直接点名是哪条测试漏的，而且在 3.11/3.12 上一样红 —— 不用等 3.13。
+_open_lock = threading.Lock()
+_open_conns: set[int] = set()
+
+
+def open_connection_count() -> int:
+    """当前还开着的、由 HttpCache 打开的 sqlite 连接数。"""
+    with _open_lock:
+        return len(_open_conns)
+
+
 class HttpCache:
     """Thread-safe SQLite-backed cache."""
 
@@ -125,6 +146,9 @@ class HttpCache:
         # 所以另存一份总账。
         self._all_conns: list[sqlite3.Connection] = []
         self._all_lock = threading.Lock()
+        # close() 关不掉的连接留痕。空列表是唯一可接受的状态 ——
+        # 非空即「有连接没真关上」，3.13 上就是一条 ResourceWarning。
+        self.close_failures: list[str] = []
         with self._conn() as conn:
             conn.executescript(_SCHEMA)
 
@@ -133,12 +157,31 @@ class HttpCache:
     def _conn(self) -> sqlite3.Connection:
         conn = getattr(self._local, "conn", None)
         if conn is None:
-            conn = sqlite3.connect(self.path, timeout=30, isolation_level=None)
+            # check_same_thread=False 是**必须**的，不是图方便：连接存在
+            # threading.local 里，线程池每个 worker 各开一条，而 close() 是在
+            # 主线程跑的。默认 check_same_thread=True 下，主线程 close 一条
+            # worker 建的连接会抛
+            #   ProgrammingError: SQLite objects created in a thread can only
+            #   be used in that same thread.
+            # 它是 sqlite3.Error 的子类，正好被 close() 里那句
+            # `with suppress(sqlite3.Error)` 吞掉 —— 于是连接从没真关上，
+            # 等 GC 析构时 3.13 发 ResourceWarning，撞上 filterwarnings=error，
+            # CI 上 3.13 三个 OS 全红，而 3.12 不报所以本地看不见。
+            #
+            # 关掉这把检查是安全的：每线程一条连接（threading.local），没有
+            # 跨线程共用；唯一的跨线程操作就是收尾时那次 close，而
+            # client.py 的 ThreadPoolExecutor 是 with 语句用的，close() 跑到时
+            # worker 已经全部 join 完，不存在「一边用一边关」。
+            conn = sqlite3.connect(
+                self.path, timeout=30, isolation_level=None, check_same_thread=False
+            )
             conn.execute("PRAGMA journal_mode=WAL")
             conn.execute("PRAGMA synchronous=NORMAL")
             self._local.conn = conn
             with self._all_lock:
                 self._all_conns.append(conn)
+            with _open_lock:
+                _open_conns.add(id(conn))
         return conn
 
     def close(self) -> None:
@@ -157,8 +200,18 @@ class HttpCache:
         with self._all_lock:
             conns, self._all_conns = self._all_conns, []
         for conn in conns:
-            with suppress(sqlite3.Error):
+            try:
                 conn.close()
+            except sqlite3.Error as exc:
+                # **不用 suppress**：原来这里是 `with suppress(sqlite3.Error)`,
+                # 而它吞掉的恰好是 check_same_thread 那条 ProgrammingError
+                # （见 _conn 里的注释）—— 一个「尽力释放」的宽容写法把一个真
+                # 泄漏藏了两轮 CI。close 仍然不许抛（收尾失败不该让调用方崩），
+                # 但失败必须留痕，好让回归测试能红。
+                self.close_failures.append(f"{type(exc).__name__}: {exc}")
+            else:
+                with _open_lock:
+                    _open_conns.discard(id(conn))
         self._local = threading.local()
 
     def __enter__(self) -> HttpCache:

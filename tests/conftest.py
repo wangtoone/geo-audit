@@ -21,11 +21,13 @@ from __future__ import annotations
 
 import os
 import socket
-from collections.abc import Callable
+from collections.abc import Callable, Iterator
 from typing import Any, NoReturn
 
 import httpx
 import pytest
+
+from geo_audit.fetch.cache import open_connection_count
 
 
 def _boom(message: str) -> Callable[..., NoReturn]:
@@ -62,3 +64,32 @@ def _no_real_network(monkeypatch: pytest.MonkeyPatch, request: pytest.FixtureReq
             _boom("测试试图做真 DNS 查询"),
             raising=True,
         )
+
+
+@pytest.fixture(autouse=True)
+def _no_leaked_sqlite_connections() -> Iterator[None]:
+    """每条测试跑完，检查它有没有漏下开着的 sqlite 连接。
+
+    **为什么值得一条 autouse 闸**：漏关的连接在 Python 3.13 上会在 GC 时发
+    ``ResourceWarning``，撞上 ``filterwarnings = error`` 直接变成错误 —— 但
+    pytest 把它算在「GC 恰好触发时正在跑的那条测试」头上。实测被连坐的三条
+    （``test_no_bypass_machinery_in_code`` / ``test_a6_named_types...`` /
+    ``test_a27_five_forbidden_patterns...``）都是纯扫源文、一个 HTTP 请求都不发
+    的测试，而报错指向 ``coverage/collector.py`` 和 ``httpx/_models.py`` ——
+    顺着报错找病因是找不到的，实测烧掉两轮 CI。
+
+    这条闸把它变成：**漏的那条测试自己红**，并且在 3.11/3.12 上一样红，
+    不用等 3.13 的 ResourceWarning 才发现。
+
+    比的是差值而不是绝对值：会话级 fixture 合法地跨测试持有连接，
+    只有「本条测试新开、又没关掉」才算漏。
+    """
+    before = open_connection_count()
+    yield
+    after = open_connection_count()
+    assert after <= before, (
+        f"这条测试漏了 {after - before} 条没关的 sqlite 连接"
+        f"（进入时 {before} 条，退出时 {after} 条）。"
+        "漏关的连接在 3.13 上会变成 ResourceWarning，并且会算在别的测试头上 —— "
+        "请在这条测试里显式 close()（Fetcher.close() 会连 cache 一起关）。"
+    )

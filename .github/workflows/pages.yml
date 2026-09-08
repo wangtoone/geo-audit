@@ -23,6 +23,15 @@ on:
   schedule: [{ cron: "23 4 1 * *" }] # 每月 1 日 04:23 UTC，§7.4(c) 的「每月重跑」
   workflow_dispatch:
 
+# ⚠️ 一次性前置：仓库的 Pages 必须先启用、且来源设成 GitHub Actions，
+# 否则 configure-pages 会以
+#     Get Pages site failed ... Error: Not Found
+# 失败 —— 那句报错**不提示**去哪开，实测白查了一轮。命令：
+#     gh api -X POST repos/<owner>/<repo>/pages -f build_type=workflow
+# （或 Settings → Pages → Source: GitHub Actions）
+# 这里刻意不写 `enablement: true` 自动开：那会让任何 fork 都去改仓库设置，
+# 而 fork 通常没有那个权限，失败信息比现在更难读。
+
 permissions:
   contents: read
   pages: write
