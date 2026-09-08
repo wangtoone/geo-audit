@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="generator" content="geo-audit 0.1.0">
-<title>geo-audit · openstatus.dev · AI 检索链路体检</title>
+<title>geo-audit · minimax.io · AI 可读性证据存档</title>
 <style>/* geo-audit 报告样式（§6.5:3262）。全部内联进单文件 HTML —— 零 webfont、零外部
    请求、零 JS。折叠一律用原生 <details>。
 
@@ -642,8 +642,8 @@ ol.tight li {
 <header class="head">
   <div class="shell">
     <div class="meta">
-      <span class="dom">geo-audit · openstatus.dev</span>
-      <span>2026-09-08 04:43 UTC</span>
+      <span class="dom">geo-audit · minimax.io</span>
+      <span>2026-09-08 04:37 UTC</span>
       <span>0.1.0</span>
       <span>UA: geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: gallery@geo-audit.invalid)</span>
       <span>去噪清单: denoise/2026-09-07.1</span>
@@ -656,67 +656,73 @@ ol.tight li {
 
 <section id="verdict">
   <h2>判决</h2>
-  <h1>8 个位置全部通过，每一条都附对照证据和可复现命令。</h1>
+  <h1>你的 AI 检索链路上有 2 个位置会被读错，另有 1 个位置我们无法判断。</h1>
   <div class="bar">
-    <span class="total">14 个位置</span>
-    <span class="st st-pass">8 通过</span>
-    <span class="st st-fail">0 读错</span>
-    <span class="st st-unknown">0 无法判断</span>
+    <span class="total">13 个位置</span>
+    <span class="st st-pass">4 通过</span>
+    <span class="st st-fail">2 读错</span>
+    <span class="st st-unknown">1 无法判断</span>
     <span class="st st-na">6 不适用</span>
   </div>
   <p class="small">四格之和恒等于位置数。「无法判断」永不折算进「通过」——「我们看不了」和「你这里没问题」是两件事。</p>
+  <div class="banner">⚠ 本次是抽样，不是全量：https://platform.minimax.io/docs/llms.txt 的内链抽样：60/161（抽样，非全量）。抽到的范围之外我们不外推。</div>
+  <p class="lead">这次没有可上报的发现。零发现不等于干净，所以这份东西叫「AI 可读性证据存档」：下面四块是这个 0 的全部依据，你可以逐行复现。</p>
 </section>
 
 <section id="root-causes">
   <h2>按根因</h2>
   <p>本次没有需要归并的根因。</p>
-  <p class="small">口径：2 条 finding / 0 处根因 / 2 个链接实例 —— 三个数各有各的意思，不许混着说。</p>
+  <p class="small">口径：0 条 finding / 0 处根因 / 0 个链接实例 —— 三个数各有各的意思，不许混着说。</p>
 </section>
 
 <section id="unknown">
   <h2>未能评估</h2>
   <p class="lead">把「我们没看到」误读成「没问题」的代价，比漏一条 LOW 死链大得多，所以这一区排在发现之前。这些位置既不计死链也不计存活。</p>
-  <p>本次扫描没有「无法判断」的位置。</p>
+  <div class="panel box-unknown">
+    <div class="f-head">
+      <span class="st st-unknown">⑥ 可点击路径</span>
+      <span class="tag">原因码: identical_to_control</span>
+      <span class="f-id">human_path:https://minimax.io/</span>
+    </div>
+    <dl class="kv">
+      <dt>位置</dt>
+      <dd><a href="https://minimax.io/">https://minimax.io/</a></dd>
+      <dt>实际是</dt>
+      <dd>起始页抓不下来：HTTP 200 / identical_to_control</dd>
+      <dt>补救办法</dt>
+      <dd>本位置未能评估，补救办法未登记（UNKNOWN_REMEDY 缺这条，见 §2.8）。</dd>
+    </dl>
+  </div>
 </section>
 
 <section id="chain">
   <h2>AI 检索链路六段</h2>
-  <div class="chain-wrap"><svg class="chain" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1046 98" width="1046" height="98" role="img" aria-label="六段链路图：每格是一段，格内是该段的状态与位置数，六格位置数之和等于总位置数。"><defs><pattern id="geoHatch" width="6" height="6" patternTransform="rotate(45)" patternUnits="userSpaceOnUse"><line class="hatch" x1="0" y1="0" x2="0" y2="6" stroke-width="2"/></pattern><marker id="geoArrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path class="arrow" d="M0,0 L8,4 L0,8 Z"/></marker></defs><g class="cell cell-pass" data-stage="discovery" data-shape="pass" data-positions="2"><rect class="cell-box" x="0" y="0" width="156" height="98" rx="6"/><circle class="sh sh-pass" stroke-width="1" cx="78.0" cy="26.0" r="15.0"/><text class="glyph" x="78" y="31">✓</text><text class="lab" x="78" y="53">① 入口发现</text><text class="num" x="78" y="68">2 个位置</text><text class="det" x="78" y="83">✓ 2 通过</text></g><line class="link" x1="159" y1="26" x2="173" y2="26" marker-end="url(#geoArrow)"/><g class="cell cell-pass" data-stage="index_file" data-shape="pass" data-positions="3"><rect class="cell-box" x="178" y="0" width="156" height="98" rx="6"/><circle class="sh sh-pass" stroke-width="1" cx="256.0" cy="26.0" r="15.0"/><text class="glyph" x="256" y="31">✓</text><text class="lab" x="256" y="53">② 索引文件真伪</text><text class="num" x="256" y="68">3 个位置</text><text class="det" x="256" y="83">✓ 2 通过 · – 1 </text><text class="det" x="256" y="96">不适用</text></g><line class="link" x1="337" y1="26" x2="351" y2="26" marker-end="url(#geoArrow)"/><g class="cell cell-pass" data-stage="fulltext" data-shape="pass" data-positions="3"><rect class="cell-box" x="356" y="0" width="156" height="98" rx="6"/><circle class="sh sh-pass" stroke-width="1" cx="434.0" cy="26.0" r="15.0"/><text class="glyph" x="434" y="31">✓</text><text class="lab" x="434" y="53">③ 全文通道</text><text class="num" x="434" y="68">3 个位置</text><text class="det" x="434" y="83">✓ 2 通过 · – 1 </text><text class="det" x="434" y="96">不适用</text></g><line class="link" x1="515" y1="26" x2="529" y2="26" marker-end="url(#geoArrow)"/><g class="cell cell-na" data-stage="index_links" data-shape="not_applicable" data-positions="0"><rect class="cell-box" x="534" y="0" width="156" height="98" rx="6"/><rect class="sh sh-na" stroke-width="1" stroke-dasharray="1 3" x="599.2" y="13.2" width="25.5" height="25.5" fill="none"/><text class="glyph" x="612" y="31">–</text><text class="lab" x="612" y="53">④ 索引内链存活</text><text class="num" x="612" y="68">0 个位置</text><text class="det" x="612" y="83">未探测</text></g><line class="link" x1="693" y1="26" x2="707" y2="26" marker-end="url(#geoArrow)"/><g class="cell cell-na" data-stage="md_channel" data-shape="not_applicable" data-positions="1"><rect class="cell-box" x="712" y="0" width="156" height="98" rx="6"/><rect class="sh sh-na" stroke-width="1" stroke-dasharray="1 3" x="777.2" y="13.2" width="25.5" height="25.5" fill="none"/><text class="glyph" x="790" y="31">–</text><text class="lab" x="790" y="53">⑤ .md 通道</text><text class="num" x="790" y="68">1 个位置</text><text class="det" x="790" y="83">未声明「任意页面加 .md</text><text class="det" x="790" y="96">」约定</text></g><line class="link" x1="871" y1="26" x2="885" y2="26" marker-end="url(#geoArrow)"/><g class="cell cell-pass" data-stage="human_path" data-shape="pass" data-positions="5"><rect class="cell-box" x="890" y="0" width="156" height="98" rx="6"/><circle class="sh sh-pass" stroke-width="1" cx="968.0" cy="26.0" r="15.0"/><text class="glyph" x="968" y="31">✓</text><text class="lab" x="968" y="53">⑥ 可点击路径</text><text class="num" x="968" y="68">5 个位置</text><text class="det" x="968" y="83">✓ 2 通过 · – 3 </text><text class="det" x="968" y="96">不适用</text></g></svg></div>
+  <div class="chain-wrap"><svg class="chain" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1046 98" width="1046" height="98" role="img" aria-label="六段链路图：每格是一段，格内是该段的状态与位置数，六格位置数之和等于总位置数。"><defs><pattern id="geoHatch" width="6" height="6" patternTransform="rotate(45)" patternUnits="userSpaceOnUse"><line class="hatch" x1="0" y1="0" x2="0" y2="6" stroke-width="2"/></pattern><marker id="geoArrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path class="arrow" d="M0,0 L8,4 L0,8 Z"/></marker></defs><g class="cell cell-fail" data-stage="discovery" data-shape="fail" data-positions="3"><rect class="cell-box" x="0" y="0" width="156" height="98" rx="6"/><polygon class="sh sh-fail" stroke-width="3" points="71.8,11.0 84.2,11.0 93.0,19.8 93.0,32.2 84.2,41.0 71.8,41.0 63.0,32.2 63.0,19.8"/><text class="glyph" x="78" y="31">✕</text><text class="lab" x="78" y="53">① 入口发现</text><text class="num" x="78" y="68">3 个位置</text><text class="det" x="78" y="83">✓ 1 通过 · ✕ 2 </text><text class="det" x="78" y="96">读错</text></g><line class="link" x1="159" y1="26" x2="173" y2="26" marker-end="url(#geoArrow)"/><g class="cell cell-pass" data-stage="index_file" data-shape="pass" data-positions="2"><rect class="cell-box" x="178" y="0" width="156" height="98" rx="6"/><circle class="sh sh-pass" stroke-width="1" cx="256.0" cy="26.0" r="15.0"/><text class="glyph" x="256" y="31">✓</text><text class="lab" x="256" y="53">② 索引文件真伪</text><text class="num" x="256" y="68">2 个位置</text><text class="det" x="256" y="83">✓ 1 通过 · – 1 </text><text class="det" x="256" y="96">不适用</text></g><line class="link" x1="337" y1="26" x2="351" y2="26" marker-end="url(#geoArrow)"/><g class="cell cell-pass" data-stage="fulltext" data-shape="pass" data-positions="1"><rect class="cell-box" x="356" y="0" width="156" height="98" rx="6"/><circle class="sh sh-pass" stroke-width="1" cx="434.0" cy="26.0" r="15.0"/><text class="glyph" x="434" y="31">✓</text><text class="lab" x="434" y="53">③ 全文通道</text><text class="num" x="434" y="68">1 个位置</text><text class="det" x="434" y="83">对照探测 https://</text><text class="det" x="434" y="96">platform.min…</text></g><line class="link" x1="515" y1="26" x2="529" y2="26" marker-end="url(#geoArrow)"/><g class="cell cell-pass" data-stage="index_links" data-shape="pass" data-positions="1"><rect class="cell-box" x="534" y="0" width="156" height="98" rx="6"/><circle class="sh sh-pass" stroke-width="1" cx="612.0" cy="26.0" r="15.0"/><text class="glyph" x="612" y="31">✓</text><text class="lab" x="612" y="53">④ 索引内链存活</text><text class="num" x="612" y="68">1 个位置</text><text class="det" x="612" y="83">161 条内链：60 活 </text><text class="det" x="612" y="96">/ 0 死 / 0 判不了</text></g><line class="link" x1="693" y1="26" x2="707" y2="26" marker-end="url(#geoArrow)"/><g class="cell cell-na" data-stage="md_channel" data-shape="not_applicable" data-positions="1"><rect class="cell-box" x="712" y="0" width="156" height="98" rx="6"/><rect class="sh sh-na" stroke-width="1" stroke-dasharray="1 3" x="777.2" y="13.2" width="25.5" height="25.5" fill="none"/><text class="glyph" x="790" y="31">–</text><text class="lab" x="790" y="53">⑤ .md 通道</text><text class="num" x="790" y="68">1 个位置</text><text class="det" x="790" y="83">未声明「任意页面加 .md</text><text class="det" x="790" y="96">」约定</text></g><line class="link" x1="871" y1="26" x2="885" y2="26" marker-end="url(#geoArrow)"/><g class="cell cell-unknown" data-stage="human_path" data-shape="unknown" data-positions="5"><rect class="cell-box" x="890" y="0" width="156" height="98" rx="6"/><polygon class="sh sh-unknown" stroke-width="2" stroke-dasharray="4 3" points="968.0,8.8 985.2,26.0 968.0,43.2 950.8,26.0" fill="url(#geoHatch)"/><text class="glyph" x="968" y="31">?</text><text class="lab" x="968" y="53">⑥ 可点击路径</text><text class="num" x="968" y="68">5 个位置</text><text class="det" x="968" y="83">? 1 无法判断 · – </text><text class="det" x="968" y="96">4 不适用</text></g></svg></div>
   <p class="lead">这条链路上任何一段断掉，后面几段的内容 AI 都拿不到。</p>
 </section>
 
 <section id="naive-demo">
   <h2>差异化演示</h2>
-  <p><strong>只探根路径、不做对照探测的实现，会在你的 4 个位置上读错</strong></p>
+  <p><strong>只探根路径、不做对照探测的实现，会在你的 2 个位置上读错</strong></p>
   <div class="wide">
     <table>
       <thead><tr><th>探测位置</th><th>那种实现会说</th><th>实际是</th></tr></thead>
       <tbody>
         <tr>
-          <td><a href="https://openstatus.dev/llms.txt">https://openstatus.dev/llms.txt</a></td>
-          <td>未采纳（599）</td>
-          <td>对照探测 https://openstatus.dev/geo-audit-probe-695299ca2c3bdb82d1fceb2f 返回 HTTP 404 / text/html，与本响应可区分，判为真实内容</td>
-        </tr>
-        <tr>
-          <td><a href="https://openstatus.dev/llms-full.txt">https://openstatus.dev/llms-full.txt</a></td>
-          <td>未采纳（599）</td>
-          <td>对照探测 https://openstatus.dev/geo-audit-probe-695299ca2c3bdb82d1fceb2f 返回 HTTP 404 / text/html，与本响应可区分，判为真实内容</td>
-        </tr>
-        <tr>
-          <td><a href="https://www.openstatus.dev/docs/llms.txt">https://www.openstatus.dev/docs/llms.txt</a></td>
+          <td><a href="https://platform.minimax.io/llms-full.txt">https://platform.minimax.io/llms-full.txt</a></td>
           <td>未采纳（没探这个位置）</td>
-          <td>对照探测 https://www.openstatus.dev/geo-audit-probe-92f3a1a37cbf5597401c981c 返回 HTTP 599 / text/plain，与本响应可区分，判为真实内容</td>
+          <td>对照探测 https://platform.minimax.io/geo-audit-probe-3d1314913a5e302422adc7e3 返回 HTTP 599 / text/plain，与本响应可区分，判为真实内容</td>
         </tr>
         <tr>
-          <td><a href="https://www.openstatus.dev/docs/llms-full.txt">https://www.openstatus.dev/docs/llms-full.txt</a></td>
+          <td><a href="https://platform.minimax.io/docs/llms.txt">https://platform.minimax.io/docs/llms.txt</a></td>
           <td>未采纳（没探这个位置）</td>
-          <td>对照探测 https://www.openstatus.dev/geo-audit-probe-92f3a1a37cbf5597401c981c 返回 HTTP 599 / text/plain，与本响应可区分，判为真实内容</td>
+          <td>对照探测 https://platform.minimax.io/geo-audit-probe-3d1314913a5e302422adc7e3 返回 HTTP 599 / text/plain，与本响应可区分，判为真实内容</td>
         </tr>
       </tbody>
     </table>
   </div>
   <p class="small">这一块的作用不是炫技，是让「我拿别的东西查过，没这条」这句话失效：我们先说出那类实现在这里会得出什么、以及它少做了哪一步。</p>
-  <pre>自己复现 → geo-audit openstatus.dev --contact you@you.co --naive-only</pre>
+  <pre>自己复现 → geo-audit minimax.io --contact you@you.co --naive-only</pre>
 </section>
 
 <section id="disclosure">
@@ -725,106 +731,7 @@ ol.tight li {
 
 <section id="findings">
   <h2>发现（按根因分组）</h2>
-  <h3>
-未归并（各自独立的一处改动）  </h3>
-  <article class="finding box-fail">
-    <div class="f-head">
-      <span class="f-sev sev-high">HIGH</span>
-      <span>·</span>
-      <span>AI 通道内部</span>
-      <span class="tag">③ 全文通道</span>
-      <span class="tag">llms_full_fake</span>
-      <span class="f-id">GA-02E41253FB</span>
-    </div>
-    <div class="f-title">llms-full.txt 与 llms.txt 是同一份字节（一个字正文都没有）</div>
-
-    <h4>去哪儿改</h4>
-    <p>索引 44 B → 全文 44 B，比 1.0（修复目标：我们没找到明显的正确目标，需人工确认）</p>
-
-    <h4>证据</h4>
-    <div class="stack">
-      <div><strong>目标</strong>
-        <a class="dead" href="https://www.openstatus.dev/docs/llms-full.txt">https://www.openstatus.dev/docs/llms-full.txt</a>
-        <span class="tag">599</span>
-        <span class="tag">text/plain</span>
-<span class="tag">44 B</span>      </div>
-<div class="small">fixture missing: this url was never recorded</div>      <div><strong>同域</strong>
-        <a href="https://www.openstatus.dev/docs/llms.txt">https://www.openstatus.dev/docs/llms.txt</a>
-        <span class="tag">599</span>
-        <span class="tag">text/plain</span>
-      </div>
-      <div class="small">同域对照返回正常，所以这不是整站反爬。</div>
-      <div><strong>复现</strong></div>
-      <pre>curl -sSL -A &#39;geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: gallery@geo-audit.invalid)&#39; &#39;https://www.openstatus.dev/docs/llms-full.txt&#39;</pre>
-    </div>
-
-    <p><strong>只探根路径、不做对照探测的实现会说：</strong>未采纳（没探这个位置）</p>
-    <p><strong>实际是：</strong>llms-full.txt 与 llms.txt 是同一份字节（一个字正文都没有）：索引 44 B / 全文 44 B（比 1.0）</p>
-
-<p>两个文件字节完全相同，说明打包流水线没把正文接进来。实测三家同为 Fern 托管 —— 一条规则抓一整个平台的所有客户。</p>    <p class="small"><strong>严重度依据：</strong>
-<span class="tag">page_role=ai_channel</span><span class="tag">anchor=（AI 通道内部，无锚文本）</span><span class="tag">anchor_class=（AI 通道内部，无 class）</span><span class="tag">region=ai_channel</span>    </p>
-    <p class="small"><strong>不认这条：</strong><code>geo-audit openstatus.dev --ignore GA-02E41253FB</code></p>
-
-    <details>
-      <summary>纯文本版（手选复制）</summary>
-      <pre>GA-02E41253FB HIGH AI 通道内部
-llms-full.txt 与 llms.txt 是同一份字节（一个字正文都没有）
-目标: https://www.openstatus.dev/docs/llms-full.txt 599 text/plain
-这个目标在站上出现 1 次（0 个页面） https://www.openstatus.dev/docs/llms.txt
-curl -sSL -A &#39;geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: gallery@geo-audit.invalid)&#39; &#39;https://www.openstatus.dev/docs/llms-full.txt&#39;
-geo-audit openstatus.dev --ignore GA-02E41253FB</pre>
-    </details>
-
-  </article>
-  <article class="finding box-fail">
-    <div class="f-head">
-      <span class="f-sev sev-high">HIGH</span>
-      <span>·</span>
-      <span>AI 通道内部</span>
-      <span class="tag">③ 全文通道</span>
-      <span class="tag">llms_full_fake</span>
-      <span class="f-id">GA-29492F0830</span>
-    </div>
-    <div class="f-title">llms-full.txt 与 llms.txt 是同一份字节（一个字正文都没有）</div>
-
-    <h4>去哪儿改</h4>
-    <p>索引 44 B → 全文 44 B，比 1.0（修复目标：我们没找到明显的正确目标，需人工确认）</p>
-
-    <h4>证据</h4>
-    <div class="stack">
-      <div><strong>目标</strong>
-        <a class="dead" href="https://openstatus.dev/llms-full.txt">https://openstatus.dev/llms-full.txt</a>
-        <span class="tag">599</span>
-        <span class="tag">text/plain</span>
-<span class="tag">44 B</span>      </div>
-<div class="small">fixture missing: this url was never recorded</div>      <div><strong>同域</strong>
-        <a href="https://openstatus.dev/llms.txt">https://openstatus.dev/llms.txt</a>
-        <span class="tag">599</span>
-        <span class="tag">text/plain</span>
-      </div>
-      <div class="small">同域对照返回正常，所以这不是整站反爬。</div>
-      <div><strong>复现</strong></div>
-      <pre>curl -sSL -A &#39;geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: gallery@geo-audit.invalid)&#39; &#39;https://openstatus.dev/llms-full.txt&#39;</pre>
-    </div>
-
-    <p><strong>只探根路径、不做对照探测的实现会说：</strong>未采纳（599 服务端错误）</p>
-    <p><strong>实际是：</strong>llms-full.txt 与 llms.txt 是同一份字节（一个字正文都没有）：索引 44 B / 全文 44 B（比 1.0）</p>
-
-<p>两个文件字节完全相同，说明打包流水线没把正文接进来。实测三家同为 Fern 托管 —— 一条规则抓一整个平台的所有客户。</p>    <p class="small"><strong>严重度依据：</strong>
-<span class="tag">page_role=ai_channel</span><span class="tag">anchor=（AI 通道内部，无锚文本）</span><span class="tag">anchor_class=（AI 通道内部，无 class）</span><span class="tag">region=ai_channel</span>    </p>
-    <p class="small"><strong>不认这条：</strong><code>geo-audit openstatus.dev --ignore GA-29492F0830</code></p>
-
-    <details>
-      <summary>纯文本版（手选复制）</summary>
-      <pre>GA-29492F0830 HIGH AI 通道内部
-llms-full.txt 与 llms.txt 是同一份字节（一个字正文都没有）
-目标: https://openstatus.dev/llms-full.txt 599 text/plain
-这个目标在站上出现 1 次（0 个页面） https://openstatus.dev/llms.txt
-curl -sSL -A &#39;geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: gallery@geo-audit.invalid)&#39; &#39;https://openstatus.dev/llms-full.txt&#39;
-geo-audit openstatus.dev --ignore GA-29492F0830</pre>
-    </details>
-
-  </article>
+  <p>本次没有可上报的发现。这不代表你的站没有可改的地方 ——见下面的「证据存档」与「下次会先坏在哪」。</p>
 </section>
 
 <section id="review">
@@ -848,7 +755,7 @@ geo-audit openstatus.dev --ignore GA-29492F0830</pre>
       <dt>实测先例</dt><dd>gusto.com 403、www.pipedrive.com 429</dd>
     </dl>
     <div><strong>放进 CI 的一条命令</strong></div>
-    <pre>geo-audit openstatus.dev --contact you@yourco.com --format json</pre>
+    <pre>geo-audit minimax.io --contact you@yourco.com --format json</pre>
   </article>
   <article class="fragility panel">
     <div class="f-head">
@@ -857,26 +764,52 @@ geo-audit openstatus.dev --ignore GA-29492F0830</pre>
     </div>
     <div class="f-title">该 host 对未知路径不返回 404</div>
     <dl class="kv">
-      <dt>判据</dt><dd>本次全部 host 对随机路径都返回了非 2xx（状态码可判别）</dd>
+      <dt>判据</dt><dd>对随机路径不返回 404 的 host：minimax.io, www.minimax.io</dd>
       <dt>为什么危险</dt><dd>这种 host 上任何只看状态码的工具都会报 0 死链，那个 0 是假的。</dd>
       <dt>实测先例</dt><dd>developers.pipedrive.com（200 + 24,907 B 兜底页）、docs.gusto.com（302→/）、docs.moderntreasury.com（302→/）、www.minimax.io（200 + 384,052 B）、platform.kimi.ai（200 + 414,072 B）</dd>
     </dl>
     <div><strong>放进 CI 的一条命令</strong></div>
-    <pre>geo-audit openstatus.dev --contact you@yourco.com --format json</pre>
+    <pre>geo-audit minimax.io --contact you@yourco.com --format json</pre>
   </article>
 </section>
 
 <section id="evidence">
   <h2>我们替你验了什么 · 证据存档</h2>
   <p class="lead">逐位置一行，行数恒等于位置数。每行都带一条可粘贴的 curl。</p>
-  <p class="small">共 14 行 == 14 个位置。</p>
+  <p class="small">共 13 行 == 13 个位置。</p>
   <div class="wide">
     <table>
       <thead><tr><th>段</th><th>URL</th><th>状态码</th><th>content-type</th><th>字节</th><th>对照路径</th><th>对照返回</th><th>结论</th></tr></thead>
       <tbody>
+        <tr class="box-fail">
+          <td>① 入口发现</td>
+          <td><a href="https://minimax.io/">https://minimax.io/</a></td>
+          <td class="num">—</td>
+          <td>—</td>
+          <td class="num">—</td>
+          <td class="rawurl">—</td>
+          <td class="num">—</td>
+          <td>
+            <span class="st st-fail">读错</span>
+            与同域不存在路径 https://minimax.io/geo-audit-probe-54c87f774312a501703355d3 的归一化正文完全相同（sha256 8548c858330bab04…，标签数 1093）；该 host 对任意路径返回同一个壳，本位置等同不存在；已用第二次即时对照探测 https://minimax.io/geo-audit-probe-54c87f774312a501703355d3 复核，结论一致
+          </td>
+        </tr>
+        <tr class="box-fail">
+          <td>① 入口发现</td>
+          <td><a href="https://www.minimax.io/">https://www.minimax.io/</a></td>
+          <td class="num">—</td>
+          <td>—</td>
+          <td class="num">—</td>
+          <td class="rawurl">—</td>
+          <td class="num">—</td>
+          <td>
+            <span class="st st-fail">读错</span>
+            与同域不存在路径 https://www.minimax.io/geo-audit-probe-f791b588bc92b4991341620c.txt 的归一化正文完全相同（sha256 8548c858330bab04…，标签数 1093）；该 host 对任意路径返回同一个壳，本位置等同不存在；已用第二次即时对照探测 https://www.minimax.io/geo-audit-probe-f791b588bc92b4991341620c.txt 复核，结论一致
+          </td>
+        </tr>
         <tr class="box-pass">
           <td>① 入口发现</td>
-          <td><a href="https://openstatus.dev/">https://openstatus.dev/</a></td>
+          <td><a href="https://platform.minimax.io/">https://platform.minimax.io/</a></td>
           <td class="num">—</td>
           <td>—</td>
           <td class="num">—</td>
@@ -884,109 +817,68 @@ geo-audit openstatus.dev --ignore GA-29492F0830</pre>
           <td class="num">—</td>
           <td>
             <span class="st st-pass">通过</span>
-            对照探测 https://openstatus.dev/geo-audit-probe-695299ca2c3bdb82d1fceb2f 返回 HTTP 404 / text/html，与本响应可区分，判为真实内容
+            对照探测 https://platform.minimax.io/geo-audit-probe-3d1314913a5e302422adc7e3 返回 HTTP 599 / text/plain，与本响应可区分，判为真实内容
+          </td>
+        </tr>
+        <tr class="box-na">
+          <td>② 索引文件真伪</td>
+          <td><a href="https://platform.minimax.io/llms.txt">https://platform.minimax.io/llms.txt</a></td>
+          <td class="num">404</td>
+          <td>text/html</td>
+          <td class="num">43,478</td>
+          <td class="rawurl">https://platform.minimax.io/geo-audit-probe-3d1314913a5e302422adc7e3</td>
+          <td class="num">599</td>
+          <td>
+            <span class="st st-na">不适用</span>
+            HTTP 404（状态码正确，正文形态不参与判定）
+            <details><summary>curl</summary><pre>curl -sSL -A &#39;geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: gallery@geo-audit.invalid)&#39; &#39;https://platform.minimax.io/llms.txt&#39;</pre></details>
           </td>
         </tr>
         <tr class="box-pass">
-          <td>① 入口发现</td>
-          <td><a href="https://www.openstatus.dev/">https://www.openstatus.dev/</a></td>
-          <td class="num">—</td>
-          <td>—</td>
-          <td class="num">—</td>
+          <td>③ 全文通道</td>
+          <td><a href="https://platform.minimax.io/llms-full.txt">https://platform.minimax.io/llms-full.txt</a></td>
+          <td class="num">599</td>
+          <td>text/plain</td>
+          <td class="num">44</td>
+          <td class="rawurl">https://platform.minimax.io/geo-audit-probe-3d1314913a5e302422adc7e3</td>
+          <td class="num">599</td>
+          <td>
+            <span class="st st-pass">通过</span>
+            对照探测 https://platform.minimax.io/geo-audit-probe-3d1314913a5e302422adc7e3 返回 HTTP 599 / text/plain，与本响应可区分，判为真实内容
+            <details><summary>curl</summary><pre>curl -sSL -A &#39;geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: gallery@geo-audit.invalid)&#39; &#39;https://platform.minimax.io/llms-full.txt&#39;</pre></details>
+          </td>
+        </tr>
+        <tr class="box-pass">
+          <td>② 索引文件真伪</td>
+          <td><a href="https://platform.minimax.io/docs/llms.txt">https://platform.minimax.io/docs/llms.txt</a></td>
+          <td class="num">200</td>
+          <td>text/plain</td>
+          <td class="num">24,676</td>
+          <td class="rawurl">https://platform.minimax.io/geo-audit-probe-3d1314913a5e302422adc7e3</td>
+          <td class="num">599</td>
+          <td>
+            <span class="st st-pass">通过</span>
+            对照探测 https://platform.minimax.io/geo-audit-probe-3d1314913a5e302422adc7e3 返回 HTTP 599 / text/plain，与本响应可区分，判为真实内容
+            <details><summary>curl</summary><pre>curl -sSL -A &#39;geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: gallery@geo-audit.invalid)&#39; &#39;https://platform.minimax.io/docs/llms.txt&#39;</pre></details>
+          </td>
+        </tr>
+        <tr class="box-pass">
+          <td>④ 索引内链存活</td>
+          <td><a href="https://platform.minimax.io/docs/llms.txt">https://platform.minimax.io/docs/llms.txt</a></td>
+          <td class="num">200</td>
+          <td>text/plain</td>
+          <td class="num">24,676</td>
           <td class="rawurl">—</td>
           <td class="num">—</td>
           <td>
             <span class="st st-pass">通过</span>
-            对照探测 https://www.openstatus.dev/geo-audit-probe-92f3a1a37cbf5597401c981c 返回 HTTP 599 / text/plain，与本响应可区分，判为真实内容
-          </td>
-        </tr>
-        <tr class="box-pass">
-          <td>② 索引文件真伪</td>
-          <td><a href="https://openstatus.dev/llms.txt">https://openstatus.dev/llms.txt</a></td>
-          <td class="num">599</td>
-          <td>text/plain</td>
-          <td class="num">44</td>
-          <td class="rawurl">https://openstatus.dev/geo-audit-probe-695299ca2c3bdb82d1fceb2f</td>
-          <td class="num">404</td>
-          <td>
-            <span class="st st-pass">通过</span>
-            对照探测 https://openstatus.dev/geo-audit-probe-695299ca2c3bdb82d1fceb2f 返回 HTTP 404 / text/html，与本响应可区分，判为真实内容
-            <details><summary>curl</summary><pre>curl -sSL -A &#39;geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: gallery@geo-audit.invalid)&#39; &#39;https://openstatus.dev/llms.txt&#39;</pre></details>
-          </td>
-        </tr>
-        <tr class="box-pass">
-          <td>③ 全文通道</td>
-          <td><a href="https://openstatus.dev/llms-full.txt">https://openstatus.dev/llms-full.txt</a></td>
-          <td class="num">599</td>
-          <td>text/plain</td>
-          <td class="num">44</td>
-          <td class="rawurl">https://openstatus.dev/geo-audit-probe-695299ca2c3bdb82d1fceb2f</td>
-          <td class="num">404</td>
-          <td>
-            <span class="st st-pass">通过</span>
-            对照探测 https://openstatus.dev/geo-audit-probe-695299ca2c3bdb82d1fceb2f 返回 HTTP 404 / text/html，与本响应可区分，判为真实内容
-            <details><summary>curl</summary><pre>curl -sSL -A &#39;geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: gallery@geo-audit.invalid)&#39; &#39;https://openstatus.dev/llms-full.txt&#39;</pre></details>
-          </td>
-        </tr>
-        <tr class="box-na">
-          <td>② 索引文件真伪</td>
-          <td><a href="https://www.openstatus.dev/llms.txt">https://www.openstatus.dev/llms.txt</a></td>
-          <td class="num">404</td>
-          <td>text/markdown</td>
-          <td class="num">483</td>
-          <td class="rawurl">https://www.openstatus.dev/geo-audit-probe-92f3a1a37cbf5597401c981c</td>
-          <td class="num">599</td>
-          <td>
-            <span class="st st-na">不适用</span>
-            HTTP 404（状态码正确，正文形态不参与判定）
-            <details><summary>curl</summary><pre>curl -sSL -A &#39;geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: gallery@geo-audit.invalid)&#39; &#39;https://www.openstatus.dev/llms.txt&#39;</pre></details>
-          </td>
-        </tr>
-        <tr class="box-na">
-          <td>③ 全文通道</td>
-          <td><a href="https://www.openstatus.dev/llms-full.txt">https://www.openstatus.dev/llms-full.txt</a></td>
-          <td class="num">404</td>
-          <td>text/markdown</td>
-          <td class="num">488</td>
-          <td class="rawurl">https://www.openstatus.dev/geo-audit-probe-92f3a1a37cbf5597401c981c</td>
-          <td class="num">599</td>
-          <td>
-            <span class="st st-na">不适用</span>
-            HTTP 404（状态码正确，正文形态不参与判定）
-            <details><summary>curl</summary><pre>curl -sSL -A &#39;geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: gallery@geo-audit.invalid)&#39; &#39;https://www.openstatus.dev/llms-full.txt&#39;</pre></details>
-          </td>
-        </tr>
-        <tr class="box-pass">
-          <td>② 索引文件真伪</td>
-          <td><a href="https://www.openstatus.dev/docs/llms.txt">https://www.openstatus.dev/docs/llms.txt</a></td>
-          <td class="num">599</td>
-          <td>text/plain</td>
-          <td class="num">44</td>
-          <td class="rawurl">https://www.openstatus.dev/geo-audit-probe-92f3a1a37cbf5597401c981c</td>
-          <td class="num">599</td>
-          <td>
-            <span class="st st-pass">通过</span>
-            对照探测 https://www.openstatus.dev/geo-audit-probe-92f3a1a37cbf5597401c981c 返回 HTTP 599 / text/plain，与本响应可区分，判为真实内容
-            <details><summary>curl</summary><pre>curl -sSL -A &#39;geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: gallery@geo-audit.invalid)&#39; &#39;https://www.openstatus.dev/docs/llms.txt&#39;</pre></details>
-          </td>
-        </tr>
-        <tr class="box-pass">
-          <td>③ 全文通道</td>
-          <td><a href="https://www.openstatus.dev/docs/llms-full.txt">https://www.openstatus.dev/docs/llms-full.txt</a></td>
-          <td class="num">599</td>
-          <td>text/plain</td>
-          <td class="num">44</td>
-          <td class="rawurl">https://www.openstatus.dev/geo-audit-probe-92f3a1a37cbf5597401c981c</td>
-          <td class="num">599</td>
-          <td>
-            <span class="st st-pass">通过</span>
-            对照探测 https://www.openstatus.dev/geo-audit-probe-92f3a1a37cbf5597401c981c 返回 HTTP 599 / text/plain，与本响应可区分，判为真实内容
-            <details><summary>curl</summary><pre>curl -sSL -A &#39;geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: gallery@geo-audit.invalid)&#39; &#39;https://www.openstatus.dev/docs/llms-full.txt&#39;</pre></details>
+            161 条内链：60 活 / 0 死 / 0 判不了
+            <details><summary>curl</summary><pre>curl -sSL -A &#39;geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: gallery@geo-audit.invalid)&#39; &#39;https://platform.minimax.io/docs/llms.txt&#39;</pre></details>
           </td>
         </tr>
         <tr class="box-na">
           <td>⑤ .md 通道</td>
-          <td><a href="https://openstatus.dev/">https://openstatus.dev/</a></td>
+          <td><a href="https://minimax.io/">https://minimax.io/</a></td>
           <td class="num">—</td>
           <td>—</td>
           <td class="num">—</td>
@@ -997,22 +889,23 @@ geo-audit openstatus.dev --ignore GA-29492F0830</pre>
             未声明「任意页面加 .md」约定
           </td>
         </tr>
-        <tr class="box-pass">
+        <tr class="box-unknown">
           <td>⑥ 可点击路径</td>
-          <td><a href="https://www.openstatus.dev/">https://www.openstatus.dev/</a></td>
-          <td class="num">—</td>
-          <td>—</td>
-          <td class="num">—</td>
+          <td><a href="https://minimax.io/">https://minimax.io/</a></td>
+          <td class="num">200</td>
+          <td>text/html</td>
+          <td class="num">384,052</td>
           <td class="rawurl">—</td>
           <td class="num">—</td>
           <td>
-            <span class="st st-pass">通过</span>
-            66 条可点击链接全部活着
+            <span class="st st-unknown">无法判断</span>
+            起始页抓不下来：HTTP 200 / identical_to_control
+            <details><summary>curl</summary><pre>curl -sSL -A &#39;geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: gallery@geo-audit.invalid)&#39; &#39;https://minimax.io/&#39;</pre></details>
           </td>
         </tr>
         <tr class="box-na">
           <td>⑥ 可点击路径</td>
-          <td><a href="https://www.openstatus.dev/pricing">https://www.openstatus.dev/pricing</a></td>
+          <td><a href="https://minimax.io/pricing">https://minimax.io/pricing</a></td>
           <td class="num">—</td>
           <td>—</td>
           <td class="num">—</td>
@@ -1025,7 +918,7 @@ geo-audit openstatus.dev --ignore GA-29492F0830</pre>
         </tr>
         <tr class="box-na">
           <td>⑥ 可点击路径</td>
-          <td><a href="https://www.openstatus.dev/changelog">https://www.openstatus.dev/changelog</a></td>
+          <td><a href="https://minimax.io/changelog">https://minimax.io/changelog</a></td>
           <td class="num">—</td>
           <td>—</td>
           <td class="num">—</td>
@@ -1036,22 +929,22 @@ geo-audit openstatus.dev --ignore GA-29492F0830</pre>
             这一页没有可判定的可点击链接
           </td>
         </tr>
-        <tr class="box-pass">
+        <tr class="box-na">
           <td>⑥ 可点击路径</td>
-          <td><a href="https://www.openstatus.dev/docs">https://www.openstatus.dev/docs</a></td>
+          <td><a href="https://minimax.io/docs">https://minimax.io/docs</a></td>
           <td class="num">—</td>
           <td>—</td>
           <td class="num">—</td>
           <td class="rawurl">—</td>
           <td class="num">—</td>
           <td>
-            <span class="st st-pass">通过</span>
-            61 条可点击链接全部活着
+            <span class="st st-na">不适用</span>
+            这一页没有可判定的可点击链接
           </td>
         </tr>
         <tr class="box-na">
           <td>⑥ 可点击路径</td>
-          <td><a href="https://www.openstatus.dev/help">https://www.openstatus.dev/help</a></td>
+          <td><a href="https://minimax.io/help">https://minimax.io/help</a></td>
           <td class="num">—</td>
           <td>—</td>
           <td class="num">—</td>
@@ -1078,12 +971,12 @@ geo-audit openstatus.dev --ignore GA-29492F0830</pre>
 <section id="apex">
   <h2>裸域 / www 双向探测</h2>
   <dl class="kv">
-    <dt>openstatus.dev</dt>
-    <dd>ok · ok_control_discriminates</dd>
-    <dt>www.openstatus.dev</dt>
-    <dd>ok · ok_control_discriminates</dd>
+    <dt>minimax.io</dt>
+    <dd>soft404 · identical_to_control</dd>
+    <dt>www.minimax.io</dt>
+    <dd>soft404 · identical_to_control</dd>
     <dt>结论</dt>
-    <dd>both_ok <span class="tag">single_case</span></dd>
+    <dd>both_dead <span class="tag">single_case</span></dd>
   </dl>
   <p class="small">证据强度 single_case：全语料只有一例（brevo 的裸域返回 Vercel 的纯文本 DEPLOYMENT_NOT_FOUND，而 www 与 developers 子域都正常）。n=1 不够格进首页计数，所以这一区单列。</p>
 </section>
@@ -1098,96 +991,78 @@ geo-audit openstatus.dev --ignore GA-29492F0830</pre>
   <h2>朴素对照全表</h2>
   <p class="lead">同一批已抓响应上的两个读数：左边只用「跟完跳转的最终状态码」推，右边是我们的判定。朴素侧不额外发一个请求 —— 它是换算器，不是第二次扫描。</p>
   <p class="small">只有 ① 入口发现 / ② 索引文件真伪 / ③ 全文通道 三段的位置进这张表；④⑤⑥ 的差异化走下面那行死链口径对比。</p>
-  <p class="small">有分歧 4 条。</p>
+  <p class="small">有分歧 2 条。</p>
   <div class="wide">
     <table>
       <thead><tr><th>探测位置</th><th>朴素方法</th><th>那种实现会说</th><th>实际是</th><th>有分歧</th><th>多打的请求</th><th>方向</th></tr></thead>
       <tbody>
         <tr>
-          <td class="rawurl">https://openstatus.dev/</td>
+          <td class="rawurl">https://minimax.io/</td>
           <td>不在朴素探测集内</td>
           <td>它往这个 host 打过请求（只打了两条根路径）</td>
-          <td>对照探测 https://openstatus.dev/geo-audit-probe-695299ca2c3bdb82d1fceb2f 返回 HTTP 404 / text/html，与本响应可区分，判为真实内容</td>
+          <td>与同域不存在路径 https://minimax.io/geo-audit-probe-54c87f774312a501703355d3 的归一化正文完全相同（sha256 8548c858330bab04…，标签数 1093）；该 host 对任意路径返回同一个壳，本位置等同不存在；已用第二次即时对照探测 https://minimax.io/geo-audit-probe-54c87f774312a501703355d3 复核，结论一致</td>
           <td>n</td>
           <td class="num">1</td>
           <td>一致</td>
         </tr>
         <tr>
-          <td class="rawurl">https://www.openstatus.dev/</td>
+          <td class="rawurl">https://www.minimax.io/</td>
           <td>不在朴素探测集内</td>
           <td>它往这个 host 打过请求（只打了两条根路径）</td>
-          <td>对照探测 https://www.openstatus.dev/geo-audit-probe-92f3a1a37cbf5597401c981c 返回 HTTP 599 / text/plain，与本响应可区分，判为真实内容</td>
+          <td>与同域不存在路径 https://www.minimax.io/geo-audit-probe-f791b588bc92b4991341620c.txt 的归一化正文完全相同（sha256 8548c858330bab04…，标签数 1093）；该 host 对任意路径返回同一个壳，本位置等同不存在；已用第二次即时对照探测 https://www.minimax.io/geo-audit-probe-f791b588bc92b4991341620c.txt 复核，结论一致</td>
           <td>n</td>
           <td class="num">1</td>
           <td>一致</td>
         </tr>
         <tr>
-          <td class="rawurl">https://openstatus.dev/llms.txt</td>
-          <td>GET https://openstatus.dev/llms.txt，跟随跳转，只看最终状态码</td>
-          <td>未采纳（599）</td>
-          <td>对照探测 https://openstatus.dev/geo-audit-probe-695299ca2c3bdb82d1fceb2f 返回 HTTP 404 / text/html，与本响应可区分，判为真实内容</td>
-          <td>y</td>
-          <td class="num">1</td>
-          <td>假阴（它说没有，其实有真文件）</td>
-        </tr>
-        <tr>
-          <td class="rawurl">https://openstatus.dev/llms-full.txt</td>
-          <td>GET https://openstatus.dev/llms-full.txt，跟随跳转，只看最终状态码</td>
-          <td>未采纳（599）</td>
-          <td>对照探测 https://openstatus.dev/geo-audit-probe-695299ca2c3bdb82d1fceb2f 返回 HTTP 404 / text/html，与本响应可区分，判为真实内容</td>
-          <td>y</td>
-          <td class="num">1</td>
-          <td>假阴（它说没有，其实有真文件）</td>
-        </tr>
-        <tr>
-          <td class="rawurl">https://www.openstatus.dev/llms.txt</td>
-          <td>GET https://www.openstatus.dev/llms.txt，跟随跳转，只看最终状态码</td>
-          <td>未采纳（404）</td>
-          <td>HTTP 404（状态码正确，正文形态不参与判定）</td>
+          <td class="rawurl">https://platform.minimax.io/</td>
+          <td>不在朴素探测集内</td>
+          <td>它从没往这个 host 打过请求</td>
+          <td>对照探测 https://platform.minimax.io/geo-audit-probe-3d1314913a5e302422adc7e3 返回 HTTP 599 / text/plain，与本响应可区分，判为真实内容</td>
           <td>n</td>
-          <td class="num">1</td>
+          <td class="num">2</td>
           <td>一致</td>
         </tr>
         <tr>
-          <td class="rawurl">https://www.openstatus.dev/llms-full.txt</td>
-          <td>GET https://www.openstatus.dev/llms-full.txt，跟随跳转，只看最终状态码</td>
-          <td>未采纳（404）</td>
-          <td>HTTP 404（状态码正确，正文形态不参与判定）</td>
-          <td>n</td>
-          <td class="num">1</td>
-          <td>一致</td>
-        </tr>
-        <tr>
-          <td class="rawurl">https://www.openstatus.dev/docs/llms.txt</td>
+          <td class="rawurl">https://platform.minimax.io/llms.txt</td>
           <td>不在朴素探测集内</td>
           <td>未采纳（没探这个位置）</td>
-          <td>对照探测 https://www.openstatus.dev/geo-audit-probe-92f3a1a37cbf5597401c981c 返回 HTTP 599 / text/plain，与本响应可区分，判为真实内容</td>
+          <td>HTTP 404（状态码正确，正文形态不参与判定）</td>
+          <td>n</td>
+          <td class="num">2</td>
+          <td>一致</td>
+        </tr>
+        <tr>
+          <td class="rawurl">https://platform.minimax.io/llms-full.txt</td>
+          <td>不在朴素探测集内</td>
+          <td>未采纳（没探这个位置）</td>
+          <td>对照探测 https://platform.minimax.io/geo-audit-probe-3d1314913a5e302422adc7e3 返回 HTTP 599 / text/plain，与本响应可区分，判为真实内容</td>
           <td>y</td>
           <td class="num">2</td>
           <td>假阴（它说没有，其实有真文件）</td>
         </tr>
         <tr>
-          <td class="rawurl">https://www.openstatus.dev/docs/llms-full.txt</td>
+          <td class="rawurl">https://platform.minimax.io/docs/llms.txt</td>
           <td>不在朴素探测集内</td>
           <td>未采纳（没探这个位置）</td>
-          <td>对照探测 https://www.openstatus.dev/geo-audit-probe-92f3a1a37cbf5597401c981c 返回 HTTP 599 / text/plain，与本响应可区分，判为真实内容</td>
+          <td>对照探测 https://platform.minimax.io/geo-audit-probe-3d1314913a5e302422adc7e3 返回 HTTP 599 / text/plain，与本响应可区分，判为真实内容</td>
           <td>y</td>
-          <td class="num">2</td>
+          <td class="num">3</td>
           <td>假阴（它说没有，其实有真文件）</td>
         </tr>
       </tbody>
     </table>
   </div>
-  <p>死链口径对比：只看首跳状态码（&gt;= 400 即判死）会数出 102 条；我们经去噪与正文比对后是 0 条链接实例。</p>
+  <p>死链口径对比：只看首跳状态码（&gt;= 400 即判死）会数出 0 条；我们经去噪与正文比对后是 0 条链接实例。</p>
 </section>
 
 <section id="coverage">
   <h2>覆盖披露</h2>
-  <p>位置数 14 ·
-     抓到的页面 5 个 ·
-     请求 120 / 上限 120</p>
-  <p class="small">链接账本：抽取 154 = 排除 0 + 待人工 0 + 已验证 103 + 无法判断 1 + 被封顶截掉 50</p>
-  <p class="small">本次未触发抽样。</p>
+  <p>位置数 13 ·
+     抓到的页面 4 个 ·
+     请求 75 / 上限 120</p>
+  <p class="small">链接账本：抽取 0 = 排除 0 + 待人工 0 + 已验证 0 + 无法判断 0 + 被封顶截掉 0</p>
+  <p class="small">抽样：https://platform.minimax.io/docs/llms.txt 的内链抽样：60/161（抽样，非全量）</p>
   <p class="small">robots.txt 的 Disallow 我们遵守了：命中的路径零请求，判「无法判断（robots_disallowed）」。「我们没被允许看」是真话。</p>
   <p class="small">LLM 调用 0 次（这个工具零 LLM、零 API key，所以它恒为 0）。</p>
 
