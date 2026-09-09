@@ -1,0 +1,26 @@
+{
+  "body_bytes": 144,
+  "body_file": "snapshots/docs.mistral.ai/getting-started-customization-6ff3eadb.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://docs.mistral.ai/getting-started/customization/",
+  "handwritten": false,
+  "headers": {
+    "cache-control": "public, max-age=0, must-revalidate",
+    "content-type": "text/html",
+    "date": "Wed, 09 Sep 2026 08:50:38 GMT",
+    "location": "/getting-started/customization",
+    "refresh": "0;url=/getting-started/customization",
+    "server": "Vercel",
+    "strict-transport-security": "max-age=63072000",
+    "transfer-encoding": "chunked",
+    "x-vercel-id": "sin1::nmmnx-1788943838771-bae35922823f"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "91d33ffa53d6b9ef41c06fce1023c45f",
+  "recorded_at": "2026-09-09T08:50:38Z",
+  "status": 308,
+  "stored_bytes": 144,
+  "transport_error": null,
+  "url": "https://docs.mistral.ai/getting-started/customization/"
+}

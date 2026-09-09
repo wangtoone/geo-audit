@@ -1,0 +1,32 @@
+{
+  "body_bytes": 15,
+  "body_file": "snapshots/docs.mistral.ai/deployment-cloud-ibm-watsonx.md-d665f57a.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://docs.mistral.ai/deployment/cloud/ibm-watsonx.md",
+  "handwritten": false,
+  "headers": {
+    "cache-control": "public, max-age=0, must-revalidate",
+    "content-security-policy": "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://analytics.google.com https://client.axept.io https://api.axept.io https://static.axept.io https://cdn.jsdelivr.net https://vercel.live; style-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://www.googletagmanager.com https://www.google-analytics.com https://analytics.google.com https://axeptio.imgix.net https://colab.research.google.com; media-src 'self' blob:; connect-src 'self' https://www.google-analytics.com https://region1.google-analytics.com https://analytics.google.com https://www.googletagmanager.com https://client.axept.io https://static.axept.io https://api.axept.io https://esm.sh; frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com https://vercel.live/; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests",
+    "content-type": "text/plain",
+    "date": "Wed, 09 Sep 2026 08:45:10 GMT",
+    "location": "/inference/deployment/cloud-deployments/ibm-watsonx.md",
+    "permissions-policy": "geolocation=(), microphone=(), camera=()",
+    "referrer-policy": "strict-origin-when-cross-origin",
+    "refresh": "0;url=/inference/deployment/cloud-deployments/ibm-watsonx.md",
+    "server": "Vercel",
+    "strict-transport-security": "max-age=63072000",
+    "transfer-encoding": "chunked",
+    "x-content-type-options": "nosniff",
+    "x-frame-options": "SAMEORIGIN",
+    "x-vercel-id": "sin1::t9t2g-1788943510042-ac0f93c3a743",
+    "x-xss-protection": "1; mode=block"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "42c939d0ba4bbdc4c7eab1b5c34aaf71",
+  "recorded_at": "2026-09-09T08:45:09Z",
+  "status": 308,
+  "stored_bytes": 15,
+  "transport_error": null,
+  "url": "https://docs.mistral.ai/deployment/cloud/ibm-watsonx.md"
+}
