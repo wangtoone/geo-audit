@@ -1,0 +1,288 @@
+{
+  "_note": "L1 校准实测：35 条机械规则修不了的死链，各开一个全新上下文问「这页在哪」，候选由我们自己发请求验活。confident 是被试的自评，**只作数据，不作判据**。这份文件的用途是把「模型自评不能当闸门」从一句话变成一个数字。",
+  "_recorded_at": "2026-09-08",
+  "_model": "claude-opus-5-fresh-context-subagent",
+  "_corpus": "mistral.ai，v1 实测 75 条索引内链全死，机械规则修好 38 条，本表是余下 37 条里的 35 条",
+  "rows": [
+    {
+      "topic": "Agents Function Calling",
+      "dead_url": "https://docs.mistral.ai/docs/agents/agents_function_calling.md",
+      "candidate": "https://docs.mistral.ai/agents/function_calling/",
+      "status": "404",
+      "model_said_confident": true,
+      "verified_alive": false
+    },
+    {
+      "topic": "Agents Introduction",
+      "dead_url": "https://docs.mistral.ai/docs/agents/agents_introduction.md",
+      "candidate": "https://docs.mistral.ai/studio/agents/introduction",
+      "status": "200",
+      "model_said_confident": true,
+      "verified_alive": true
+    },
+    {
+      "topic": "Code Interpreter",
+      "dead_url": "https://docs.mistral.ai/docs/agents/connectors/code_interpreter.md",
+      "candidate": "https://docs.mistral.ai/studio-api/agents/agent-tools/code_interpreter",
+      "status": "200",
+      "model_said_confident": true,
+      "verified_alive": true
+    },
+    {
+      "topic": "Connectors Overview",
+      "dead_url": "https://docs.mistral.ai/docs/agents/connectors/connectors_overview.md",
+      "candidate": "https://docs.mistral.ai/agents/connectors/connectors",
+      "status": "404",
+      "model_said_confident": true,
+      "verified_alive": false
+    },
+    {
+      "topic": "Document Library",
+      "dead_url": "https://docs.mistral.ai/docs/agents/connectors/document_library.md",
+      "candidate": "https://docs.mistral.ai/agents/connectors/document_library/",
+      "status": "404",
+      "model_said_confident": true,
+      "verified_alive": false
+    },
+    {
+      "topic": "Batch Inference",
+      "dead_url": "https://docs.mistral.ai/docs/capabilities/batch_inference.md",
+      "candidate": "https://docs.mistral.ai/capabilities/batch",
+      "status": "200",
+      "model_said_confident": true,
+      "verified_alive": true
+    },
+    {
+      "topic": "Citations and References",
+      "dead_url": "https://docs.mistral.ai/docs/capabilities/citations_and_references.md",
+      "candidate": "https://docs.mistral.ai/capabilities/citations",
+      "status": "200",
+      "model_said_confident": true,
+      "verified_alive": true
+    },
+    {
+      "topic": "Coding",
+      "dead_url": "https://docs.mistral.ai/docs/capabilities/coding.md",
+      "candidate": "https://docs.mistral.ai/capabilities/code_generation",
+      "status": "200",
+      "model_said_confident": true,
+      "verified_alive": true
+    },
+    {
+      "topic": "Function calling",
+      "dead_url": "https://docs.mistral.ai/docs/capabilities/function-calling.md",
+      "candidate": "https://docs.mistral.ai/capabilities/function_calling",
+      "status": "200",
+      "model_said_confident": true,
+      "verified_alive": true
+    },
+    {
+      "topic": "Moderation",
+      "dead_url": "https://docs.mistral.ai/docs/capabilities/moderation.md",
+      "candidate": "https://docs.mistral.ai/capabilities/guardrailing",
+      "status": "200",
+      "model_said_confident": true,
+      "verified_alive": true
+    },
+    {
+      "topic": "Predicted outputs",
+      "dead_url": "https://docs.mistral.ai/docs/capabilities/predicted-outputs.md",
+      "candidate": "https://docs.mistral.ai/capabilities/predicted_outputs",
+      "status": "200",
+      "model_said_confident": true,
+      "verified_alive": true
+    },
+    {
+      "topic": "Custom Structured Output",
+      "dead_url": "https://docs.mistral.ai/docs/capabilities/structured-output/custom.md",
+      "candidate": "https://docs.mistral.ai/studio-api/conversations/structured-output/custom",
+      "status": "200",
+      "model_said_confident": true,
+      "verified_alive": true
+    },
+    {
+      "topic": "JSON mode",
+      "dead_url": "https://docs.mistral.ai/docs/capabilities/structured-output/json-mode.md",
+      "candidate": "https://docs.mistral.ai/studio/conversations/structured-output/json_mode",
+      "status": "200",
+      "model_said_confident": true,
+      "verified_alive": true
+    },
+    {
+      "topic": "Structured Output",
+      "dead_url": "https://docs.mistral.ai/docs/capabilities/structured-output/overview.md",
+      "candidate": "https://docs.mistral.ai/studio-api/conversations/structured-output",
+      "status": "200",
+      "model_said_confident": true,
+      "verified_alive": true
+    },
+    {
+      "topic": "Text and Chat Completions",
+      "dead_url": "https://docs.mistral.ai/docs/capabilities/text_and_chat_completions.md",
+      "candidate": "https://docs.mistral.ai/capabilities/completion/",
+      "status": "200",
+      "model_said_confident": true,
+      "verified_alive": true
+    },
+    {
+      "topic": "Cloud",
+      "dead_url": "https://docs.mistral.ai/docs/deployment/cloud/overview.md",
+      "candidate": "https://docs.mistral.ai/deployment/cloud",
+      "status": "200",
+      "model_said_confident": true,
+      "verified_alive": true
+    },
+    {
+      "topic": "Workspaces",
+      "dead_url": "https://docs.mistral.ai/docs/deployment/laplateforme/organization.md",
+      "candidate": "https://docs.mistral.ai/admin/security-access/organization",
+      "status": "200",
+      "model_said_confident": true,
+      "verified_alive": true
+    },
+    {
+      "topic": "La Plateforme",
+      "dead_url": "https://docs.mistral.ai/docs/deployment/laplateforme/overview.md",
+      "candidate": "https://docs.mistral.ai/deployment/laplateforme/overview",
+      "status": "404",
+      "model_said_confident": true,
+      "verified_alive": false
+    },
+    {
+      "topic": "Rate limit and usage tiers",
+      "dead_url": "https://docs.mistral.ai/docs/deployment/laplateforme/tier.md",
+      "candidate": "https://docs.mistral.ai/admin/user-management-finops/tier",
+      "status": "200",
+      "model_said_confident": true,
+      "verified_alive": true
+    },
+    {
+      "topic": "Self-deployment",
+      "dead_url": "https://docs.mistral.ai/docs/deployment/self-deployment/overview.md",
+      "candidate": "https://docs.mistral.ai/deployment/self-deployment/overview",
+      "status": "404",
+      "model_said_confident": true,
+      "verified_alive": false
+    },
+    {
+      "topic": "Welcome to Mistral AI Documentation",
+      "dead_url": "https://docs.mistral.ai/docs/getting-started/docs_introduction.md",
+      "candidate": "https://docs.mistral.ai/",
+      "status": "200",
+      "model_said_confident": true,
+      "verified_alive": true
+    },
+    {
+      "topic": "Model customization",
+      "dead_url": "https://docs.mistral.ai/docs/getting-started/model_customization.md",
+      "candidate": "https://docs.mistral.ai/getting-started/customization/",
+      "status": "200",
+      "model_said_confident": true,
+      "verified_alive": true
+    },
+    {
+      "topic": "Model selection",
+      "dead_url": "https://docs.mistral.ai/docs/getting-started/models/model_selection.md",
+      "candidate": "https://docs.mistral.ai/models/model-selection-guide",
+      "status": "200",
+      "model_said_confident": true,
+      "verified_alive": true
+    },
+    {
+      "topic": "Models Overview",
+      "dead_url": "https://docs.mistral.ai/docs/getting-started/models/overview.md",
+      "candidate": "https://docs.mistral.ai/models/overview",
+      "status": "200",
+      "model_said_confident": true,
+      "verified_alive": true
+    },
+    {
+      "topic": "Model weights",
+      "dead_url": "https://docs.mistral.ai/docs/getting-started/models/weights.md",
+      "candidate": "https://docs.mistral.ai/getting-started/models/weights/",
+      "status": "404",
+      "model_said_confident": true,
+      "verified_alive": false
+    },
+    {
+      "topic": " 01 Intro Basics",
+      "dead_url": "https://docs.mistral.ai/docs/guides/finetuning_sections/_01_intro_basics.md",
+      "candidate": "https://docs.mistral.ai/getting-started/quickstart/",
+      "status": "200",
+      "model_said_confident": false,
+      "verified_alive": true
+    },
+    {
+      "topic": " 02 Prepare Dataset",
+      "dead_url": "https://docs.mistral.ai/docs/guides/finetuning_sections/_02_prepare_dataset.md",
+      "candidate": "https://docs.mistral.ai/guides/finetuning/",
+      "status": "200",
+      "model_said_confident": false,
+      "verified_alive": true
+    },
+    {
+      "topic": "download the validation and reformat script",
+      "dead_url": "https://docs.mistral.ai/docs/guides/finetuning_sections/_03_e2e_examples.md",
+      "candidate": "https://docs.mistral.ai/guides/finetuning",
+      "status": "200",
+      "model_said_confident": true,
+      "verified_alive": true
+    },
+    {
+      "topic": "get data from hugging face",
+      "dead_url": "https://docs.mistral.ai/docs/guides/finetuning_sections/_04_faq.md",
+      "candidate": "",
+      "status": "-",
+      "model_said_confident": false,
+      "verified_alive": false
+    },
+    {
+      "topic": "Observability",
+      "dead_url": "https://docs.mistral.ai/docs/guides/observability.md",
+      "candidate": "https://docs.mistral.ai/studio-api/observability",
+      "status": "200",
+      "model_said_confident": true,
+      "verified_alive": true
+    },
+    {
+      "topic": "Other resources",
+      "dead_url": "https://docs.mistral.ai/docs/guides/other-resources.md",
+      "candidate": "https://docs.mistral.ai/docs/guides/other-resources",
+      "status": "404",
+      "model_said_confident": true,
+      "verified_alive": false
+    },
+    {
+      "topic": "Prefix",
+      "dead_url": "https://docs.mistral.ai/docs/guides/prefix.md",
+      "candidate": "https://docs.mistral.ai/guides/prefix/",
+      "status": "200",
+      "model_said_confident": true,
+      "verified_alive": true
+    },
+    {
+      "topic": "Prompting capabilities",
+      "dead_url": "https://docs.mistral.ai/docs/guides/prompting-capabilities.md",
+      "candidate": "https://docs.mistral.ai/guides/prompting_capabilities",
+      "status": "200",
+      "model_said_confident": true,
+      "verified_alive": true
+    },
+    {
+      "topic": "Sampling",
+      "dead_url": "https://docs.mistral.ai/docs/guides/sampling.md",
+      "candidate": "https://docs.mistral.ai/capabilities/completion/sampling",
+      "status": "200",
+      "model_said_confident": true,
+      "verified_alive": true
+    },
+    {
+      "topic": "Tokenization",
+      "dead_url": "https://docs.mistral.ai/docs/guides/tokenization.md",
+      "candidate": "https://docs.mistral.ai/guides/tokenization/",
+      "status": "200",
+      "model_said_confident": true,
+      "verified_alive": true
+    }
+  ]
+}

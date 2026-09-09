@@ -34,7 +34,8 @@ mistral 的 75 条死链，**全量实测：机械命中 38 / 75**，一个 LLM 
 from __future__ import annotations
 
 from collections.abc import Callable, Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
+from enum import Enum
 from urllib.parse import urlsplit, urlunsplit
 
 from geo_audit.models import FixHint, Verdict
@@ -44,10 +45,12 @@ __all__ = [
     "MAX_MODEL_TRIES",
     "MAX_TRIES_PER_URL",
     "TRANSFORMS",
+    "CandidateQuality",
     "CandidateResult",
     "Transform",
     "apply_transforms",
     "find_fix_candidate",
+    "grade_candidates",
 ]
 
 #: 每条死链最多试几个**机械**候选。**这个数由实测定，不是猜的。**
@@ -153,6 +156,30 @@ def apply_transforms(dead_url: str) -> tuple[tuple[str, Transform], ...]:
     return tuple(seen.items())[:MAX_MECHANICAL_TRIES]
 
 
+class CandidateQuality(str, Enum):
+    """候选的质量档。**「验通 200」不等于「修好了」。**
+
+    实测 mistral 那 35 条机械修不了的死链，模型给的候选里有 3 条虽然 200，
+    但不是真正的替代：
+
+        2× /guides/finetuning   ← ' 02 Prepare Dataset' 与
+                                   'download the validation and reformat script' 都指到这里
+        1× /                    ← 'Welcome to Mistral AI Documentation'
+
+    多条死链落到同一页，说明那多半是**父页面**；拿站点首页当替代更不算修好。
+    把这三条混进「修好了」，报告的数字就虚了 3 条。
+
+    这两条判据都是确定性的（候选去重计数、根路径检测），**不需要任何模型参与**。
+    刻意只留这两条：观测到的数据只支持这两条，第三条（按路径段数猜父子）在
+    实测样本上就不成立 —— `/guides/finetuning` 与
+    `/guides/finetuning_sections/_02_prepare_dataset` 只差一段，按段数判分不出。
+    """
+
+    EXACT = "exact"
+    DOWNGRADED = "downgraded"
+    NONE = "none"
+
+
 @dataclass(frozen=True, slots=True)
 class CandidateResult:
     """一次候选验证的结果。``fix`` 的 ``verified_target`` 只在 2xx 时为 True。"""
@@ -161,6 +188,10 @@ class CandidateResult:
     fix: FixHint
     tried: tuple[tuple[str, str, int | None], ...]  # (候选, rule_id, 状态码)
     source: str  # "mechanical" | "model" | "none"
+    #: 质量档。**单条判不出 DOWNGRADED 的「父页面」那一半** —— 那要看整轮里
+    #: 有没有别的死链也指到同一个候选，所以由 :func:`grade_candidates` 事后统一打。
+    quality: CandidateQuality = CandidateQuality.NONE
+    downgrade_why: str = ""
 
 
 def find_fix_candidate(
@@ -231,3 +262,60 @@ def find_fix_candidate(
         tried=tuple(tried),
         source="none",
     )
+
+
+def _is_site_root(url: str) -> bool:
+    _, _, path = _split(url)
+    return path.strip("/") == ""
+
+
+def grade_candidates(results: Sequence[CandidateResult]) -> tuple[CandidateResult, ...]:
+    """整轮统一打质量档。**必须整轮一起看**，单条看不出父页面。
+
+    两条判据，都是确定性的：
+
+    1. **候选是站点根路径** → 拿首页当替代不算修好。
+       实测：'Welcome to Mistral AI Documentation' 的候选就是 ``/``。
+    2. **≥2 条死链指到同一个候选** → 那多半是父页面，不是各自的替代。
+       实测：' 02 Prepare Dataset' 与 'download the validation and reformat script'
+       都指到 ``/guides/finetuning``。
+
+    刻意不加第三条「按路径段数猜父子」：实测样本上它就不成立
+    （``/guides/finetuning`` 与 ``/guides/finetuning_sections/_02_prepare_dataset``
+    只差一段，按段数分不出父子）。**数据不支持的判据不写。**
+    """
+    claims: dict[str, int] = {}
+    for r in results:
+        after = r.fix.after
+        if after and r.fix.verified_target:
+            claims[after.rstrip("/")] = claims.get(after.rstrip("/"), 0) + 1
+
+    out: list[CandidateResult] = []
+    for r in results:
+        after = r.fix.after
+        if not after or not r.fix.verified_target:
+            out.append(replace(r, quality=CandidateQuality.NONE, downgrade_why=""))
+            continue
+        if _is_site_root(after):
+            out.append(
+                replace(
+                    r,
+                    quality=CandidateQuality.DOWNGRADED,
+                    downgrade_why="候选是站点首页 —— 把一条具体页面的死链改指首页不算修好",
+                )
+            )
+            continue
+        n = claims.get(after.rstrip("/"), 0)
+        if n >= 2:
+            out.append(
+                replace(
+                    r,
+                    quality=CandidateQuality.DOWNGRADED,
+                    downgrade_why=(
+                        f"另有 {n - 1} 条死链也指到这个候选 —— 那多半是父页面，不是各自的替代"
+                    ),
+                )
+            )
+            continue
+        out.append(replace(r, quality=CandidateQuality.EXACT, downgrade_why=""))
+    return tuple(out)

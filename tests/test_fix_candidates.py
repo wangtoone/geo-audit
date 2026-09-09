@@ -12,8 +12,10 @@ from geo_audit.checks.fix_candidates import (
     MAX_MODEL_TRIES,
     MAX_TRIES_PER_URL,
     TRANSFORMS,
+    CandidateQuality,
     apply_transforms,
     find_fix_candidate,
+    grade_candidates,
 )
 from geo_audit.models import Verdict
 
@@ -208,4 +210,120 @@ def test_drop_both_handles_prefix_and_suffix_together() -> None:
     assert (
         both.fn("https://docs.mistral.ai/docs/guides/evaluation.md")
         == "https://docs.mistral.ai/guides/evaluation"
+    )
+
+
+# --------------------------------------------------------------------------- #
+# 三档质量：验通 200 ≠ 修好了
+# --------------------------------------------------------------------------- #
+#
+# 用例全部来自实测。mistral 那 35 条机械修不了的死链，模型给的候选里有 3 条
+# 虽然 200 但不是真正的替代：
+#     2× /guides/finetuning   ← ' 02 Prepare Dataset' 与
+#                                'download the validation and reformat script'
+#     1× /                    ← 'Welcome to Mistral AI Documentation'
+# 把这三条混进「修好了」，报告的数字就虚了 3 条。
+
+
+def _result(dead: str, after: str | None) -> object:
+    from geo_audit.checks.fix_candidates import CandidateResult
+    from geo_audit.models import FixHint
+
+    return CandidateResult(
+        dead_url=dead,
+        fix=FixHint(
+            action="x",
+            open_this=dead,
+            locator="",
+            before=dead,
+            after=after,
+            verified_target=after is not None,
+        ),
+        tried=(),
+        source="model" if after else "none",
+    )
+
+
+def test_site_root_candidate_is_downgraded_not_counted_as_fixed() -> None:
+    """实测：'Welcome to Mistral AI Documentation' 的候选就是 `/`。"""
+    graded = grade_candidates(
+        [
+            _result(
+                "https://docs.mistral.ai/docs/getting-started/docs_introduction.md",
+                "https://docs.mistral.ai/",
+            )
+        ]
+    )
+    assert graded[0].quality is CandidateQuality.DOWNGRADED
+    assert "首页" in graded[0].downgrade_why
+
+
+def test_two_dead_links_claiming_one_candidate_are_downgraded() -> None:
+    """实测：两条死链都指到 /guides/finetuning —— 那多半是父页面。"""
+    parent = "https://docs.mistral.ai/guides/finetuning"
+    graded = grade_candidates(
+        [
+            _result(
+                "https://docs.mistral.ai/docs/guides/finetuning_sections/_02_prepare_dataset.md",
+                parent + "/",
+            ),
+            _result(
+                "https://docs.mistral.ai/docs/guides/finetuning_sections/_03_e2e_examples.md",
+                parent,
+            ),
+        ]
+    )
+    assert all(g.quality is CandidateQuality.DOWNGRADED for g in graded)
+    assert all("父页面" in g.downgrade_why for g in graded)
+
+
+def test_a_unique_deep_candidate_is_exact() -> None:
+    graded = grade_candidates(
+        [
+            _result(
+                "https://docs.mistral.ai/docs/capabilities/moderation.md",
+                "https://docs.mistral.ai/capabilities/guardrailing",
+            )
+        ]
+    )
+    assert graded[0].quality is CandidateQuality.EXACT
+    assert graded[0].downgrade_why == ""
+
+
+def test_unverified_candidate_is_none_tier() -> None:
+    graded = grade_candidates([_result("https://docs.mistral.ai/docs/x.md", None)])
+    assert graded[0].quality is CandidateQuality.NONE
+
+
+def test_grading_needs_the_whole_round_not_one_result() -> None:
+    """单条看不出父页面 —— 这就是 grade_candidates 收整轮而不是收单条的理由。"""
+    parent = "https://docs.mistral.ai/guides/finetuning"
+    alone = grade_candidates([_result("https://docs.mistral.ai/docs/a.md", parent)])
+    assert alone[0].quality is CandidateQuality.EXACT, "单条时无从判断，只能算 EXACT"
+
+    together = grade_candidates(
+        [
+            _result("https://docs.mistral.ai/docs/a.md", parent),
+            _result("https://docs.mistral.ai/docs/b.md", parent),
+        ]
+    )
+    assert all(g.quality is CandidateQuality.DOWNGRADED for g in together)
+
+
+def test_no_segment_count_heuristic_is_used() -> None:
+    """刻意**没有**「按路径段数猜父子」这条规则 —— 实测样本上它不成立。
+
+    /guides/finetuning 与 /guides/finetuning_sections/_02_prepare_dataset 只差
+    一段，按段数判分不出父子。数据不支持的判据不写。
+    """
+    graded = grade_candidates(
+        [
+            _result(
+                "https://docs.mistral.ai/docs/guides/finetuning_sections/_02_prepare_dataset.md",
+                "https://docs.mistral.ai/guides/finetuning",
+            )
+        ]
+    )
+    assert graded[0].quality is CandidateQuality.EXACT, (
+        "只有一条死链指向它时不许因为「路径更短」就降级 —— 那条启发式没有数据支持"
     )
