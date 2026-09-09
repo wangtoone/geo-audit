@@ -213,6 +213,11 @@ def build_parser() -> argparse.ArgumentParser:
     )
     checks.add_argument("--index-links-full", action="store_true", help="llms.txt 内链一律全量验证")
     checks.add_argument(
+        "--fix-candidates",
+        action="store_true",
+        help="给每条死链找一个**验证过**的替代地址（默认关：会额外发不少请求）",
+    )
+    checks.add_argument(
         "--no-wellknown", action="store_true", help="不探 /.well-known/llms.txt（72 域实测 0 命中）"
     )
     checks.add_argument(
@@ -687,6 +692,7 @@ def _run(parser: argparse.ArgumentParser, argv: Sequence[str] | None) -> int:
         max_links=args.max_links,
         max_requests=args.max_requests,
         index_links_full=args.index_links_full,
+        fix_candidates=args.fix_candidates,
         wellknown=not args.no_wellknown,
         rate=args.rate,
         timeout=args.timeout,

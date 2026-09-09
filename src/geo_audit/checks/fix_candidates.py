@@ -177,6 +177,13 @@ class CandidateQuality(str, Enum):
 
     EXACT = "exact"
     DOWNGRADED = "downgraded"
+    #: 试过了，但每一次都拿不到可用答复（缺快照 / 599 / 超时 / 5xx）——
+    #: **我们没能查**，不是「没有替代地址」。这两件事在报告里必须分开。
+    #: 实测踩过：replay 模式下候选响应没录进 fixtures，75 条全拿到合成 599，
+    #: 而第一版把它们和「查过确实没有」一起塞进 NONE，报告于是对 75 条都写
+    #: 「补一个页面」—— 读的人会以为我们查过了。那是「没能看 ≠ 没问题」
+    #: 这条铁律在修复建议上的同一个破法。
+    UNCHECKED = "unchecked"
     NONE = "none"
 
 
@@ -186,7 +193,7 @@ class CandidateResult:
 
     dead_url: str
     fix: FixHint
-    tried: tuple[tuple[str, str, int | None], ...]  # (候选, rule_id, 状态码)
+    tried: tuple[tuple[str, str, int | None, Verdict], ...]  # (候选, rule_id, 状态码, 判定)
     source: str  # "mechanical" | "model" | "none"
     #: 质量档。**单条判不出 DOWNGRADED 的「父页面」那一半** —— 那要看整轮里
     #: 有没有别的死链也指到同一个候选，所以由 :func:`grade_candidates` 事后统一打。
@@ -209,11 +216,11 @@ def find_fix_candidate(
     顺序：先机械变换（不要钱、可解释），再模型给的候选（覆盖真重组的情形）。
     **两者走同一条验证路径**，模型提的不因为「是 AI 说的」而豁免验活。
     """
-    tried: list[tuple[str, str, int | None]] = []
+    tried: list[tuple[str, str, int | None, Verdict]] = []
 
     for candidate, transform in apply_transforms(dead_url):
         status, verdict = probe(candidate)
-        tried.append((candidate, transform.rule_id, status))
+        tried.append((candidate, transform.rule_id, status, verdict))
         if verdict is Verdict.OK and status is not None and 200 <= status < 300:
             return CandidateResult(
                 dead_url=dead_url,
@@ -233,7 +240,7 @@ def find_fix_candidate(
         if candidate == dead_url or any(candidate == t[0] for t in tried):
             continue
         status, verdict = probe(candidate)
-        tried.append((candidate, "model_proposed", status))
+        tried.append((candidate, "model_proposed", status, verdict))
         if verdict is Verdict.OK and status is not None and 200 <= status < 300:
             return CandidateResult(
                 dead_url=dead_url,
@@ -249,10 +256,32 @@ def find_fix_candidate(
                 source="model",
             )
 
+    # 每一次尝试都拿不到可用答复 → **我们没能查**，不是「没有替代地址」。
+    unchecked = bool(tried) and all(v is Verdict.UNKNOWN for _, _, _, v in tried)
+    if unchecked or not tried:
+        why = (
+            "候选地址一条都没能验证（缺快照 / 请求失败）"
+            if tried
+            else "这条 URL 推不出任何候选形态"
+        )
+        return CandidateResult(
+            dead_url=dead_url,
+            fix=FixHint(
+                action=f"{why} —— 这**不是**「没有替代地址」，是我们没查到。",
+                open_this=locator or dead_url,
+                locator=locator,
+                before=dead_url,
+                after=None,
+                verified_target=False,
+            ),
+            tried=tuple(tried),
+            source="unchecked",
+            quality=CandidateQuality.UNCHECKED,
+        )
     return CandidateResult(
         dead_url=dead_url,
         fix=FixHint(
-            action="补一个页面，或把索引里这条删掉",
+            action="补一个页面，或把索引里这条删掉（候选地址我们逐个试过，都不存在）",
             open_this=locator or dead_url,
             locator=locator,
             before=dead_url,
@@ -294,7 +323,10 @@ def grade_candidates(results: Sequence[CandidateResult]) -> tuple[CandidateResul
     for r in results:
         after = r.fix.after
         if not after or not r.fix.verified_target:
-            out.append(replace(r, quality=CandidateQuality.NONE, downgrade_why=""))
+            # UNCHECKED 是 find_fix_candidate 已经判过的，别在这里覆盖成 NONE ——
+            # 那会把「我们没能查」又变回「查过没有」。
+            keep = r.quality if r.quality is CandidateQuality.UNCHECKED else CandidateQuality.NONE
+            out.append(replace(r, quality=keep, downgrade_why=""))
             continue
         if _is_site_root(after):
             out.append(
