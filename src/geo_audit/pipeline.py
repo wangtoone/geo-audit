@@ -2041,8 +2041,20 @@ def _stage_fix_candidates(
         return
 
     def probe(url: str) -> tuple[int | None, Verdict]:
+        # **不用 liveness_only。** 第一版用了，实测 75 条候选里 73 条判成
+        # UNKNOWN/body_truncated —— 因为 LIVENESS_BYTE_CAP 是 64 KiB，而这些
+        # 文档页正好卡在 65,536 字节，截断之后判定层按设计「不做指纹判定」。
+        #
+        # 那个 64 KiB 上限本身是对的（截断正文的哈希跟完整正文不同，是测量假象）。
+        # 错在我选了它：**「这页适不适合当替代」是内容问题，不是存活问题。**
+        # 为省流量选 liveness_only，省下来的代价是拿到了错答案 —— 工具只找到
+        # 2 条替代地址，而实际有几十条。
+        #
+        # 走完整内容路径之后判定层能真正指纹，于是一个 200 的兜底页会被判成
+        # 软 404 而**不**被当成修复目标 —— 那正是这里需要的严格：把「200 但其实
+        # 是兜底页」的地址写进建议，甲方改完还是错的。
         st.requests_made += 1
-        p = fetcher.probe(url, expect=Expect.ANY, liveness_only=True)
+        p = fetcher.probe(url, expect=Expect.ANY)
         resp = p.response
         return (resp.status if resp is not None else None, p.verdict)
 

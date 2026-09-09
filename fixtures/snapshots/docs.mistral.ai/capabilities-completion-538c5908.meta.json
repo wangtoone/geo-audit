@@ -1,0 +1,26 @@
+{
+  "body_bytes": 138,
+  "body_file": "snapshots/docs.mistral.ai/capabilities-completion-538c5908.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://docs.mistral.ai/capabilities/completion/",
+  "handwritten": false,
+  "headers": {
+    "cache-control": "public, max-age=0, must-revalidate",
+    "content-type": "text/html",
+    "date": "Wed, 09 Sep 2026 08:50:17 GMT",
+    "location": "/capabilities/completion",
+    "refresh": "0;url=/capabilities/completion",
+    "server": "Vercel",
+    "strict-transport-security": "max-age=63072000",
+    "transfer-encoding": "chunked",
+    "x-vercel-id": "sin1::rzxbf-1788943817838-4c11f9190bab"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "85299da55c3954e26242c98a09404575",
+  "recorded_at": "2026-09-09T08:50:17Z",
+  "status": 308,
+  "stored_bytes": 138,
+  "transport_error": null,
+  "url": "https://docs.mistral.ai/capabilities/completion/"
+}

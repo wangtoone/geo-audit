@@ -379,3 +379,198 @@ https://docs.saleor.io/                            # 画廊 · DNS 与对照探�
 @control https://gusto.com/
 https://www.gusto.com/                            # 画廊 · DNS 与对照探针
 @control https://www.gusto.com/
+
+# ─────────────────────────────────────────────────────────────────────────
+# FIX 组 · mistral.ai 那 75 条死链的**修复候选**（174 条，录于 2026-09-09）
+#
+# 为什么要录这一批：⑦「修复目标」那一段要给每条死链找一个**验证过 200** 的
+# 替代地址，而 replay 模式绝不静默回落真网络 —— 不录的话候选全拿到合成 599，
+# 报告只能写「我们没能查」（那是诚实的，但对读者没信息量）。
+#
+# 这批分两类，**都要录**，因为报告里要分开显示：
+#   * 机械变换产出的候选（drop_both / drop_docs_prefix，每条死链最多 2 个）
+#     —— 实测全量命中 38/75，零 LLM
+#   * 模型给的候选（两批共 50 份回答，取多数票那条）
+#     —— 覆盖机械规则推不出的「文档被真重组」那 37 条，实测补上 29 条
+#
+# **大部分会是 404**，那是对的：录 404 才能证明「我们逐个试过、确实不存在」，
+# 与「我们没能查」在报告里是两档不同的话。
+#
+# ⚠️ 这批快照把「今天验通」这个事实冻在了录制那一刻。mistral 正在重组文档，
+# 三个月后可能又变。fixture-freshness.yml 每周对活网 diff 就是管这件事的，
+# 这批是它的新监控对象。
+# ─────────────────────────────────────────────────────────────────────────
+https://docs.mistral.ai/agents/agents_and_conversations                            # FIX 候选
+https://docs.mistral.ai/agents/agents_and_conversations.md                            # FIX 候选
+https://docs.mistral.ai/agents/agents_function_calling                            # FIX 候选
+https://docs.mistral.ai/agents/agents_function_calling.md                            # FIX 候选
+https://docs.mistral.ai/agents/agents_introduction                            # FIX 候选
+https://docs.mistral.ai/agents/agents_introduction.md                            # FIX 候选
+https://docs.mistral.ai/agents/connectors/code_interpreter                            # FIX 候选
+https://docs.mistral.ai/agents/connectors/code_interpreter.md                            # FIX 候选
+https://docs.mistral.ai/agents/connectors/connectors_overview                            # FIX 候选
+https://docs.mistral.ai/agents/connectors/connectors_overview.md                            # FIX 候选
+https://docs.mistral.ai/agents/connectors/document_library                            # FIX 候选
+https://docs.mistral.ai/agents/connectors/document_library.md                            # FIX 候选
+https://docs.mistral.ai/agents/connectors/image_generation                            # FIX 候选
+https://docs.mistral.ai/agents/connectors/image_generation.md                            # FIX 候选
+https://docs.mistral.ai/agents/connectors/websearch                            # FIX 候选
+https://docs.mistral.ai/agents/connectors/websearch.md                            # FIX 候选
+https://docs.mistral.ai/agents/handoffs                            # FIX 候选
+https://docs.mistral.ai/agents/handoffs.md                            # FIX 候选
+https://docs.mistral.ai/agents/mcp                            # FIX 候选
+https://docs.mistral.ai/agents/mcp.md                            # FIX 候选
+https://docs.mistral.ai/capabilities/audio_and_transcription                            # FIX 候选
+https://docs.mistral.ai/capabilities/audio_and_transcription.md                            # FIX 候选
+https://docs.mistral.ai/capabilities/batch_inference                            # FIX 候选
+https://docs.mistral.ai/capabilities/batch_inference.md                            # FIX 候选
+https://docs.mistral.ai/capabilities/citations_and_references                            # FIX 候选
+https://docs.mistral.ai/capabilities/citations_and_references.md                            # FIX 候选
+https://docs.mistral.ai/capabilities/coding                            # FIX 候选
+https://docs.mistral.ai/capabilities/coding.md                            # FIX 候选
+https://docs.mistral.ai/capabilities/document_ai/annotations                            # FIX 候选
+https://docs.mistral.ai/capabilities/document_ai/annotations.md                            # FIX 候选
+https://docs.mistral.ai/capabilities/document_ai/basic_ocr                            # FIX 候选
+https://docs.mistral.ai/capabilities/document_ai/basic_ocr.md                            # FIX 候选
+https://docs.mistral.ai/capabilities/document_ai/document_ai_overview                            # FIX 候选
+https://docs.mistral.ai/capabilities/document_ai/document_ai_overview.md                            # FIX 候选
+https://docs.mistral.ai/capabilities/document_ai/document_qna                            # FIX 候选
+https://docs.mistral.ai/capabilities/document_ai/document_qna.md                            # FIX 候选
+https://docs.mistral.ai/capabilities/embeddings/code_embeddings                            # FIX 候选
+https://docs.mistral.ai/capabilities/embeddings/code_embeddings.md                            # FIX 候选
+https://docs.mistral.ai/capabilities/embeddings/embeddings_overview                            # FIX 候选
+https://docs.mistral.ai/capabilities/embeddings/embeddings_overview.md                            # FIX 候选
+https://docs.mistral.ai/capabilities/embeddings/text_embeddings                            # FIX 候选
+https://docs.mistral.ai/capabilities/embeddings/text_embeddings.md                            # FIX 候选
+https://docs.mistral.ai/capabilities/finetuning/classifier-factory                            # FIX 候选
+https://docs.mistral.ai/capabilities/finetuning/classifier-factory.md                            # FIX 候选
+https://docs.mistral.ai/capabilities/finetuning                            # FIX 候选
+https://docs.mistral.ai/capabilities/finetuning/text-vision-finetuning                            # FIX 候选
+https://docs.mistral.ai/capabilities/finetuning/text-vision-finetuning.md                            # FIX 候选
+https://docs.mistral.ai/capabilities/function-calling                            # FIX 候选
+https://docs.mistral.ai/capabilities/function-calling.md                            # FIX 候选
+https://docs.mistral.ai/capabilities/moderation                            # FIX 候选
+https://docs.mistral.ai/capabilities/moderation.md                            # FIX 候选
+https://docs.mistral.ai/capabilities/predicted-outputs                            # FIX 候选
+https://docs.mistral.ai/capabilities/predicted-outputs.md                            # FIX 候选
+https://docs.mistral.ai/capabilities/reasoning                            # FIX 候选
+https://docs.mistral.ai/capabilities/reasoning.md                            # FIX 候选
+https://docs.mistral.ai/capabilities/structured-output/custom                            # FIX 候选
+https://docs.mistral.ai/capabilities/structured-output/custom.md                            # FIX 候选
+https://docs.mistral.ai/capabilities/structured-output/json-mode                            # FIX 候选
+https://docs.mistral.ai/capabilities/structured-output/json-mode.md                            # FIX 候选
+https://docs.mistral.ai/capabilities/structured-output/overview                            # FIX 候选
+https://docs.mistral.ai/capabilities/structured-output/overview.md                            # FIX 候选
+https://docs.mistral.ai/capabilities/text_and_chat_completions                            # FIX 候选
+https://docs.mistral.ai/capabilities/text_and_chat_completions.md                            # FIX 候选
+https://docs.mistral.ai/capabilities/vision                            # FIX 候选
+https://docs.mistral.ai/capabilities/vision.md                            # FIX 候选
+https://docs.mistral.ai/deployment/cloud/aws                            # FIX 候选
+https://docs.mistral.ai/deployment/cloud/aws.md                            # FIX 候选
+https://docs.mistral.ai/deployment/cloud/azure                            # FIX 候选
+https://docs.mistral.ai/deployment/cloud/azure.md                            # FIX 候选
+https://docs.mistral.ai/deployment/cloud/ibm-watsonx                            # FIX 候选
+https://docs.mistral.ai/deployment/cloud/ibm-watsonx.md                            # FIX 候选
+https://docs.mistral.ai/deployment/cloud/outscale                            # FIX 候选
+https://docs.mistral.ai/deployment/cloud/outscale.md                            # FIX 候选
+https://docs.mistral.ai/deployment/cloud/overview                            # FIX 候选
+https://docs.mistral.ai/deployment/cloud/overview.md                            # FIX 候选
+https://docs.mistral.ai/deployment/cloud/sfcortex                            # FIX 候选
+https://docs.mistral.ai/deployment/cloud/sfcortex.md                            # FIX 候选
+https://docs.mistral.ai/deployment/cloud/vertex                            # FIX 候选
+https://docs.mistral.ai/deployment/cloud/vertex.md                            # FIX 候选
+https://docs.mistral.ai/deployment/laplateforme/organization                            # FIX 候选
+https://docs.mistral.ai/deployment/laplateforme/organization.md                            # FIX 候选
+https://docs.mistral.ai/deployment/laplateforme/overview                            # FIX 候选
+https://docs.mistral.ai/deployment/laplateforme/overview.md                            # FIX 候选
+https://docs.mistral.ai/deployment/laplateforme/pricing                            # FIX 候选
+https://docs.mistral.ai/deployment/laplateforme/pricing.md                            # FIX 候选
+https://docs.mistral.ai/deployment/laplateforme/tier                            # FIX 候选
+https://docs.mistral.ai/deployment/laplateforme/tier.md                            # FIX 候选
+https://docs.mistral.ai/deployment/self-deployment/cerebrium                            # FIX 候选
+https://docs.mistral.ai/deployment/self-deployment/cerebrium.md                            # FIX 候选
+https://docs.mistral.ai/deployment/self-deployment/cloudflare                            # FIX 候选
+https://docs.mistral.ai/deployment/self-deployment/cloudflare.md                            # FIX 候选
+https://docs.mistral.ai/deployment/self-deployment/overview                            # FIX 候选
+https://docs.mistral.ai/deployment/self-deployment/overview.md                            # FIX 候选
+https://docs.mistral.ai/deployment/self-deployment/skypilot                            # FIX 候选
+https://docs.mistral.ai/deployment/self-deployment/skypilot.md                            # FIX 候选
+https://docs.mistral.ai/deployment/self-deployment/tgi                            # FIX 候选
+https://docs.mistral.ai/deployment/self-deployment/tgi.md                            # FIX 候选
+https://docs.mistral.ai/deployment/self-deployment/trt                            # FIX 候选
+https://docs.mistral.ai/deployment/self-deployment/trt.md                            # FIX 候选
+https://docs.mistral.ai/deployment/self-deployment/vllm                            # FIX 候选
+https://docs.mistral.ai/deployment/self-deployment/vllm.md                            # FIX 候选
+https://docs.mistral.ai/getting-started/clients                            # FIX 候选
+https://docs.mistral.ai/getting-started/clients.md                            # FIX 候选
+https://docs.mistral.ai/getting-started/docs_introduction                            # FIX 候选
+https://docs.mistral.ai/getting-started/docs_introduction.md                            # FIX 候选
+https://docs.mistral.ai/getting-started/glossary                            # FIX 候选
+https://docs.mistral.ai/getting-started/glossary.md                            # FIX 候选
+https://docs.mistral.ai/getting-started/model_customization                            # FIX 候选
+https://docs.mistral.ai/getting-started/model_customization.md                            # FIX 候选
+https://docs.mistral.ai/getting-started/models/benchmark                            # FIX 候选
+https://docs.mistral.ai/getting-started/models/benchmark.md                            # FIX 候选
+https://docs.mistral.ai/getting-started/models/model_selection                            # FIX 候选
+https://docs.mistral.ai/getting-started/models/model_selection.md                            # FIX 候选
+https://docs.mistral.ai/getting-started/models/overview                            # FIX 候选
+https://docs.mistral.ai/getting-started/models/overview.md                            # FIX 候选
+https://docs.mistral.ai/getting-started/models/weights                            # FIX 候选
+https://docs.mistral.ai/getting-started/models/weights.md                            # FIX 候选
+https://docs.mistral.ai/guides/basic-RAG                            # FIX 候选
+https://docs.mistral.ai/guides/basic-RAG.md                            # FIX 候选
+https://docs.mistral.ai/guides/contribute/ambassador                            # FIX 候选
+https://docs.mistral.ai/guides/contribute/ambassador.md                            # FIX 候选
+https://docs.mistral.ai/guides/contribute/overview                            # FIX 候选
+https://docs.mistral.ai/guides/contribute/overview.md                            # FIX 候选
+https://docs.mistral.ai/guides/evaluation                            # FIX 候选
+https://docs.mistral.ai/guides/evaluation.md                            # FIX 候选
+https://docs.mistral.ai/guides/finetuning                            # FIX 候选
+https://docs.mistral.ai/guides/finetuning.md                            # FIX 候选
+https://docs.mistral.ai/guides/finetuning_sections/_01_intro_basics                            # FIX 候选
+https://docs.mistral.ai/guides/finetuning_sections/_01_intro_basics.md                            # FIX 候选
+https://docs.mistral.ai/guides/finetuning_sections/_02_prepare_dataset                            # FIX 候选
+https://docs.mistral.ai/guides/finetuning_sections/_02_prepare_dataset.md                            # FIX 候选
+https://docs.mistral.ai/guides/finetuning_sections/_03_e2e_examples                            # FIX 候选
+https://docs.mistral.ai/guides/finetuning_sections/_03_e2e_examples.md                            # FIX 候选
+https://docs.mistral.ai/guides/finetuning_sections/_04_faq                            # FIX 候选
+https://docs.mistral.ai/guides/finetuning_sections/_04_faq.md                            # FIX 候选
+https://docs.mistral.ai/guides/observability                            # FIX 候选
+https://docs.mistral.ai/guides/observability.md                            # FIX 候选
+https://docs.mistral.ai/guides/other-resources                            # FIX 候选
+https://docs.mistral.ai/guides/other-resources.md                            # FIX 候选
+https://docs.mistral.ai/guides/prefix                            # FIX 候选
+https://docs.mistral.ai/guides/prefix.md                            # FIX 候选
+https://docs.mistral.ai/guides/prompting-capabilities                            # FIX 候选
+https://docs.mistral.ai/guides/prompting-capabilities.md                            # FIX 候选
+https://docs.mistral.ai/guides/sampling                            # FIX 候选
+https://docs.mistral.ai/guides/sampling.md                            # FIX 候选
+https://docs.mistral.ai/guides/tokenization                            # FIX 候选
+https://docs.mistral.ai/guides/tokenization.md                            # FIX 候选
+https://docs.mistral.ai/studio-api/agents/agents-api                            # FIX 候选
+https://docs.mistral.ai/studio/audio/overview                            # FIX 候选
+https://docs.mistral.ai/capabilities/audio/speech_to_text                            # FIX 候选
+https://docs.mistral.ai/agents/function_calling/                            # FIX 候选
+https://docs.mistral.ai/studio/agents/introduction                            # FIX 候选
+https://docs.mistral.ai/studio-api/agents/agent-tools/code_interpreter                            # FIX 候选
+https://docs.mistral.ai/agents/connectors/connectors                            # FIX 候选
+https://docs.mistral.ai/capabilities/batch                            # FIX 候选
+https://docs.mistral.ai/capabilities/citations                            # FIX 候选
+https://docs.mistral.ai/capabilities/code_generation                            # FIX 候选
+https://docs.mistral.ai/capabilities/function_calling                            # FIX 候选
+https://docs.mistral.ai/capabilities/guardrailing                            # FIX 候选
+https://docs.mistral.ai/capabilities/predicted_outputs                            # FIX 候选
+https://docs.mistral.ai/studio-api/conversations/structured-output/custom                            # FIX 候选
+https://docs.mistral.ai/studio/conversations/structured-output/json_mode                            # FIX 候选
+https://docs.mistral.ai/studio-api/conversations/structured-output                            # FIX 候选
+https://docs.mistral.ai/capabilities/completion/                            # FIX 候选
+https://docs.mistral.ai/deployment/cloud                            # FIX 候选
+https://docs.mistral.ai/admin/security-access/organization                            # FIX 候选
+https://docs.mistral.ai/admin/user-management-finops/tier                            # FIX 候选
+https://docs.mistral.ai/getting-started/customization/                            # FIX 候选
+https://docs.mistral.ai/models/model-selection-guide                            # FIX 候选
+https://docs.mistral.ai/models/overview                            # FIX 候选
+https://docs.mistral.ai/studio-api/observability                            # FIX 候选
+https://docs.mistral.ai/docs/guides/other-resources                            # FIX 候选
+https://docs.mistral.ai/guides/prompting_capabilities                            # FIX 候选
+https://docs.mistral.ai/capabilities/completion/sampling                            # FIX 候选

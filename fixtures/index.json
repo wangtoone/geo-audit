@@ -2685,6 +2685,2148 @@
       "status": 200,
       "transport_error": null
     },
+    "https://docs.mistral.ai/admin/billing-usage/usage-limits": {
+      "body_storage": "truncated",
+      "bytes": 1134066,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 1134066,
+        "raw_md5": "2ca344cd0ec3294a0f93a3f8509a6438"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/admin-billing-usage-usage-limits-434f9b76",
+      "probe_for": null,
+      "raw_md5": "2ca344cd0ec3294a0f93a3f8509a6438",
+      "recorded_at": "2026-09-09T08:50:36Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/admin/security-access/organization": {
+      "body_storage": "full",
+      "bytes": 152,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 152,
+        "raw_md5": "10609d765ac619893317ca2448b0ef72"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/admin-security-access-organization-d41a9877",
+      "probe_for": null,
+      "raw_md5": "10609d765ac619893317ca2448b0ef72",
+      "recorded_at": "2026-09-09T08:50:29Z",
+      "status": 308,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/admin/user-management-finops/tier": {
+      "body_storage": "full",
+      "bytes": 147,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 147,
+        "raw_md5": "83503258d7c66613745ad0e1247af3fb"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/admin-user-management-finops-tier-6d963312",
+      "probe_for": null,
+      "raw_md5": "83503258d7c66613745ad0e1247af3fb",
+      "recorded_at": "2026-09-09T08:50:34Z",
+      "status": 308,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/admin/workspaces/your-first-workspace": {
+      "body_storage": "truncated",
+      "bytes": 1104596,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 1104596,
+        "raw_md5": "122fdbeeb79b64784f3ec70d8aa7727a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/admin-workspaces-your-first-workspace-8e955170",
+      "probe_for": null,
+      "raw_md5": "122fdbeeb79b64784f3ec70d8aa7727a",
+      "recorded_at": "2026-09-09T08:50:31Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/agents/agents_and_conversations": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/agents-agents_and_conversations-add156dc",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:41:18Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/agents/agents_and_conversations.md": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/agents-agents_and_conversations.md-9151e184",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:41:21Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/agents/agents_function_calling": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/agents-agents_function_calling-eabefbf9",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:41:23Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/agents/agents_function_calling.md": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/agents-agents_function_calling.md-e0e15f0e",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:41:25Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/agents/agents_introduction": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/agents-agents_introduction-39413a68",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:41:28Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/agents/agents_introduction.md": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/agents-agents_introduction.md-86d18d73",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:41:30Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/agents/connectors/code_interpreter": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/agents-connectors-code_interpreter-32bb8c7c",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:41:32Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/agents/connectors/code_interpreter.md": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/agents-connectors-code_interpreter.md-e5493d3a",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:41:35Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/agents/connectors/connectors": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/agents-connectors-connectors-3e98f67a",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:49:34Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/agents/connectors/connectors_overview": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/agents-connectors-connectors_overview-b791c890",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:41:37Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/agents/connectors/connectors_overview.md": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/agents-connectors-connectors_overview.md-15bdc2fb",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:41:39Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/agents/connectors/document_library": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/agents-connectors-document_library-62dc7957",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:41:42Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/agents/connectors/document_library.md": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/agents-connectors-document_library.md-73c603df",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:41:44Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/agents/connectors/image_generation": {
+      "body_storage": "full",
+      "bytes": 157,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 157,
+        "raw_md5": "827cd8bd5d371bfcf4127bd010bb5813"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/agents-connectors-image_generation-ccf05476",
+      "probe_for": null,
+      "raw_md5": "827cd8bd5d371bfcf4127bd010bb5813",
+      "recorded_at": "2026-09-09T08:41:46Z",
+      "status": 308,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/agents/connectors/image_generation.md": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/agents-connectors-image_generation.md-76a11164",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:41:51Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/agents/connectors/websearch": {
+      "body_storage": "full",
+      "bytes": 150,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 150,
+        "raw_md5": "428a28b46d9e244e75b3caedb5334a00"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/agents-connectors-websearch-398f5f13",
+      "probe_for": null,
+      "raw_md5": "428a28b46d9e244e75b3caedb5334a00",
+      "recorded_at": "2026-09-09T08:41:53Z",
+      "status": 308,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/agents/connectors/websearch.md": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/agents-connectors-websearch.md-6ab74783",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:41:58Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/agents/function_calling": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/agents-function_calling-8d855b5d",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:49:24Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/agents/function_calling/": {
+      "body_storage": "full",
+      "bytes": 138,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 138,
+        "raw_md5": "1d20def7cd1a50d9550c50c48f7ce427"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/agents-function_calling-3240ecb0",
+      "probe_for": null,
+      "raw_md5": "1d20def7cd1a50d9550c50c48f7ce427",
+      "recorded_at": "2026-09-09T08:49:22Z",
+      "status": 308,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/agents/handoffs": {
+      "body_storage": "full",
+      "bytes": 137,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 137,
+        "raw_md5": "042a10d726b5ebcb810b2bbd9a5e06b9"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/agents-handoffs-68a41713",
+      "probe_for": null,
+      "raw_md5": "042a10d726b5ebcb810b2bbd9a5e06b9",
+      "recorded_at": "2026-09-09T08:42:00Z",
+      "status": 308,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/agents/handoffs.md": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/agents-handoffs.md-9850a0e3",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:42:04Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/agents/mcp": {
+      "body_storage": "full",
+      "bytes": 132,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 132,
+        "raw_md5": "d98cf0b9055e3cd973d7c44298d3ad6b"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/agents-mcp-a2092ab9",
+      "probe_for": null,
+      "raw_md5": "d98cf0b9055e3cd973d7c44298d3ad6b",
+      "recorded_at": "2026-09-09T08:42:07Z",
+      "status": 308,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/agents/mcp.md": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/agents-mcp.md-bbdf77f5",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:42:11Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/capabilities/audio/speech_to_text": {
+      "body_storage": "full",
+      "bytes": 142,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 142,
+        "raw_md5": "b1af4a1b1dff2c530b9bfa2e078caff2"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/capabilities-audio-speech_to_text-ce7bcd3b",
+      "probe_for": null,
+      "raw_md5": "b1af4a1b1dff2c530b9bfa2e078caff2",
+      "recorded_at": "2026-09-09T08:49:18Z",
+      "status": 308,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/capabilities/audio_and_transcription": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/capabilities-audio_and_transcription-3e6dd383",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:42:14Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/capabilities/audio_and_transcription.md": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/capabilities-audio_and_transcription.md-37faf259",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:42:18Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/capabilities/batch": {
+      "body_storage": "full",
+      "bytes": 138,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 138,
+        "raw_md5": "677fbcb97b84e32260554ec7c4816dee"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/capabilities-batch-c91a5cd0",
+      "probe_for": null,
+      "raw_md5": "677fbcb97b84e32260554ec7c4816dee",
+      "recorded_at": "2026-09-09T08:49:36Z",
+      "status": 308,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/capabilities/batch_inference": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/capabilities-batch_inference-c5f1d0c0",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:42:20Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/capabilities/batch_inference.md": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/capabilities-batch_inference.md-acbe229d",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:42:23Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/capabilities/citations": {
+      "body_storage": "full",
+      "bytes": 145,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 145,
+        "raw_md5": "e9728eebe99708ea6d31e12c533aa829"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/capabilities-citations-7c94336e",
+      "probe_for": null,
+      "raw_md5": "e9728eebe99708ea6d31e12c533aa829",
+      "recorded_at": "2026-09-09T08:49:40Z",
+      "status": 308,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/capabilities/citations_and_references": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/capabilities-citations_and_references-ef8d4f93",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:42:25Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/capabilities/citations_and_references.md": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/capabilities-citations_and_references.md-07c11a8d",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:42:28Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/capabilities/code_generation": {
+      "body_storage": "full",
+      "bytes": 124,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 124,
+        "raw_md5": "8a36ff1d80dc3853ecab243a6ec7041a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/capabilities-code_generation-25fba6e7",
+      "probe_for": null,
+      "raw_md5": "8a36ff1d80dc3853ecab243a6ec7041a",
+      "recorded_at": "2026-09-09T08:49:45Z",
+      "status": 308,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/capabilities/coding": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/capabilities-coding-c01b1d49",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:42:30Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/capabilities/coding.md": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/capabilities-coding.md-f5547729",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:42:33Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/capabilities/completion": {
+      "body_storage": "full",
+      "bytes": 151,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 151,
+        "raw_md5": "8ec99692ec8f14dc2893ac174d91c77c"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/capabilities-completion-2fc16925",
+      "probe_for": null,
+      "raw_md5": "8ec99692ec8f14dc2893ac174d91c77c",
+      "recorded_at": "2026-09-09T08:50:19Z",
+      "status": 308,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/capabilities/completion/": {
+      "body_storage": "full",
+      "bytes": 138,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 138,
+        "raw_md5": "85299da55c3954e26242c98a09404575"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/capabilities-completion-538c5908",
+      "probe_for": null,
+      "raw_md5": "85299da55c3954e26242c98a09404575",
+      "recorded_at": "2026-09-09T08:50:17Z",
+      "status": 308,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/capabilities/completion/sampling": {
+      "body_storage": "full",
+      "bytes": 133,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 133,
+        "raw_md5": "847c368d0b3ba5b28498b54b1d25a069"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/capabilities-completion-sampling-3c9f26aa",
+      "probe_for": null,
+      "raw_md5": "847c368d0b3ba5b28498b54b1d25a069",
+      "recorded_at": "2026-09-09T08:51:06Z",
+      "status": 308,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/capabilities/document_ai/annotations": {
+      "body_storage": "full",
+      "bytes": 153,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 153,
+        "raw_md5": "8f730a0b6af4efe2e1d66dcd3102518d"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/capabilities-document_ai-annotations-78a88801",
+      "probe_for": null,
+      "raw_md5": "8f730a0b6af4efe2e1d66dcd3102518d",
+      "recorded_at": "2026-09-09T08:42:35Z",
+      "status": 308,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/capabilities/document_ai/annotations.md": {
+      "body_storage": "full",
+      "bytes": 15,
+      "comment": "FIX 候选",
+      "content_type": "text/plain",
+      "drift": null,
+      "expect": {
+        "bytes": 15,
+        "raw_md5": "42c939d0ba4bbdc4c7eab1b5c34aaf71"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/capabilities-document_ai-annotations.md-a2939373",
+      "probe_for": null,
+      "raw_md5": "42c939d0ba4bbdc4c7eab1b5c34aaf71",
+      "recorded_at": "2026-09-09T08:42:40Z",
+      "status": 308,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/capabilities/document_ai/basic_ocr": {
+      "body_storage": "full",
+      "bytes": 151,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 151,
+        "raw_md5": "86516ecf8a8488790b1ad8bf0f24e720"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/capabilities-document_ai-basic_ocr-9813d913",
+      "probe_for": null,
+      "raw_md5": "86516ecf8a8488790b1ad8bf0f24e720",
+      "recorded_at": "2026-09-09T08:42:45Z",
+      "status": 308,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/capabilities/document_ai/basic_ocr.md": {
+      "body_storage": "full",
+      "bytes": 15,
+      "comment": "FIX 候选",
+      "content_type": "text/plain",
+      "drift": null,
+      "expect": {
+        "bytes": 15,
+        "raw_md5": "42c939d0ba4bbdc4c7eab1b5c34aaf71"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/capabilities-document_ai-basic_ocr.md-9ca88047",
+      "probe_for": null,
+      "raw_md5": "42c939d0ba4bbdc4c7eab1b5c34aaf71",
+      "recorded_at": "2026-09-09T08:42:49Z",
+      "status": 308,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/capabilities/document_ai/document_ai_overview": {
+      "body_storage": "full",
+      "bytes": 150,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 150,
+        "raw_md5": "01ed49e3858b786122956f1e8c93bfdb"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/capabilities-document_ai-document_ai_overview-4e1f78d6",
+      "probe_for": null,
+      "raw_md5": "01ed49e3858b786122956f1e8c93bfdb",
+      "recorded_at": "2026-09-09T08:42:54Z",
+      "status": 308,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/capabilities/document_ai/document_ai_overview.md": {
+      "body_storage": "full",
+      "bytes": 15,
+      "comment": "FIX 候选",
+      "content_type": "text/plain",
+      "drift": null,
+      "expect": {
+        "bytes": 15,
+        "raw_md5": "42c939d0ba4bbdc4c7eab1b5c34aaf71"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/capabilities-document_ai-document_ai_overview.md-7b0126d2",
+      "probe_for": null,
+      "raw_md5": "42c939d0ba4bbdc4c7eab1b5c34aaf71",
+      "recorded_at": "2026-09-09T08:42:58Z",
+      "status": 308,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/capabilities/document_ai/document_qna": {
+      "body_storage": "full",
+      "bytes": 154,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 154,
+        "raw_md5": "fe925483017181b4607ee889ddbe7609"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/capabilities-document_ai-document_qna-50bc69a8",
+      "probe_for": null,
+      "raw_md5": "fe925483017181b4607ee889ddbe7609",
+      "recorded_at": "2026-09-09T08:43:03Z",
+      "status": 308,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/capabilities/document_ai/document_qna.md": {
+      "body_storage": "full",
+      "bytes": 15,
+      "comment": "FIX 候选",
+      "content_type": "text/plain",
+      "drift": null,
+      "expect": {
+        "bytes": 15,
+        "raw_md5": "42c939d0ba4bbdc4c7eab1b5c34aaf71"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/capabilities-document_ai-document_qna.md-6a0a74c9",
+      "probe_for": null,
+      "raw_md5": "42c939d0ba4bbdc4c7eab1b5c34aaf71",
+      "recorded_at": "2026-09-09T08:43:07Z",
+      "status": 308,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/capabilities/embeddings/code_embeddings": {
+      "body_storage": "full",
+      "bytes": 146,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 146,
+        "raw_md5": "24eb838b6ad52e5e8124304d5256ee14"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/capabilities-embeddings-code_embeddings-e2702409",
+      "probe_for": null,
+      "raw_md5": "24eb838b6ad52e5e8124304d5256ee14",
+      "recorded_at": "2026-09-09T08:43:12Z",
+      "status": 308,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/capabilities/embeddings/code_embeddings.md": {
+      "body_storage": "full",
+      "bytes": 15,
+      "comment": "FIX 候选",
+      "content_type": "text/plain",
+      "drift": null,
+      "expect": {
+        "bytes": 15,
+        "raw_md5": "42c939d0ba4bbdc4c7eab1b5c34aaf71"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/capabilities-embeddings-code_embeddings.md-f7c8f15b",
+      "probe_for": null,
+      "raw_md5": "42c939d0ba4bbdc4c7eab1b5c34aaf71",
+      "recorded_at": "2026-09-09T08:43:16Z",
+      "status": 308,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/capabilities/embeddings/embeddings_overview": {
+      "body_storage": "full",
+      "bytes": 146,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 146,
+        "raw_md5": "24eb838b6ad52e5e8124304d5256ee14"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/capabilities-embeddings-embeddings_overview-d28dc64a",
+      "probe_for": null,
+      "raw_md5": "24eb838b6ad52e5e8124304d5256ee14",
+      "recorded_at": "2026-09-09T08:43:21Z",
+      "status": 308,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/capabilities/embeddings/embeddings_overview.md": {
+      "body_storage": "full",
+      "bytes": 15,
+      "comment": "FIX 候选",
+      "content_type": "text/plain",
+      "drift": null,
+      "expect": {
+        "bytes": 15,
+        "raw_md5": "42c939d0ba4bbdc4c7eab1b5c34aaf71"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/capabilities-embeddings-embeddings_overview.md-6e4e8801",
+      "probe_for": null,
+      "raw_md5": "42c939d0ba4bbdc4c7eab1b5c34aaf71",
+      "recorded_at": "2026-09-09T08:43:25Z",
+      "status": 308,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/capabilities/embeddings/text_embeddings": {
+      "body_storage": "full",
+      "bytes": 146,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 146,
+        "raw_md5": "24eb838b6ad52e5e8124304d5256ee14"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/capabilities-embeddings-text_embeddings-45e61467",
+      "probe_for": null,
+      "raw_md5": "24eb838b6ad52e5e8124304d5256ee14",
+      "recorded_at": "2026-09-09T08:43:29Z",
+      "status": 308,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/capabilities/embeddings/text_embeddings.md": {
+      "body_storage": "full",
+      "bytes": 15,
+      "comment": "FIX 候选",
+      "content_type": "text/plain",
+      "drift": null,
+      "expect": {
+        "bytes": 15,
+        "raw_md5": "42c939d0ba4bbdc4c7eab1b5c34aaf71"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/capabilities-embeddings-text_embeddings.md-2002ec96",
+      "probe_for": null,
+      "raw_md5": "42c939d0ba4bbdc4c7eab1b5c34aaf71",
+      "recorded_at": "2026-09-09T08:43:33Z",
+      "status": 308,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/capabilities/finetuning": {
+      "body_storage": "full",
+      "bytes": 146,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 146,
+        "raw_md5": "cccbf4c1ff56759dc24f4849ff6a28a0"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/capabilities-finetuning-d2289501",
+      "probe_for": null,
+      "raw_md5": "cccbf4c1ff56759dc24f4849ff6a28a0",
+      "recorded_at": "2026-09-09T08:43:47Z",
+      "status": 308,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/capabilities/finetuning/classifier-factory": {
+      "body_storage": "full",
+      "bytes": 146,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 146,
+        "raw_md5": "cccbf4c1ff56759dc24f4849ff6a28a0"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/capabilities-finetuning-classifier-factory-188bd2cd",
+      "probe_for": null,
+      "raw_md5": "cccbf4c1ff56759dc24f4849ff6a28a0",
+      "recorded_at": "2026-09-09T08:43:37Z",
+      "status": 308,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/capabilities/finetuning/classifier-factory.md": {
+      "body_storage": "full",
+      "bytes": 15,
+      "comment": "FIX 候选",
+      "content_type": "text/plain",
+      "drift": null,
+      "expect": {
+        "bytes": 15,
+        "raw_md5": "42c939d0ba4bbdc4c7eab1b5c34aaf71"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/capabilities-finetuning-classifier-factory.md-c26c2420",
+      "probe_for": null,
+      "raw_md5": "42c939d0ba4bbdc4c7eab1b5c34aaf71",
+      "recorded_at": "2026-09-09T08:43:42Z",
+      "status": 308,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/capabilities/finetuning/text-vision-finetuning": {
+      "body_storage": "full",
+      "bytes": 146,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 146,
+        "raw_md5": "cccbf4c1ff56759dc24f4849ff6a28a0"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/capabilities-finetuning-text-vision-finetuning-cf2d7ca6",
+      "probe_for": null,
+      "raw_md5": "cccbf4c1ff56759dc24f4849ff6a28a0",
+      "recorded_at": "2026-09-09T08:43:51Z",
+      "status": 308,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/capabilities/finetuning/text-vision-finetuning.md": {
+      "body_storage": "full",
+      "bytes": 15,
+      "comment": "FIX 候选",
+      "content_type": "text/plain",
+      "drift": null,
+      "expect": {
+        "bytes": 15,
+        "raw_md5": "42c939d0ba4bbdc4c7eab1b5c34aaf71"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/capabilities-finetuning-text-vision-finetuning.md-ad8fb3b7",
+      "probe_for": null,
+      "raw_md5": "42c939d0ba4bbdc4c7eab1b5c34aaf71",
+      "recorded_at": "2026-09-09T08:43:55Z",
+      "status": 308,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/capabilities/function-calling": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/capabilities-function-calling-b8357a8b",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:44:00Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/capabilities/function-calling.md": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/capabilities-function-calling.md-bcabc50d",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:44:02Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/capabilities/function_calling": {
+      "body_storage": "full",
+      "bytes": 152,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 152,
+        "raw_md5": "bfe058dbbe1f1d9dc26ddf48669ef2c3"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/capabilities-function_calling-b0db8420",
+      "probe_for": null,
+      "raw_md5": "bfe058dbbe1f1d9dc26ddf48669ef2c3",
+      "recorded_at": "2026-09-09T08:49:51Z",
+      "status": 308,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/capabilities/guardrailing": {
+      "body_storage": "full",
+      "bytes": 146,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 146,
+        "raw_md5": "eeddb033f3acdbbee55741a389102a32"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/capabilities-guardrailing-631e0e38",
+      "probe_for": null,
+      "raw_md5": "eeddb033f3acdbbee55741a389102a32",
+      "recorded_at": "2026-09-09T08:49:57Z",
+      "status": 308,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/capabilities/moderation": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/capabilities-moderation-5d14d264",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:44:04Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/capabilities/moderation.md": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/capabilities-moderation.md-a5802fec",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:44:07Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/capabilities/predicted-outputs": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/capabilities-predicted-outputs-41944300",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:44:09Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/capabilities/predicted-outputs.md": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/capabilities-predicted-outputs.md-bc043c65",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:44:12Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/capabilities/predicted_outputs": {
+      "body_storage": "full",
+      "bytes": 162,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 162,
+        "raw_md5": "5a1b77f6bd3c8beb80053477ef3c93bc"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/capabilities-predicted_outputs-868e1cf0",
+      "probe_for": null,
+      "raw_md5": "5a1b77f6bd3c8beb80053477ef3c93bc",
+      "recorded_at": "2026-09-09T08:50:01Z",
+      "status": 308,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/capabilities/reasoning": {
+      "body_storage": "full",
+      "bytes": 145,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 145,
+        "raw_md5": "0e4a86829c1afcae0f9c12637daf292e"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/capabilities-reasoning-0a17dcde",
+      "probe_for": null,
+      "raw_md5": "0e4a86829c1afcae0f9c12637daf292e",
+      "recorded_at": "2026-09-09T08:44:14Z",
+      "status": 308,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/capabilities/reasoning.md": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/capabilities-reasoning.md-5b4162cc",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:44:19Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/capabilities/structured-output/custom": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/capabilities-structured-output-custom-d730da7b",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:44:22Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/capabilities/structured-output/custom.md": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/capabilities-structured-output-custom.md-2b38b0c8",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:44:24Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/capabilities/structured-output/json-mode": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/capabilities-structured-output-json-mode-650641f7",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:44:26Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/capabilities/structured-output/json-mode.md": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/capabilities-structured-output-json-mode.md-e1e7f6e9",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:44:29Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/capabilities/structured-output/overview": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/capabilities-structured-output-overview-31de1d42",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:44:31Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/capabilities/structured-output/overview.md": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/capabilities-structured-output-overview.md-ba4d3b86",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:44:33Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/capabilities/text_and_chat_completions": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/capabilities-text_and_chat_completions-d4affc2c",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:44:36Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/capabilities/text_and_chat_completions.md": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/capabilities-text_and_chat_completions.md-d9b0881e",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:44:38Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/capabilities/vision": {
+      "body_storage": "full",
+      "bytes": 142,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 142,
+        "raw_md5": "1c41db0b743fc807a4ecf8f54ea312d0"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/capabilities-vision-8972a049",
+      "probe_for": null,
+      "raw_md5": "1c41db0b743fc807a4ecf8f54ea312d0",
+      "recorded_at": "2026-09-09T08:44:40Z",
+      "status": 308,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/capabilities/vision.md": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/capabilities-vision.md-5ed23245",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:44:45Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/deployment/cloud": {
+      "body_storage": "full",
+      "bytes": 153,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 153,
+        "raw_md5": "b8ee3fb44b3487487299cb1b45c2a000"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/deployment-cloud-9abde04d",
+      "probe_for": null,
+      "raw_md5": "b8ee3fb44b3487487299cb1b45c2a000",
+      "recorded_at": "2026-09-09T08:50:24Z",
+      "status": 308,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/deployment/cloud/aws": {
+      "body_storage": "full",
+      "bytes": 168,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 168,
+        "raw_md5": "93e4e56f2d425fede16d66d786dbdd53"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/deployment-cloud-aws-eec8ac74",
+      "probe_for": null,
+      "raw_md5": "93e4e56f2d425fede16d66d786dbdd53",
+      "recorded_at": "2026-09-09T08:44:47Z",
+      "status": 308,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/deployment/cloud/aws.md": {
+      "body_storage": "full",
+      "bytes": 15,
+      "comment": "FIX 候选",
+      "content_type": "text/plain",
+      "drift": null,
+      "expect": {
+        "bytes": 15,
+        "raw_md5": "42c939d0ba4bbdc4c7eab1b5c34aaf71"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/deployment-cloud-aws.md-129c0706",
+      "probe_for": null,
+      "raw_md5": "42c939d0ba4bbdc4c7eab1b5c34aaf71",
+      "recorded_at": "2026-09-09T08:44:52Z",
+      "status": 308,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/deployment/cloud/azure": {
+      "body_storage": "full",
+      "bytes": 159,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 159,
+        "raw_md5": "a77ea8418bb43dbd3e8169a2c7a30a0b"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/deployment-cloud-azure-f176626c",
+      "probe_for": null,
+      "raw_md5": "a77ea8418bb43dbd3e8169a2c7a30a0b",
+      "recorded_at": "2026-09-09T08:44:56Z",
+      "status": 308,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/deployment/cloud/azure.md": {
+      "body_storage": "full",
+      "bytes": 15,
+      "comment": "FIX 候选",
+      "content_type": "text/plain",
+      "drift": null,
+      "expect": {
+        "bytes": 15,
+        "raw_md5": "42c939d0ba4bbdc4c7eab1b5c34aaf71"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/deployment-cloud-azure.md-80221abe",
+      "probe_for": null,
+      "raw_md5": "42c939d0ba4bbdc4c7eab1b5c34aaf71",
+      "recorded_at": "2026-09-09T08:45:01Z",
+      "status": 308,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/deployment/cloud/ibm-watsonx": {
+      "body_storage": "full",
+      "bytes": 165,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 165,
+        "raw_md5": "535c004b71dce3ca2df7be4c30e9a87b"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/deployment-cloud-ibm-watsonx-edd57567",
+      "probe_for": null,
+      "raw_md5": "535c004b71dce3ca2df7be4c30e9a87b",
+      "recorded_at": "2026-09-09T08:45:05Z",
+      "status": 308,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/deployment/cloud/ibm-watsonx.md": {
+      "body_storage": "full",
+      "bytes": 15,
+      "comment": "FIX 候选",
+      "content_type": "text/plain",
+      "drift": null,
+      "expect": {
+        "bytes": 15,
+        "raw_md5": "42c939d0ba4bbdc4c7eab1b5c34aaf71"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/deployment-cloud-ibm-watsonx.md-d665f57a",
+      "probe_for": null,
+      "raw_md5": "42c939d0ba4bbdc4c7eab1b5c34aaf71",
+      "recorded_at": "2026-09-09T08:45:09Z",
+      "status": 308,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/deployment/cloud/outscale": {
+      "body_storage": "full",
+      "bytes": 162,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 162,
+        "raw_md5": "1a5e4412cd7d52a2c6ecd96e61061132"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/deployment-cloud-outscale-9b827231",
+      "probe_for": null,
+      "raw_md5": "1a5e4412cd7d52a2c6ecd96e61061132",
+      "recorded_at": "2026-09-09T08:45:14Z",
+      "status": 308,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/deployment/cloud/outscale.md": {
+      "body_storage": "full",
+      "bytes": 15,
+      "comment": "FIX 候选",
+      "content_type": "text/plain",
+      "drift": null,
+      "expect": {
+        "bytes": 15,
+        "raw_md5": "42c939d0ba4bbdc4c7eab1b5c34aaf71"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/deployment-cloud-outscale.md-c497c0b7",
+      "probe_for": null,
+      "raw_md5": "42c939d0ba4bbdc4c7eab1b5c34aaf71",
+      "recorded_at": "2026-09-09T08:45:18Z",
+      "status": 308,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/deployment/cloud/overview": {
+      "body_storage": "full",
+      "bytes": 162,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 162,
+        "raw_md5": "4d8c5bdd47a94c0efed0025899937f13"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/deployment-cloud-overview-cedd6998",
+      "probe_for": null,
+      "raw_md5": "4d8c5bdd47a94c0efed0025899937f13",
+      "recorded_at": "2026-09-09T08:45:23Z",
+      "status": 308,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/deployment/cloud/overview.md": {
+      "body_storage": "full",
+      "bytes": 15,
+      "comment": "FIX 候选",
+      "content_type": "text/plain",
+      "drift": null,
+      "expect": {
+        "bytes": 15,
+        "raw_md5": "42c939d0ba4bbdc4c7eab1b5c34aaf71"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/deployment-cloud-overview.md-88e82ceb",
+      "probe_for": null,
+      "raw_md5": "42c939d0ba4bbdc4c7eab1b5c34aaf71",
+      "recorded_at": "2026-09-09T08:45:27Z",
+      "status": 308,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/deployment/cloud/sfcortex": {
+      "body_storage": "full",
+      "bytes": 162,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 162,
+        "raw_md5": "d79f537385fc818a1427686a862ee853"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/deployment-cloud-sfcortex-5e7c5ff8",
+      "probe_for": null,
+      "raw_md5": "d79f537385fc818a1427686a862ee853",
+      "recorded_at": "2026-09-09T08:45:32Z",
+      "status": 308,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/deployment/cloud/sfcortex.md": {
+      "body_storage": "full",
+      "bytes": 15,
+      "comment": "FIX 候选",
+      "content_type": "text/plain",
+      "drift": null,
+      "expect": {
+        "bytes": 15,
+        "raw_md5": "42c939d0ba4bbdc4c7eab1b5c34aaf71"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/deployment-cloud-sfcortex.md-3b6ae4e0",
+      "probe_for": null,
+      "raw_md5": "42c939d0ba4bbdc4c7eab1b5c34aaf71",
+      "recorded_at": "2026-09-09T08:45:37Z",
+      "status": 308,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/deployment/cloud/vertex": {
+      "body_storage": "full",
+      "bytes": 160,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 160,
+        "raw_md5": "962545aa08d1b8309b616cf9f5c030d0"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/deployment-cloud-vertex-e3830e64",
+      "probe_for": null,
+      "raw_md5": "962545aa08d1b8309b616cf9f5c030d0",
+      "recorded_at": "2026-09-09T08:45:41Z",
+      "status": 308,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/deployment/cloud/vertex.md": {
+      "body_storage": "full",
+      "bytes": 15,
+      "comment": "FIX 候选",
+      "content_type": "text/plain",
+      "drift": null,
+      "expect": {
+        "bytes": 15,
+        "raw_md5": "42c939d0ba4bbdc4c7eab1b5c34aaf71"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/deployment-cloud-vertex.md-9c84b572",
+      "probe_for": null,
+      "raw_md5": "42c939d0ba4bbdc4c7eab1b5c34aaf71",
+      "recorded_at": "2026-09-09T08:45:46Z",
+      "status": 308,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/deployment/laplateforme/organization": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/deployment-laplateforme-organization-23d4e7a5",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:45:50Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/deployment/laplateforme/organization.md": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/deployment-laplateforme-organization.md-cba34f21",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:45:53Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/deployment/laplateforme/overview": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/deployment-laplateforme-overview-57084c4c",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:45:55Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/deployment/laplateforme/overview.md": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/deployment-laplateforme-overview.md-1cd3139c",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:45:57Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/deployment/laplateforme/pricing": {
+      "body_storage": "full",
+      "bytes": 140,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 140,
+        "raw_md5": "494e68f8c781da6c0ba1d76010a4d2dd"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/deployment-laplateforme-pricing-d3c78085",
+      "probe_for": null,
+      "raw_md5": "494e68f8c781da6c0ba1d76010a4d2dd",
+      "recorded_at": "2026-09-09T08:45:59Z",
+      "status": 308,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/deployment/laplateforme/pricing.md": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/deployment-laplateforme-pricing.md-e60ef808",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:46:06Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/deployment/laplateforme/tier": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/deployment-laplateforme-tier-6f40ee74",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:46:08Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/deployment/laplateforme/tier.md": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/deployment-laplateforme-tier.md-a2baa235",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:46:11Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/deployment/self-deployment/cerebrium": {
+      "body_storage": "full",
+      "bytes": 162,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 162,
+        "raw_md5": "bb382b1b57d752643f949bd6ee581971"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/deployment-self-deployment-cerebrium-99a2950d",
+      "probe_for": null,
+      "raw_md5": "bb382b1b57d752643f949bd6ee581971",
+      "recorded_at": "2026-09-09T08:46:13Z",
+      "status": 308,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/deployment/self-deployment/cerebrium.md": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/deployment-self-deployment-cerebrium.md-0a45dc4f",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:46:17Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/deployment/self-deployment/cloudflare": {
+      "body_storage": "full",
+      "bytes": 163,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 163,
+        "raw_md5": "2191f974d5b3f04d21b907d910550c2b"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/deployment-self-deployment-cloudflare-c46dd1d1",
+      "probe_for": null,
+      "raw_md5": "2191f974d5b3f04d21b907d910550c2b",
+      "recorded_at": "2026-09-09T08:46:19Z",
+      "status": 308,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/deployment/self-deployment/cloudflare.md": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/deployment-self-deployment-cloudflare.md-d1128a91",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:46:24Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/deployment/self-deployment/overview": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/deployment-self-deployment-overview-39546a26",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:46:26Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/deployment/self-deployment/overview.md": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/deployment-self-deployment-overview.md-1689dfb2",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:46:29Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/deployment/self-deployment/skypilot": {
+      "body_storage": "full",
+      "bytes": 161,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 161,
+        "raw_md5": "3a1d107c8554051156d4e995652f615c"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/deployment-self-deployment-skypilot-e6f59f6f",
+      "probe_for": null,
+      "raw_md5": "3a1d107c8554051156d4e995652f615c",
+      "recorded_at": "2026-09-09T08:46:31Z",
+      "status": 308,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/deployment/self-deployment/skypilot.md": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/deployment-self-deployment-skypilot.md-8f2d4b6e",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:46:36Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/deployment/self-deployment/tgi": {
+      "body_storage": "full",
+      "bytes": 156,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 156,
+        "raw_md5": "34cff1c133f1026c9a2333382bf00dd5"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/deployment-self-deployment-tgi-8cbe4bd8",
+      "probe_for": null,
+      "raw_md5": "34cff1c133f1026c9a2333382bf00dd5",
+      "recorded_at": "2026-09-09T08:46:38Z",
+      "status": 308,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/deployment/self-deployment/tgi.md": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/deployment-self-deployment-tgi.md-0f8e5470",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:46:42Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/deployment/self-deployment/trt": {
+      "body_storage": "full",
+      "bytes": 156,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 156,
+        "raw_md5": "8f64cfa0e1e14efbda2a0b7db3e983d6"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/deployment-self-deployment-trt-fce3457e",
+      "probe_for": null,
+      "raw_md5": "8f64cfa0e1e14efbda2a0b7db3e983d6",
+      "recorded_at": "2026-09-09T08:46:45Z",
+      "status": 308,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/deployment/self-deployment/trt.md": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/deployment-self-deployment-trt.md-4bd0691a",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:46:49Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/deployment/self-deployment/vllm": {
+      "body_storage": "full",
+      "bytes": 157,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 157,
+        "raw_md5": "b175731eaeae055ea8af00a2512f0c84"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/deployment-self-deployment-vllm-71dfc14e",
+      "probe_for": null,
+      "raw_md5": "b175731eaeae055ea8af00a2512f0c84",
+      "recorded_at": "2026-09-09T08:46:51Z",
+      "status": 308,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/deployment/self-deployment/vllm.md": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/deployment-self-deployment-vllm.md-a3ac641c",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:46:56Z",
+      "status": 404,
+      "transport_error": null
+    },
     "https://docs.mistral.ai/docs/agents/agents_and_conversations.md": {
       "body_storage": "full",
       "bytes": 462592,
@@ -3945,6 +6087,24 @@
       "status": 404,
       "transport_error": null
     },
+    "https://docs.mistral.ai/docs/guides/other-resources": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/docs-guides-other-resources-35122ea2",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:51:00Z",
+      "status": 404,
+      "transport_error": null
+    },
     "https://docs.mistral.ai/docs/guides/other-resources.md": {
       "body_storage": "full",
       "bytes": 462592,
@@ -4053,6 +6213,348 @@
       "status": 404,
       "transport_error": null
     },
+    "https://docs.mistral.ai/getting-started": {
+      "body_storage": "full",
+      "bytes": 953836,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 953836,
+        "raw_md5": "dbd32a0e36c18d7ff56afbeb62f511d1"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/getting-started-b37efb5d",
+      "probe_for": null,
+      "raw_md5": "dbd32a0e36c18d7ff56afbeb62f511d1",
+      "recorded_at": "2026-09-09T08:47:57Z",
+      "status": 307,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/getting-started/clients": {
+      "body_storage": "full",
+      "bytes": 129,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 129,
+        "raw_md5": "43db26c5405edea55b67015327fd9c6a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/getting-started-clients-89abf173",
+      "probe_for": null,
+      "raw_md5": "43db26c5405edea55b67015327fd9c6a",
+      "recorded_at": "2026-09-09T08:46:58Z",
+      "status": 308,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/getting-started/clients.md": {
+      "body_storage": "full",
+      "bytes": 16305,
+      "comment": "FIX 候选",
+      "content_type": "text/markdown",
+      "drift": null,
+      "expect": {
+        "bytes": 16305,
+        "raw_md5": "9f82df39678572ad43a3ec5c50c21568"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/getting-started-clients.md-c9fb3a04",
+      "probe_for": null,
+      "raw_md5": "9f82df39678572ad43a3ec5c50c21568",
+      "recorded_at": "2026-09-09T08:47:02Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/getting-started/customization": {
+      "body_storage": "full",
+      "bytes": 149,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 149,
+        "raw_md5": "947ea3b3a4d5a1c8f65a30183652513c"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/getting-started-customization-76c223e9",
+      "probe_for": null,
+      "raw_md5": "947ea3b3a4d5a1c8f65a30183652513c",
+      "recorded_at": "2026-09-09T08:50:40Z",
+      "status": 308,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/getting-started/customization/": {
+      "body_storage": "full",
+      "bytes": 144,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 144,
+        "raw_md5": "91d33ffa53d6b9ef41c06fce1023c45f"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/getting-started-customization-6ff3eadb",
+      "probe_for": null,
+      "raw_md5": "91d33ffa53d6b9ef41c06fce1023c45f",
+      "recorded_at": "2026-09-09T08:50:38Z",
+      "status": 308,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/getting-started/docs_introduction": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/getting-started-docs_introduction-544256fa",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:47:05Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/getting-started/docs_introduction.md": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/getting-started-docs_introduction.md-3e89f8ef",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:47:07Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/getting-started/glossary": {
+      "body_storage": "full",
+      "bytes": 133,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 133,
+        "raw_md5": "8712a6398058a689b0593082fc342371"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/getting-started-glossary-6c4a5046",
+      "probe_for": null,
+      "raw_md5": "8712a6398058a689b0593082fc342371",
+      "recorded_at": "2026-09-09T08:47:09Z",
+      "status": 308,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/getting-started/glossary.md": {
+      "body_storage": "full",
+      "bytes": 368,
+      "comment": "FIX 候选",
+      "content_type": "text/markdown",
+      "drift": null,
+      "expect": {
+        "bytes": 368,
+        "raw_md5": "c574dac12c68eb6ebdb373682446b1c8"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/getting-started-glossary.md-b5c8d473",
+      "probe_for": null,
+      "raw_md5": "c574dac12c68eb6ebdb373682446b1c8",
+      "recorded_at": "2026-09-09T08:47:14Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/getting-started/model_customization": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/getting-started-model_customization-0b40d829",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:47:16Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/getting-started/model_customization.md": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/getting-started-model_customization.md-d2ac17e2",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:47:18Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/getting-started/models/benchmark": {
+      "body_storage": "full",
+      "bytes": 121,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 121,
+        "raw_md5": "fb7a009ec0c82a48f4c3a2b1c1ee8b91"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/getting-started-models-benchmark-f89191d2",
+      "probe_for": null,
+      "raw_md5": "fb7a009ec0c82a48f4c3a2b1c1ee8b91",
+      "recorded_at": "2026-09-09T08:47:20Z",
+      "status": 308,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/getting-started/models/benchmark.md": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/getting-started-models-benchmark.md-665cc5ed",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:47:25Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/getting-started/models/model_selection": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/getting-started-models-model_selection-11605f06",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:47:27Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/getting-started/models/model_selection.md": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/getting-started-models-model_selection.md-e50fb61c",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:47:30Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/getting-started/models/overview": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/getting-started-models-overview-0bd29a16",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:47:32Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/getting-started/models/overview.md": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/getting-started-models-overview.md-af303cc6",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:47:34Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/getting-started/models/weights": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/getting-started-models-weights-1a357a19",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:47:36Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/getting-started/models/weights.md": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/getting-started-models-weights.md-d2ca6fb3",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:47:39Z",
+      "status": 404,
+      "transport_error": null
+    },
     "https://docs.mistral.ai/getting-started/platform-overview.md": {
       "body_storage": "full",
       "bytes": 5784,
@@ -4125,6 +6627,996 @@
       "status": 308,
       "transport_error": null
     },
+    "https://docs.mistral.ai/guides/basic-RAG": {
+      "body_storage": "full",
+      "bytes": 150,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 150,
+        "raw_md5": "9b3e2dc044304f53aa9aeac83f7c3f21"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/guides-basic-RAG-2b8f8230",
+      "probe_for": null,
+      "raw_md5": "9b3e2dc044304f53aa9aeac83f7c3f21",
+      "recorded_at": "2026-09-09T08:47:41Z",
+      "status": 308,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/guides/basic-RAG.md": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/guides-basic-RAG.md-90c7a7cf",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:47:45Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/guides/contribute/ambassador": {
+      "body_storage": "full",
+      "bytes": 136,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 136,
+        "raw_md5": "5643ccbdb54ff3a99d9f9954659df6d1"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/guides-contribute-ambassador-b6989196",
+      "probe_for": null,
+      "raw_md5": "5643ccbdb54ff3a99d9f9954659df6d1",
+      "recorded_at": "2026-09-09T08:47:48Z",
+      "status": 308,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/guides/contribute/ambassador.md": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/guides-contribute-ambassador.md-a417b865",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:47:52Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/guides/contribute/overview": {
+      "body_storage": "full",
+      "bytes": 130,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 130,
+        "raw_md5": "0d4a9759a68fd6c63ef56e1a7134ff5b"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/guides-contribute-overview-8035de08",
+      "probe_for": null,
+      "raw_md5": "0d4a9759a68fd6c63ef56e1a7134ff5b",
+      "recorded_at": "2026-09-09T08:47:54Z",
+      "status": 308,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/guides/contribute/overview.md": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/guides-contribute-overview.md-09517a82",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:48:02Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/guides/evaluation": {
+      "body_storage": "full",
+      "bytes": 134,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 134,
+        "raw_md5": "9ec393761d979b69a860b6bba1ec7417"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/guides-evaluation-ec010c2b",
+      "probe_for": null,
+      "raw_md5": "9ec393761d979b69a860b6bba1ec7417",
+      "recorded_at": "2026-09-09T08:48:04Z",
+      "status": 308,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/guides/evaluation.md": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/guides-evaluation.md-50d0f6b8",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:48:09Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/guides/finetuning": {
+      "body_storage": "full",
+      "bytes": 146,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 146,
+        "raw_md5": "cccbf4c1ff56759dc24f4849ff6a28a0"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/guides-finetuning-b395677a",
+      "probe_for": null,
+      "raw_md5": "cccbf4c1ff56759dc24f4849ff6a28a0",
+      "recorded_at": "2026-09-09T08:48:11Z",
+      "status": 308,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/guides/finetuning.md": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/guides-finetuning.md-e76409f8",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:48:15Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/guides/finetuning_sections/_01_intro_basics": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/guides-finetuning_sections-_01_intro_basics-c318c9f5",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:48:17Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/guides/finetuning_sections/_01_intro_basics.md": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/guides-finetuning_sections-_01_intro_basics.md-d39f791d",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:48:20Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/guides/finetuning_sections/_02_prepare_dataset": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/guides-finetuning_sections-_02_prepare_dataset-b2a35cdc",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:48:22Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/guides/finetuning_sections/_02_prepare_dataset.md": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/guides-finetuning_sections-_02_prepare_dataset.md-dbd6a6a5",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:48:24Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/guides/finetuning_sections/_03_e2e_examples": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/guides-finetuning_sections-_03_e2e_examples-ecfa75d9",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:48:26Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/guides/finetuning_sections/_03_e2e_examples.md": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/guides-finetuning_sections-_03_e2e_examples.md-af7c6544",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:48:29Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/guides/finetuning_sections/_04_faq": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/guides-finetuning_sections-_04_faq-8b1f4f84",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:48:32Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/guides/finetuning_sections/_04_faq.md": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/guides-finetuning_sections-_04_faq.md-0f0d36ff",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:48:34Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/guides/observability": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/guides-observability-521b6a83",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:48:37Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/guides/observability.md": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/guides-observability.md-1240aa7d",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:48:39Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/guides/other-resources": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/guides-other-resources-33aef4ef",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:48:41Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/guides/other-resources.md": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/guides-other-resources.md-b4fe69ad",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:48:44Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/guides/prefix": {
+      "body_storage": "full",
+      "bytes": 169,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 169,
+        "raw_md5": "da193c6e43c0df3fa016c87c12e20689"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/guides-prefix-fd0d4088",
+      "probe_for": null,
+      "raw_md5": "da193c6e43c0df3fa016c87c12e20689",
+      "recorded_at": "2026-09-09T08:48:46Z",
+      "status": 308,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/guides/prefix.md": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/guides-prefix.md-0b4b2970",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:48:50Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/guides/prompting-capabilities": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/guides-prompting-capabilities-2d15d019",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:48:53Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/guides/prompting-capabilities.md": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/guides-prompting-capabilities.md-cef6da02",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:48:55Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/guides/prompting_capabilities": {
+      "body_storage": "full",
+      "bytes": 134,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 134,
+        "raw_md5": "9ec393761d979b69a860b6bba1ec7417"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/guides-prompting_capabilities-9342917e",
+      "probe_for": null,
+      "raw_md5": "9ec393761d979b69a860b6bba1ec7417",
+      "recorded_at": "2026-09-09T08:51:02Z",
+      "status": 308,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/guides/sampling": {
+      "body_storage": "full",
+      "bytes": 133,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 133,
+        "raw_md5": "847c368d0b3ba5b28498b54b1d25a069"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/guides-sampling-8b70b4ad",
+      "probe_for": null,
+      "raw_md5": "847c368d0b3ba5b28498b54b1d25a069",
+      "recorded_at": "2026-09-09T08:48:57Z",
+      "status": 308,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/guides/sampling.md": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/guides-sampling.md-7f099def",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:49:02Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/guides/tokenization": {
+      "body_storage": "full",
+      "bytes": 172,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 172,
+        "raw_md5": "296b9f8828c5899e91a2a509997d4c5f"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/guides-tokenization-a906a95d",
+      "probe_for": null,
+      "raw_md5": "296b9f8828c5899e91a2a509997d4c5f",
+      "recorded_at": "2026-09-09T08:49:04Z",
+      "status": 308,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/guides/tokenization.md": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/guides-tokenization.md-c06c8d34",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:49:09Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/inference/deployment/cloud-deployments": {
+      "body_storage": "truncated",
+      "bytes": 1077802,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 1077802,
+        "raw_md5": "cbceeb903f239e9e50fa0d5355892984"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/inference-deployment-cloud-deployments-9c7ef9fe",
+      "probe_for": null,
+      "raw_md5": "cbceeb903f239e9e50fa0d5355892984",
+      "recorded_at": "2026-09-09T08:50:27Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/inference/deployment/cloud-deployments/amazon_bedrock": {
+      "body_storage": "truncated",
+      "bytes": 1129217,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 1129217,
+        "raw_md5": "26fc5aea55c108524accfabcc007762b"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/inference-deployment-cloud-deployments-amazon_bedrock-ddeeaf77",
+      "probe_for": null,
+      "raw_md5": "26fc5aea55c108524accfabcc007762b",
+      "recorded_at": "2026-09-09T08:44:50Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/inference/deployment/cloud-deployments/aws.md": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/inference-deployment-cloud-deployments-aws.md-7361410e",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:44:54Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/inference/deployment/cloud-deployments/azure": {
+      "body_storage": "truncated",
+      "bytes": 1125402,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 1125402,
+        "raw_md5": "9b5008ca69c1ed0e70702edc2252b1a4"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/inference-deployment-cloud-deployments-azure-e8e76b1c",
+      "probe_for": null,
+      "raw_md5": "9b5008ca69c1ed0e70702edc2252b1a4",
+      "recorded_at": "2026-09-09T08:44:58Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/inference/deployment/cloud-deployments/azure.md": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/inference-deployment-cloud-deployments-azure.md-219e3393",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:45:03Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/inference/deployment/cloud-deployments/ibm-watsonx": {
+      "body_storage": "truncated",
+      "bytes": 1150175,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 1150175,
+        "raw_md5": "6ce00e6c0c94ff904be836c4ec36ae3f"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/inference-deployment-cloud-deployments-ibm-watsonx-a57acff2",
+      "probe_for": null,
+      "raw_md5": "6ce00e6c0c94ff904be836c4ec36ae3f",
+      "recorded_at": "2026-09-09T08:45:07Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/inference/deployment/cloud-deployments/ibm-watsonx.md": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/inference-deployment-cloud-deployments-ibm-watsonx.md-112747a2",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:45:12Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/inference/deployment/cloud-deployments/outscale": {
+      "body_storage": "truncated",
+      "bytes": 1141068,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 1141068,
+        "raw_md5": "d34a6302ded61f1b50f641cdb4b99baf"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/inference-deployment-cloud-deployments-outscale-a597bf59",
+      "probe_for": null,
+      "raw_md5": "d34a6302ded61f1b50f641cdb4b99baf",
+      "recorded_at": "2026-09-09T08:45:16Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/inference/deployment/cloud-deployments/outscale.md": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/inference-deployment-cloud-deployments-outscale.md-8194afa9",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:45:21Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/inference/deployment/cloud-deployments/overview": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/inference-deployment-cloud-deployments-overview-6b6e7275",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:45:25Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/inference/deployment/cloud-deployments/overview.md": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/inference-deployment-cloud-deployments-overview.md-313bd94c",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:45:30Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/inference/deployment/cloud-deployments/sfcortex": {
+      "body_storage": "truncated",
+      "bytes": 1114951,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 1114951,
+        "raw_md5": "7fb364f20946e3c94a483a2cdd03eff9"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/inference-deployment-cloud-deployments-sfcortex-c3063cbb",
+      "probe_for": null,
+      "raw_md5": "7fb364f20946e3c94a483a2cdd03eff9",
+      "recorded_at": "2026-09-09T08:45:35Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/inference/deployment/cloud-deployments/sfcortex.md": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/inference-deployment-cloud-deployments-sfcortex.md-588426ae",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:45:39Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/inference/deployment/cloud-deployments/vertex": {
+      "body_storage": "truncated",
+      "bytes": 1156527,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 1156527,
+        "raw_md5": "8cf13d2117568bb5e9d7404cb5415de2"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/inference-deployment-cloud-deployments-vertex-b820eb0e",
+      "probe_for": null,
+      "raw_md5": "8cf13d2117568bb5e9d7404cb5415de2",
+      "recorded_at": "2026-09-09T08:45:43Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/inference/deployment/cloud-deployments/vertex.md": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/inference-deployment-cloud-deployments-vertex.md-6b5e1618",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:45:48Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/inference/deployment/local-deployment/cerebrium": {
+      "body_storage": "truncated",
+      "bytes": 1174239,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 1174239,
+        "raw_md5": "9a153e30f437f8fae13b510d0441d90c"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/inference-deployment-local-deployment-cerebrium-0972d5e2",
+      "probe_for": null,
+      "raw_md5": "9a153e30f437f8fae13b510d0441d90c",
+      "recorded_at": "2026-09-09T08:46:15Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/inference/deployment/local-deployment/cloudflare": {
+      "body_storage": "truncated",
+      "bytes": 1097612,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 1097612,
+        "raw_md5": "da13d7193668c05f370895f47f61243d"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/inference-deployment-local-deployment-cloudflare-2bde3efd",
+      "probe_for": null,
+      "raw_md5": "da13d7193668c05f370895f47f61243d",
+      "recorded_at": "2026-09-09T08:46:22Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/inference/deployment/local-deployment/skypilot": {
+      "body_storage": "truncated",
+      "bytes": 1117978,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 1117978,
+        "raw_md5": "eabfed6f41bbd411e87c1e0cb58ba95f"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/inference-deployment-local-deployment-skypilot-7ff82220",
+      "probe_for": null,
+      "raw_md5": "eabfed6f41bbd411e87c1e0cb58ba95f",
+      "recorded_at": "2026-09-09T08:46:33Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/inference/deployment/local-deployment/tgi": {
+      "body_storage": "truncated",
+      "bytes": 1131820,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 1131820,
+        "raw_md5": "31ed1efd9d8e95d5d1ed398100ea2e53"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/inference-deployment-local-deployment-tgi-6035e0ae",
+      "probe_for": null,
+      "raw_md5": "31ed1efd9d8e95d5d1ed398100ea2e53",
+      "recorded_at": "2026-09-09T08:46:40Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/inference/deployment/local-deployment/trt": {
+      "body_storage": "truncated",
+      "bytes": 1076998,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 1076998,
+        "raw_md5": "1631c7a1604afeb0af6ded6834ebdf8f"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/inference-deployment-local-deployment-trt-c5ad5448",
+      "probe_for": null,
+      "raw_md5": "1631c7a1604afeb0af6ded6834ebdf8f",
+      "recorded_at": "2026-09-09T08:46:47Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/inference/deployment/local-deployment/vllm": {
+      "body_storage": "truncated",
+      "bytes": 1184667,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 1184667,
+        "raw_md5": "5c7b3d475f9882a948d0441f29bdeaa1"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/inference-deployment-local-deployment-vllm-1f1ccf7b",
+      "probe_for": null,
+      "raw_md5": "5c7b3d475f9882a948d0441f29bdeaa1",
+      "recorded_at": "2026-09-09T08:46:54Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/inference/model-selection-guide": {
+      "body_storage": "truncated",
+      "bytes": 1151240,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 1151240,
+        "raw_md5": "fe23d622c43593e9a962943b2ff4ccf8"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/inference-model-selection-guide-8508409d",
+      "probe_for": null,
+      "raw_md5": "fe23d622c43593e9a962943b2ff4ccf8",
+      "recorded_at": "2026-09-09T08:50:48Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/inference/prompting": {
+      "body_storage": "truncated",
+      "bytes": 1248191,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 1248191,
+        "raw_md5": "f20fe227cc2518a7c9b918469b7a15dc"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/inference-prompting-2625e6dd",
+      "probe_for": null,
+      "raw_md5": "f20fe227cc2518a7c9b918469b7a15dc",
+      "recorded_at": "2026-09-09T08:48:06Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/inference/sampling": {
+      "body_storage": "truncated",
+      "bytes": 1173438,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 1173438,
+        "raw_md5": "3c6e92feacaec1a8815ceca42a40ee61"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/inference-sampling-4fea3b64",
+      "probe_for": null,
+      "raw_md5": "3c6e92feacaec1a8815ceca42a40ee61",
+      "recorded_at": "2026-09-09T08:48:59Z",
+      "status": 200,
+      "transport_error": null
+    },
     "https://docs.mistral.ai/llms-full.txt": {
       "body_storage": "full",
       "bytes": 992425,
@@ -4158,6 +7650,186 @@
       "probe_for": null,
       "raw_md5": "83b9c1cd61d35da0699de5bb0759246c",
       "recorded_at": "2026-09-07T12:21:46Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/models": {
+      "body_storage": "truncated",
+      "bytes": 1281708,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 1281708,
+        "raw_md5": "7e1a62a6af24c591d55bce095111a5db"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/models-52fb3b13",
+      "probe_for": null,
+      "raw_md5": "7e1a62a6af24c591d55bce095111a5db",
+      "recorded_at": "2026-09-09T08:47:23Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/models/model-selection-guide": {
+      "body_storage": "full",
+      "bytes": 146,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 146,
+        "raw_md5": "2b9e966e0ded8bdfd4277eb2a523b0a5"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/models-model-selection-guide-cfae9bf2",
+      "probe_for": null,
+      "raw_md5": "2b9e966e0ded8bdfd4277eb2a523b0a5",
+      "recorded_at": "2026-09-09T08:50:46Z",
+      "status": 308,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/models/overview": {
+      "body_storage": "full",
+      "bytes": 121,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 121,
+        "raw_md5": "fb7a009ec0c82a48f4c3a2b1c1ee8b91"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/models-overview-51a8a1b5",
+      "probe_for": null,
+      "raw_md5": "fb7a009ec0c82a48f4c3a2b1c1ee8b91",
+      "recorded_at": "2026-09-09T08:50:51Z",
+      "status": 308,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/resources/ambassadors": {
+      "body_storage": "truncated",
+      "bytes": 1254851,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 1254851,
+        "raw_md5": "1d0f966fb88580ba05da01c468738d84"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/resources-ambassadors-673d72c7",
+      "probe_for": null,
+      "raw_md5": "1d0f966fb88580ba05da01c468738d84",
+      "recorded_at": "2026-09-09T08:47:50Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/resources/cookbooks/concept-deep-dive-tokenization-readme": {
+      "body_storage": "truncated",
+      "bytes": 1288000,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 1288000,
+        "raw_md5": "d660aa291fa6ca6b1ef2580ca51a493b"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/resources-cookbooks-concept-deep-dive-tokenization-readme-89a2f551",
+      "probe_for": null,
+      "raw_md5": "d660aa291fa6ca6b1ef2580ca51a493b",
+      "recorded_at": "2026-09-09T08:49:06Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/resources/cookbooks/mistral-prompting-prefix_use_cases": {
+      "body_storage": "truncated",
+      "bytes": 1616212,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 1616212,
+        "raw_md5": "4d4c12b44d2843e7078226e32a8f7efe"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/resources-cookbooks-mistral-prompting-prefix_use_cases-20eb376c",
+      "probe_for": null,
+      "raw_md5": "4d4c12b44d2843e7078226e32a8f7efe",
+      "recorded_at": "2026-09-09T08:48:48Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/resources/deprecated/customization": {
+      "body_storage": "truncated",
+      "bytes": 1254767,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 1254767,
+        "raw_md5": "a5c7fdf70ff6c7a7f474f1768fc0049e"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/resources-deprecated-customization-b89783da",
+      "probe_for": null,
+      "raw_md5": "a5c7fdf70ff6c7a7f474f1768fc0049e",
+      "recorded_at": "2026-09-09T08:50:43Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/resources/deprecated/finetuning": {
+      "body_storage": "truncated",
+      "bytes": 1107510,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 1107510,
+        "raw_md5": "bb3db45ef31d4f5a76396739b8212830"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/resources-deprecated-finetuning-5c277c25",
+      "probe_for": null,
+      "raw_md5": "bb3db45ef31d4f5a76396739b8212830",
+      "recorded_at": "2026-09-09T08:43:40Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/resources/glossary": {
+      "body_storage": "truncated",
+      "bytes": 1113662,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 1113662,
+        "raw_md5": "5f68da0ce70a182a8dac557760c4a258"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/resources-glossary-14f881c1",
+      "probe_for": null,
+      "raw_md5": "5f68da0ce70a182a8dac557760c4a258",
+      "recorded_at": "2026-09-09T08:47:11Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/resources/sdks": {
+      "body_storage": "truncated",
+      "bytes": 1137703,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 1137703,
+        "raw_md5": "04c619325ce791d2b0f6bf31f4940f5b"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/resources-sdks-550a3254",
+      "probe_for": null,
+      "raw_md5": "04c619325ce791d2b0f6bf31f4940f5b",
+      "recorded_at": "2026-09-09T08:47:00Z",
       "status": 200,
       "transport_error": null
     },
@@ -4231,6 +7903,690 @@
       "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
       "recorded_at": "2026-09-07T14:46:37Z",
       "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/studio-api/agents/agent-tools/code_interpreter": {
+      "body_storage": "full",
+      "bytes": 157,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 157,
+        "raw_md5": "2aabfda9be3214d0e40c2366a9456b1f"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/studio-api-agents-agent-tools-code_interpreter-197e1ffc",
+      "probe_for": null,
+      "raw_md5": "2aabfda9be3214d0e40c2366a9456b1f",
+      "recorded_at": "2026-09-09T08:49:29Z",
+      "status": 308,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/studio-api/agents/agents-api": {
+      "body_storage": "full",
+      "bytes": 139,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 139,
+        "raw_md5": "218299521339a315a328c38ab2c8e113"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/studio-api-agents-agents-api-7ca5f948",
+      "probe_for": null,
+      "raw_md5": "218299521339a315a328c38ab2c8e113",
+      "recorded_at": "2026-09-09T08:49:11Z",
+      "status": 308,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/studio-api/conversations/structured-output": {
+      "body_storage": "full",
+      "bytes": 153,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 153,
+        "raw_md5": "efe19a4a297085d5587629c7fd84ac87"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/studio-api-conversations-structured-output-31d8b274",
+      "probe_for": null,
+      "raw_md5": "efe19a4a297085d5587629c7fd84ac87",
+      "recorded_at": "2026-09-09T08:50:13Z",
+      "status": 308,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/studio-api/conversations/structured-output/custom": {
+      "body_storage": "full",
+      "bytes": 160,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 160,
+        "raw_md5": "95950864a7399f7941182e247f2cc77d"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/studio-api-conversations-structured-output-custom-e0ecef98",
+      "probe_for": null,
+      "raw_md5": "95950864a7399f7941182e247f2cc77d",
+      "recorded_at": "2026-09-09T08:50:06Z",
+      "status": 308,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/studio-api/observability": {
+      "body_storage": "full",
+      "bytes": 135,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 135,
+        "raw_md5": "c1dde2eac2fe35294adff121a1490f7b"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/studio-api-observability-6a4eb296",
+      "probe_for": null,
+      "raw_md5": "c1dde2eac2fe35294adff121a1490f7b",
+      "recorded_at": "2026-09-09T08:50:55Z",
+      "status": 308,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/studio/agents/agent-tools/code_interpreter": {
+      "body_storage": "truncated",
+      "bytes": 1164027,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 1164027,
+        "raw_md5": "2d9c81fc70c70e07ce2a7ef84ccff890"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/studio-agents-agent-tools-code_interpreter-e65aeb1b",
+      "probe_for": null,
+      "raw_md5": "2d9c81fc70c70e07ce2a7ef84ccff890",
+      "recorded_at": "2026-09-09T08:49:31Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/studio/agents/agent-tools/image_generation": {
+      "body_storage": "truncated",
+      "bytes": 1208439,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 1208439,
+        "raw_md5": "8ccea040c46613d865990decd56f9a58"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/studio-agents-agent-tools-image_generation-26561654",
+      "probe_for": null,
+      "raw_md5": "8ccea040c46613d865990decd56f9a58",
+      "recorded_at": "2026-09-09T08:41:48Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/studio/agents/agent-tools/websearch": {
+      "body_storage": "truncated",
+      "bytes": 1181459,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 1181459,
+        "raw_md5": "fbbf9924619eae1eecd229f6a9de515a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/studio-agents-agent-tools-websearch-30406a13",
+      "probe_for": null,
+      "raw_md5": "fbbf9924619eae1eecd229f6a9de515a",
+      "recorded_at": "2026-09-09T08:41:55Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/studio/agents/agents-api": {
+      "body_storage": "truncated",
+      "bytes": 1286821,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 1286821,
+        "raw_md5": "5dd981841782a2a25a91d10473e168c5"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/studio-agents-agents-api-8a6bfca1",
+      "probe_for": null,
+      "raw_md5": "5dd981841782a2a25a91d10473e168c5",
+      "recorded_at": "2026-09-09T08:49:13Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/studio/agents/handoffs": {
+      "body_storage": "truncated",
+      "bytes": 1268302,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 1268302,
+        "raw_md5": "12ab2b9e8c12c816e07ea83a8b4594a4"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/studio-agents-handoffs-272897ee",
+      "probe_for": null,
+      "raw_md5": "12ab2b9e8c12c816e07ea83a8b4594a4",
+      "recorded_at": "2026-09-09T08:42:02Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/studio/agents/introduction": {
+      "body_storage": "truncated",
+      "bytes": 1116136,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 1116136,
+        "raw_md5": "82978d732d8d32b53d18fcf6b675765e"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/studio-agents-introduction-71e47278",
+      "probe_for": null,
+      "raw_md5": "82978d732d8d32b53d18fcf6b675765e",
+      "recorded_at": "2026-09-09T08:49:27Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/studio/audio/overview": {
+      "body_storage": "truncated",
+      "bytes": 1155164,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 1155164,
+        "raw_md5": "f4458376a2288c4ce56733d0c2e6042f"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/studio-audio-overview-a25bf3f5",
+      "probe_for": null,
+      "raw_md5": "f4458376a2288c4ce56733d0c2e6042f",
+      "recorded_at": "2026-09-09T08:49:15Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/studio/audio/speech_to_text": {
+      "body_storage": "truncated",
+      "bytes": 1093130,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 1093130,
+        "raw_md5": "db67e31ad8e888cdc681b8d766f63649"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/studio-audio-speech_to_text-1a704700",
+      "probe_for": null,
+      "raw_md5": "db67e31ad8e888cdc681b8d766f63649",
+      "recorded_at": "2026-09-09T08:49:20Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/studio/batch-processing": {
+      "body_storage": "truncated",
+      "bytes": 1684912,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 1684912,
+        "raw_md5": "638135b8d6b625fec446bb6fada31f85"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/studio-batch-processing-dd2b80f8",
+      "probe_for": null,
+      "raw_md5": "638135b8d6b625fec446bb6fada31f85",
+      "recorded_at": "2026-09-09T08:49:38Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/studio/connectors": {
+      "body_storage": "truncated",
+      "bytes": 1097625,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 1097625,
+        "raw_md5": "a352da57169d6b643d0faccb8e17cc3a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/studio-connectors-b4db9319",
+      "probe_for": null,
+      "raw_md5": "a352da57169d6b643d0faccb8e17cc3a",
+      "recorded_at": "2026-09-09T08:42:09Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/studio/conversations/advanced/predicted-outputs": {
+      "body_storage": "truncated",
+      "bytes": 1158261,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 1158261,
+        "raw_md5": "c6bb43b528c233a00495e1fcc3988e92"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/studio-conversations-advanced-predicted-outputs-07629052",
+      "probe_for": null,
+      "raw_md5": "c6bb43b528c233a00495e1fcc3988e92",
+      "recorded_at": "2026-09-09T08:50:04Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/studio/conversations/chat-completion": {
+      "body_storage": "truncated",
+      "bytes": 1273355,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 1273355,
+        "raw_md5": "34b53c7881bd024bfa9d8ace04c2d2c1"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/studio-conversations-chat-completion-14599b88",
+      "probe_for": null,
+      "raw_md5": "34b53c7881bd024bfa9d8ace04c2d2c1",
+      "recorded_at": "2026-09-09T08:50:22Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/studio/conversations/citations": {
+      "body_storage": "truncated",
+      "bytes": 1257105,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 1257105,
+        "raw_md5": "65b1a58f7dcd983d6b046e24f4c0e913"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/studio-conversations-citations-d13812ba",
+      "probe_for": null,
+      "raw_md5": "65b1a58f7dcd983d6b046e24f4c0e913",
+      "recorded_at": "2026-09-09T08:49:43Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/studio/conversations/function-calling": {
+      "body_storage": "truncated",
+      "bytes": 1503372,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 1503372,
+        "raw_md5": "9ff7d0929b1a7c9a04150c2c934fbb97"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/studio-conversations-function-calling-4c8c61e4",
+      "probe_for": null,
+      "raw_md5": "9ff7d0929b1a7c9a04150c2c934fbb97",
+      "recorded_at": "2026-09-09T08:49:55Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/studio/conversations/moderation": {
+      "body_storage": "truncated",
+      "bytes": 1372985,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 1372985,
+        "raw_md5": "3d821af6f7d21c4ef2ccca00e5a04d2f"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/studio-conversations-moderation-3adcd878",
+      "probe_for": null,
+      "raw_md5": "3d821af6f7d21c4ef2ccca00e5a04d2f",
+      "recorded_at": "2026-09-09T08:49:59Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/studio/conversations/reasoning": {
+      "body_storage": "truncated",
+      "bytes": 1268827,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 1268827,
+        "raw_md5": "bc4c77e14e0e2b9ee77941455479e638"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/studio-conversations-reasoning-4e8b21f5",
+      "probe_for": null,
+      "raw_md5": "bc4c77e14e0e2b9ee77941455479e638",
+      "recorded_at": "2026-09-09T08:44:17Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/studio/conversations/structured-output": {
+      "body_storage": "truncated",
+      "bytes": 1100006,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 1100006,
+        "raw_md5": "43ce0ca9b67d427c3372ccdbf00d911a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/studio-conversations-structured-output-a806b54b",
+      "probe_for": null,
+      "raw_md5": "43ce0ca9b67d427c3372ccdbf00d911a",
+      "recorded_at": "2026-09-09T08:50:15Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/studio/conversations/structured-output/custom": {
+      "body_storage": "truncated",
+      "bytes": 1187596,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 1187596,
+        "raw_md5": "b46c0c2a109910e2ef2ba381a437873e"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/studio-conversations-structured-output-custom-4e04493e",
+      "probe_for": null,
+      "raw_md5": "b46c0c2a109910e2ef2ba381a437873e",
+      "recorded_at": "2026-09-09T08:50:08Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/studio/conversations/structured-output/json_mode": {
+      "body_storage": "truncated",
+      "bytes": 1149788,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 1149788,
+        "raw_md5": "adf801d59c75da66e8a9a32c441a713c"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/studio-conversations-structured-output-json_mode-b6827a4d",
+      "probe_for": null,
+      "raw_md5": "adf801d59c75da66e8a9a32c441a713c",
+      "recorded_at": "2026-09-09T08:50:11Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/studio/conversations/vision": {
+      "body_storage": "truncated",
+      "bytes": 1256643,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 1256643,
+        "raw_md5": "eee44d68d9bd95da3e41e5007d44ba7f"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/studio-conversations-vision-fa2f67f2",
+      "probe_for": null,
+      "raw_md5": "eee44d68d9bd95da3e41e5007d44ba7f",
+      "recorded_at": "2026-09-09T08:44:43Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/studio/document-processing/annotations": {
+      "body_storage": "truncated",
+      "bytes": 1297435,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 1297435,
+        "raw_md5": "9cada9a33e51161538f0eedbccb978f1"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/studio-document-processing-annotations-5b568820",
+      "probe_for": null,
+      "raw_md5": "9cada9a33e51161538f0eedbccb978f1",
+      "recorded_at": "2026-09-09T08:42:38Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/studio/document-processing/annotations.md": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/studio-document-processing-annotations.md-7e45bbda",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:42:42Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/studio/document-processing/basic_ocr": {
+      "body_storage": "truncated",
+      "bytes": 1544399,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 1544399,
+        "raw_md5": "c5e763029873fe90d7b16e535fd60bc4"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/studio-document-processing-basic_ocr-5d7180b1",
+      "probe_for": null,
+      "raw_md5": "c5e763029873fe90d7b16e535fd60bc4",
+      "recorded_at": "2026-09-09T08:42:47Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/studio/document-processing/basic_ocr.md": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/studio-document-processing-basic_ocr.md-1c9ea5f2",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:42:52Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/studio/document-processing/document_ai_overview.md": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/studio-document-processing-document_ai_overview.md-e8499f24",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:43:01Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/studio/document-processing/document_qna": {
+      "body_storage": "truncated",
+      "bytes": 1183363,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 1183363,
+        "raw_md5": "7345efcafcb1bb0440b4a951daaa7e33"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/studio-document-processing-document_qna-9880d83e",
+      "probe_for": null,
+      "raw_md5": "7345efcafcb1bb0440b4a951daaa7e33",
+      "recorded_at": "2026-09-09T08:43:05Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/studio/document-processing/document_qna.md": {
+      "body_storage": "full",
+      "bytes": 462592,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 462592,
+        "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/studio-document-processing-document_qna.md-bf351c14",
+      "probe_for": null,
+      "raw_md5": "616b0ae2d90a72e6e69a233f396ff66a",
+      "recorded_at": "2026-09-09T08:43:10Z",
+      "status": 404,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/studio/document-processing/overview": {
+      "body_storage": "truncated",
+      "bytes": 1085278,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 1085278,
+        "raw_md5": "7231eec19441f661373eda0cb349b15d"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/studio-document-processing-overview-1be1f293",
+      "probe_for": null,
+      "raw_md5": "7231eec19441f661373eda0cb349b15d",
+      "recorded_at": "2026-09-09T08:42:56Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/studio/knowledge-rag/embeddings": {
+      "body_storage": "truncated",
+      "bytes": 1087107,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 1087107,
+        "raw_md5": "a99570a22cc9d156325422c8f2b4e39f"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/studio-knowledge-rag-embeddings-fee10470",
+      "probe_for": null,
+      "raw_md5": "a99570a22cc9d156325422c8f2b4e39f",
+      "recorded_at": "2026-09-09T08:43:14Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/studio/knowledge-rag/rag_quickstart": {
+      "body_storage": "truncated",
+      "bytes": 1244447,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 1244447,
+        "raw_md5": "fe5f87eddcbeffdd8f18192efa886600"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/studio-knowledge-rag-rag_quickstart-c3fac68a",
+      "probe_for": null,
+      "raw_md5": "fe5f87eddcbeffdd8f18192efa886600",
+      "recorded_at": "2026-09-09T08:47:43Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/studio/observability": {
+      "body_storage": "truncated",
+      "bytes": 1106650,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 1106650,
+        "raw_md5": "8b49833eaf9bbbe18960199ee2fa034f"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/studio-observability-8c027f56",
+      "probe_for": null,
+      "raw_md5": "8b49833eaf9bbbe18960199ee2fa034f",
+      "recorded_at": "2026-09-09T08:50:57Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/vibe/code": {
+      "body_storage": "full",
+      "bytes": 133,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 133,
+        "raw_md5": "af40aed818ccd8202ca07333ae48acb2"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/vibe-code-99620d8b",
+      "probe_for": null,
+      "raw_md5": "af40aed818ccd8202ca07333ae48acb2",
+      "recorded_at": "2026-09-09T08:49:47Z",
+      "status": 308,
+      "transport_error": null
+    },
+    "https://docs.mistral.ai/vibe/code/overview": {
+      "body_storage": "truncated",
+      "bytes": 1090077,
+      "comment": "FIX 候选",
+      "content_type": "text/html",
+      "drift": null,
+      "expect": {
+        "bytes": 1090077,
+        "raw_md5": "05b502d8d2b863b01c82e2dddcd601dd"
+      },
+      "handwritten": false,
+      "path": "snapshots/docs.mistral.ai/vibe-code-overview-31f5a716",
+      "probe_for": null,
+      "raw_md5": "05b502d8d2b863b01c82e2dddcd601dd",
+      "recorded_at": "2026-09-09T08:49:49Z",
+      "status": 200,
       "transport_error": null
     },
     "https://docs.moderntreasury.com/": {

@@ -393,3 +393,33 @@ def test_tried_records_the_verdict_not_just_the_status() -> None:
     for entry in r.tried:
         assert len(entry) == 4, f"tried 条目少了 verdict：{entry}"
         assert entry[3] is Verdict.UNKNOWN
+
+
+def test_partial_inability_is_unchecked_not_none() -> None:
+    """混合情形：有的候选真 404、有的没判成 → **不许**说「试过都不存在」。
+
+    第一版判据是 `all(UNKNOWN)`，于是「两条机械候选 404 + 模型候选没判成」
+    被算进 NONE，报告写「逐个试过都不存在」—— 而其中一条根本没判成。
+    实测 mistral 那 75 条里这种混合情形是多数。
+    """
+    seen: list[str] = []
+
+    def probe(url: str) -> tuple[int | None, Verdict]:
+        seen.append(url)
+        # 机械候选（前两个）真 404，模型候选没判成
+        return (404, Verdict.REAL404) if len(seen) <= 2 else (200, Verdict.UNKNOWN)
+
+    r = find_fix_candidate(
+        DEAD, probe=probe, model_candidates=["https://docs.mistral.ai/new/place"]
+    )
+    assert r.quality is CandidateQuality.UNCHECKED, (
+        f"混合情形被判成 {r.quality.value} —— 那会让报告说「试过都不存在」"
+    )
+    assert "没查到" in r.fix.action
+
+
+def test_all_real_404_is_still_none() -> None:
+    """全部真 404 才是「逐个试过、确实不存在」。判据收紧了不能把这一档也吞掉。"""
+    r = find_fix_candidate(DEAD, probe=_probe_real404(), model_candidates=[])  # type: ignore[arg-type]
+    assert r.quality is CandidateQuality.NONE
+    assert "试过" in r.fix.action

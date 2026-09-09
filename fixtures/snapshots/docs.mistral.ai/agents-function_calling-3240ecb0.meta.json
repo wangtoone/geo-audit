@@ -1,0 +1,26 @@
+{
+  "body_bytes": 138,
+  "body_file": "snapshots/docs.mistral.ai/agents-function_calling-3240ecb0.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://docs.mistral.ai/agents/function_calling/",
+  "handwritten": false,
+  "headers": {
+    "cache-control": "public, max-age=0, must-revalidate",
+    "content-type": "text/html",
+    "date": "Wed, 09 Sep 2026 08:49:22 GMT",
+    "location": "/agents/function_calling",
+    "refresh": "0;url=/agents/function_calling",
+    "server": "Vercel",
+    "strict-transport-security": "max-age=63072000",
+    "transfer-encoding": "chunked",
+    "x-vercel-id": "sin1::g9zqw-1788943762637-6cd1d07b8688"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "1d20def7cd1a50d9550c50c48f7ce427",
+  "recorded_at": "2026-09-09T08:49:22Z",
+  "status": 308,
+  "stored_bytes": 138,
+  "transport_error": null,
+  "url": "https://docs.mistral.ai/agents/function_calling/"
+}

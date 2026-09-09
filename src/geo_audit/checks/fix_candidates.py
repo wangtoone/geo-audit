@@ -256,8 +256,15 @@ def find_fix_candidate(
                 source="model",
             )
 
-    # 每一次尝试都拿不到可用答复 → **我们没能查**，不是「没有替代地址」。
-    unchecked = bool(tried) and all(v is Verdict.UNKNOWN for _, _, _, v in tried)
+    # **有任何一次没能判定，就不许说「试过都不存在」。**
+    #
+    # 第一版写的是 `all(... UNKNOWN)` —— 要求「全部」没判成才算没能查。实测那是
+    # 错的：真实情形常是「两条机械候选 404、模型候选没判成」，混合情况被算进
+    # NONE，报告于是写「候选地址我们逐个试过，都不存在」——**而其中一条我们
+    # 根本没判成**。那是把「部分无能力」说成「确定的否定」，
+    # 和今天前面那几处（suppress 吞异常、落空分支判 OK、host_is_live 丢 UNKNOWN、
+    # 候选额度饿死模型候选）是同一个病的第五次现身。
+    unchecked = any(v is Verdict.UNKNOWN for _, _, _, v in tried)
     if unchecked or not tried:
         why = (
             "候选地址一条都没能验证（缺快照 / 请求失败）"
