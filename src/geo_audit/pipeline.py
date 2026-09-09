@@ -46,6 +46,12 @@ from geo_audit.checks.ai_path import (
     parse_index_links,
     probe_index_links,
 )
+from geo_audit.checks.fix_candidates import (
+    CandidateQuality,
+    CandidateResult,
+    find_fix_candidate,
+    grade_candidates,
+)
 from geo_audit.extract import LinkTarget, PageExtraction, extract_page
 from geo_audit.fetch.cache import HttpCache
 from geo_audit.fetch.client import Fetcher, FetcherConfig, build_user_agent
@@ -361,6 +367,12 @@ class AuditOptions:
     use_cache: bool = True
     cache_dir: str | None = None
     replay_fixtures: bool = False
+    #: 给每条死链找一个**验证过**的替代地址。默认关：它要额外发请求
+    #: （实测 mistral 的 75 条死链用了 166 个），会把默认的 120 上限直接吃穿。
+    #: 开了之后按剩余预算尽力做，做不完的如实记成覆盖缺口。
+    fix_candidates: bool = False
+    #: 模型给的候选（qid 无关，按死链 URL 索引）。没有就只跑机械变换。
+    model_candidates: dict[str, tuple[str, ...]] = field(default_factory=dict)
 
     @property
     def interval(self) -> float:
@@ -1938,6 +1950,9 @@ def _run_stages(
         _stage_index_links(st, options, fetcher, prog)
         st.check()
         _stage_md_channel(st, options, fetcher, prog)
+    if options.fix_candidates:
+        st.check()
+        _stage_fix_candidates(st, options, fetcher, prog)
     if "dead_links" in checks:
         st.check()
         _stage_human_path(
@@ -2004,3 +2019,97 @@ __all__ = [
     "skeleton_seeds",
     "valid_ids",
 ]
+
+
+def _stage_fix_candidates(
+    st: RunState, options: AuditOptions, fetcher: Fetcher, prog: ProgressSink
+) -> None:
+    """⑦ 给每条死链找一个**验证过**的替代地址。
+
+    **为什么默认关**：实测 mistral 的 75 条死链，机械变换验完用了 166 个请求，
+    直接吃穿默认的 120 上限。开了之后按剩余预算尽力做，剩下的如实记成覆盖缺口
+    —— 不是静默少做。
+
+    **判定权不外借**：机械变换与模型候选走**同一条**验活路径，模型提的不因为
+    「是 AI 说的」而豁免。实测依据在 tests/data/l1_calibration.json：模型自称
+    有把握的 32 条里有 7 条是 404，拿它的自评当闸门会发布 7 条把人引到 404
+    的建议。
+    """
+    dead_kinds = ("index_link_dead", "dead_link")
+    targets = [(i, f) for i, f in enumerate(st.findings) if f.kind in dead_kinds and f.fix is None]
+    if not targets:
+        return
+
+    def probe(url: str) -> tuple[int | None, Verdict]:
+        st.requests_made += 1
+        p = fetcher.probe(url, expect=Expect.ANY, liveness_only=True)
+        resp = p.response
+        return (resp.status if resp is not None else None, p.verdict)
+
+    results: dict[int, CandidateResult] = {}
+    skipped = 0
+    for idx, finding in targets:
+        st.check()
+        if not _budget_left(st, options):
+            skipped += 1
+            continue
+        results[idx] = find_fix_candidate(
+            finding.target.url,
+            probe=probe,
+            model_candidates=options.model_candidates.get(finding.target.url, ()),
+            locator=finding.found_on or "",
+        )
+
+    graded = dict(zip(results, grade_candidates(list(results.values())), strict=True))
+    findings = list(st.findings)
+    for idx, result in graded.items():
+        findings[idx] = replace(findings[idx], fix=result.fix)
+    st.findings = findings
+
+    exact = sum(1 for r in graded.values() if r.quality is CandidateQuality.EXACT)
+    downgraded = sum(1 for r in graded.values() if r.quality is CandidateQuality.DOWNGRADED)
+    none = sum(1 for r in graded.values() if r.quality is CandidateQuality.NONE)
+    unchecked = sum(1 for r in graded.values() if r.quality is CandidateQuality.UNCHECKED)
+    prog.stage(
+        7,
+        "⑦ 修复目标",
+        f"精确 {exact} / 降级 {downgraded} / 查过没有 {none} / 没能查 {unchecked}"
+        + (f" / 预算不够未查 {skipped}" if skipped else ""),
+    )
+
+    if unchecked:
+        # **必须披露。** 「候选一条都没验成」与「查过确实没有替代地址」在报告里
+        # 长得一样（都是 after=None），而含义相反。实测 replay 模式下候选响应
+        # 没录进 fixtures，75 条全落这一档 —— 不说的话读的人会以为我们查过了。
+        st.coverage_gaps.append(
+            CoverageGap(
+                where="⑦ 修复目标",
+                reason="not_fetched",
+                detail=(
+                    f"{unchecked} 条死链的候选替代地址**一条都没能验证**"
+                    "（缺快照或请求失败）。这不是「它们没有替代地址」，是我们没查到。"
+                    f"另有 {none} 条是逐个试过、确实不存在。"
+                ),
+                remedy=(
+                    "replay 模式下候选地址要先实录："
+                    "在 fixtures/urls.txt 里补这些候选后跑 capture_fixtures.py --live；"
+                    "或者去掉 --replay-fixtures 直接打活网。"
+                ),
+            )
+        )
+
+    if skipped:
+        st.coverage_gaps.append(
+            CoverageGap(
+                where="⑦ 修复目标",
+                reason="not_fetched",
+                detail=(
+                    f"还有 {skipped} 条死链没找替代地址：请求预算用完了。"
+                    f"已查 {len(graded)} 条。这不是「那些没有替代地址」，是「我们没查」。"
+                ),
+                remedy=(
+                    f"用 --max-requests {options.max_requests * 2} 重跑，"
+                    "或 --only ai_path 缩小范围。"
+                ),
+            )
+        )

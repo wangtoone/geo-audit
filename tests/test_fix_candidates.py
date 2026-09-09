@@ -140,10 +140,11 @@ def test_tried_list_records_every_attempt_with_its_rule() -> None:
     """报告要能写「我们试了这几个、各自什么状态」—— 那是这个猜测的可审计性。"""
     r = find_fix_candidate(DEAD, probe=_probe(set()))
     assert r.tried, "没有记下任何尝试"
-    for candidate, rule_id, status in r.tried:
+    for candidate, rule_id, status, verdict in r.tried:
         assert candidate.startswith("http")
         assert rule_id
         assert status == 404
+        assert verdict is Verdict.REAL404
 
 
 def test_total_requests_are_capped_per_url() -> None:
@@ -327,3 +328,68 @@ def test_no_segment_count_heuristic_is_used() -> None:
     assert graded[0].quality is CandidateQuality.EXACT, (
         "只有一条死链指向它时不许因为「路径更短」就降级 —— 那条启发式没有数据支持"
     )
+
+
+# --------------------------------------------------------------------------- #
+# 第四档：「没能查」与「查过没有」必须分开
+# --------------------------------------------------------------------------- #
+#
+# 实测踩过：replay 模式下候选响应没录进 fixtures，75 条候选全拿到合成 599，
+# 而第一版把它们和「查过确实没有」一起塞进 NONE —— 报告于是对 75 条都写
+# 「补一个页面」，读的人会以为我们查过了。那是「没能看 ≠ 没问题」这条铁律
+# 在修复建议上的同一个破法。
+
+
+def _probe_unknown() -> object:
+    def probe(url: str) -> tuple[int | None, Verdict]:
+        return (599, Verdict.UNKNOWN)  # fixture 缺失时的合成答复
+
+    return probe
+
+
+def _probe_real404() -> object:
+    def probe(url: str) -> tuple[int | None, Verdict]:
+        return (404, Verdict.REAL404)
+
+    return probe
+
+
+def test_all_attempts_unusable_is_unchecked_not_none() -> None:
+    r = find_fix_candidate(DEAD, probe=_probe_unknown())  # type: ignore[arg-type]
+    assert r.quality is CandidateQuality.UNCHECKED
+    assert r.source == "unchecked"
+    assert r.fix.after is None
+    assert "不是" in r.fix.action and "没查到" in r.fix.action
+
+
+def test_attempts_that_really_404_are_none_not_unchecked() -> None:
+    """逐个试过、确实不存在 —— 那才是「补一个页面」。"""
+    r = find_fix_candidate(DEAD, probe=_probe_real404())  # type: ignore[arg-type]
+    assert r.quality is CandidateQuality.NONE
+    assert r.source == "none"
+    assert "试过" in r.fix.action
+
+
+def test_the_two_tiers_read_differently_to_a_human() -> None:
+    """两档的 after 都是 None，所以**只能靠文案区分** —— 那就必须真的不同。"""
+    unchecked = find_fix_candidate(DEAD, probe=_probe_unknown())  # type: ignore[arg-type]
+    none = find_fix_candidate(DEAD, probe=_probe_real404())  # type: ignore[arg-type]
+    assert unchecked.fix.after is none.fix.after is None
+    assert unchecked.fix.action != none.fix.action
+
+
+def test_grading_does_not_overwrite_unchecked_with_none() -> None:
+    """grade_candidates 不许把「没能查」又压回「查过没有」。"""
+    r = find_fix_candidate(DEAD, probe=_probe_unknown())  # type: ignore[arg-type]
+    graded = grade_candidates([r])
+    assert graded[0].quality is CandidateQuality.UNCHECKED
+
+
+def test_tried_records_the_verdict_not_just_the_status() -> None:
+    """光看状态码分不出「599 是 fixture 缺失」还是「站点真返回 599」——
+    所以 tried 里必须带 verdict。"""
+    r = find_fix_candidate(DEAD, probe=_probe_unknown())  # type: ignore[arg-type]
+    assert r.tried
+    for entry in r.tried:
+        assert len(entry) == 4, f"tried 条目少了 verdict：{entry}"
+        assert entry[3] is Verdict.UNKNOWN
