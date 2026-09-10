@@ -21,6 +21,24 @@
       "status": 200,
       "transport_error": null
     },
+    "https://big-selftest.invalid/robots.txt": {
+      "body_storage": "full",
+      "bytes": 23,
+      "comment": "自检 robots：放行全部（fetch 的 robots 闸要用）",
+      "content_type": "text/plain",
+      "drift": null,
+      "expect": {
+        "bytes": 23,
+        "raw_md5": "5e0bd1c281a62a380d7a948085bfe2d1"
+      },
+      "handwritten": true,
+      "path": "snapshots/big-selftest.invalid/robots.txt-6a34af7f",
+      "probe_for": null,
+      "raw_md5": "5e0bd1c281a62a380d7a948085bfe2d1",
+      "recorded_at": "2026-09-07T00:00:00Z",
+      "status": 200,
+      "transport_error": null
+    },
     "https://fixture-selftest.invalid/geo-audit-probe-0f1e2d3c4b5a69788796a5b4.txt": {
       "body_storage": "full",
       "bytes": 10,
@@ -93,6 +111,24 @@
       "status": 200,
       "transport_error": null
     },
+    "https://huge-selftest.invalid/robots.txt": {
+      "body_storage": "full",
+      "bytes": 23,
+      "comment": "自检 robots：放行全部（fetch 的 robots 闸要用）",
+      "content_type": "text/plain",
+      "drift": null,
+      "expect": {
+        "bytes": 23,
+        "raw_md5": "5e0bd1c281a62a380d7a948085bfe2d1"
+      },
+      "handwritten": true,
+      "path": "snapshots/huge-selftest.invalid/robots.txt-671dfac4",
+      "probe_for": null,
+      "raw_md5": "5e0bd1c281a62a380d7a948085bfe2d1",
+      "recorded_at": "2026-09-07T00:00:00Z",
+      "status": 200,
+      "transport_error": null
+    },
     "https://redirect-selftest.invalid/llms-full.txt": {
       "body_storage": "full",
       "bytes": 0,
@@ -111,6 +147,24 @@
       "status": 302,
       "transport_error": null
     },
+    "https://redirect-selftest.invalid/robots.txt": {
+      "body_storage": "full",
+      "bytes": 23,
+      "comment": "自检 robots：放行全部（fetch 的 robots 闸要用）",
+      "content_type": "text/plain",
+      "drift": null,
+      "expect": {
+        "bytes": 23,
+        "raw_md5": "5e0bd1c281a62a380d7a948085bfe2d1"
+      },
+      "handwritten": true,
+      "path": "snapshots/redirect-selftest.invalid/robots.txt-a5569bad",
+      "probe_for": null,
+      "raw_md5": "5e0bd1c281a62a380d7a948085bfe2d1",
+      "recorded_at": "2026-09-07T00:00:00Z",
+      "status": 200,
+      "transport_error": null
+    },
     "https://target-selftest.invalid/": {
       "body_storage": "full",
       "bytes": 147,
@@ -125,6 +179,24 @@
       "path": "snapshots/target-selftest.invalid/index-91c000e7",
       "probe_for": null,
       "raw_md5": "f78105293ead7bafc9093c9010c28339",
+      "recorded_at": "2026-09-07T00:00:00Z",
+      "status": 200,
+      "transport_error": null
+    },
+    "https://target-selftest.invalid/robots.txt": {
+      "body_storage": "full",
+      "bytes": 23,
+      "comment": "自检 robots：放行全部（fetch 的 robots 闸要用）",
+      "content_type": "text/plain",
+      "drift": null,
+      "expect": {
+        "bytes": 23,
+        "raw_md5": "5e0bd1c281a62a380d7a948085bfe2d1"
+      },
+      "handwritten": true,
+      "path": "snapshots/target-selftest.invalid/robots.txt-5b816aa6",
+      "probe_for": null,
+      "raw_md5": "5e0bd1c281a62a380d7a948085bfe2d1",
       "recorded_at": "2026-09-07T00:00:00Z",
       "status": 200,
       "transport_error": null
@@ -146,6 +218,24 @@
       "recorded_at": "2026-09-07T00:00:00Z",
       "status": 0,
       "transport_error": "timeout: ConnectTimeout('handwritten fixture')"
+    },
+    "https://timeout-selftest.invalid/robots.txt": {
+      "body_storage": "full",
+      "bytes": 23,
+      "comment": "自检 robots：放行全部（fetch 的 robots 闸要用）",
+      "content_type": "text/plain",
+      "drift": null,
+      "expect": {
+        "bytes": 23,
+        "raw_md5": "5e0bd1c281a62a380d7a948085bfe2d1"
+      },
+      "handwritten": true,
+      "path": "snapshots/timeout-selftest.invalid/robots.txt-a5aa6e92",
+      "probe_for": null,
+      "raw_md5": "5e0bd1c281a62a380d7a948085bfe2d1",
+      "recorded_at": "2026-09-07T00:00:00Z",
+      "status": 200,
+      "transport_error": null
     }
   }
 }

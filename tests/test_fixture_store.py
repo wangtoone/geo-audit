@@ -840,3 +840,31 @@ def test_accept_text_is_what_the_text_file_positions_ask_for() -> None:
     这件事至少有人看见。
     """
     assert "text/plain" in ACCEPT_TEXT
+
+
+def test_every_selftest_host_has_a_robots_snapshot() -> None:
+    """每个自检域都要有 robots.txt 快照。
+
+    `Fetcher.fetch()` 现在在发请求之前过 robots 闸 —— 原来那道闸只有 `probe()`
+    过，于是 sitemap 抓取（`fetch_sitemap_urls`）与对照探针（`host_profile`）
+    整个绕过了它，而 `robots_allows` 自己的文档串写的是「honour robots.txt for
+    **everything** except /robots.txt itself」。
+
+    加闸的副作用是 strict 模式下每个域都需要 robots.txt 快照。这条断言守的就是
+    那份名单 —— 不靠记性：加闸那一版漏了 `timeout-selftest.invalid`，是测试红了
+    才发现的，而错误信息指向的是「缺快照」而不是「你漏了一个域」，很难读。
+    """
+    import json as _json
+
+    handwritten = REPO / "fixtures" / "handwritten" / "index.json"
+    if not handwritten.exists():
+        pytest.skip("fixtures/handwritten/index.json 不在")
+    snaps = _json.loads(handwritten.read_text(encoding="utf-8"))["snapshots"]
+    hosts = {u.split("/")[2] for u in snaps}
+    with_robots = {u.split("/")[2] for u in snaps if u.endswith("/robots.txt")}
+    missing = sorted(hosts - with_robots)
+    assert missing == [], (
+        f"这些自检域没有 robots.txt 快照：{missing}。"
+        "把它们加进 scripts/capture_fixtures.py 的 SELFTEST_EXTRA_HOSTS，然后重跑"
+        " --write-selftest-fixtures。"
+    )

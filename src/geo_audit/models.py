@@ -534,6 +534,14 @@ class RobotsInfo:
     crawl_delay: float | None
     sitemaps: tuple[str, ...]
     raw: str
+    #: 这份 robots.txt 最后被**怎么执行**的。RFC 9309 §2.3.1 把三种结果分开，
+    #: 而 `fetched` / `status` 读不出这个区别 —— 4xx 与 5xx 都是 `fetched=False`，
+    #: 但一个该放行全部、另一个该全部不许抓。
+    #:
+    #:   parsed        2xx，按内容执行
+    #:   allow_all     4xx，视为「没有 robots.txt」
+    #:   disallow_all  5xx 或网络错误（unreachable），按完全不许抓处理
+    policy: Literal["parsed", "allow_all", "disallow_all"] = "parsed"
 
 
 # --------------------------------------------------------------------------- #
