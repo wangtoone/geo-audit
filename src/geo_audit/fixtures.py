@@ -507,6 +507,62 @@ REDACTED_UA = b"geo-audit/x.y.z (+https://example.invalid/geo-audit; contact: re
 REDACTED_REPO_PATH = b"example.invalid/geo-audit-owner/geo-audit"
 
 
+#: 第三方凭据类 query 参数的占位。**这不是我们的东西，是别人发给我们的。**
+#:
+#: 实测：`developers.brevo.com` 的页面正文里带着 S3 presigned URL，
+#: 11 份已提交快照里含 `AKIA6KXJSKKNFOCF7G4B` + `X-Amz-Signature=`，
+#: 签发 2026-09-04、有效期 604800s（7 天），也就是说**公开仓库里有一条当时
+#: 还能用的、授予第三方 S3 对象读权限的 URL**。
+#:
+#: 项目此前知道 fixtures 里有 presigned URL —— §8.1 的漂移分支里就叫
+#: `presigned_expiring` —— 但只当成「快照会过期」的新鲜度问题，
+#: **没当成泄漏问题**。这两件事是分开的：过期解决的是可复现性，
+#: 不解决「我们把别人的凭据材料再分发了」。
+REDACTED_CREDENTIAL = b"REDACTED"
+
+#: 会被换掉的凭据类 query 参数名。**只收 AWS 签名那一族。**
+#:
+#: 第一版还收了 `token` / `sig` / `signature` / `access_token`，实测直接把语料
+#: 改坏：这些词在普通文档正文里到处都是（示例代码、API 参考里的占位符），
+#: 32 份快照被改，其中有的**变长了**（短值换成更长的 `REDACTED`）。
+#: 判定语料多改一个字节就多一次「测量假象」的风险，所以宁可漏也不宽。
+CREDENTIAL_QUERY_KEYS: Final = ("X-Amz-Signature", "X-Amz-Credential", "X-Amz-Security-Token")
+
+#: AWS 访问密钥 ID 的形态。它本身不是密钥，但它标识对方的 AWS 账号，
+#: 而且是所有密钥扫描器都会报的东西 —— 留在公开仓库里等于给对方招麻烦。
+_AKIA_RE: Final = re.compile(rb"(?:AKIA|ASIA)[0-9A-Z]{16}")
+
+#: `?k=v` 或 `&k=v`，值一直吃到下一个分隔符。刻意也吃 `\u0026`（JSON 里的 &）
+#: —— 实测 brevo 那份是嵌在 JSON 里的，`&` 被转义成 `\u0026`。
+_CRED_QUERY_RE: Final = re.compile(
+    rb"((?:X-Amz-Signature|X-Amz-Credential|X-Amz-Security-Token)=)"
+    rb"([^&\s\"'<>\\]+)",
+    re.IGNORECASE,
+)
+
+
+def redact_credentials(body: bytes) -> tuple[bytes, int]:
+    """把正文里**第三方**的凭据材料换成占位符。返回 (脱敏后正文, 替换次数)。
+
+    与 :func:`redact_contact` 分开的理由：那个换的是**我们自己**回显出去的邮箱，
+    这个换的是**别人发给我们、而我们要再分发**的东西。两件事的责任方不同，
+    混在一个函数里下次只会有一半被想起来。
+
+    只动 query 参数的值与 AKIA/ASIA 形态。**不动别的**：正文是判定语料，
+    多改一个字节就多一次「测量假象」的风险。
+    """
+    n = 0
+
+    def _q(m: re.Match[bytes]) -> bytes:
+        nonlocal n
+        n += 1
+        return m.group(1) + REDACTED_CREDENTIAL
+
+    body, k = _CRED_QUERY_RE.subn(_q, body)
+    body, j = _AKIA_RE.subn(REDACTED_CREDENTIAL, body)
+    return body, k + j
+
+
 #: 同理：UA 里带着仓库 URL 与版本号，回显出来无所谓，但邮箱那一段要换掉。
 #: URL 编码形态也要覆盖（youtube 回显的是 `contact%3A+x%40gmail.com`，
 #: facebook 回显的是 `x` 加 JSON 转义的 at 符号 加 `gmail.com`）。
@@ -1006,12 +1062,19 @@ class FixtureStore:
 
         # 脱敏必须在算 total / digest **之前** —— 摘要要对得上磁盘上的字节。
         redacted = 0
+        if body:
+            # 第三方凭据**无条件**脱敏：它跟有没有传 contact 无关。
+            # 第一版只在 `if contact` 里做脱敏，于是 --contact 之外的路径
+            # （比如 --url 单条补录）完全不过脱敏层。
+            body, cred = redact_credentials(body)
+            redacted += cred
         if contact and body:
-            body, redacted = redact_contact(body, contact, user_agent or "")
-            if redacted:
-                # 脱敏改了长度，调用方传进来的 body_bytes / raw_md5 就作废了。
-                body_bytes = None
-                raw_md5 = None
+            body, n_contact = redact_contact(body, contact, user_agent or "")
+            redacted += n_contact
+        if redacted:
+            # 脱敏改了长度，调用方传进来的 body_bytes / raw_md5 就作废了。
+            body_bytes = None
+            raw_md5 = None
 
         total = len(body) if body_bytes is None else body_bytes
         if body_bytes is not None and body and len(body) > body_bytes:

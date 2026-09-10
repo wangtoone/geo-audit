@@ -262,6 +262,33 @@ def classify_response(
     content_type = headers.get("content-type", "").split(";")[0].strip().lower()
 
     # ---- pre-flight: things that happened instead of a response ----------
+    # ---- L0  我们**根本没观测过**这个响应 ---------------------------------
+    #
+    # **这条必须排在所有判据之前。** fixture 层在 lenient 模式下给缺快照的 URL
+    # 合成一条 `599 + x-geo-audit-fixture: missing`（见 fixtures.py 的
+    # `_replay_lenient`）。它的含义是「我们没抓过这个 URL」，不是站点的任何事实。
+    #
+    # 实测踩过，而且发出去了：`www.modal.com/llms-full.txt` 从来没录过 → 合成
+    # 599，而 `www.modal.com` 的**对照探针录过**（真 404、能区分）→ 于是下面那条
+    # `ok_control_discriminates`（「host 对不存在的路径给 404，这个路径给了别的，
+    # 所以文件是真的」）命中，判 **OK**。接着 llms_full 的配对判定看到索引与全文
+    # 都是那 44 字节的占位符、比值 1.0 → 产出一条 HIGH：
+    #
+    #     「llms-full.txt 与 llms.txt 是同一份字节（一个字正文都没有）」
+    #
+    # 而 modal.com 实际有一份 2,292,505 B 的真全文。**七份已发布报告里 10 条
+    # 这样的不实指控**，其中报告自己还把「fixture missing: this URL was never
+    # recorded」印在证据栏里 —— 它一边说没抓过，一边给出 HIGH 结论。
+    #
+    # 那条 `ok_control_discriminates` 的推理对**真实响应**是成立的；错在它没问
+    # 一句「这个响应是真观测来的吗」。所以守在入口，一次盖住所有调用方与所有分支。
+    if headers.get("x-geo-audit-fixture") == "missing":
+        return Classification(
+            Verdict.UNKNOWN,
+            "not_fetched",
+            (f"没有 {url} 的实录快照，本位置未观测 —— 缺快照绝不当成站点的事实",),
+        )
+
     if robots_disallowed:
         return Classification(
             Verdict.UNKNOWN,

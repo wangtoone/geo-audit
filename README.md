@@ -49,27 +49,34 @@ Cloudflare 挡掉了几乎所有位置 —— 而它的 `llms.txt` 其实是真�
 
 ## 先看报告，再决定要不要装
 
-九份真实站点的真实扫描结果。**打开看，别看我怎么形容它。**
-索引页：[docs/index.html](docs/index.html)（GitHub Pages 上的画廊入口）。
+九份真实站点的真实扫描结果。索引页：[docs/index.html](docs/index.html)。
 
-| 报告 | 这个站发生了什么 |
-|---|---|
-| [mistral.ai](docs/reports/mistral.ai.html) | `docs.mistral.ai/llms.txt` 是规范的真文件，里面的链接 **75 条死 / 0 条活**；76 条 finding 收敛成 **1 处根因**。另有 5 个位置「无法判断」（撞上默认请求预算，报告写明了怎么重跑） |
-| [gusto.com](docs/reports/gusto.com.html) | 第一屏那句「这次扫描不可信」就是这份报告的原文。它的 llms.txt 是真文件，只是 Cloudflare 挡掉了 17/18 个位置 |
-| [minimax.io](docs/reports/minimax.io.html) | 同上那种「不可信」判决，另加 2 个真读错的位置。8 个核心位置里 6 个没能评估 |
-| [modal.com](docs/reports/modal.com.html) | **零发现。** 9 个位置全部通过、每条附对照证据。这种报告长什么样、值不值这个页数，你自己看 |
-| [rustdesk.com](docs/reports/rustdesk.com.html) | **零发现。** llms.txt 与 llms-full.txt 都是真文件、内容不同 —— 「llms-full 是 llms.txt 的字节副本」这个常见毛病它没有 |
-| [saleor.io](docs/reports/saleor.io.html) | **零发现。** 12 个位置全部通过 |
-| [deepgram.com](docs/reports/deepgram.com.html) | 一个位置都没读错，**但也不算「全部通过」**：`developers.deepgram.com` 的对照探测做不成，那个 host 下面的 AI 路径我们一条都没看 —— 覆盖披露里逐条写着没看什么 |
-| [tdengine.com](docs/reports/tdengine.com.html) | 同上形态：0 读错、1 个位置没能评估 |
-| [openstatus.dev](docs/reports/openstatus.dev.html) | apex 308 跳到 www，两边都测；`www.openstatus.dev/llms.txt` 是**诚实的 404**（不是伪装成 200 的空壳）。同样有 1 个位置没能评估，所以也不算「全部通过」 |
+**先说清楚：这九份现在首屏全是「这次扫描不可信」。** 不是报告写错了，是它第一次
+说了实话 —— 这批报告跑在**离线 replay 语料**上，而语料没覆盖到探测集里的多数
+位置（每份报告的覆盖披露里逐条写着缺哪些）。原先那些「零发现、N 个位置全部
+通过」里有一大半，是靠「一个从没抓过的 URL + 一个恰好录过的对照探针」判出来的：
+判定层的 `ok_control_discriminates` 分支（「这个 host 对不存在的路径给 404，
+而这个路径给了别的，所以文件是真的」）没问一句「这个响应是真观测来的吗」。
 
-九份里三份是零发现（modal / rustdesk / saleor）。这不是挑样挑偏了：72 个域的实测分布是
-**20.8% 一条都报不出来、52.8% 只有 1–2 条、只有 26.4% 能报 3 条以上**。
+| 报告 | 位置 | 通过 | 读错 | 未能评估 |
+|---|---|---|---|---|
+| [mistral.ai](docs/reports/mistral.ai.html) | 21 | 7 | 1 | 11 |
+| [saleor.io](docs/reports/saleor.io.html) | 23 | 7 | 0 | 15 |
+| [modal.com](docs/reports/modal.com.html) | 16 | 7 | 0 | 9 |
+| [rustdesk.com](docs/reports/rustdesk.com.html) | 16 | 6 | 0 | 9 |
+| [deepgram.com](docs/reports/deepgram.com.html) | 19 | 3 | 0 | 15 |
+| [tdengine.com](docs/reports/tdengine.com.html) | 19 | 3 | 0 | 14 |
+| [openstatus.dev](docs/reports/openstatus.dev.html) | 13 | 2 | 0 | 10 |
+| [minimax.io](docs/reports/minimax.io.html) | 9 | 0 | 2 | 6 |
+| [gusto.com](docs/reports/gusto.com.html) | 19 | 0 | 1 | 17 |
 
-**「不算全部通过」这四个字是这个工具的重点。** 一个位置没能评估，首屏就不许写
-「全部通过」—— `Status.UNKNOWN` 永不折算成通过。九份报告里四种判决形态各有活案例：
-读错、零发现、有未评估所以不算通过、以及**扫描本身不可信**。
+**mistral.ai 那份仍然是完整的证据链**：`docs.mistral.ai/llms.txt` 里列的内链
+**75 条死 / 0 条活**，76 条 finding 收敛成 **1 处根因**，每条附 `curl`。
+那部分不依赖缺失的语料。
+
+**这个「不可信」判决本身就是这个工具的重点**：一份主要在说「没能看」的报告，
+比一份把「没能看」写成「没问题」的报告有用。九份全部这么写，是因为语料确实不够
+—— 修的办法是补语料或改成活网跑，不是把判据放松回去。
 
 ## 跑一次
 

