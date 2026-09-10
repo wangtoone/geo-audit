@@ -643,7 +643,7 @@ ol.tight li {
   <div class="shell">
     <div class="meta">
       <span class="dom">geo-audit · minimax.io</span>
-      <span>2026-09-08 09:33 UTC</span>
+      <span>2026-09-10 07:21 UTC</span>
       <span>0.1.0</span>
       <span>UA: geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: ci@geo-audit.invalid)</span>
       <span>去噪清单: denoise/2026-09-07.1</span>
@@ -681,16 +681,16 @@ ol.tight li {
   <div class="panel box-unknown">
     <div class="f-head">
       <span class="st st-unknown">① 入口发现</span>
-      <span class="tag">原因码: control_unavailable</span>
+      <span class="tag">原因码: not_fetched</span>
       <span class="f-id">discovery:platform.minimax.io</span>
     </div>
     <dl class="kv">
       <dt>位置</dt>
       <dd><a href="https://platform.minimax.io/">https://platform.minimax.io/</a></dd>
       <dt>实际是</dt>
-      <dd>同域对照探测（https://platform.minimax.io/geo-audit-probe-3d1314913a5e302422adc7e3）自身不可用，无法判定本响应是真文件还是兜底页</dd>
+      <dd>没有 https://platform.minimax.io/ 的实录快照，本位置未观测 —— 缺快照绝不当成站点的事实</dd>
       <dt>补救办法</dt>
-      <dd>同域对照探测自身不可用（被拦或出错），无法判定本响应是真文件还是兜底页。判定作废，绝不退化成「没问题」。</dd>
+      <dd>超出本次预算上限（--max-requests / --max-links），本位置未验证。用 --max-requests 0 取消上限重跑可以覆盖它。</dd>
     </dl>
   </div>
   <div class="panel box-unknown">
@@ -711,61 +711,61 @@ ol.tight li {
   <div class="panel box-unknown">
     <div class="f-head">
       <span class="st st-unknown">⑥ 可点击路径</span>
-      <span class="tag">原因码: unexpected_status</span>
+      <span class="tag">原因码: not_fetched</span>
       <span class="f-id">human_path:https://minimax.io/pricing</span>
     </div>
     <dl class="kv">
       <dt>位置</dt>
       <dd><a href="https://minimax.io/pricing">https://minimax.io/pricing</a></dd>
       <dt>实际是</dt>
-      <dd>起始页抓不下来：HTTP 599 / unexpected_status</dd>
+      <dd>起始页抓不下来：HTTP 599 / not_fetched</dd>
       <dt>补救办法</dt>
-      <dd>该位置返回了本工具没有判据的状态码（既不是 2xx，也不落在我们逐条实测过的404/410/403/429/5xx 名单里）。这种情况我们不猜：不认定通过，也不认定失败。如果你知道这个码在你这儿的含义（比如自建网关的自定义码），把它的语义告诉我们，我们补一条判据；在那之前它留在「未能评估」里。</dd>
+      <dd>超出本次预算上限（--max-requests / --max-links），本位置未验证。用 --max-requests 0 取消上限重跑可以覆盖它。</dd>
     </dl>
   </div>
   <div class="panel box-unknown">
     <div class="f-head">
       <span class="st st-unknown">⑥ 可点击路径</span>
-      <span class="tag">原因码: unexpected_status</span>
+      <span class="tag">原因码: not_fetched</span>
       <span class="f-id">human_path:https://minimax.io/changelog</span>
     </div>
     <dl class="kv">
       <dt>位置</dt>
       <dd><a href="https://minimax.io/changelog">https://minimax.io/changelog</a></dd>
       <dt>实际是</dt>
-      <dd>起始页抓不下来：HTTP 599 / unexpected_status</dd>
+      <dd>起始页抓不下来：HTTP 599 / not_fetched</dd>
       <dt>补救办法</dt>
-      <dd>该位置返回了本工具没有判据的状态码（既不是 2xx，也不落在我们逐条实测过的404/410/403/429/5xx 名单里）。这种情况我们不猜：不认定通过，也不认定失败。如果你知道这个码在你这儿的含义（比如自建网关的自定义码），把它的语义告诉我们，我们补一条判据；在那之前它留在「未能评估」里。</dd>
+      <dd>超出本次预算上限（--max-requests / --max-links），本位置未验证。用 --max-requests 0 取消上限重跑可以覆盖它。</dd>
     </dl>
   </div>
   <div class="panel box-unknown">
     <div class="f-head">
       <span class="st st-unknown">⑥ 可点击路径</span>
-      <span class="tag">原因码: unexpected_status</span>
+      <span class="tag">原因码: not_fetched</span>
       <span class="f-id">human_path:https://minimax.io/docs</span>
     </div>
     <dl class="kv">
       <dt>位置</dt>
       <dd><a href="https://minimax.io/docs">https://minimax.io/docs</a></dd>
       <dt>实际是</dt>
-      <dd>起始页抓不下来：HTTP 599 / unexpected_status</dd>
+      <dd>起始页抓不下来：HTTP 599 / not_fetched</dd>
       <dt>补救办法</dt>
-      <dd>该位置返回了本工具没有判据的状态码（既不是 2xx，也不落在我们逐条实测过的404/410/403/429/5xx 名单里）。这种情况我们不猜：不认定通过，也不认定失败。如果你知道这个码在你这儿的含义（比如自建网关的自定义码），把它的语义告诉我们，我们补一条判据；在那之前它留在「未能评估」里。</dd>
+      <dd>超出本次预算上限（--max-requests / --max-links），本位置未验证。用 --max-requests 0 取消上限重跑可以覆盖它。</dd>
     </dl>
   </div>
   <div class="panel box-unknown">
     <div class="f-head">
       <span class="st st-unknown">⑥ 可点击路径</span>
-      <span class="tag">原因码: unexpected_status</span>
+      <span class="tag">原因码: not_fetched</span>
       <span class="f-id">human_path:https://minimax.io/help</span>
     </div>
     <dl class="kv">
       <dt>位置</dt>
       <dd><a href="https://minimax.io/help">https://minimax.io/help</a></dd>
       <dt>实际是</dt>
-      <dd>起始页抓不下来：HTTP 599 / unexpected_status</dd>
+      <dd>起始页抓不下来：HTTP 599 / not_fetched</dd>
       <dt>补救办法</dt>
-      <dd>该位置返回了本工具没有判据的状态码（既不是 2xx，也不落在我们逐条实测过的404/410/403/429/5xx 名单里）。这种情况我们不猜：不认定通过，也不认定失败。如果你知道这个码在你这儿的含义（比如自建网关的自定义码），把它的语义告诉我们，我们补一条判据；在那之前它留在「未能评估」里。</dd>
+      <dd>超出本次预算上限（--max-requests / --max-links），本位置未验证。用 --max-requests 0 取消上限重跑可以覆盖它。</dd>
     </dl>
   </div>
 </section>
@@ -875,7 +875,7 @@ ol.tight li {
           <td class="num">—</td>
           <td>
             <span class="st st-unknown">无法判断</span>
-            同域对照探测（https://platform.minimax.io/geo-audit-probe-3d1314913a5e302422adc7e3）自身不可用，无法判定本响应是真文件还是兜底页
+            没有 https://platform.minimax.io/ 的实录快照，本位置未观测 —— 缺快照绝不当成站点的事实
           </td>
         </tr>
         <tr class="box-na">
@@ -915,7 +915,7 @@ ol.tight li {
           <td class="num">—</td>
           <td>
             <span class="st st-unknown">无法判断</span>
-            起始页抓不下来：HTTP 599 / unexpected_status
+            起始页抓不下来：HTTP 599 / not_fetched
             <details><summary>curl</summary><pre>curl -sSL -A &#39;geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: ci@geo-audit.invalid)&#39; &#39;https://minimax.io/pricing&#39;</pre></details>
           </td>
         </tr>
@@ -929,7 +929,7 @@ ol.tight li {
           <td class="num">—</td>
           <td>
             <span class="st st-unknown">无法判断</span>
-            起始页抓不下来：HTTP 599 / unexpected_status
+            起始页抓不下来：HTTP 599 / not_fetched
             <details><summary>curl</summary><pre>curl -sSL -A &#39;geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: ci@geo-audit.invalid)&#39; &#39;https://minimax.io/changelog&#39;</pre></details>
           </td>
         </tr>
@@ -943,7 +943,7 @@ ol.tight li {
           <td class="num">—</td>
           <td>
             <span class="st st-unknown">无法判断</span>
-            起始页抓不下来：HTTP 599 / unexpected_status
+            起始页抓不下来：HTTP 599 / not_fetched
             <details><summary>curl</summary><pre>curl -sSL -A &#39;geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: ci@geo-audit.invalid)&#39; &#39;https://minimax.io/docs&#39;</pre></details>
           </td>
         </tr>
@@ -957,7 +957,7 @@ ol.tight li {
           <td class="num">—</td>
           <td>
             <span class="st st-unknown">无法判断</span>
-            起始页抓不下来：HTTP 599 / unexpected_status
+            起始页抓不下来：HTTP 599 / not_fetched
             <details><summary>curl</summary><pre>curl -sSL -A &#39;geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: ci@geo-audit.invalid)&#39; &#39;https://minimax.io/help&#39;</pre></details>
           </td>
         </tr>
@@ -1024,7 +1024,7 @@ ol.tight li {
           <td class="rawurl">https://platform.minimax.io/</td>
           <td>不在朴素探测集内</td>
           <td>它从没往这个 host 打过请求</td>
-          <td>同域对照探测（https://platform.minimax.io/geo-audit-probe-3d1314913a5e302422adc7e3）自身不可用，无法判定本响应是真文件还是兜底页</td>
+          <td>没有 https://platform.minimax.io/ 的实录快照，本位置未观测 —— 缺快照绝不当成站点的事实</td>
           <td>n</td>
           <td class="num">2</td>
           <td>一致</td>
@@ -1062,9 +1062,9 @@ ol.tight li {
       <tbody>
         <tr class="box-unknown">
           <td class="rawurl">① 入口发现 · https://platform.minimax.io/</td>
-          <td><code>control_unavailable</code></td>
-          <td>这个 host 解析通了、根路径也请求了，但判不了（control_unavailable），于是它的 AI 路径（llms.txt / llms-full.txt / .md 通道）一条都没探，robots.txt 与 sitemap.xml 也没读。这不是「这个 host 没问题」，是「我们没能看」。</td>
-          <td>同域对照探测自身不可用（被拦或出错），无法判定本响应是真文件还是兜底页。判定作废，绝不退化成「没问题」。</td>
+          <td><code>not_fetched</code></td>
+          <td>这个 host 解析通了、根路径也请求了，但判不了（not_fetched），于是它的 AI 路径（llms.txt / llms-full.txt / .md 通道）一条都没探，robots.txt 与 sitemap.xml 也没读。这不是「这个 host 没问题」，是「我们没能看」。</td>
+          <td>超出本次预算上限（--max-requests / --max-links），本位置未验证。用 --max-requests 0 取消上限重跑可以覆盖它。</td>
         </tr>
       </tbody>
     </table>
