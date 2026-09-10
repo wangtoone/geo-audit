@@ -257,9 +257,36 @@ class Fetcher:
         robots_url = f"{scheme}://{host}/robots.txt"
         with self.limiter.hold(host):
             resp = self._raw_request(robots_url, accept="text/plain", byte_cap=LIVENESS_BYTE_CAP)
-        raw = resp.text if resp.status == 200 else ""
+        # RFC 9309 §2.3.1 把三种结果分开，**我们原来全按「没有 robots.txt」处理**：
+        #   2xx      → 按内容执行
+        #   4xx      → 视为「没有 robots.txt」，放行全部
+        #   5xx / 网络错误 → 「unreachable」，**可以按完全不许抓处理**
+        #
+        # 原来写的是 `raw = resp.text if resp.status == 200 else ""`，于是 503、
+        # 超时、DNS 失败都得到一个空 parser，而空 parser 的 can_fetch() 恒为 True
+        # —— **robots.txt 临时 503 的站会被完整抓一遍**，而且结果缓存一整轮。
+        #
+        # 这里选「5xx/网络错误 → 全部不许抓」。RFC 用的词是 MAY 而不是 MUST，
+        # 但对一个把「我们没被允许看」当成合法结论的工具，宁可少看不要多抓：
+        # 那些位置会如实进「未能评估」区，而不是变成「没问题」。
+        raw = resp.text if 200 <= resp.status < 300 else ""
+        # **合成的「缺快照」响应不算 unreachable。**
+        #
+        # 差点撞出灾难：replay 下缺 robots.txt 快照会得到 `599 +
+        # x-geo-audit-fixture: missing`，而 599 >= 500。语料里 143 个 host 只有
+        # 13 个录了 robots.txt —— 按 unreachable 处理的话 130 个 host 全部变成
+        # 「不许抓」，九份报告会 100% 变成 robots_disallowed。
+        #
+        # 区分点在于 **robots 管的是「我们可不可以发这个请求」，而 replay 模式
+        # 下我们不发请求** —— 那些请求在录制时就已经发生过了。所以缺快照是
+        # 语料完整性的事，不是站方的决定，放行；真 5xx / 网络错误才是 unreachable。
+        replayed_gap = resp.headers.get("x-geo-audit-fixture") == "missing"
+        unreachable = not replayed_gap and (resp.status == 0 or resp.status >= 500)
         parser = urllib.robotparser.RobotFileParser()
-        parser.parse(raw.splitlines())
+        if unreachable:
+            parser.parse(["User-agent: *", "Disallow: /"])
+        else:
+            parser.parse(raw.splitlines())
         sitemaps = tuple(
             line.split(":", 1)[1].strip()
             for line in raw.splitlines()
@@ -275,11 +302,12 @@ class Fetcher:
             self.limiter.set_crawl_delay(host, delay)
         info = RobotsInfo(
             host=host,
-            fetched=resp.status == 200,
+            fetched=200 <= resp.status < 300,
             status=resp.status,
             crawl_delay=delay,
             sitemaps=sitemaps,
             raw=raw,
+            policy=("disallow_all" if unreachable else ("parsed" if raw else "allow_all")),
         )
         with self._robots_lock:
             self._robots[host] = info
@@ -321,6 +349,33 @@ class Fetcher:
         """Fetch ``url``, following redirects and recording the chain."""
         accept = ACCEPT_TEXT if expect is Expect.TEXT_FILE else ACCEPT_HTML
         byte_cap = LIVENESS_BYTE_CAP if liveness_only else CONTENT_BYTE_CAP
+
+        # ---- robots 闸。**排在缓存之前** ------------------------------------
+        #
+        # `robots_allows()` 原来只有一个调用方 —— `probe()`。于是走 `fetch()`
+        # 的路径全部绕过了它：**sitemap 抓取**（discovery.py 的
+        # `fetch_sitemap_urls`，最多 5+5 条）、**对照探针**（`host_profile`）、
+        # 以及录制脚本。而 `robots_allows` 自己的文档串写的是
+        # 「honour robots.txt for **everything** except /robots.txt itself」。
+        #
+        # 最要紧的情形是 `Disallow: /`：那样的站原本仍会被抓 sitemap 与对照探针。
+        #
+        # 放在缓存命中**之前**：一条早先（比如 --no-robots 那轮）缓存过的响应
+        # 不该让这次绕过检查。robots.txt 自身由 `robots_allows` 里的路径判断豁免，
+        # 它走 `_raw_request` 不经过这里。
+        if not self.robots_allows(url):
+            resp = HttpResponse(
+                url=url,
+                final_url=url,
+                status=0,
+                headers={},
+                body=b"",
+                # classify_response 认这个前缀 → UNKNOWN/robots_disallowed。
+                # 不用 status 403 之类的真状态码：那会被判成「站点拦了我们」，
+                # 而这里是**我们自己决定不抓**，两件事在报告里不该长得一样。
+                transport_error=f"robots_disallowed: {urlsplit(url).path or '/'}",
+            )
+            return resp
 
         if use_cache:
             hit = self.cache.get("GET", url, accept)

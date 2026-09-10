@@ -297,6 +297,15 @@ def classify_response(
         )
     if status == 0:
         err = (transport_error or "").lower()
+        if err.startswith("robots_disallowed"):
+            # fetch() 在 robots 不许抓时返回的标记响应。**必须在这里认出来**，
+            # 否则会落到下面的 network_error —— 把「我们没被允许看」写成
+            # 「网络出错了」，前者是站方的决定、后者是我们的故障，两件事。
+            return Classification(
+                Verdict.UNKNOWN,
+                "robots_disallowed",
+                (f"robots.txt 禁止抓取 {_path_of(url)}，本位置未评估",),
+            )
         if "resolve" in err or "nodename" in err or "name or service" in err or "servfail" in err:
             reason = "dns_unresolved"
             ev = f"DNS 解析失败（已换第二解析器复测仍失败）：{transport_error}"

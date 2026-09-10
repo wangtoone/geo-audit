@@ -422,6 +422,19 @@ SELFTEST_NOTE = (
 )
 
 SELFTEST_HOST = "fixture-selftest.invalid"
+#: 除 SELFTEST_HOST 之外还会被请求的自检域。**每一个都要有 robots.txt** ——
+#: `Fetcher.fetch()` 现在在发请求之前过 robots 闸（原来只有 `probe()` 过，
+#: 于是 sitemap 抓取与对照探针整个绕过了它），strict 模式下缺快照会抛。
+#:
+#: 这份名单靠 `tests/test_fixture_store.py` 里那条断言守着，不靠记性：
+#: 这一版就漏了 timeout-selftest.invalid，是测试红了才发现的。
+SELFTEST_EXTRA_HOSTS = (
+    "redirect-selftest.invalid",
+    "target-selftest.invalid",
+    "big-selftest.invalid",
+    "huge-selftest.invalid",
+    "timeout-selftest.invalid",
+)
 SELFTEST_PROBE_HEX = "0f1e2d3c4b5a69788796a5b4"  # 冻住的探针路径，不随机
 SELFTEST_LLMS_BODY = (
     b"# fixture-selftest\n\n"
@@ -487,6 +500,18 @@ def write_selftest_fixtures(root: Path) -> int:
         probe_for=f"https://{SELFTEST_HOST}/llms.txt",
         comment="自检对照探针：probe_for 反查索引",
     )
+    # 自检域各自的 robots.txt。**必须有**：`Fetcher.fetch()` 现在在发请求之前
+    # 过 robots 闸（原来只有 `probe()` 过，于是 sitemap 抓取与对照探针整个绕过了
+    # 它），而 strict 模式下缺 robots.txt 快照会抛 FixtureMissing。
+    # 补上之后自检测试其实更忠实 —— 真实的一次 fetch 本来就先取 robots.txt。
+    for _host in SELFTEST_EXTRA_HOSTS:
+        put(
+            f"https://{_host}/robots.txt",
+            status=200,
+            headers=text_plain,
+            body=b"User-agent: *\nAllow: /\n",
+            comment="自检 robots：放行全部（fetch 的 robots 闸要用）",
+        )
     put(
         "https://redirect-selftest.invalid/llms-full.txt",
         status=302,

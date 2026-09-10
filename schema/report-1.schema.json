@@ -997,6 +997,13 @@
         "host": {
           "type": "string"
         },
+        "policy": {
+          "enum": [
+            "parsed",
+            "allow_all",
+            "disallow_all"
+          ]
+        },
         "raw": {
           "type": "string"
         },

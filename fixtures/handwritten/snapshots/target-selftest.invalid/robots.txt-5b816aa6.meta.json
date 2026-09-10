@@ -1,0 +1,19 @@
+{
+  "body_bytes": 23,
+  "body_file": "snapshots/target-selftest.invalid/robots.txt-5b816aa6.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://target-selftest.invalid/robots.txt",
+  "handwritten": true,
+  "headers": {
+    "content-type": "text/plain; charset=utf-8",
+    "server": "selftest"
+  },
+  "note": "手写，非实录",
+  "probe_for": null,
+  "raw_md5": "5e0bd1c281a62a380d7a948085bfe2d1",
+  "recorded_at": "2026-09-07T00:00:00Z",
+  "status": 200,
+  "stored_bytes": 23,
+  "transport_error": null,
+  "url": "https://target-selftest.invalid/robots.txt"
+}
