@@ -255,21 +255,39 @@ class Outcome:
         return self.report is not None and self.html_path is not None
 
 
-def _options(domain: str, contact: str) -> AuditOptions:
-    """画廊一律跑**默认参数**：用户装完就是这套，报告里的数字才有可比性。"""
+def _options(domain: str, contact: str, *, live: bool = False) -> AuditOptions:
+    """画廊一律跑**默认参数**：用户装完就是这套，报告里的数字才有可比性。
+
+    ``live=True`` 打真网络。为什么需要这个开关：replay 语料只录了实测涉及的
+    那些 URL，而探测集会枚举 16 个子域前缀 —— 于是九份报告里多数位置是
+    「没录过」，判定层如实标成「未能评估」，首屏全变成「这次扫描不可信」。
+    那个判决是对的，但一份主要在说「没能看」的报告对读者没有信息量。
+
+    **画廊不是判定语料。** 判定的可复现性由 42 条标注 + `fp_gate.py` 保证，
+    画廊只负责「这是真跑出来的九份报告」。所以这里把两件事分开：
+    展示走活网，判定复现走 fixtures。
+    """
     return AuditOptions(
         domain=domain,
         contact=contact,
-        replay_fixtures=True,
-        use_cache=False,  # --replay-fixtures 强制禁用缓存（卡点 B18）
+        replay_fixtures=not live,
+        # replay 下 --replay-fixtures 强制禁用缓存（卡点 B18）；
+        # 活网下也关缓存，免得两次重建拿到不同新鲜度的字节。
+        use_cache=False,
     )
 
 
-def run_domain(domain: str, *, contact: str, store: FixtureStore) -> Outcome:
-    """preflight → 跑六段 → 渲染。不联网（``store`` 的 transport 是 MockTransport）。"""
-    gaps = preflight(store, domain)
-    if gaps:
-        return Outcome(domain, gaps=gaps)
+def run_domain(domain: str, *, contact: str, store: FixtureStore, live: bool = False) -> Outcome:
+    """preflight → 跑六段 → 渲染。
+
+    ``live=False``（默认）不联网，``store`` 的 transport 是 MockTransport。
+    ``live=True`` 打真网络，**跳过 preflight** —— preflight 查的是「快照够不够」，
+    活网跑时那个问题不存在。
+    """
+    if not live:
+        gaps = preflight(store, domain)
+        if gaps:
+            return Outcome(domain, gaps=gaps)
 
     missing: list[str] = []
     seen: set[str] = set()
@@ -284,10 +302,10 @@ def run_domain(domain: str, *, contact: str, store: FixtureStore) -> Outcome:
 
     try:
         report = audit_domain(
-            _options(domain, contact),
-            store=store,
-            resolver=store.resolver(),
-            before_request=before_request,
+            _options(domain, contact, live=live),
+            store=None if live else store,
+            resolver=None if live else store.resolver(),
+            before_request=None if live else before_request,
         )
     except DomainUnreachableError as exc:
         return Outcome(
@@ -569,6 +587,12 @@ def main(argv: list[str] | None = None) -> int:
         help="并发跑几个域（限速是按域名的，跨域并发不违反 0.5 req/s）",
     )
     ap.add_argument("--check-copy-only", action="store_true", help="只跑措辞纪律闸门然后退出")
+    ap.add_argument(
+        "--live",
+        action="store_true",
+        help="打真网络跑（默认用 fixtures 回放）。画廊要有内容就得用它 —— "
+        "replay 语料覆盖不到探测集里的多数位置，报告会全变成「这次扫描不可信」",
+    )
     args = ap.parse_args(argv)
 
     # 一个域要跑好几分钟（限速 0.5 req/s，replay 也照走），进度必须实时可见。
@@ -597,13 +621,15 @@ def main(argv: list[str] | None = None) -> int:
         f"geo-audit {__version__} · 画廊 · {len(domains)} 个候选域 · "
         f"fixtures 录于 {_recorded_at(store)}"
     )
-    print(f"replay（零网络、零 DNS）· 并发 {args.jobs} · 默认参数（0.5 req/s、请求上限 120）")
+    mode = "**活网**（真请求）" if args.live else "replay（零网络、零 DNS）"
+    print(f"{mode} · 并发 {args.jobs} · 默认参数（0.5 req/s、请求上限 120）")
     print()
 
     outcomes: list[Outcome] = []
     with concurrent.futures.ThreadPoolExecutor(max_workers=max(1, args.jobs)) as pool:
         futures = {
-            pool.submit(run_domain, d, contact=args.contact, store=store): d for d in domains
+            pool.submit(run_domain, d, contact=args.contact, store=store, live=args.live): d
+            for d in domains
         }
         done: dict[str, Outcome] = {}
         for fut in concurrent.futures.as_completed(futures):

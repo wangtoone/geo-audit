@@ -1,14 +1,20 @@
 name: pages
 # 把 docs/ 发到 GitHub Pages —— README 第一屏指向的那个真实报告画廊（§7.4(c)）。
 #
-# **每次都重跑一遍 build_gallery.py，不直接发仓库里那份 HTML。** 理由：仓库里的
-# docs/ 是给 review 用的（diff 能看出报告里的数字变了），而线上那份必须由当前
-# 代码 + 当前 fixtures 现产 —— 否则「改了判定忘了重跑画廊」这件事会静默发生，
-# 而画廊是我们唯一对外展示判定的地方。
+# **只发布仓库里已提交的 HTML，不在 CI 里重跑 build_gallery。**
 #
-# ⚠️ 这个 job 是 replay 的（零网络、零 DNS），所以它能抓到的是
-# 「渲染/判定坏了」，**抓不到「站点变了、报告里的数字烂了」** —— 后者是
-# fixture-freshness.yml 每周对活网 diff 的事，两件事别混。
+# 原来是每次都 replay 重跑一遍，理由是「改了判定忘了重跑画廊会静默发生」。
+# 那个担心是对的，但 replay 这条路已经走不通了：判定层堵掉「没抓过的响应
+# 也能出结论」那个洞之后，replay 语料覆盖不到探测集里的多数位置，九份报告
+# 首屏全变成「这次扫描不可信」—— 判决是对的，但对读者没有信息量。
+#
+# 于是把两件事分开：
+#   * **判定的可复现性** 由 42 条标注 + `scripts/fp_gate.py` 保证，走 CI；
+#   * **画廊** 只负责「这是九份真跑出来的报告」，用 `--live` 本地重建后提交。
+#
+# CI 不该爬真网络：不礼貌、不确定、且每次 push docs 都会再爬一轮。
+# 「忘了重跑画廊」改由 tests/test_readme_claims.py 与 test_never_fetched.py
+# 的产物闸接住 —— 它们比「每次重跑」更直接地盯住了报告本身。
 on:
   push:
     branches: [main]
@@ -20,7 +26,8 @@ on:
       - "README.md"
       - "CONTRIBUTING.md"
       - ".github/workflows/pages.yml"
-  schedule: [{ cron: "23 4 1 * *" }] # 每月 1 日 04:23 UTC，§7.4(c) 的「每月重跑」
+  # 不再按月重跑：CI 不重建报告了。画廊过期由 fixture-freshness.yml 每周
+  # 对活网 diff 发现，重建用 `build_gallery.py --live` 本地做。
   workflow_dispatch:
 
 # ⚠️ 一次性前置：仓库的 Pages 必须先启用、且来源设成 GitHub Actions，
@@ -49,9 +56,9 @@ jobs:
       - uses: astral-sh/setup-uv@v3
         with: { enable-cache: true }
       - run: uv sync --locked --extra dev
-      # 断网跑：画廊只许用冻结快照。任何一条想摸真网络（含 DNS）的路径都会立刻失败。
-      - name: 跑画廊（replay，零网络）
-        run: uv run python scripts/build_gallery.py
+      # 只跑措辞纪律闸门，不重建报告。断网跑：这一步本来就不该联网。
+      - name: 措辞纪律闸门（不重建报告）
+        run: uv run python scripts/build_gallery.py --check-copy-only
         env:
           GEO_AUDIT_FORBID_NETWORK: "1"
           GEO_AUDIT_FORBID_DNS: "1"
