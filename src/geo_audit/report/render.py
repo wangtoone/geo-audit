@@ -59,6 +59,7 @@ import jinja2
 from jinja2 import Environment, StrictUndefined, select_autoescape
 
 from ..models import (
+    CONTROL_DEPENDENT_KINDS,
     POSITION_LABEL,
     STAGE_LABEL,
     UNKNOWN_REMEDY,
@@ -398,6 +399,7 @@ def render_html(report: Report) -> str:
         chain_svg=render_chain_svg(report.positions),
         STAGE_LABEL=STAGE_LABEL,
         POSITION_LABEL=POSITION_LABEL,
+        CONTROL_DEPENDENT_KINDS=CONTROL_DEPENDENT_KINDS,
         UNKNOWN_REMEDY=UNKNOWN_REMEDY,
         copy=COPY_ZH,
         grouped=group_by_root_cause(report),

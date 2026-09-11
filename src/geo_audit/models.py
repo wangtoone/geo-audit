@@ -685,6 +685,16 @@ FINDING_KINDS: frozenset[str] = frozenset(
     ("soft_404", "llms_full_fake", "index_link_dead", "md_unfulfilled", "dead_link")
 )
 
+#: 真正**依赖同域对照探测**的判据。只有这些在拿不到对照时该说「判定作废」。
+#:
+#: 死链两类（`index_link_dead` / `dead_link`）靠状态码判，不需要对照。
+#: 而报告模板原来在 `f.control` 为空时**无条件**印「判定作废，已按无法评估
+#: 处理」—— 于是 mistral 那份 75 条死链，每一条都同时写着
+#:     标题「llms.txt 里列的 …/sfcortex.md 是死链」
+#:     证据「同域对照本身不可用，所以这一条的判定作废」
+#: 两句话不能同时成立。
+CONTROL_DEPENDENT_KINDS: frozenset[str] = frozenset(("soft_404", "llms_full_fake"))
+
 
 @dataclass(frozen=True, slots=True)
 class Evidence:

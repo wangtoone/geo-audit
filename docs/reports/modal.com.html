@@ -643,7 +643,7 @@ ol.tight li {
   <div class="shell">
     <div class="meta">
       <span class="dom">geo-audit · modal.com</span>
-      <span>2026-09-10 07:26 UTC</span>
+      <span>2026-09-11 05:15 UTC</span>
       <span>0.1.0</span>
       <span>UA: geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: ci@geo-audit.invalid)</span>
       <span>去噪清单: denoise/2026-09-07.1</span>
@@ -1046,7 +1046,7 @@ ol.tight li {
           <td class="num">—</td>
           <td>
             <span class="st st-pass">通过</span>
-            32 条可点击链接全部活着
+            22 条可点击链接全部活着
           </td>
         </tr>
         <tr class="box-unknown">
@@ -1230,15 +1230,15 @@ ol.tight li {
       </tbody>
     </table>
   </div>
-  <p>死链口径对比：只看首跳状态码（&gt;= 400 即判死）会数出 27 条；我们经去噪与正文比对后是 0 条链接实例。</p>
+  <p>死链口径对比：只看首跳状态码（&gt;= 400 即判死）会数出 20 条；我们经去噪与正文比对后是 0 条链接实例。</p>
 </section>
 
 <section id="coverage">
   <h2>覆盖披露</h2>
   <p>位置数 16 ·
      抓到的页面 1 个 ·
-     请求 120 / 上限 120</p>
-  <p class="small">链接账本：抽取 50 = 排除 0 + 待人工 0 + 已验证 28 + 无法判断 1 + 被封顶截掉 21</p>
+     HTTP 请求 120 / 上限 120（其中不同 URL 112 个；差额是跳转每一跳、robots.txt 与重试）</p>
+  <p class="small">链接账本：抽取 50 = 排除 0 + 待人工 0 + 已验证 20 + 无法判断 1 + 被封顶截掉 29</p>
   <p class="small">抽样：https://modal.com/llms.txt 的内链抽样：60/308（抽样，非全量）</p>
   <p class="small">robots.txt 的 Disallow 我们遵守了：命中的路径零请求，判「无法判断（robots_disallowed）」。「我们没被允许看」是真话。</p>
   <p class="small">LLM 调用 0 次（这个工具零 LLM、零 API key，所以它恒为 0）。</p>
