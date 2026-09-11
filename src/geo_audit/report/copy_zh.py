@@ -295,8 +295,12 @@ COPY_ZH: dict[str, str] = {
     "finding_evidence_target": "目标",
     "finding_evidence_control": "同域",
     "finding_evidence_control_why": "同域对照返回正常，所以这不是整站反爬。",
+    #: 只给**真正依赖对照**的判据用（软 404 那一族）。
     "finding_evidence_control_missing": "同域对照本身不可用，所以这一条的判定作废，"
     "已按「无法评估」处理。",
+    #: 死链类判据靠状态码，不需要对照 —— 印上面那句会和标题自相矛盾。
+    #: 实测 mistral 那份 75 条死链每一条都同时写着「是死链」和「判定作废」。
+    "finding_evidence_control_na": "这一条按状态码判定，不需要同域对照。",
     "finding_evidence_repro": "复现",
     "finding_naive_title": NAIVE_FIXED_PHRASE + "会说",
     "finding_actual_title": "实际是",

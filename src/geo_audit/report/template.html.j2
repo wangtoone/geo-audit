@@ -247,8 +247,10 @@
         <span class="tag">{{ f.control.content_type or "—" }}</span>
       </div>
       <div class="small">{{ copy["finding_evidence_control_why"] }}</div>
-      {% else %}
+      {% elif f.kind in CONTROL_DEPENDENT_KINDS %}
       <div class="small">{{ copy["finding_evidence_control_missing"] }}</div>
+      {% else %}
+      <div class="small">{{ copy["finding_evidence_control_na"] }}</div>
       {% endif %}
       <div><strong>{{ copy["finding_evidence_repro"] }}</strong></div>
       <pre>{{ f.target.curl_repro }}</pre>

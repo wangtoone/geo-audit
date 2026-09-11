@@ -643,7 +643,7 @@ ol.tight li {
   <div class="shell">
     <div class="meta">
       <span class="dom">geo-audit · openstatus.dev</span>
-      <span>2026-09-10 07:29 UTC</span>
+      <span>2026-09-11 05:17 UTC</span>
       <span>0.1.0</span>
       <span>UA: geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: ci@geo-audit.invalid)</span>
       <span>去噪清单: denoise/2026-09-07.1</span>
@@ -1106,21 +1106,7 @@ ol.tight li {
 <section id="excluded">
   <h2>被去噪排除的链接</h2>
   <p class="lead">逐条留痕，带 rule_id。实测教训：五个批次排除了 /cdn-cgi/l/email-protection、另几个批次没排 —— 同一个东西两套口径，所以这里必须逐条列。</p>
-  <div class="wide">
-    <table>
-      <thead><tr><th>URL</th><th>rule_id</th><th>规则说明</th><th>出现在</th><th>证据强度</th><th>处置</th></tr></thead>
-      <tbody>
-        <tr>
-          <td class="rawurl">mailto:ping@openstatus.dev</td>
-          <td><code>non_http_scheme</code></td>
-          <td>非 HTTP scheme</td>
-          <td class="rawurl">https://www.openstatus.dev/</td>
-          <td>measured</td>
-          <td>excluded</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+  <p>本次没有被去噪排除的链接。</p>
 </section>
 
 <section id="naive">
@@ -1198,15 +1184,15 @@ ol.tight li {
       </tbody>
     </table>
   </div>
-  <p>死链口径对比：只看首跳状态码（&gt;= 400 即判死）会数出 76 条；我们经去噪与正文比对后是 0 条链接实例。</p>
+  <p>死链口径对比：只看首跳状态码（&gt;= 400 即判死）会数出 35 条；我们经去噪与正文比对后是 0 条链接实例。</p>
 </section>
 
 <section id="coverage">
   <h2>覆盖披露</h2>
   <p>位置数 13 ·
      抓到的页面 1 个 ·
-     请求 103 / 上限 120</p>
-  <p class="small">链接账本：抽取 79 = 排除 1 + 待人工 0 + 已验证 6 + 无法判断 72 + 被封顶截掉 0</p>
+     HTTP 请求 120 / 上限 120（其中不同 URL 59 个；差额是跳转每一跳、robots.txt 与重试）</p>
+  <p class="small">链接账本：抽取 79 = 排除 0 + 待人工 0 + 已验证 6 + 无法判断 30 + 被封顶截掉 43</p>
   <p class="small">本次未触发抽样。</p>
   <p class="small">robots.txt 的 Disallow 我们遵守了：命中的路径零请求，判「无法判断（robots_disallowed）」。「我们没被允许看」是真话。</p>
   <p class="small">LLM 调用 0 次（这个工具零 LLM、零 API key，所以它恒为 0）。</p>

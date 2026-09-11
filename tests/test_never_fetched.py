@@ -260,3 +260,43 @@ def test_report_json_schema_still_validates() -> None:
     schema = REPO / "schema" / "report-1.schema.json"
     assert schema.exists()
     assert json.loads(schema.read_text(encoding="utf-8"))["$schema"]
+
+
+# --------------------------------------------------------------------------- #
+# 报告不许自相矛盾：「是死链」与「判定作废」不能同时出现在一条 finding 里
+# --------------------------------------------------------------------------- #
+
+
+@needs_reports
+def test_no_finding_asserts_and_retracts_itself() -> None:
+    """一条 finding 里不许同时有肯定结论和「判定作废」。
+
+    实测 mistral 那份 **75 条**死链，每一条都同时写着：
+
+        标题「llms.txt 里列的 …/sfcortex.md 是死链」
+        证据「同域对照本身不可用，所以这一条的判定作废，已按「无法评估」处理。」
+
+    成因：模板在 `f.control` 为空时**无条件**印那句，而死链判据靠状态码、
+    本来就不需要对照。现在按 `CONTROL_DEPENDENT_KINDS` 分流。
+    """
+    import re as _re
+
+    bad: list[str] = []
+    for path in sorted(REPORTS.glob("*.html")):
+        html_text = path.read_text(encoding="utf-8")
+        # 按 finding 块切开，逐块看
+        blocks = _re.split(r'<div class="f-title">', html_text)[1:]
+        for block in blocks:
+            title = block.split("<", 1)[0]
+            body = (
+                block[: block.find('<div class="f-title">')]
+                if '<div class="f-title">' in block
+                else block
+            )
+            if "判定作废" in body and "是死链" in title:
+                bad.append(f"{path.name}: {title[:56]}")
+    assert bad == [], (
+        "这些 finding 一边断言、一边说判定作废：\n  "
+        + "\n  ".join(bad[:8])
+        + (f"\n  …共 {len(bad)} 条" if len(bad) > 8 else "")
+    )
