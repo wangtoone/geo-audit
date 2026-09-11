@@ -121,6 +121,21 @@ def build_user_agent(contact: str) -> str:
     return f"geo-audit/{__version__} (+https://github.com/wangtoone/geo-audit; contact: {contact})"
 
 
+class _NoCookies(httpx.Cookies):
+    """永远为空的 cookie jar。
+
+    httpx 没有「关掉 cookie」的开关：`cookies=None` 只是不给初始值，响应里的
+    Set-Cookie 照样会被 `extract_cookies` 写进 jar。这里让写入变成 no-op ——
+    比每次请求后手动 `clear()` 可靠，因为不依赖调用方记得清。
+    """
+
+    def extract_cookies(self, response: object) -> None:
+        return None
+
+    def set_cookie_header(self, request: object) -> None:
+        return None
+
+
 class Fetcher:
     """Rate-limited, cached, redirect-aware HTTP client."""
 
@@ -170,7 +185,25 @@ class Fetcher:
             },
             verify=config.verify_tls,
             http2=False,
+            # **关掉 cookie jar。** httpx 默认开着，于是站点发的 Set-Cookie 会被
+            # 存下来、在后续请求里自动回放。实测：
+            #     第 1 次请求 Cookie: None
+            #     第 3 次请求 Cookie: sid=SECRET123      ← 第 1 次响应发的
+            #
+            # 两个后果，第二个更要命：
+            # 1. 我们不是登录用户，却在假装持有会话状态 —— 抓到的可能是
+            #    「半登录态」的页面，那不是匿名 AI 爬虫看到的东西；
+            # 2. **目标页与对照探针会带不同的 cookie**，两边就不是同一把尺子了。
+            #    而整个软 404 判定就靠「同 host 随机路径对照」——尺子不同，
+            #    正文/骨架比对的差异可能来自 cookie 而不是站点行为。
+            cookies=None,
         )
+        # `client.cookies = x` 的 setter 会把传进去的东西重新包成 `Cookies(x)`,
+        # 子类直接被丢掉（实测：赋值后 cookie 照样回放）。所以写私有属性。
+        # 这是对 httpx 内部的依赖，用一条断言钉住：哪天它改名，测试立刻红，
+        # 而不是悄悄退回「带 cookie 抓取」。
+        assert hasattr(self._client, "_cookies"), "httpx.Client 没有 _cookies 了，改法要重写"
+        self._client._cookies = _NoCookies()
         self._robots: dict[str, RobotsInfo] = {}
         self._robots_parsers: dict[str, urllib.robotparser.RobotFileParser] = {}
         self._robots_lock = threading.Lock()

@@ -239,3 +239,34 @@ def test_emphasis_does_not_break_citation_matching() -> None:
     )
     assert f.evidence_kind == "cited"
     assert f.n_cited == 5
+
+
+# --------------------------------------------------------------------------- #
+# 控制字符：模型回答是自由文本，什么都可能带
+# --------------------------------------------------------------------------- #
+
+
+@pytest.mark.parametrize(
+    "evil",
+    [
+        "See https://a.invalid/x\x1b[2Jclear",  # 清屏
+        "See https://a.invalid/x\x07bell",  # 响铃
+        "See https://a.invalid/x\x1b]0;pwned\x07title",  # 改终端标题
+        "See https://a.invalid/x\x00nul",
+        "See https://a.invalid/x\x7fdel",
+    ],
+)
+def test_control_characters_never_survive_into_a_url(evil: str) -> None:
+    """RFC 3986 本来就不许控制字符出现在 URI 里。
+
+    抽出来的串要进报告 HTML，也会被 scripts/l1_reconcile.py 原样打到终端 ——
+    终端转义序列可以清屏、改标题、伪造后续输出。
+    """
+    for url in extract_urls(evil):
+        bad = [c for c in url if ord(c) < 32 or ord(c) == 127]
+        assert not bad, f"URL 里带控制字符 {bad!r}：{url!r}"
+
+
+def test_control_character_does_not_split_one_url_into_two() -> None:
+    """截断而不是丢弃：前半段仍是一条可比对的 URL。"""
+    assert extract_urls("go https://a.invalid/ok\x1b[2Jjunk") == ("https://a.invalid/ok",)

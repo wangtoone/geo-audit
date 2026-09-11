@@ -21,7 +21,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v3
-      - run: uv sync
+      - run: uv sync --locked
       # ⚠️ 用户输入**必须先落到 env**，再在 shell 里用 "$VAR" 取。
       #
       # 原来写的是 `uv run geo-audit "${{ inputs.domain }}"` —— 那是 GitHub

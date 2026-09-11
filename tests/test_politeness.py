@@ -620,3 +620,53 @@ def test_a_fully_disallowed_domain_yields_zero_passes_end_to_end(
     assert blocked, "至少 apex/www 两格要落在「无法评估」里"
     assert all(p.unknown_reason == "robots_disallowed" for p in blocked)
     assert all(p.unknown_remedy for p in blocked)
+
+
+def test_cookies_are_never_stored_or_replayed() -> None:
+    """站点发的 Set-Cookie 不许被存下来、也不许在后续请求里回放。
+
+    httpx 默认开着 cookie jar。实测修复前：
+
+        第 1 次请求 Cookie: None
+        第 3 次请求 Cookie: sid=SECRET123      ← 第 1 次响应发的
+
+    两个后果，第二个更要命：
+    1. 我们不是登录用户，却在假装持有会话状态；
+    2. **目标页与对照探针会带不同的 cookie** —— 而整个软 404 判定就靠
+       「同 host 随机路径对照」。尺子不同，正文/骨架比对的差异可能来自
+       cookie 而不是站点行为。
+    """
+    import httpx
+
+    from geo_audit.fetch.cache import HttpCache
+    from geo_audit.fetch.client import Fetcher, FetcherConfig
+    from geo_audit.fetch.ratelimit import DomainLimiter
+    from geo_audit.models import Expect
+
+    seen: list[str | None] = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        seen.append(dict(request.headers).get("cookie"))
+        if request.url.path == "/robots.txt":
+            return httpx.Response(404, text="")
+        return httpx.Response(
+            200,
+            headers={"content-type": "text/plain", "set-cookie": "sid=SECRET123; Path=/"},
+            text="x",
+        )
+
+    fetcher = Fetcher(
+        FetcherConfig(contact="ci@geo-audit.invalid", interval=2.0),
+        HttpCache(":memory:"),
+        DomainLimiter(2.0),
+        transport=httpx.MockTransport(handler),
+    )
+    try:
+        for path in ("/a", "/b", "/c"):
+            fetcher.fetch(f"https://x.invalid{path}", expect=Expect.ANY)
+    finally:
+        fetcher.close()
+
+    assert seen, "一个请求都没发出去，这条测试测了个空"
+    leaked = [c for c in seen if c]
+    assert leaked == [], f"这些请求带上了上一次响应发的 cookie：{leaked}"
