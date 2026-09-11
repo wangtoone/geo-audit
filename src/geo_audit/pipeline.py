@@ -1191,7 +1191,7 @@ def _stage_index_links(
         pid = position_id(Stage.INDEX_LINKS, key)
         if pid not in {position_id(s.stage, s.key) for s in st.skeleton}:
             continue  # 这份索引没解析出链接，按 P3 不占格
-        if not _budget_left(st, options):
+        if not _budget_left(st, options, fetcher):
             continue  # 格子留 UNKNOWN(not_fetched)
         host = (urlsplit(probe.url).hostname or "").lower()
         report = probe_index_links(
@@ -1307,7 +1307,7 @@ def _stage_md_channel(
         resp = probe.response
         if resp is not None:
             links.extend(link.abs_url for link in parse_index_links(resp.text, resp.final_url))
-    if not _budget_left(st, options):
+    if not _budget_left(st, options, fetcher):
         prog.stage(5, STAGE_LABEL[Stage.MD_CHANNEL], "超出预算，未评估")
         return
 
@@ -1375,10 +1375,23 @@ def _stage_md_channel(
     prog.stage(5, STAGE_LABEL[Stage.MD_CHANNEL], detail[:40])
 
 
-def _budget_left(st: RunState, options: AuditOptions) -> bool:
-    """``--max-requests`` 记账。0 = 不限。"""
+def _budget_left(st: RunState, options: AuditOptions, fetcher: Fetcher | None = None) -> bool:
+    """``--max-requests`` 记账。0 = 不限。
+
+    **按真实 HTTP 请求条数掐**，不按逻辑 URL。CLI 写的是「单域请求硬上限」、
+    报告写的是「请求 N / 上限 M」—— 两处都说「请求」，那就得真的是请求。
+
+    实测改之前：一次 probe 记 2 个预算单位，在 9 跳跳转链上打出 **21 条**真实
+    请求（10.5 倍）。用户设 120 以为是 120 条，最坏情况上千条。对一个把礼貌
+    当卖点的工具，这个差距不能留。
+
+    ``fetcher`` 拿不到时退回旧口径（逻辑 URL）——那是低估，但至少不会因为
+    读不到计数就变成「不限」。
+    """
     if options.max_requests <= 0:
         return True
+    if fetcher is not None:
+        return fetcher.http_requests < options.max_requests
     spent = st.requests_made + (st.sitemap.requests_spent if st.sitemap is not None else 0)
     return spent < options.max_requests
 
@@ -1414,7 +1427,7 @@ def _stage_human_path(
     pages: list[tuple[str, str, PageExtraction]] = []
     for url in seed_pages:
         st.check()
-        if not _budget_left(st, options):
+        if not _budget_left(st, options, fetcher):
             break
         role = _role_of(url, sitemap)
         probe = fetcher.probe(url, expect=Expect.HTML_PAGE)
@@ -1497,7 +1510,7 @@ def _stage_human_path(
     with closing(httpx.Client(transport=store.transport())) as client:
         for norm in planned:
             st.check()
-            if not _budget_left(st, options):
+            if not _budget_left(st, options, fetcher):
                 break
             target = unique[norm]
             verdict = dl.classify_link(
@@ -1771,6 +1784,9 @@ def _assemble(
     options: AuditOptions,
     *,
     user_agent: str,
+    #: 真实 HTTP 请求条数。传值而不是传 Fetcher：_assemble 是纯装配，
+    #: 不该拿到一个能发请求的东西。
+    http_requests: int,
     scanned_at: str,
     duration_s: float,
     interrupted: bool,
@@ -1805,6 +1821,7 @@ def _assemble(
         sampling_note=st.sampling_note,
         robots_respected=not options.ignore_robots,
         requests_made=st.requests_made + (sitemap.requests_spent if sitemap is not None else 0),
+        http_requests=http_requests,
         budget_cap=options.max_requests,
         interrupted=interrupted,
     )
@@ -1892,6 +1909,7 @@ def audit_domain(
         st,
         options,
         user_agent=active.user_agent,
+        http_requests=active.http_requests,
         scanned_at=scanned_at,
         duration_s=time.monotonic() - started,
         interrupted=interrupted,
@@ -2062,7 +2080,7 @@ def _stage_fix_candidates(
     skipped = 0
     for idx, finding in targets:
         st.check()
-        if not _budget_left(st, options):
+        if not _budget_left(st, options, fetcher):
             skipped += 1
             continue
         results[idx] = find_fix_candidate(

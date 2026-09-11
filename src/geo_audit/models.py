@@ -1006,7 +1006,12 @@ class Coverage:
     index_links_sampled: bool = False
     sampling_note: str = ""
     robots_respected: bool = True
+    #: 逻辑 URL 计数（同一 URL 只算一次、对照探针按 host 算一次）。
     requests_made: int = 0
+    #: **真实发出去的 HTTP 请求条数**：跳转每一跳、robots.txt、重试都算。
+    #: 与 `requests_made` 分开印 —— 实测两者能差 10 倍，只印前者会让读者
+    #: 以为我们比实际更克制。
+    http_requests: int = 0
     budget_cap: int = 0
     interrupted: bool = False  # v2：Ctrl-C（§7.5）
 

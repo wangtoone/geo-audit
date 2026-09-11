@@ -47,6 +47,12 @@ class _StubFetcher:
         self.status = status
         self.calls = 0
 
+    @property
+    def http_requests(self) -> int:
+        """预算闸现在按**真实 HTTP 请求条数**掐（`_budget_left`），
+        替身也得给出这个数，否则测的就不是真正在跑的那条路径。"""
+        return self.calls
+
     def probe(self, url: str, *, expect: Expect = Expect.ANY, **_: object) -> Probe:
         from geo_audit.models import Classification, HttpResponse
 

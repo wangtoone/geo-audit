@@ -670,3 +670,56 @@ def test_cookies_are_never_stored_or_replayed() -> None:
     assert seen, "一个请求都没发出去，这条测试测了个空"
     leaked = [c for c in seen if c]
     assert leaked == [], f"这些请求带上了上一次响应发的 cookie：{leaked}"
+
+
+def test_budget_counts_real_http_requests_not_logical_urls() -> None:
+    """`--max-requests` 说的是「请求」，那就得真的是请求。
+
+    实测修复前：一次 `probe()` 记 **2 个预算单位**，在 9 跳跳转链上打出
+    **21 条**真实 HTTP 请求 —— 10.5 倍。CLI 写「单域请求硬上限」、报告写
+    「请求 N / 上限 M」，用户设 120 以为是 120 条，最坏情况上千条。
+    对一个把礼貌当卖点的工具，这个差距不能留。
+
+    差额来自：跳转的每一跳、robots.txt、重试 —— 这些 `DiscoveryBudget`
+    都不记（它记的是逻辑 URL：同一 URL 一次、对照探针按 host 一次）。
+    """
+    import re as _re
+
+    import httpx
+
+    from geo_audit.fetch.cache import HttpCache
+    from geo_audit.fetch.client import Fetcher, FetcherConfig
+    from geo_audit.fetch.ratelimit import DomainLimiter
+    from geo_audit.models import Expect
+
+    sent: list[str] = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        sent.append(str(request.url))
+        path = request.url.path
+        if path == "/robots.txt":
+            return httpx.Response(404, text="")
+        hop = _re.match(r"/hop(\d+)", path)
+        if hop:
+            i = int(hop.group(1))
+            if i < 9:
+                return httpx.Response(302, headers={"location": f"/hop{i + 1}"})
+            return httpx.Response(200, headers={"content-type": "text/plain"}, text="end")
+        return httpx.Response(302, headers={"location": "/hop1"})
+
+    fetcher = Fetcher(
+        FetcherConfig(contact="ci@geo-audit.invalid", interval=2.0),
+        HttpCache(":memory:"),
+        DomainLimiter(2.0),
+        transport=httpx.MockTransport(handler),
+    )
+    try:
+        fetcher.probe("https://x.invalid/start", expect=Expect.ANY)
+        counted = fetcher.http_requests
+    finally:
+        fetcher.close()
+
+    assert counted == len(sent), (
+        f"计数 {counted} 与真实发出的 {len(sent)} 条对不上 —— 计数点不在唯一的 HTTP 出口上？"
+    )
+    assert counted > 10, f"这条跳转链只打出 {counted} 条，测不到放大效应"

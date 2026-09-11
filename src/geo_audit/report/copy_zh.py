@@ -367,7 +367,10 @@ COPY_ZH: dict[str, str] = {
     "coverage_identity": "链接账本：抽取 {extracted} = 排除 {excluded} + 待人工 {needs_review}"
     " + 已验证 {verified} + 无法判断 {unknown} + 被封顶截掉 {capped}",
     "coverage_pages": "抓到的页面 {pages} 个",
-    "coverage_requests": "请求 {made} / 上限 {cap}",
+    "coverage_requests": (
+        "HTTP 请求 {http} / 上限 {cap}（其中不同 URL {made} 个；"
+        "差额是跳转每一跳、robots.txt 与重试）"
+    ),
     "coverage_robots_on": "robots.txt 的 Disallow 我们遵守了：命中的路径零请求，判"
     "「无法判断（robots_disallowed）」。「我们没被允许看」是真话。",
     "coverage_robots_off": "本次带了 --ignore-robots，robots.txt 的 Disallow 未被遵守。",

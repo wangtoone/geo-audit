@@ -484,7 +484,7 @@
   <h2>{{ copy["coverage_title"] }}</h2>
   <p>{{ copy["coverage_positions"].format(positions=r.counts.positions|thousands) }} ·
      {{ copy["coverage_pages"].format(pages=r.coverage.pages_fetched|thousands) }} ·
-     {{ copy["coverage_requests"].format(made=r.coverage.requests_made|thousands, cap=r.coverage.budget_cap|thousands) }}</p>
+     {{ copy["coverage_requests"].format(http=r.coverage.http_requests|thousands, made=r.coverage.requests_made|thousands, cap=r.coverage.budget_cap|thousands) }}</p>
   <p class="small">{{ copy["coverage_identity"].format(extracted=r.coverage.links_extracted|thousands, excluded=r.coverage.links_excluded|thousands, needs_review=r.coverage.links_needs_review|thousands, verified=r.coverage.links_verified|thousands, unknown=r.coverage.links_unknown|thousands, capped=links_capped|thousands) }}</p>
   {% if r.coverage.sampling_note %}
   <p class="small">{{ copy["coverage_sampling"].format(note=r.coverage.sampling_note) }}</p>
