@@ -75,7 +75,13 @@ class PerceptionStatus(str, Enum):
 #: 于是同一条 URL 被拆成两个「不同 URL」：多数票从 5 稀释到 4、
 #: n_distinct_urls 虚报成 2、而且带 ** 的串跟检索结果里的干净 URL 匹配不上，
 #: 把 `cited` 误判成 `stated_only`。一个 bug 三个症状。
-_URL_RE = re.compile(r"https?://[^\s<>\"'`)\]},*；。，]+")
+#: 也排除**全部控制字符**（\x00-\x1f、\x7f）。RFC 3986 本来就不许它们出现在
+#: URI 里，而模型回答是自由文本、什么都可能带。实测：
+#:     "See https://a.invalid/x\x1b[2J\x1b[He\x07vil"
+#: 会被抽成一条带清屏转义序列与响铃的「URL」，而这串要进报告 HTML、
+#: 也会被 scripts/l1_reconcile.py 原样打到终端 —— 终端转义序列可以清屏、
+#: 改标题、伪造后续输出。
+_URL_RE = re.compile(r"https?://[^\s<>\"'`)\]},*；。，\x00-\x1f\x7f]+")
 
 #: 比对前要削掉的尾部字符（Markdown 链接与强调、句读）。
 _TRAILING = ".,;:!?)]}'\"`>*_"

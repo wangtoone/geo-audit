@@ -13,7 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v3
-      - run: uv sync --extra dev
+      - run: uv sync --locked --extra dev
       - name: 对活网重抓并 diff（不写回快照）
         run: uv run python scripts/refresh_fixtures.py --check --json drift.json
         env:
