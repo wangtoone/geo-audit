@@ -208,6 +208,10 @@ class Fetcher:
         self._robots_parsers: dict[str, urllib.robotparser.RobotFileParser] = {}
         self._robots_lock = threading.Lock()
         self._exclusion_log: list[tuple[str, str, str]] = []  # (url, rule_id, why)
+        #: 真实发出去的 HTTP 请求条数（含跳转每一跳、robots.txt、重试）。
+        #: 与 DiscoveryBudget.spent（逻辑 URL）是两个数，报告里要分开印。
+        self._http_requests = 0
+        self._http_lock = threading.Lock()
 
     # ------------------------------------------------------------------ #
     # low-level
@@ -223,6 +227,16 @@ class Fetcher:
         the local resolver could not route still gets a real answer.
         """
         started = time.monotonic()
+        # **真实 HTTP 请求计数。** 这是全仓唯一一次 HTTP 交换的出口，
+        # 所以也是唯一能说清「到底发了几条」的地方。
+        #
+        # 为什么要单独记：`DiscoveryBudget` 记的是**逻辑 URL**（同一 URL 只记
+        # 一次、对照探针按 host 记一次），而 CLI 的 `--max-requests` 与报告里的
+        # 「请求 N / 上限 M」两处都写着「请求」。实测一次 probe（记 2 个预算
+        # 单位）在 9 跳跳转链上打出 **21 条**真实请求 —— 10.5 倍。
+        # 用户设 120 以为是 120 条，最坏情况上千条。
+        with self._http_lock:
+            self._http_requests += 1
         headers = {"Accept": accept}
         request_url = url
         if pinned_ip:
@@ -762,6 +776,16 @@ class Fetcher:
         three did not, which silently made the batches non-comparable.
         """
         return list(self._exclusion_log)
+
+    @property
+    def http_requests(self) -> int:
+        """真实发出去的 HTTP 请求条数。
+
+        与预算记的「逻辑 URL」不是一个数：跳转的每一跳、robots.txt、重试
+        都算一条。报告里两个数都要印 —— 只印前者会让读者以为我们很克制。
+        """
+        with self._http_lock:
+            return self._http_requests
 
     def note_exclusion(self, url: str, rule_id: str, why: str) -> None:
         self._exclusion_log.append((url, rule_id, why))
