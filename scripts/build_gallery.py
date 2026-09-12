@@ -43,7 +43,9 @@ import argparse
 import concurrent.futures
 import html
 import os
+import shutil
 import sys
+import tempfile
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
@@ -617,6 +619,17 @@ def main(argv: list[str] | None = None) -> int:
     reports_dir = out_dir / "reports"
     reports_dir.mkdir(parents=True, exist_ok=True)
 
+    # 先写 staging，最后一次性搬进 docs/ —— 见 :func:`_publish` 的理由。
+    # 目录建在 out_dir 里面（不是系统临时目录）：``Path.replace`` 只有同一文件
+    # 系统上才是原子的，跨设备会抛 OSError。代价是被 SIGKILL 打断时会留一个
+    # 残骸在 docs/ 下 —— 所以开跑先扫掉上一轮的，并且 .gitignore 里挡着它。
+    for stale in sorted(out_dir.glob(".gallery-staging-*")):
+        shutil.rmtree(stale, ignore_errors=True)
+        print(f"扫掉上一轮的暂存目录 {stale.name}（上次是被强杀的）")
+    staging = Path(tempfile.mkdtemp(prefix=".gallery-staging-", dir=out_dir))
+    staging_reports = staging / "reports"
+    staging_reports.mkdir()
+
     print(
         f"geo-audit {__version__} · 画廊 · {len(domains)} 个候选域 · "
         f"fixtures 录于 {_recorded_at(store)}"
@@ -640,7 +653,7 @@ def main(argv: list[str] | None = None) -> int:
             except Exception as exc:
                 outcome = Outcome(domain, error=f"{type(exc).__name__}: {exc}")
             done[domain] = outcome
-            _log_one(outcome, reports_dir)
+            _log_one(outcome, staging_reports)
         outcomes = [done[d] for d in domains]
 
     index = render_index(
@@ -651,8 +664,7 @@ def main(argv: list[str] | None = None) -> int:
     )
     assert_selfcontained(index)
     assert_no_banned_words(index)
-    (out_dir / "index.html").write_text(index, "utf-8")
-    (out_dir / ".nojekyll").write_text("", "utf-8")
+    _publish(outcomes, index, staging=staging, out_dir=out_dir, reports_dir=reports_dir)
 
     published = [o for o in outcomes if o.published]
     print()
@@ -668,8 +680,48 @@ def main(argv: list[str] | None = None) -> int:
     return 0 if published else 1
 
 
+def _publish(
+    outcomes: list[Outcome],
+    index: str,
+    *,
+    staging: Path,
+    out_dir: Path,
+    reports_dir: Path,
+) -> None:
+    """把这一轮的产物一次性搬进 ``docs/``：**跑完了才写盘**。
+
+    为什么不是边跑边写（原来的做法）：2026-09-11 那次重建被系统因内存不足
+    连杀 6 次，每次都在中途 —— 于是 ``docs/reports/`` 里躺着 6 份新的 + 3 份
+    旧的，**而那批混合物看起来完全正常**：文件都在、每份自己都是合法 HTML、
+    index.html 是上一轮的所以数字也自洽。不是恰好查了 `git status` 的话，
+    它会被当成一次正常的重建提交上去。
+
+    与内存无关，是「长任务中途被杀」的通用形态。所以判据不是「内存够不够」，
+    是**中途死掉时 docs/ 必须原封不动**：报告先落 staging，全跑完、索引也渲染
+    完并过了自包含 / 禁词两道闸，才 ``Path.replace`` 逐个搬过去（同一文件系统上
+    是原子替换），index.html 最后写 —— 它是「这批报告」的目录，早于报告落盘
+    就会指向还不存在的东西。
+
+    **一个域失败不阻止发布**（那是它自己的 ``error`` / ``gaps``，index 里会
+    写明），阻止发布的只有「整轮没跑完」—— 那种情况下这个函数根本不会被调到。
+    """
+    for outcome in outcomes:
+        if outcome.html_path is None:
+            continue
+        final = reports_dir / outcome.html_path.name
+        outcome.html_path.replace(final)
+        outcome.html_path = final
+    (out_dir / "index.html").write_text(index, "utf-8")
+    (out_dir / ".nojekyll").write_text("", "utf-8")
+    shutil.rmtree(staging, ignore_errors=True)
+
+
 def _log_one(outcome: Outcome, reports_dir: Path) -> None:
-    """一个域跑完就落盘 + 打一行。渲染失败也只影响这一个域。"""
+    """一个域跑完就落 **staging** + 打一行。渲染失败也只影响这一个域。
+
+    ``reports_dir`` 是 staging 下的那个目录，不是 ``docs/reports/`` ——
+    搬家在 :func:`_publish` 里一次性做。
+    """
     if outcome.report is None:
         why = outcome.error or "；".join(g.what for g in outcome.gaps)
         print(f"  跳过  {outcome.domain:<16} {why}")

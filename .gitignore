@@ -12,3 +12,6 @@ htmlcov/
 fp-gate-report.json
 drift.json
 /out/
+# 画廊落盘用的暂存目录。正常跑完会自己删；被 SIGKILL 打断时会留下，
+# 下一次跑开头扫掉。留在 docs/ 里是因为 Path.replace 必须同一文件系统。
+docs/.gallery-staging-*/
