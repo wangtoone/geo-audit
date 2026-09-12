@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="generator" content="geo-audit 0.1.0">
-<title>geo-audit · saleor.io · AI 可读性证据存档</title>
+<title>geo-audit · saleor.io · AI 检索链路体检</title>
 <style>/* geo-audit 报告样式（§6.5:3262）。全部内联进单文件 HTML —— 零 webfont、零外部
    请求、零 JS。折叠一律用原生 <details>。
 
@@ -643,9 +643,9 @@ ol.tight li {
   <div class="shell">
     <div class="meta">
       <span class="dom">geo-audit · saleor.io</span>
-      <span>2026-09-11 05:11 UTC</span>
+      <span>2026-09-12 10:18 UTC</span>
       <span>0.1.0</span>
-      <span>UA: geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: ci@geo-audit.invalid)</span>
+      <span>UA: geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: 152046194+wangtoone@users.noreply.github.com)</span>
       <span>去噪清单: denoise/2026-09-07.1</span>
       <span>schema geo-audit/report/1</span>
     </div>
@@ -656,23 +656,21 @@ ol.tight li {
 
 <section id="verdict">
   <h2>判决</h2>
-  <div class="banner">⚠ 这次扫描的核心位置里超过一半我们没能评估（15/22），整份报告已降级。下面的结论不要当结论用，先按「未能评估」区的补救办法重跑。</div>
-  <h1>这次扫描不可信：22 个核心位置里有 15 个我们没能评估。下面的结论不要当结论用。</h1>
+  <h1>你的 AI 检索链路上有 1 个位置会被读错，另有 1 个位置我们无法判断。</h1>
   <div class="bar">
-    <span class="total">23 个位置</span>
-    <span class="st st-pass">7 通过</span>
-    <span class="st st-fail">0 读错</span>
-    <span class="st st-unknown">15 无法判断</span>
-    <span class="st st-na">1 不适用</span>
+    <span class="total">21 个位置</span>
+    <span class="st st-pass">12 通过</span>
+    <span class="st st-fail">1 读错</span>
+    <span class="st st-unknown">1 无法判断</span>
+    <span class="st st-na">7 不适用</span>
   </div>
   <p class="small">四格之和恒等于位置数。「无法判断」永不折算进「通过」——「我们看不了」和「你这里没问题」是两件事。</p>
-  <p class="lead">这次没有可上报的发现。零发现不等于干净，所以这份东西叫「AI 可读性证据存档」：下面四块是这个 0 的全部依据，你可以逐行复现。</p>
 </section>
 
 <section id="root-causes">
   <h2>按根因</h2>
   <p>本次没有需要归并的根因。</p>
-  <p class="small">口径：0 条 finding / 0 处根因 / 0 个链接实例 —— 三个数各有各的意思，不许混着说。</p>
+  <p class="small">口径：1 条 finding / 0 处根因 / 1 个链接实例 —— 三个数各有各的意思，不许混着说。</p>
 </section>
 
 <section id="unknown">
@@ -680,234 +678,24 @@ ol.tight li {
   <p class="lead">把「我们没看到」误读成「没问题」的代价，比漏一条 LOW 死链大得多，所以这一区排在发现之前。这些位置既不计死链也不计存活。</p>
   <div class="panel box-unknown">
     <div class="f-head">
-      <span class="st st-unknown">③ 全文通道</span>
-      <span class="tag">原因码: not_fetched</span>
-      <span class="f-id">fulltext:saleor.io/llms-full.txt</span>
+      <span class="st st-unknown">① 入口发现</span>
+      <span class="tag">原因码: robots_disallowed</span>
+      <span class="f-id">discovery:support.saleor.io</span>
     </div>
     <dl class="kv">
       <dt>位置</dt>
-      <dd><a href="https://saleor.io/llms-full.txt">https://saleor.io/llms-full.txt</a></dd>
+      <dd><a href="https://support.saleor.io/">https://support.saleor.io/</a></dd>
       <dt>实际是</dt>
-      <dd>没有 https://saleor.io/llms-full.txt 的实录快照，本位置未观测 —— 缺快照绝不当成站点的事实</dd>
+      <dd>robots.txt 禁止抓取 /，本位置未评估</dd>
       <dt>补救办法</dt>
-      <dd>超出本次预算上限（--max-requests / --max-links），本位置未验证。用 --max-requests 0 取消上限重跑可以覆盖它。</dd>
-    </dl>
-  </div>
-  <div class="panel box-unknown">
-    <div class="f-head">
-      <span class="st st-unknown">② 索引文件真伪</span>
-      <span class="tag">原因码: not_fetched</span>
-      <span class="f-id">index_file:www.saleor.io/llms.txt</span>
-    </div>
-    <dl class="kv">
-      <dt>位置</dt>
-      <dd><a href="https://www.saleor.io/llms.txt">https://www.saleor.io/llms.txt</a></dd>
-      <dt>实际是</dt>
-      <dd>没有 https://www.saleor.io/llms.txt 的实录快照，本位置未观测 —— 缺快照绝不当成站点的事实</dd>
-      <dt>补救办法</dt>
-      <dd>超出本次预算上限（--max-requests / --max-links），本位置未验证。用 --max-requests 0 取消上限重跑可以覆盖它。</dd>
-    </dl>
-  </div>
-  <div class="panel box-unknown">
-    <div class="f-head">
-      <span class="st st-unknown">③ 全文通道</span>
-      <span class="tag">原因码: not_fetched</span>
-      <span class="f-id">fulltext:www.saleor.io/llms-full.txt</span>
-    </div>
-    <dl class="kv">
-      <dt>位置</dt>
-      <dd><a href="https://www.saleor.io/llms-full.txt">https://www.saleor.io/llms-full.txt</a></dd>
-      <dt>实际是</dt>
-      <dd>没有 https://www.saleor.io/llms-full.txt 的实录快照，本位置未观测 —— 缺快照绝不当成站点的事实</dd>
-      <dt>补救办法</dt>
-      <dd>超出本次预算上限（--max-requests / --max-links），本位置未验证。用 --max-requests 0 取消上限重跑可以覆盖它。</dd>
-    </dl>
-  </div>
-  <div class="panel box-unknown">
-    <div class="f-head">
-      <span class="st st-unknown">② 索引文件真伪</span>
-      <span class="tag">原因码: not_fetched</span>
-      <span class="f-id">index_file:docs.saleor.io/llms.txt</span>
-    </div>
-    <dl class="kv">
-      <dt>位置</dt>
-      <dd><a href="https://docs.saleor.io/llms.txt">https://docs.saleor.io/llms.txt</a></dd>
-      <dt>实际是</dt>
-      <dd>没有 https://docs.saleor.io/llms.txt 的实录快照，本位置未观测 —— 缺快照绝不当成站点的事实</dd>
-      <dt>补救办法</dt>
-      <dd>超出本次预算上限（--max-requests / --max-links），本位置未验证。用 --max-requests 0 取消上限重跑可以覆盖它。</dd>
-    </dl>
-  </div>
-  <div class="panel box-unknown">
-    <div class="f-head">
-      <span class="st st-unknown">③ 全文通道</span>
-      <span class="tag">原因码: not_fetched</span>
-      <span class="f-id">fulltext:docs.saleor.io/llms-full.txt</span>
-    </div>
-    <dl class="kv">
-      <dt>位置</dt>
-      <dd><a href="https://docs.saleor.io/llms-full.txt">https://docs.saleor.io/llms-full.txt</a></dd>
-      <dt>实际是</dt>
-      <dd>没有 https://docs.saleor.io/llms-full.txt 的实录快照，本位置未观测 —— 缺快照绝不当成站点的事实</dd>
-      <dt>补救办法</dt>
-      <dd>超出本次预算上限（--max-requests / --max-links），本位置未验证。用 --max-requests 0 取消上限重跑可以覆盖它。</dd>
-    </dl>
-  </div>
-  <div class="panel box-unknown">
-    <div class="f-head">
-      <span class="st st-unknown">③ 全文通道</span>
-      <span class="tag">原因码: not_fetched</span>
-      <span class="f-id">fulltext:saleor.io/docs/llms-full.txt</span>
-    </div>
-    <dl class="kv">
-      <dt>位置</dt>
-      <dd><a href="https://saleor.io/docs/llms-full.txt">https://saleor.io/docs/llms-full.txt</a></dd>
-      <dt>实际是</dt>
-      <dd>没有 https://saleor.io/docs/llms-full.txt 的实录快照，本位置未观测 —— 缺快照绝不当成站点的事实</dd>
-      <dt>补救办法</dt>
-      <dd>超出本次预算上限（--max-requests / --max-links），本位置未验证。用 --max-requests 0 取消上限重跑可以覆盖它。</dd>
-    </dl>
-  </div>
-  <div class="panel box-unknown">
-    <div class="f-head">
-      <span class="st st-unknown">② 索引文件真伪</span>
-      <span class="tag">原因码: not_fetched</span>
-      <span class="f-id">index_file:www.saleor.io/docs/llms.txt</span>
-    </div>
-    <dl class="kv">
-      <dt>位置</dt>
-      <dd><a href="https://www.saleor.io/docs/llms.txt">https://www.saleor.io/docs/llms.txt</a></dd>
-      <dt>实际是</dt>
-      <dd>没有 https://www.saleor.io/docs/llms.txt 的实录快照，本位置未观测 —— 缺快照绝不当成站点的事实</dd>
-      <dt>补救办法</dt>
-      <dd>超出本次预算上限（--max-requests / --max-links），本位置未验证。用 --max-requests 0 取消上限重跑可以覆盖它。</dd>
-    </dl>
-  </div>
-  <div class="panel box-unknown">
-    <div class="f-head">
-      <span class="st st-unknown">③ 全文通道</span>
-      <span class="tag">原因码: not_fetched</span>
-      <span class="f-id">fulltext:www.saleor.io/docs/llms-full.txt</span>
-    </div>
-    <dl class="kv">
-      <dt>位置</dt>
-      <dd><a href="https://www.saleor.io/docs/llms-full.txt">https://www.saleor.io/docs/llms-full.txt</a></dd>
-      <dt>实际是</dt>
-      <dd>没有 https://www.saleor.io/docs/llms-full.txt 的实录快照，本位置未观测 —— 缺快照绝不当成站点的事实</dd>
-      <dt>补救办法</dt>
-      <dd>超出本次预算上限（--max-requests / --max-links），本位置未验证。用 --max-requests 0 取消上限重跑可以覆盖它。</dd>
-    </dl>
-  </div>
-  <div class="panel box-unknown">
-    <div class="f-head">
-      <span class="st st-unknown">② 索引文件真伪</span>
-      <span class="tag">原因码: not_fetched</span>
-      <span class="f-id">index_file:docs.saleor.io/docs/llms.txt</span>
-    </div>
-    <dl class="kv">
-      <dt>位置</dt>
-      <dd><a href="https://docs.saleor.io/docs/llms.txt">https://docs.saleor.io/docs/llms.txt</a></dd>
-      <dt>实际是</dt>
-      <dd>没有 https://docs.saleor.io/docs/llms.txt 的实录快照，本位置未观测 —— 缺快照绝不当成站点的事实</dd>
-      <dt>补救办法</dt>
-      <dd>超出本次预算上限（--max-requests / --max-links），本位置未验证。用 --max-requests 0 取消上限重跑可以覆盖它。</dd>
-    </dl>
-  </div>
-  <div class="panel box-unknown">
-    <div class="f-head">
-      <span class="st st-unknown">③ 全文通道</span>
-      <span class="tag">原因码: not_fetched</span>
-      <span class="f-id">fulltext:docs.saleor.io/docs/llms-full.txt</span>
-    </div>
-    <dl class="kv">
-      <dt>位置</dt>
-      <dd><a href="https://docs.saleor.io/docs/llms-full.txt">https://docs.saleor.io/docs/llms-full.txt</a></dd>
-      <dt>实际是</dt>
-      <dd>没有 https://docs.saleor.io/docs/llms-full.txt 的实录快照，本位置未观测 —— 缺快照绝不当成站点的事实</dd>
-      <dt>补救办法</dt>
-      <dd>超出本次预算上限（--max-requests / --max-links），本位置未验证。用 --max-requests 0 取消上限重跑可以覆盖它。</dd>
-    </dl>
-  </div>
-  <div class="panel box-unknown">
-    <div class="f-head">
-      <span class="st st-unknown">② 索引文件真伪</span>
-      <span class="tag">原因码: not_fetched</span>
-      <span class="f-id">index_file:www.saleor.io/.well-known/llms.txt</span>
-    </div>
-    <dl class="kv">
-      <dt>位置</dt>
-      <dd><a href="https://www.saleor.io/.well-known/llms.txt">https://www.saleor.io/.well-known/llms.txt</a></dd>
-      <dt>实际是</dt>
-      <dd>没有 https://www.saleor.io/.well-known/llms.txt 的实录快照，本位置未观测 —— 缺快照绝不当成站点的事实</dd>
-      <dt>补救办法</dt>
-      <dd>超出本次预算上限（--max-requests / --max-links），本位置未验证。用 --max-requests 0 取消上限重跑可以覆盖它。</dd>
-    </dl>
-  </div>
-  <div class="panel box-unknown">
-    <div class="f-head">
-      <span class="st st-unknown">② 索引文件真伪</span>
-      <span class="tag">原因码: not_fetched</span>
-      <span class="f-id">index_file:docs.saleor.io/.well-known/llms.txt</span>
-    </div>
-    <dl class="kv">
-      <dt>位置</dt>
-      <dd><a href="https://docs.saleor.io/.well-known/llms.txt">https://docs.saleor.io/.well-known/llms.txt</a></dd>
-      <dt>实际是</dt>
-      <dd>没有 https://docs.saleor.io/.well-known/llms.txt 的实录快照，本位置未观测 —— 缺快照绝不当成站点的事实</dd>
-      <dt>补救办法</dt>
-      <dd>超出本次预算上限（--max-requests / --max-links），本位置未验证。用 --max-requests 0 取消上限重跑可以覆盖它。</dd>
-    </dl>
-  </div>
-  <div class="panel box-unknown">
-    <div class="f-head">
-      <span class="st st-unknown">⑥ 可点击路径</span>
-      <span class="tag">原因码: not_fetched</span>
-      <span class="f-id">human_path:https://www.saleor.io/pricing</span>
-    </div>
-    <dl class="kv">
-      <dt>位置</dt>
-      <dd><a href="https://www.saleor.io/pricing">https://www.saleor.io/pricing</a></dd>
-      <dt>实际是</dt>
-      <dd>起始页抓不下来：HTTP 599 / not_fetched</dd>
-      <dt>补救办法</dt>
-      <dd>超出本次预算上限（--max-requests / --max-links），本位置未验证。用 --max-requests 0 取消上限重跑可以覆盖它。</dd>
-    </dl>
-  </div>
-  <div class="panel box-unknown">
-    <div class="f-head">
-      <span class="st st-unknown">⑥ 可点击路径</span>
-      <span class="tag">原因码: not_fetched</span>
-      <span class="f-id">human_path:https://www.saleor.io/changelog</span>
-    </div>
-    <dl class="kv">
-      <dt>位置</dt>
-      <dd><a href="https://www.saleor.io/changelog">https://www.saleor.io/changelog</a></dd>
-      <dt>实际是</dt>
-      <dd>起始页抓不下来：HTTP 599 / not_fetched</dd>
-      <dt>补救办法</dt>
-      <dd>超出本次预算上限（--max-requests / --max-links），本位置未验证。用 --max-requests 0 取消上限重跑可以覆盖它。</dd>
-    </dl>
-  </div>
-  <div class="panel box-unknown">
-    <div class="f-head">
-      <span class="st st-unknown">⑥ 可点击路径</span>
-      <span class="tag">原因码: not_fetched</span>
-      <span class="f-id">human_path:https://www.saleor.io/help</span>
-    </div>
-    <dl class="kv">
-      <dt>位置</dt>
-      <dd><a href="https://www.saleor.io/help">https://www.saleor.io/help</a></dd>
-      <dt>实际是</dt>
-      <dd>起始页抓不下来：HTTP 599 / not_fetched</dd>
-      <dt>补救办法</dt>
-      <dd>超出本次预算上限（--max-requests / --max-links），本位置未验证。用 --max-requests 0 取消上限重跑可以覆盖它。</dd>
+      <dd>你的 robots.txt 禁止抓这个路径，我们遵守了。要检查请加 --ignore-robots。「我们没被允许看」是真话，「这里没问题」是假话。</dd>
     </dl>
   </div>
 </section>
 
 <section id="chain">
   <h2>AI 检索链路六段</h2>
-  <div class="chain-wrap"><svg class="chain" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1046 98" width="1046" height="98" role="img" aria-label="六段链路图：每格是一段，格内是该段的状态与位置数，六格位置数之和等于总位置数。"><defs><pattern id="geoHatch" width="6" height="6" patternTransform="rotate(45)" patternUnits="userSpaceOnUse"><line class="hatch" x1="0" y1="0" x2="0" y2="6" stroke-width="2"/></pattern><marker id="geoArrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path class="arrow" d="M0,0 L8,4 L0,8 Z"/></marker></defs><g class="cell cell-pass" data-stage="discovery" data-shape="pass" data-positions="3"><rect class="cell-box" x="0" y="0" width="156" height="98" rx="6"/><circle class="sh sh-pass" stroke-width="1" cx="78.0" cy="26.0" r="15.0"/><text class="glyph" x="78" y="31">✓</text><text class="lab" x="78" y="53">① 入口发现</text><text class="num" x="78" y="68">3 个位置</text><text class="det" x="78" y="83">✓ 3 通过</text></g><line class="link" x1="159" y1="26" x2="173" y2="26" marker-end="url(#geoArrow)"/><g class="cell cell-unknown" data-stage="index_file" data-shape="unknown" data-positions="7"><rect class="cell-box" x="178" y="0" width="156" height="98" rx="6"/><polygon class="sh sh-unknown" stroke-width="2" stroke-dasharray="4 3" points="256.0,8.8 273.2,26.0 256.0,43.2 238.8,26.0" fill="url(#geoHatch)"/><text class="glyph" x="256" y="31">?</text><text class="lab" x="256" y="53">② 索引文件真伪</text><text class="num" x="256" y="68">7 个位置</text><text class="det" x="256" y="83">✓ 1 通过 · ? 6 </text><text class="det" x="256" y="96">无法判断</text></g><line class="link" x1="337" y1="26" x2="351" y2="26" marker-end="url(#geoArrow)"/><g class="cell cell-unknown" data-stage="fulltext" data-shape="unknown" data-positions="6"><rect class="cell-box" x="356" y="0" width="156" height="98" rx="6"/><polygon class="sh sh-unknown" stroke-width="2" stroke-dasharray="4 3" points="434.0,8.8 451.2,26.0 434.0,43.2 416.8,26.0" fill="url(#geoHatch)"/><text class="glyph" x="434" y="31">?</text><text class="lab" x="434" y="53">③ 全文通道</text><text class="num" x="434" y="68">6 个位置</text><text class="det" x="434" y="83">? 6 无法判断</text></g><line class="link" x1="515" y1="26" x2="529" y2="26" marker-end="url(#geoArrow)"/><g class="cell cell-pass" data-stage="index_links" data-shape="pass" data-positions="1"><rect class="cell-box" x="534" y="0" width="156" height="98" rx="6"/><circle class="sh sh-pass" stroke-width="1" cx="612.0" cy="26.0" r="15.0"/><text class="glyph" x="612" y="31">✓</text><text class="lab" x="612" y="53">④ 索引内链存活</text><text class="num" x="612" y="68">1 个位置</text><text class="det" x="612" y="83">16 条内链：5 活 / </text><text class="det" x="612" y="96">0 死 / 11 判不了</text></g><line class="link" x1="693" y1="26" x2="707" y2="26" marker-end="url(#geoArrow)"/><g class="cell cell-na" data-stage="md_channel" data-shape="not_applicable" data-positions="1"><rect class="cell-box" x="712" y="0" width="156" height="98" rx="6"/><rect class="sh sh-na" stroke-width="1" stroke-dasharray="1 3" x="777.2" y="13.2" width="25.5" height="25.5" fill="none"/><text class="glyph" x="790" y="31">–</text><text class="lab" x="790" y="53">⑤ .md 通道</text><text class="num" x="790" y="68">1 个位置</text><text class="det" x="790" y="83">未声明「任意页面加 .md</text><text class="det" x="790" y="96">」约定</text></g><line class="link" x1="871" y1="26" x2="885" y2="26" marker-end="url(#geoArrow)"/><g class="cell cell-unknown" data-stage="human_path" data-shape="unknown" data-positions="5"><rect class="cell-box" x="890" y="0" width="156" height="98" rx="6"/><polygon class="sh sh-unknown" stroke-width="2" stroke-dasharray="4 3" points="968.0,8.8 985.2,26.0 968.0,43.2 950.8,26.0" fill="url(#geoHatch)"/><text class="glyph" x="968" y="31">?</text><text class="lab" x="968" y="53">⑥ 可点击路径</text><text class="num" x="968" y="68">5 个位置</text><text class="det" x="968" y="83">✓ 2 通过 · ? 3 </text><text class="det" x="968" y="96">无法判断</text></g></svg></div>
+  <div class="chain-wrap"><svg class="chain" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1046 98" width="1046" height="98" role="img" aria-label="六段链路图：每格是一段，格内是该段的状态与位置数，六格位置数之和等于总位置数。"><defs><pattern id="geoHatch" width="6" height="6" patternTransform="rotate(45)" patternUnits="userSpaceOnUse"><line class="hatch" x1="0" y1="0" x2="0" y2="6" stroke-width="2"/></pattern><marker id="geoArrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path class="arrow" d="M0,0 L8,4 L0,8 Z"/></marker></defs><g class="cell cell-unknown" data-stage="discovery" data-shape="unknown" data-positions="4"><rect class="cell-box" x="0" y="0" width="156" height="98" rx="6"/><polygon class="sh sh-unknown" stroke-width="2" stroke-dasharray="4 3" points="78.0,8.8 95.2,26.0 78.0,43.2 60.8,26.0" fill="url(#geoHatch)"/><text class="glyph" x="78" y="31">?</text><text class="lab" x="78" y="53">① 入口发现</text><text class="num" x="78" y="68">4 个位置</text><text class="det" x="78" y="83">✓ 3 通过 · ? 1 </text><text class="det" x="78" y="96">无法判断</text></g><line class="link" x1="159" y1="26" x2="173" y2="26" marker-end="url(#geoArrow)"/><g class="cell cell-pass" data-stage="index_file" data-shape="pass" data-positions="3"><rect class="cell-box" x="178" y="0" width="156" height="98" rx="6"/><circle class="sh sh-pass" stroke-width="1" cx="256.0" cy="26.0" r="15.0"/><text class="glyph" x="256" y="31">✓</text><text class="lab" x="256" y="53">② 索引文件真伪</text><text class="num" x="256" y="68">3 个位置</text><text class="det" x="256" y="83">✓ 3 通过</text></g><line class="link" x1="337" y1="26" x2="351" y2="26" marker-end="url(#geoArrow)"/><g class="cell cell-fail" data-stage="fulltext" data-shape="fail" data-positions="6"><rect class="cell-box" x="356" y="0" width="156" height="98" rx="6"/><polygon class="sh sh-fail" stroke-width="3" points="427.8,11.0 440.2,11.0 449.0,19.8 449.0,32.2 440.2,41.0 427.8,41.0 419.0,32.2 419.0,19.8"/><text class="glyph" x="434" y="31">✕</text><text class="lab" x="434" y="53">③ 全文通道</text><text class="num" x="434" y="68">6 个位置</text><text class="det" x="434" y="83">✕ 1 读错 · – 5 </text><text class="det" x="434" y="96">不适用</text></g><line class="link" x1="515" y1="26" x2="529" y2="26" marker-end="url(#geoArrow)"/><g class="cell cell-pass" data-stage="index_links" data-shape="pass" data-positions="2"><rect class="cell-box" x="534" y="0" width="156" height="98" rx="6"/><circle class="sh sh-pass" stroke-width="1" cx="612.0" cy="26.0" r="15.0"/><text class="glyph" x="612" y="31">✓</text><text class="lab" x="612" y="53">④ 索引内链存活</text><text class="num" x="612" y="68">2 个位置</text><text class="det" x="612" y="83">✓ 2 通过</text></g><line class="link" x1="693" y1="26" x2="707" y2="26" marker-end="url(#geoArrow)"/><g class="cell cell-na" data-stage="md_channel" data-shape="not_applicable" data-positions="1"><rect class="cell-box" x="712" y="0" width="156" height="98" rx="6"/><rect class="sh sh-na" stroke-width="1" stroke-dasharray="1 3" x="777.2" y="13.2" width="25.5" height="25.5" fill="none"/><text class="glyph" x="790" y="31">–</text><text class="lab" x="790" y="53">⑤ .md 通道</text><text class="num" x="790" y="68">1 个位置</text><text class="det" x="790" y="83">未声明「任意页面加 .md</text><text class="det" x="790" y="96">」约定</text></g><line class="link" x1="871" y1="26" x2="885" y2="26" marker-end="url(#geoArrow)"/><g class="cell cell-pass" data-stage="human_path" data-shape="pass" data-positions="5"><rect class="cell-box" x="890" y="0" width="156" height="98" rx="6"/><circle class="sh sh-pass" stroke-width="1" cx="968.0" cy="26.0" r="15.0"/><text class="glyph" x="968" y="31">✓</text><text class="lab" x="968" y="53">⑥ 可点击路径</text><text class="num" x="968" y="68">5 个位置</text><text class="det" x="968" y="83">✓ 4 通过 · – 1 </text><text class="det" x="968" y="96">不适用</text></g></svg></div>
   <p class="lead">这条链路上任何一段断掉，后面几段的内容 AI 都拿不到。</p>
 </section>
 
@@ -924,7 +712,53 @@ ol.tight li {
 
 <section id="findings">
   <h2>发现（按根因分组）</h2>
-  <p>本次没有可上报的发现。这不代表你的站没有可改的地方 ——见下面的「证据存档」与「下次会先坏在哪」。</p>
+  <h3>
+未归并（各自独立的一处改动）  </h3>
+  <article class="finding box-fail">
+    <div class="f-head">
+      <span class="f-sev sev-high">HIGH</span>
+      <span>·</span>
+      <span>AI 通道内部</span>
+      <span class="tag">③ 全文通道</span>
+      <span class="tag">soft_404</span>
+      <span class="f-id">GA-B9E590057E</span>
+    </div>
+    <div class="f-title">https://docs.saleor.io/docs/llms-full.txt 返回 200 但内容不是文本文件（软 404）</div>
+
+    <h4>去哪儿改</h4>
+    <p>HTTP 200，74335 字节，内容是兜底页（修复目标：我们没找到明显的正确目标，需人工确认）</p>
+
+    <h4>证据</h4>
+    <div class="stack">
+      <div><strong>目标</strong>
+        <a class="dead" href="https://docs.saleor.io/docs/llms-full.txt">https://docs.saleor.io/docs/llms-full.txt</a>
+        <span class="tag">200</span>
+        <span class="tag">text/html</span>
+<span class="tag">74,335 B</span>      </div>
+<div class="small mono">&lt;title&gt;Saleor Documentation | Saleor Commerce Documentation&lt;/title&gt;</div><div class="small">saleor documentation | saleor commerce documentation skip to main content 🔧 let&#39;s build together. join saleor dev community on discord. join the community search sign up overview quickstart why saleor product cloud core concepts recipes api</div>      <div class="small">同域对照本身不可用，所以这一条的判定作废，已按「无法评估」处理。</div>
+      <div><strong>复现</strong></div>
+      <pre>curl -sSL -A &#39;geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: 152046194+wangtoone@users.noreply.github.com)&#39; &#39;https://docs.saleor.io/docs/llms-full.txt&#39;</pre>
+    </div>
+
+    <p><strong>只探根路径、不做对照探测的实现会说：</strong>未采纳（没探这个位置）</p>
+    <p><strong>实际是：</strong>软 404：html_where_text_expected（另命中 redirect_to_site_root），HTTP 200 / text/html</p>
+
+<p>AI 抓这个位置拿到的是页面外壳，不是你的索引文件。只看状态码的工具会把它读成「已采纳 llms.txt」——采纳率因此虚高。</p>    <p class="small"><strong>已排除的可能（通过了这些去噪规则才报出来）：</strong>
+<span class="tag">html_where_text_expected</span><span class="tag">redirect_to_site_root</span>    </p>
+    <p class="small"><strong>严重度依据：</strong>
+<span class="tag">page_role=ai_channel</span><span class="tag">anchor=（AI 通道内部，无锚文本）</span><span class="tag">anchor_class=（AI 通道内部，无 class）</span><span class="tag">region=ai_channel</span>    </p>
+    <p class="small"><strong>不认这条：</strong><code>geo-audit saleor.io --ignore GA-B9E590057E</code></p>
+
+    <details>
+      <summary>纯文本版（手选复制）</summary>
+      <pre>GA-B9E590057E HIGH AI 通道内部
+https://docs.saleor.io/docs/llms-full.txt 返回 200 但内容不是文本文件（软 404）
+目标: https://docs.saleor.io/docs/llms-full.txt 200 text/html
+curl -sSL -A &#39;geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: 152046194+wangtoone@users.noreply.github.com)&#39; &#39;https://docs.saleor.io/docs/llms-full.txt&#39;
+geo-audit saleor.io --ignore GA-B9E590057E</pre>
+    </details>
+
+  </article>
 </section>
 
 <section id="review">
@@ -969,7 +803,7 @@ ol.tight li {
 <section id="evidence">
   <h2>我们替你验了什么 · 证据存档</h2>
   <p class="lead">逐位置一行，行数恒等于位置数。每行都带一条可粘贴的 curl。</p>
-  <p class="small">共 23 行 == 23 个位置。</p>
+  <p class="small">共 21 行 == 21 个位置。</p>
   <div class="wide">
     <table>
       <thead><tr><th>段</th><th>URL</th><th>状态码</th><th>content-type</th><th>字节</th><th>对照路径</th><th>对照返回</th><th>结论</th></tr></thead>
@@ -984,7 +818,7 @@ ol.tight li {
           <td class="num">—</td>
           <td>
             <span class="st st-pass">通过</span>
-            对照探测 https://saleor.io/geo-audit-probe-65cc6bb7ddae2bbb51a694ed.txt 返回 HTTP 404 / text/html，与本响应可区分，判为真实内容
+            对照探测 https://saleor.io/geo-audit-probe-96bdb5038ea9c44c9a4811db 返回 HTTP 404 / text/html，与本响应可区分，判为真实内容
           </td>
         </tr>
         <tr class="box-pass">
@@ -997,7 +831,7 @@ ol.tight li {
           <td class="num">—</td>
           <td>
             <span class="st st-pass">通过</span>
-            对照探测 https://www.saleor.io/geo-audit-probe-643b565871fabbb1eeb9acdb 返回 HTTP 404 / text/html，与本响应可区分，判为真实内容
+            对照探测 https://www.saleor.io/geo-audit-probe-71a42713b1b938c587c74655 返回 HTTP 404 / text/html，与本响应可区分，判为真实内容
           </td>
         </tr>
         <tr class="box-pass">
@@ -1010,7 +844,20 @@ ol.tight li {
           <td class="num">—</td>
           <td>
             <span class="st st-pass">通过</span>
-            对照探测 https://docs.saleor.io/geo-audit-probe-93f34e0b9638461bd78bddbf 返回 HTTP 404 / text/html，与本响应可区分，判为真实内容
+            对照探测 https://docs.saleor.io/geo-audit-probe-0449cbaf0fd9b5672a8ceff6 返回 HTTP 404 / text/html，与本响应可区分，判为真实内容
+          </td>
+        </tr>
+        <tr class="box-unknown">
+          <td>① 入口发现</td>
+          <td><a href="https://support.saleor.io/">https://support.saleor.io/</a></td>
+          <td class="num">—</td>
+          <td>—</td>
+          <td class="num">—</td>
+          <td class="rawurl">—</td>
+          <td class="num">—</td>
+          <td>
+            <span class="st st-unknown">无法判断</span>
+            robots.txt 禁止抓取 /，本位置未评估
           </td>
         </tr>
         <tr class="box-pass">
@@ -1019,180 +866,124 @@ ol.tight li {
           <td class="num">200</td>
           <td>text/plain</td>
           <td class="num">2,043</td>
-          <td class="rawurl">https://saleor.io/geo-audit-probe-65cc6bb7ddae2bbb51a694ed.txt</td>
+          <td class="rawurl">https://saleor.io/geo-audit-probe-96bdb5038ea9c44c9a4811db</td>
           <td class="num">404</td>
           <td>
             <span class="st st-pass">通过</span>
-            对照探测 https://saleor.io/geo-audit-probe-65cc6bb7ddae2bbb51a694ed.txt 返回 HTTP 404 / text/html，与本响应可区分，判为真实内容
-            <details><summary>curl</summary><pre>curl -sSL -A &#39;geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: ci@geo-audit.invalid)&#39; &#39;https://saleor.io/llms.txt&#39;</pre></details>
+            对照探测 https://saleor.io/geo-audit-probe-96bdb5038ea9c44c9a4811db 返回 HTTP 404 / text/html，与本响应可区分，判为真实内容；用 Accept: */* 再量一次，状态码、正文类型都一致
+            <details><summary>curl</summary><pre>curl -sSL -A &#39;geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: 152046194+wangtoone@users.noreply.github.com)&#39; &#39;https://saleor.io/llms.txt&#39;</pre></details>
           </td>
         </tr>
-        <tr class="box-unknown">
+        <tr class="box-na">
           <td>③ 全文通道</td>
           <td><a href="https://saleor.io/llms-full.txt">https://saleor.io/llms-full.txt</a></td>
-          <td class="num">599</td>
-          <td>text/plain</td>
-          <td class="num">44</td>
-          <td class="rawurl">https://saleor.io/geo-audit-probe-65cc6bb7ddae2bbb51a694ed.txt</td>
+          <td class="num">404</td>
+          <td>text/html</td>
+          <td class="num">38,789</td>
+          <td class="rawurl">https://saleor.io/geo-audit-probe-96bdb5038ea9c44c9a4811db</td>
           <td class="num">404</td>
           <td>
-            <span class="st st-unknown">无法判断</span>
-            没有 https://saleor.io/llms-full.txt 的实录快照，本位置未观测 —— 缺快照绝不当成站点的事实
-            <details><summary>curl</summary><pre>curl -sSL -A &#39;geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: ci@geo-audit.invalid)&#39; &#39;https://saleor.io/llms-full.txt&#39;</pre></details>
+            <span class="st st-na">不适用</span>
+            HTTP 404（状态码正确，正文形态不参与判定）；用 Accept: */* 再量一次，状态码、正文类型都一致
+            <details><summary>curl</summary><pre>curl -sSL -A &#39;geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: 152046194+wangtoone@users.noreply.github.com)&#39; &#39;https://saleor.io/llms-full.txt&#39;</pre></details>
           </td>
         </tr>
-        <tr class="box-unknown">
+        <tr class="box-pass">
           <td>② 索引文件真伪</td>
           <td><a href="https://www.saleor.io/llms.txt">https://www.saleor.io/llms.txt</a></td>
-          <td class="num">599</td>
+          <td class="num">200</td>
           <td>text/plain</td>
-          <td class="num">44</td>
-          <td class="rawurl">https://www.saleor.io/geo-audit-probe-643b565871fabbb1eeb9acdb</td>
+          <td class="num">2,043</td>
+          <td class="rawurl">https://www.saleor.io/geo-audit-probe-71a42713b1b938c587c74655</td>
           <td class="num">404</td>
           <td>
-            <span class="st st-unknown">无法判断</span>
-            没有 https://www.saleor.io/llms.txt 的实录快照，本位置未观测 —— 缺快照绝不当成站点的事实
-            <details><summary>curl</summary><pre>curl -sSL -A &#39;geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: ci@geo-audit.invalid)&#39; &#39;https://www.saleor.io/llms.txt&#39;</pre></details>
+            <span class="st st-pass">通过</span>
+            对照探测 https://www.saleor.io/geo-audit-probe-71a42713b1b938c587c74655 返回 HTTP 404 / text/html，与本响应可区分，判为真实内容；用 Accept: */* 再量一次，状态码、正文类型都一致
+            <details><summary>curl</summary><pre>curl -sSL -A &#39;geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: 152046194+wangtoone@users.noreply.github.com)&#39; &#39;https://www.saleor.io/llms.txt&#39;</pre></details>
           </td>
         </tr>
-        <tr class="box-unknown">
+        <tr class="box-na">
           <td>③ 全文通道</td>
           <td><a href="https://www.saleor.io/llms-full.txt">https://www.saleor.io/llms-full.txt</a></td>
-          <td class="num">599</td>
-          <td>text/plain</td>
-          <td class="num">44</td>
-          <td class="rawurl">https://www.saleor.io/geo-audit-probe-643b565871fabbb1eeb9acdb</td>
+          <td class="num">404</td>
+          <td>text/html</td>
+          <td class="num">38,789</td>
+          <td class="rawurl">https://www.saleor.io/geo-audit-probe-71a42713b1b938c587c74655</td>
           <td class="num">404</td>
           <td>
-            <span class="st st-unknown">无法判断</span>
-            没有 https://www.saleor.io/llms-full.txt 的实录快照，本位置未观测 —— 缺快照绝不当成站点的事实
-            <details><summary>curl</summary><pre>curl -sSL -A &#39;geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: ci@geo-audit.invalid)&#39; &#39;https://www.saleor.io/llms-full.txt&#39;</pre></details>
+            <span class="st st-na">不适用</span>
+            HTTP 404（状态码正确，正文形态不参与判定）；用 Accept: */* 再量一次，状态码、正文类型都一致
+            <details><summary>curl</summary><pre>curl -sSL -A &#39;geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: 152046194+wangtoone@users.noreply.github.com)&#39; &#39;https://www.saleor.io/llms-full.txt&#39;</pre></details>
           </td>
         </tr>
-        <tr class="box-unknown">
+        <tr class="box-pass">
           <td>② 索引文件真伪</td>
           <td><a href="https://docs.saleor.io/llms.txt">https://docs.saleor.io/llms.txt</a></td>
-          <td class="num">599</td>
+          <td class="num">200</td>
           <td>text/plain</td>
-          <td class="num">44</td>
-          <td class="rawurl">https://docs.saleor.io/geo-audit-probe-93f34e0b9638461bd78bddbf</td>
+          <td class="num">3,947</td>
+          <td class="rawurl">https://docs.saleor.io/geo-audit-probe-0449cbaf0fd9b5672a8ceff6</td>
           <td class="num">404</td>
           <td>
-            <span class="st st-unknown">无法判断</span>
-            没有 https://docs.saleor.io/llms.txt 的实录快照，本位置未观测 —— 缺快照绝不当成站点的事实
-            <details><summary>curl</summary><pre>curl -sSL -A &#39;geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: ci@geo-audit.invalid)&#39; &#39;https://docs.saleor.io/llms.txt&#39;</pre></details>
+            <span class="st st-pass">通过</span>
+            对照探测 https://docs.saleor.io/geo-audit-probe-0449cbaf0fd9b5672a8ceff6 返回 HTTP 404 / text/html，与本响应可区分，判为真实内容；用 Accept: */* 再量一次，状态码、正文类型都一致
+            <details><summary>curl</summary><pre>curl -sSL -A &#39;geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: 152046194+wangtoone@users.noreply.github.com)&#39; &#39;https://docs.saleor.io/llms.txt&#39;</pre></details>
           </td>
         </tr>
-        <tr class="box-unknown">
+        <tr class="box-na">
           <td>③ 全文通道</td>
           <td><a href="https://docs.saleor.io/llms-full.txt">https://docs.saleor.io/llms-full.txt</a></td>
-          <td class="num">599</td>
-          <td>text/plain</td>
-          <td class="num">44</td>
-          <td class="rawurl">https://docs.saleor.io/geo-audit-probe-93f34e0b9638461bd78bddbf</td>
+          <td class="num">404</td>
+          <td>text/html</td>
+          <td class="num">9,404</td>
+          <td class="rawurl">https://docs.saleor.io/geo-audit-probe-0449cbaf0fd9b5672a8ceff6</td>
           <td class="num">404</td>
           <td>
-            <span class="st st-unknown">无法判断</span>
-            没有 https://docs.saleor.io/llms-full.txt 的实录快照，本位置未观测 —— 缺快照绝不当成站点的事实
-            <details><summary>curl</summary><pre>curl -sSL -A &#39;geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: ci@geo-audit.invalid)&#39; &#39;https://docs.saleor.io/llms-full.txt&#39;</pre></details>
+            <span class="st st-na">不适用</span>
+            HTTP 404（状态码正确，正文形态不参与判定）；用 Accept: */* 再量一次，状态码、正文类型都一致
+            <details><summary>curl</summary><pre>curl -sSL -A &#39;geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: 152046194+wangtoone@users.noreply.github.com)&#39; &#39;https://docs.saleor.io/llms-full.txt&#39;</pre></details>
           </td>
         </tr>
-        <tr class="box-unknown">
+        <tr class="box-na">
           <td>③ 全文通道</td>
           <td><a href="https://saleor.io/docs/llms-full.txt">https://saleor.io/docs/llms-full.txt</a></td>
-          <td class="num">599</td>
-          <td>text/plain</td>
-          <td class="num">44</td>
-          <td class="rawurl">https://saleor.io/geo-audit-probe-65cc6bb7ddae2bbb51a694ed.txt</td>
+          <td class="num">404</td>
+          <td>text/html</td>
+          <td class="num">38,829</td>
+          <td class="rawurl">https://saleor.io/geo-audit-probe-96bdb5038ea9c44c9a4811db</td>
           <td class="num">404</td>
           <td>
-            <span class="st st-unknown">无法判断</span>
-            没有 https://saleor.io/docs/llms-full.txt 的实录快照，本位置未观测 —— 缺快照绝不当成站点的事实
-            <details><summary>curl</summary><pre>curl -sSL -A &#39;geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: ci@geo-audit.invalid)&#39; &#39;https://saleor.io/docs/llms-full.txt&#39;</pre></details>
+            <span class="st st-na">不适用</span>
+            HTTP 404（状态码正确，正文形态不参与判定）；用 Accept: */* 再量一次，状态码、正文类型都一致
+            <details><summary>curl</summary><pre>curl -sSL -A &#39;geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: 152046194+wangtoone@users.noreply.github.com)&#39; &#39;https://saleor.io/docs/llms-full.txt&#39;</pre></details>
           </td>
         </tr>
-        <tr class="box-unknown">
-          <td>② 索引文件真伪</td>
-          <td><a href="https://www.saleor.io/docs/llms.txt">https://www.saleor.io/docs/llms.txt</a></td>
-          <td class="num">599</td>
-          <td>text/plain</td>
-          <td class="num">44</td>
-          <td class="rawurl">https://www.saleor.io/geo-audit-probe-643b565871fabbb1eeb9acdb</td>
-          <td class="num">404</td>
-          <td>
-            <span class="st st-unknown">无法判断</span>
-            没有 https://www.saleor.io/docs/llms.txt 的实录快照，本位置未观测 —— 缺快照绝不当成站点的事实
-            <details><summary>curl</summary><pre>curl -sSL -A &#39;geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: ci@geo-audit.invalid)&#39; &#39;https://www.saleor.io/docs/llms.txt&#39;</pre></details>
-          </td>
-        </tr>
-        <tr class="box-unknown">
+        <tr class="box-na">
           <td>③ 全文通道</td>
           <td><a href="https://www.saleor.io/docs/llms-full.txt">https://www.saleor.io/docs/llms-full.txt</a></td>
-          <td class="num">599</td>
-          <td>text/plain</td>
-          <td class="num">44</td>
-          <td class="rawurl">https://www.saleor.io/geo-audit-probe-643b565871fabbb1eeb9acdb</td>
+          <td class="num">404</td>
+          <td>text/html</td>
+          <td class="num">38,829</td>
+          <td class="rawurl">https://www.saleor.io/geo-audit-probe-71a42713b1b938c587c74655</td>
           <td class="num">404</td>
           <td>
-            <span class="st st-unknown">无法判断</span>
-            没有 https://www.saleor.io/docs/llms-full.txt 的实录快照，本位置未观测 —— 缺快照绝不当成站点的事实
-            <details><summary>curl</summary><pre>curl -sSL -A &#39;geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: ci@geo-audit.invalid)&#39; &#39;https://www.saleor.io/docs/llms-full.txt&#39;</pre></details>
+            <span class="st st-na">不适用</span>
+            HTTP 404（状态码正确，正文形态不参与判定）；用 Accept: */* 再量一次，状态码、正文类型都一致
+            <details><summary>curl</summary><pre>curl -sSL -A &#39;geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: 152046194+wangtoone@users.noreply.github.com)&#39; &#39;https://www.saleor.io/docs/llms-full.txt&#39;</pre></details>
           </td>
         </tr>
-        <tr class="box-unknown">
-          <td>② 索引文件真伪</td>
-          <td><a href="https://docs.saleor.io/docs/llms.txt">https://docs.saleor.io/docs/llms.txt</a></td>
-          <td class="num">599</td>
-          <td>text/plain</td>
-          <td class="num">44</td>
-          <td class="rawurl">https://docs.saleor.io/geo-audit-probe-93f34e0b9638461bd78bddbf</td>
-          <td class="num">404</td>
-          <td>
-            <span class="st st-unknown">无法判断</span>
-            没有 https://docs.saleor.io/docs/llms.txt 的实录快照，本位置未观测 —— 缺快照绝不当成站点的事实
-            <details><summary>curl</summary><pre>curl -sSL -A &#39;geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: ci@geo-audit.invalid)&#39; &#39;https://docs.saleor.io/docs/llms.txt&#39;</pre></details>
-          </td>
-        </tr>
-        <tr class="box-unknown">
+        <tr class="box-fail">
           <td>③ 全文通道</td>
           <td><a href="https://docs.saleor.io/docs/llms-full.txt">https://docs.saleor.io/docs/llms-full.txt</a></td>
-          <td class="num">599</td>
-          <td>text/plain</td>
-          <td class="num">44</td>
-          <td class="rawurl">https://docs.saleor.io/geo-audit-probe-93f34e0b9638461bd78bddbf</td>
+          <td class="num">200</td>
+          <td>text/html</td>
+          <td class="num">74,335</td>
+          <td class="rawurl">https://docs.saleor.io/geo-audit-probe-0449cbaf0fd9b5672a8ceff6</td>
           <td class="num">404</td>
           <td>
-            <span class="st st-unknown">无法判断</span>
-            没有 https://docs.saleor.io/docs/llms-full.txt 的实录快照，本位置未观测 —— 缺快照绝不当成站点的事实
-            <details><summary>curl</summary><pre>curl -sSL -A &#39;geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: ci@geo-audit.invalid)&#39; &#39;https://docs.saleor.io/docs/llms-full.txt&#39;</pre></details>
-          </td>
-        </tr>
-        <tr class="box-unknown">
-          <td>② 索引文件真伪</td>
-          <td><a href="https://www.saleor.io/.well-known/llms.txt">https://www.saleor.io/.well-known/llms.txt</a></td>
-          <td class="num">599</td>
-          <td>text/plain</td>
-          <td class="num">44</td>
-          <td class="rawurl">https://www.saleor.io/geo-audit-probe-643b565871fabbb1eeb9acdb</td>
-          <td class="num">404</td>
-          <td>
-            <span class="st st-unknown">无法判断</span>
-            没有 https://www.saleor.io/.well-known/llms.txt 的实录快照，本位置未观测 —— 缺快照绝不当成站点的事实
-            <details><summary>curl</summary><pre>curl -sSL -A &#39;geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: ci@geo-audit.invalid)&#39; &#39;https://www.saleor.io/.well-known/llms.txt&#39;</pre></details>
-          </td>
-        </tr>
-        <tr class="box-unknown">
-          <td>② 索引文件真伪</td>
-          <td><a href="https://docs.saleor.io/.well-known/llms.txt">https://docs.saleor.io/.well-known/llms.txt</a></td>
-          <td class="num">599</td>
-          <td>text/plain</td>
-          <td class="num">44</td>
-          <td class="rawurl">https://docs.saleor.io/geo-audit-probe-93f34e0b9638461bd78bddbf</td>
-          <td class="num">404</td>
-          <td>
-            <span class="st st-unknown">无法判断</span>
-            没有 https://docs.saleor.io/.well-known/llms.txt 的实录快照，本位置未观测 —— 缺快照绝不当成站点的事实
-            <details><summary>curl</summary><pre>curl -sSL -A &#39;geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: ci@geo-audit.invalid)&#39; &#39;https://docs.saleor.io/.well-known/llms.txt&#39;</pre></details>
+            <span class="st st-fail">读错</span>
+            请求的是文本文件，实际返回 HTML（content-type: text/html，74329 字符）；用 Accept: */* 再量一次，状态码、正文类型都一致
+            <details><summary>curl</summary><pre>curl -sSL -A &#39;geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: 152046194+wangtoone@users.noreply.github.com)&#39; &#39;https://docs.saleor.io/docs/llms-full.txt&#39;</pre></details>
           </td>
         </tr>
         <tr class="box-pass">
@@ -1205,8 +996,22 @@ ol.tight li {
           <td class="num">—</td>
           <td>
             <span class="st st-pass">通过</span>
-            16 条内链：5 活 / 0 死 / 11 判不了
-            <details><summary>curl</summary><pre>curl -sSL -A &#39;geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: ci@geo-audit.invalid)&#39; &#39;https://saleor.io/llms.txt&#39;</pre></details>
+            16 条内链：10 活 / 0 死 / 6 判不了
+            <details><summary>curl</summary><pre>curl -sSL -A &#39;geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: 152046194+wangtoone@users.noreply.github.com)&#39; &#39;https://www.saleor.io/llms.txt&#39;</pre></details>
+          </td>
+        </tr>
+        <tr class="box-pass">
+          <td>④ 索引内链存活</td>
+          <td><a href="https://docs.saleor.io/llms.txt">https://docs.saleor.io/llms.txt</a></td>
+          <td class="num">200</td>
+          <td>text/plain</td>
+          <td class="num">3,947</td>
+          <td class="rawurl">—</td>
+          <td class="num">—</td>
+          <td>
+            <span class="st st-pass">通过</span>
+            7 条内链：2 活 / 0 死 / 4 判不了
+            <details><summary>curl</summary><pre>curl -sSL -A &#39;geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: 152046194+wangtoone@users.noreply.github.com)&#39; &#39;https://docs.saleor.io/llms.txt&#39;</pre></details>
           </td>
         </tr>
         <tr class="box-na">
@@ -1232,35 +1037,33 @@ ol.tight li {
           <td class="num">—</td>
           <td>
             <span class="st st-pass">通过</span>
-            14 条可点击链接全部活着
+            6 条可点击链接全部活着
           </td>
         </tr>
-        <tr class="box-unknown">
+        <tr class="box-pass">
           <td>⑥ 可点击路径</td>
           <td><a href="https://www.saleor.io/pricing">https://www.saleor.io/pricing</a></td>
-          <td class="num">599</td>
-          <td>text/plain</td>
-          <td class="num">44</td>
+          <td class="num">—</td>
+          <td>—</td>
+          <td class="num">—</td>
           <td class="rawurl">—</td>
           <td class="num">—</td>
           <td>
-            <span class="st st-unknown">无法判断</span>
-            起始页抓不下来：HTTP 599 / not_fetched
-            <details><summary>curl</summary><pre>curl -sSL -A &#39;geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: ci@geo-audit.invalid)&#39; &#39;https://www.saleor.io/pricing&#39;</pre></details>
+            <span class="st st-pass">通过</span>
+            3 条可点击链接全部活着
           </td>
         </tr>
-        <tr class="box-unknown">
+        <tr class="box-pass">
           <td>⑥ 可点击路径</td>
           <td><a href="https://www.saleor.io/changelog">https://www.saleor.io/changelog</a></td>
-          <td class="num">599</td>
-          <td>text/plain</td>
-          <td class="num">44</td>
+          <td class="num">—</td>
+          <td>—</td>
+          <td class="num">—</td>
           <td class="rawurl">—</td>
           <td class="num">—</td>
           <td>
-            <span class="st st-unknown">无法判断</span>
-            起始页抓不下来：HTTP 599 / not_fetched
-            <details><summary>curl</summary><pre>curl -sSL -A &#39;geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: ci@geo-audit.invalid)&#39; &#39;https://www.saleor.io/changelog&#39;</pre></details>
+            <span class="st st-pass">通过</span>
+            2 条可点击链接全部活着
           </td>
         </tr>
         <tr class="box-pass">
@@ -1273,21 +1076,21 @@ ol.tight li {
           <td class="num">—</td>
           <td>
             <span class="st st-pass">通过</span>
-            45 条可点击链接全部活着
+            19 条可点击链接全部活着
           </td>
         </tr>
-        <tr class="box-unknown">
+        <tr class="box-na">
           <td>⑥ 可点击路径</td>
           <td><a href="https://www.saleor.io/help">https://www.saleor.io/help</a></td>
-          <td class="num">599</td>
-          <td>text/plain</td>
-          <td class="num">44</td>
+          <td class="num">404</td>
+          <td>text/html</td>
+          <td class="num">38,735</td>
           <td class="rawurl">—</td>
           <td class="num">—</td>
           <td>
-            <span class="st st-unknown">无法判断</span>
-            起始页抓不下来：HTTP 599 / not_fetched
-            <details><summary>curl</summary><pre>curl -sSL -A &#39;geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: ci@geo-audit.invalid)&#39; &#39;https://www.saleor.io/help&#39;</pre></details>
+            <span class="st st-na">不适用</span>
+            起始页抓不下来：HTTP 404 / status_404
+            <details><summary>curl</summary><pre>curl -sSL -A &#39;geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: 152046194+wangtoone@users.noreply.github.com)&#39; &#39;https://www.saleor.io/help&#39;</pre></details>
           </td>
         </tr>
       </tbody>
@@ -1319,7 +1122,21 @@ ol.tight li {
 <section id="excluded">
   <h2>被去噪排除的链接</h2>
   <p class="lead">逐条留痕，带 rule_id。实测教训：五个批次排除了 /cdn-cgi/l/email-protection、另几个批次没排 —— 同一个东西两套口径，所以这里必须逐条列。</p>
-  <p>本次没有被去噪排除的链接。</p>
+  <div class="wide">
+    <table>
+      <thead><tr><th>URL</th><th>rule_id</th><th>规则说明</th><th>出现在</th><th>证据强度</th><th>处置</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="rawurl">https://raw.githubusercontent.com/saleor/saleor-docs/main/docs/{path}.mdx</td>
+          <td><code>url_template_placeholder</code></td>
+          <td>URL 里含未替换的模板占位符（{year}/{permalink}/{templateID}）</td>
+          <td class="rawurl">https://docs.saleor.io/llms.txt</td>
+          <td>measured</td>
+          <td>excluded</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </section>
 
 <section id="naive">
@@ -1335,7 +1152,7 @@ ol.tight li {
           <td class="rawurl">https://saleor.io/</td>
           <td>不在朴素探测集内</td>
           <td>它往这个 host 打过请求（只打了两条根路径）</td>
-          <td>对照探测 https://saleor.io/geo-audit-probe-65cc6bb7ddae2bbb51a694ed.txt 返回 HTTP 404 / text/html，与本响应可区分，判为真实内容</td>
+          <td>对照探测 https://saleor.io/geo-audit-probe-96bdb5038ea9c44c9a4811db 返回 HTTP 404 / text/html，与本响应可区分，判为真实内容</td>
           <td>n</td>
           <td class="num">1</td>
           <td>一致</td>
@@ -1344,7 +1161,7 @@ ol.tight li {
           <td class="rawurl">https://www.saleor.io/</td>
           <td>不在朴素探测集内</td>
           <td>它往这个 host 打过请求（只打了两条根路径）</td>
-          <td>对照探测 https://www.saleor.io/geo-audit-probe-643b565871fabbb1eeb9acdb 返回 HTTP 404 / text/html，与本响应可区分，判为真实内容</td>
+          <td>对照探测 https://www.saleor.io/geo-audit-probe-71a42713b1b938c587c74655 返回 HTTP 404 / text/html，与本响应可区分，判为真实内容</td>
           <td>n</td>
           <td class="num">1</td>
           <td>一致</td>
@@ -1353,7 +1170,16 @@ ol.tight li {
           <td class="rawurl">https://docs.saleor.io/</td>
           <td>不在朴素探测集内</td>
           <td>它从没往这个 host 打过请求</td>
-          <td>对照探测 https://docs.saleor.io/geo-audit-probe-93f34e0b9638461bd78bddbf 返回 HTTP 404 / text/html，与本响应可区分，判为真实内容</td>
+          <td>对照探测 https://docs.saleor.io/geo-audit-probe-0449cbaf0fd9b5672a8ceff6 返回 HTTP 404 / text/html，与本响应可区分，判为真实内容</td>
+          <td>n</td>
+          <td class="num">2</td>
+          <td>一致</td>
+        </tr>
+        <tr>
+          <td class="rawurl">https://support.saleor.io/</td>
+          <td>不在朴素探测集内</td>
+          <td>它从没往这个 host 打过请求</td>
+          <td>robots.txt 禁止抓取 /，本位置未评估</td>
           <td>n</td>
           <td class="num">2</td>
           <td>一致</td>
@@ -1362,7 +1188,7 @@ ol.tight li {
           <td class="rawurl">https://saleor.io/llms.txt</td>
           <td>GET https://saleor.io/llms.txt，跟随跳转，只看最终状态码</td>
           <td>已采纳（200）</td>
-          <td>对照探测 https://saleor.io/geo-audit-probe-65cc6bb7ddae2bbb51a694ed.txt 返回 HTTP 404 / text/html，与本响应可区分，判为真实内容</td>
+          <td>对照探测 https://saleor.io/geo-audit-probe-96bdb5038ea9c44c9a4811db 返回 HTTP 404 / text/html，与本响应可区分，判为真实内容；用 Accept: */* 再量一次，状态码、正文类型都一致</td>
           <td>n</td>
           <td class="num">1</td>
           <td>一致</td>
@@ -1370,8 +1196,8 @@ ol.tight li {
         <tr>
           <td class="rawurl">https://saleor.io/llms-full.txt</td>
           <td>GET https://saleor.io/llms-full.txt，跟随跳转，只看最终状态码</td>
-          <td>未采纳（599）</td>
-          <td>没有 https://saleor.io/llms-full.txt 的实录快照，本位置未观测 —— 缺快照绝不当成站点的事实</td>
+          <td>未采纳（404）</td>
+          <td>HTTP 404（状态码正确，正文形态不参与判定）；用 Accept: */* 再量一次，状态码、正文类型都一致</td>
           <td>n</td>
           <td class="num">1</td>
           <td>一致</td>
@@ -1379,8 +1205,8 @@ ol.tight li {
         <tr>
           <td class="rawurl">https://www.saleor.io/llms.txt</td>
           <td>GET https://www.saleor.io/llms.txt，跟随跳转，只看最终状态码</td>
-          <td>未采纳（599）</td>
-          <td>没有 https://www.saleor.io/llms.txt 的实录快照，本位置未观测 —— 缺快照绝不当成站点的事实</td>
+          <td>已采纳（200）</td>
+          <td>对照探测 https://www.saleor.io/geo-audit-probe-71a42713b1b938c587c74655 返回 HTTP 404 / text/html，与本响应可区分，判为真实内容；用 Accept: */* 再量一次，状态码、正文类型都一致</td>
           <td>n</td>
           <td class="num">1</td>
           <td>一致</td>
@@ -1388,8 +1214,8 @@ ol.tight li {
         <tr>
           <td class="rawurl">https://www.saleor.io/llms-full.txt</td>
           <td>GET https://www.saleor.io/llms-full.txt，跟随跳转，只看最终状态码</td>
-          <td>未采纳（599）</td>
-          <td>没有 https://www.saleor.io/llms-full.txt 的实录快照，本位置未观测 —— 缺快照绝不当成站点的事实</td>
+          <td>未采纳（404）</td>
+          <td>HTTP 404（状态码正确，正文形态不参与判定）；用 Accept: */* 再量一次，状态码、正文类型都一致</td>
           <td>n</td>
           <td class="num">1</td>
           <td>一致</td>
@@ -1398,7 +1224,7 @@ ol.tight li {
           <td class="rawurl">https://docs.saleor.io/llms.txt</td>
           <td>不在朴素探测集内</td>
           <td>未采纳（没探这个位置）</td>
-          <td>没有 https://docs.saleor.io/llms.txt 的实录快照，本位置未观测 —— 缺快照绝不当成站点的事实</td>
+          <td>对照探测 https://docs.saleor.io/geo-audit-probe-0449cbaf0fd9b5672a8ceff6 返回 HTTP 404 / text/html，与本响应可区分，判为真实内容；用 Accept: */* 再量一次，状态码、正文类型都一致</td>
           <td>n</td>
           <td class="num">2</td>
           <td>一致</td>
@@ -1407,7 +1233,7 @@ ol.tight li {
           <td class="rawurl">https://docs.saleor.io/llms-full.txt</td>
           <td>不在朴素探测集内</td>
           <td>未采纳（没探这个位置）</td>
-          <td>没有 https://docs.saleor.io/llms-full.txt 的实录快照，本位置未观测 —— 缺快照绝不当成站点的事实</td>
+          <td>HTTP 404（状态码正确，正文形态不参与判定）；用 Accept: */* 再量一次，状态码、正文类型都一致</td>
           <td>n</td>
           <td class="num">2</td>
           <td>一致</td>
@@ -1416,16 +1242,7 @@ ol.tight li {
           <td class="rawurl">https://saleor.io/docs/llms-full.txt</td>
           <td>不在朴素探测集内</td>
           <td>未采纳（没探这个位置）</td>
-          <td>没有 https://saleor.io/docs/llms-full.txt 的实录快照，本位置未观测 —— 缺快照绝不当成站点的事实</td>
-          <td>n</td>
-          <td class="num">2</td>
-          <td>一致</td>
-        </tr>
-        <tr>
-          <td class="rawurl">https://www.saleor.io/docs/llms.txt</td>
-          <td>不在朴素探测集内</td>
-          <td>未采纳（没探这个位置）</td>
-          <td>没有 https://www.saleor.io/docs/llms.txt 的实录快照，本位置未观测 —— 缺快照绝不当成站点的事实</td>
+          <td>HTTP 404（状态码正确，正文形态不参与判定）；用 Accept: */* 再量一次，状态码、正文类型都一致</td>
           <td>n</td>
           <td class="num">2</td>
           <td>一致</td>
@@ -1434,43 +1251,16 @@ ol.tight li {
           <td class="rawurl">https://www.saleor.io/docs/llms-full.txt</td>
           <td>不在朴素探测集内</td>
           <td>未采纳（没探这个位置）</td>
-          <td>没有 https://www.saleor.io/docs/llms-full.txt 的实录快照，本位置未观测 —— 缺快照绝不当成站点的事实</td>
+          <td>HTTP 404（状态码正确，正文形态不参与判定）；用 Accept: */* 再量一次，状态码、正文类型都一致</td>
           <td>n</td>
           <td class="num">2</td>
-          <td>一致</td>
-        </tr>
-        <tr>
-          <td class="rawurl">https://docs.saleor.io/docs/llms.txt</td>
-          <td>不在朴素探测集内</td>
-          <td>未采纳（没探这个位置）</td>
-          <td>没有 https://docs.saleor.io/docs/llms.txt 的实录快照，本位置未观测 —— 缺快照绝不当成站点的事实</td>
-          <td>n</td>
-          <td class="num">3</td>
           <td>一致</td>
         </tr>
         <tr>
           <td class="rawurl">https://docs.saleor.io/docs/llms-full.txt</td>
           <td>不在朴素探测集内</td>
           <td>未采纳（没探这个位置）</td>
-          <td>没有 https://docs.saleor.io/docs/llms-full.txt 的实录快照，本位置未观测 —— 缺快照绝不当成站点的事实</td>
-          <td>n</td>
-          <td class="num">3</td>
-          <td>一致</td>
-        </tr>
-        <tr>
-          <td class="rawurl">https://www.saleor.io/.well-known/llms.txt</td>
-          <td>不在朴素探测集内</td>
-          <td>未采纳（没探这个位置）</td>
-          <td>没有 https://www.saleor.io/.well-known/llms.txt 的实录快照，本位置未观测 —— 缺快照绝不当成站点的事实</td>
-          <td>n</td>
-          <td class="num">2</td>
-          <td>一致</td>
-        </tr>
-        <tr>
-          <td class="rawurl">https://docs.saleor.io/.well-known/llms.txt</td>
-          <td>不在朴素探测集内</td>
-          <td>未采纳（没探这个位置）</td>
-          <td>没有 https://docs.saleor.io/.well-known/llms.txt 的实录快照，本位置未观测 —— 缺快照绝不当成站点的事实</td>
+          <td>请求的是文本文件，实际返回 HTML（content-type: text/html，74329 字符）；用 Accept: */* 再量一次，状态码、正文类型都一致</td>
           <td>n</td>
           <td class="num">3</td>
           <td>一致</td>
@@ -1478,15 +1268,15 @@ ol.tight li {
       </tbody>
     </table>
   </div>
-  <p>死链口径对比：只看首跳状态码（&gt;= 400 即判死）会数出 46 条；我们经去噪与正文比对后是 0 条链接实例。</p>
+  <p>死链口径对比：只看首跳状态码（&gt;= 400 即判死）会数出 0 条；我们经去噪与正文比对后是 0 条链接实例。</p>
 </section>
 
 <section id="coverage">
   <h2>覆盖披露</h2>
-  <p>位置数 23 ·
-     抓到的页面 2 个 ·
-     HTTP 请求 120 / 上限 120（其中不同 URL 99 个；差额是跳转每一跳、robots.txt 与重试）</p>
-  <p class="small">链接账本：抽取 95 = 排除 0 + 待人工 0 + 已验证 45 + 无法判断 5 + 被封顶截掉 45</p>
+  <p>位置数 21 ·
+     抓到的页面 4 个 ·
+     HTTP 请求 120 / 上限 120（其中不同 URL 80 个；差额是跳转每一跳、robots.txt 与重试）</p>
+  <p class="small">链接账本：抽取 206 = 排除 0 + 待人工 0 + 已验证 17 + 无法判断 2 + 被封顶截掉 187</p>
   <p class="small">本次未触发抽样。</p>
   <p class="small">robots.txt 的 Disallow 我们遵守了：命中的路径零请求，判「无法判断（robots_disallowed）」。「我们没被允许看」是真话。</p>
   <p class="small">LLM 调用 0 次（这个工具零 LLM、零 API key，所以它恒为 0）。</p>
@@ -1497,7 +1287,30 @@ ol.tight li {
   <ul class="tight"><li>内容是否过期（通用「旧年份」正则两批样本 134 命中 0 真信号 / 296 命中 2 真信号）</li><li>事实是否自相冲突</li><li>锚点（#fragment）是否腐烂</li><li>定价页 ↔ 文档的口径比对</li><li>定期扫描 / 监控</li><li>托管 web 版（会让 --contact 这条合规约束当场失效）</li><li>Playwright 渲染（合规不绕 WAF，且实测只有 2/72 = 2.8% 盲区）</li><li>--serve 本地服务</li></ul>
 
   <h3>这些地方我们想看但没看到</h3>
-  <p>没有额外的覆盖缺口。</p>
+  <div class="wide">
+    <table>
+      <thead><tr>
+        <th>位置</th>
+        <th>原因码</th>
+        <th>实际是</th>
+        <th>补救办法</th>
+      </tr></thead>
+      <tbody>
+        <tr class="box-unknown">
+          <td class="rawurl">① 入口发现 · https://support.saleor.io/</td>
+          <td><code>robots_disallowed</code></td>
+          <td>这个 host 解析通了、根路径也请求了，但判不了（robots_disallowed），于是它的 AI 路径（llms.txt / llms-full.txt / .md 通道）一条都没探，robots.txt 与 sitemap.xml 也没读。这不是「这个 host 没问题」，是「我们没能看」。</td>
+          <td>你的 robots.txt 禁止抓这个路径，我们遵守了。要检查请加 --ignore-robots。「我们没被允许看」是真话，「这里没问题」是假话。</td>
+        </tr>
+        <tr class="box-unknown">
+          <td class="rawurl">https://saleor.io/blog</td>
+          <td><code>not_fetched</code></td>
+          <td>page_targets 封顶 120，截掉 30 条</td>
+          <td>用 --max-links 0 取消上限重跑可以覆盖它。</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </section>
 
 <section id="method">
@@ -1539,7 +1352,7 @@ ol.tight li {
 </main>
 
 <footer class="footer">
-  <div class="shell">本报告为单文件 HTML，无任何外部请求，可离线转发与打印。 · geo-audit 0.1.0 · denoise/2026-09-07.1 · ci@geo-audit.invalid</div>
+  <div class="shell">本报告为单文件 HTML，无任何外部请求，可离线转发与打印。 · geo-audit 0.1.0 · denoise/2026-09-07.1 · 152046194+wangtoone@users.noreply.github.com</div>
 </footer>
 </body>
 </html>
