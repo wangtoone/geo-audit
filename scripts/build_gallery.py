@@ -471,17 +471,45 @@ def _skipped_row(outcome: Outcome) -> str:
     )
 
 
+def _provenance_block(recorded_at: str, built_at: str, *, live: bool) -> str:
+    """第一段：这些数字是**怎么来的**。活网与 replay 是两句完全不同的话。"""
+    if live:
+        return (
+            '<p class="lede">下面每一份都是<strong>真实站点的真实抓取结果</strong>：'
+            f"于 <strong>{html.escape(built_at)}</strong> 直接向这些站点发请求跑出来的"
+            "（0.5 req/s、遵守 <code>robots.txt</code>、单域 120 请求上限，"
+            "全是装完就有的默认参数）。不是构造出来的样例站，也不是回放。</p>"
+            '<p class="meta">跑的是默认参数，所以数字有可比性 —— 也意味着'
+            "大站会撞上请求上限，撞上的位置写「无法判断 · 超出预算」而不是悄悄跳过。</p>"
+        )
+    return (
+        '<p class="lede">下面每一份都是<strong>真实站点的真实抓取结果</strong>：'
+        "HTTP 响应（含 headers、逐跳分开）在 "
+        f"<strong>{html.escape(recorded_at)}</strong> 从这些站点上抓下来冻结进 "
+        "<code>fixtures/</code>，本页的报告由同一套判定重放那些字节产出，"
+        "判定一个字节都没改。不是实时扫描，也不是构造出来的样例站。</p>"
+    )
+
+
 def render_index(
     outcomes: list[Outcome],
     *,
     recorded_at: str,
     built_at: str,
     tool_version: str,
+    live: bool = False,
 ) -> str:
-    """索引页。单文件自包含 —— 和报告一样，零外部请求。"""
+    """索引页。单文件自包含 —— 和报告一样，零外部请求。
+
+    ``live`` 决定第一段怎么写，**这一段不许写错**：2026-09-12 把画廊改成活网跑
+    之后，这页还印着「由同一套判定重放那些字节产出，不是实时扫描」——
+    一句它当时没资格说的话，而且恰好是这个仓库最在意的那类错误。
+    """
     published = [o for o in outcomes if o.published]
     skipped = [o for o in outcomes if not o.published]
 
+    provenance = _provenance_block(recorded_at, built_at, live=live)
+    footer_note = "活网跑" if live else f"快照录制于 {recorded_at}"
     rows = "".join(_published_row(o) for o in published)
     skips = "".join(_skipped_row(o) for o in skipped)
     skip_block = (
@@ -506,10 +534,7 @@ def render_index(
 <body>
 <main class="wrap">
 <h1>geo-audit · 真实站点报告画廊</h1>
-<p class="lede">下面每一份都是<strong>真实站点的真实抓取结果</strong>：HTTP 响应（含 headers、
-逐跳分开）在 <strong>{html.escape(recorded_at)}</strong> 从这些站点上抓下来冻结进
-<code>fixtures/</code>，本页的报告由同一套判定重放那些字节产出，判定一个字节都没改。
-不是实时扫描，也不是构造出来的样例站。</p>
+{provenance}
 <p class="lede">先看报告，再决定要不要装。报告是单个 HTML 文件，零外部请求，
 可离线转发、可直接打印、可贴进工单。</p>
 <p class="meta">四格计数里「{html.escape(STATUS_LABEL["unknown"])}」是独立的一态，
@@ -524,7 +549,7 @@ def render_index(
 {skip_block}
 
 <footer>geo-audit {html.escape(tool_version)} · 本页由 <code>scripts/build_gallery.py</code>
-于 {html.escape(built_at)} 生成 · 快照录制于 {html.escape(recorded_at)}</footer>
+于 {html.escape(built_at)} 生成 · {html.escape(footer_note)}</footer>
 </main>
 </body>
 </html>
@@ -661,6 +686,7 @@ def main(argv: list[str] | None = None) -> int:
         recorded_at=_recorded_at(store),
         built_at=datetime.now(UTC).strftime("%Y-%m-%d %H:%M UTC"),
         tool_version=__version__,
+        live=args.live,
     )
     assert_selfcontained(index)
     assert_no_banned_words(index)

@@ -669,6 +669,11 @@ def test_a_dead_link_finding_carries_the_status_it_measured() -> None:
     assert f.target.http_status == 404, "报告说它死了，却不带测到的状态码"
     assert f.target.final_url == dead_url
     assert f.target.curl_repro, "curl 复现命令是硬要求（A35）"
+    assert "ci@geo-audit.invalid" in f.target.curl_repro, (
+        "复现命令里必须是这次真用的 UA。账本可能由 probe_index_links 直接造"
+        "（pipeline 就是这么调的），那一层没有 UA —— 沿用它会印成「contact: 未注入」，"
+        "而换个 UA 站点可能换个答案，UA 是复现命令的一部分。"
+    )
 
 
 def test_the_evidence_falls_back_when_the_ledger_has_no_observation() -> None:
@@ -703,3 +708,29 @@ def test_the_evidence_falls_back_when_the_ledger_has_no_observation() -> None:
     (f,) = findings_from_index_report(report, domain="inngest.com", user_agent="ua")
     assert f.target.http_status is None
     assert f.target.curl_repro
+
+
+def test_the_pipeline_path_still_gets_the_real_ua_in_the_repro() -> None:
+    """pipeline 的调法：账本由 `probe_index_links` 造（**没有 UA**），
+    finding 由 `findings_from_index_report` 造（有 UA）。
+
+    这条守的是 2026-09-12 我自己写出来的一个回归：把观测挂进账本之后，
+    复现命令跟着账本走，于是线上 mistral 那条死链印的是
+    `-A 'geo-audit/0.1.0 (contact: 未注入)'`。UA 是复现命令的一部分 ——
+    换个 UA 站点可能换个答案 —— 印错等于给了一条复现不出来的命令。
+    """
+    from geo_audit.checks.ai_path import findings_from_index_report, probe_index_links
+
+    dead_url = "https://www.inngest.com/docs/gone"
+    text = f"- [dead]({dead_url})\n- [alive](https://www.inngest.com/docs/here)\n"
+    ledger = probe_index_links(
+        "inngest.com",
+        _index_probe("https://www.inngest.com/llms.txt", text),
+        fetcher=FakeProber({dead_url: Verdict.REAL404}, default=Verdict.OK),
+    )
+    (f,) = findings_from_index_report(
+        ledger, domain="inngest.com", user_agent="geo-audit/0.1.0 (contact: real@example.com)"
+    )
+    assert f.target.http_status == 404
+    assert "real@example.com" in f.target.curl_repro
+    assert "未注入" not in f.target.curl_repro

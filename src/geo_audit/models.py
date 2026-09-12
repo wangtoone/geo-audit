@@ -697,6 +697,20 @@ FINDING_KINDS: frozenset[str] = frozenset(
 #: 两句话不能同时成立。
 CONTROL_DEPENDENT_KINDS: frozenset[str] = frozenset(("soft_404", "llms_full_fake"))
 
+#: 真正**用到了对照读数**的 reason。同一个 kind 里两种都有 ——
+#: 软 404 既可以靠对照判（两边同一个壳），也可以靠 L2 的确定性规则判
+#: （要的是文本文件、给的是 HTML）。
+#:
+#: 只按 kind 分流不够细，实测代价：tdengine 那份报告里
+#:     标题「https://www.tdengine.com/docs/llms.txt 返回 200 但内容不是文本文件（软 404）」
+#:     严重度 HIGH，计进「读错」那一格
+#:     证据「同域对照本身不可用，所以这一条的判定作废，已按『无法评估』处理。」
+#: 三句话不能同时成立 —— 而它判的依据是 html_where_text_expected，
+#: 一条根本不需要对照的确定性规则。
+CONTROL_DEPENDENT_REASONS: frozenset[str] = frozenset(
+    ("identical_to_control", "near_identical_to_control")
+)
+
 
 @dataclass(frozen=True, slots=True)
 class Evidence:

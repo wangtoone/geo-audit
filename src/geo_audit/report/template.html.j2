@@ -247,8 +247,10 @@
         <span class="tag">{{ f.control.content_type or "—" }}</span>
       </div>
       <div class="small">{{ copy["finding_evidence_control_why"] }}</div>
-      {% elif f.kind in CONTROL_DEPENDENT_KINDS %}
+      {% elif f.kind in CONTROL_DEPENDENT_KINDS and f.detail.get("reason") in CONTROL_DEPENDENT_REASONS %}
       <div class="small">{{ copy["finding_evidence_control_missing"] }}</div>
+      {% elif f.kind in CONTROL_DEPENDENT_KINDS %}
+      <div class="small">{{ copy["finding_evidence_control_rule_only"] }}</div>
       {% else %}
       <div class="small">{{ copy["finding_evidence_control_na"] }}</div>
       {% endif %}

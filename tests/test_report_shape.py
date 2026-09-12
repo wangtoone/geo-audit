@@ -1303,3 +1303,69 @@ def test_render_html_accepts_the_real_pipeline_report() -> None:
     assert real.headline in html
     for sid in (*SECTION_ORDER, "verdict", "chain", "naive-demo"):
         assert f'id="{sid}"' in html
+
+
+# --------------------------------------------------------------------------- #
+# 「判定作废」只许出现在真的用了对照读数、而对照拿不到的那一条上
+# --------------------------------------------------------------------------- #
+
+
+def _soft404_finding(reason: str) -> Finding:
+    """一条没有 control 证据的 soft_404，reason 由调用方指定。"""
+    url = "https://www.example.com/docs/llms.txt"
+    fid = make_finding_id("ai_path.soft404", url, None)
+    return Finding(
+        finding_id=fid,
+        kind="soft_404",
+        check_id="ai_path.soft404",
+        title=f"{url} 返回 200 但内容不是文本文件（软 404）",
+        severity=Severity.HIGH,
+        position_class=PositionClass.AI_CHANNEL,
+        stage=Stage.INDEX_FILE,
+        target=ev(url, 200, "text/html", nbytes=28515),
+        naive_conclusion="未采纳（没探这个位置）",
+        naive_is_wrong=True,
+        actual_conclusion=f"软 404：{reason}，HTTP 200 / text/html",
+        why_it_matters="AI 抓这个位置拿到的是页面外壳，不是你的索引文件。",
+        detail={"reason": reason, "http_status": 200, "content_type": "text/html"},
+        severity_signals={
+            "page_role": "ai_channel",
+            "anchor": "-",
+            "anchor_class": "-",
+            "region": "ai_channel",
+        },
+        suppress_hint=f"geo-audit example.com --ignore {fid}",
+    )
+
+
+def _render_with(finding: Finding) -> str:
+    from dataclasses import replace
+
+    sample = build_page_one_sample()
+    return render_html(replace(sample, findings=(finding,), root_causes=()))
+
+
+def test_a_rule_only_soft404_does_not_retract_itself() -> None:
+    """靠 L2 确定性规则判出来的软 404，**不许**印「判定作废」。
+
+    实测（2026-09-12，tdengine 那份线上报告）：
+
+        标题「…/docs/llms.txt 返回 200 但内容不是文本文件（软 404）」·HIGH·计进「读错」
+        证据「同域对照本身不可用，所以这一条的判定作废，已按「无法评估」处理。」
+
+    三句话不能同时成立。成因是模板按 **kind** 分流 —— 而 soft_404 这一族里
+    既有靠对照判的，也有靠 html_where_text_expected 这种不需要对照的。
+    """
+    page = _render_with(_soft404_finding("html_where_text_expected"))
+    assert "判定作废" not in page, "不依赖对照的判据不许说自己作废"
+    assert "不依赖同域对照" in page
+
+
+def test_a_control_based_soft404_still_retracts_when_the_control_is_gone() -> None:
+    """反过来一条：真的靠对照判的，对照没了就必须说判定作废。
+
+    没有这条，上面那个修法很容易被写成「一律不说作废」—— 那就把一个诚实的
+    退让删掉了。
+    """
+    page = _render_with(_soft404_finding("identical_to_control"))
+    assert "判定作废" in page

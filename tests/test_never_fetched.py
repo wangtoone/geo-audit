@@ -277,7 +277,17 @@ def test_no_finding_asserts_and_retracts_itself() -> None:
         证据「同域对照本身不可用，所以这一条的判定作废，已按「无法评估」处理。」
 
     成因：模板在 `f.control` 为空时**无条件**印那句，而死链判据靠状态码、
-    本来就不需要对照。现在按 `CONTROL_DEPENDENT_KINDS` 分流。
+    本来就不需要对照。第一版按 `CONTROL_DEPENDENT_KINDS`（kind）分流。
+
+    2026-09-12 又抓到同一个病的第二形态：kind 分流不够细。tdengine 那条
+
+        标题「…/docs/llms.txt 返回 200 但内容不是文本文件（软 404）」·HIGH·计进「读错」
+        证据「同域对照本身不可用，所以这一条的判定作废，已按「无法评估」处理。」
+
+    是 `soft_404`（确实属于依赖对照的那一族），但**它自己**判的依据是
+    `html_where_text_expected` —— 一条不需要对照的确定性规则。现在按
+    `CONTROL_DEPENDENT_REASONS`（这一条用没用到对照读数）分流，
+    所以这条测试也从只看死链扩到看任何已经下了肯定结论的标题。
     """
     import re as _re
 
@@ -293,7 +303,11 @@ def test_no_finding_asserts_and_retracts_itself() -> None:
                 if '<div class="f-title">' in block
                 else block
             )
-            if "判定作废" in body and "是死链" in title:
+            # 「判定作废」只有一种成立的处境：这一条**确实**依赖对照读数，
+            # 而对照拿不到。标题里已经下了肯定结论的（是死链 / 是软 404），
+            # 都不许再说自己作废。
+            asserts_something = "是死链" in title or "软 404" in title
+            if "判定作废" in body and asserts_something:
                 bad.append(f"{path.name}: {title[:56]}")
     assert bad == [], (
         "这些 finding 一边断言、一边说判定作废：\n  "

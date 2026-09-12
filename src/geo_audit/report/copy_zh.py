@@ -301,6 +301,10 @@ COPY_ZH: dict[str, str] = {
     #: 死链类判据靠状态码，不需要对照 —— 印上面那句会和标题自相矛盾。
     #: 实测 mistral 那份 75 条死链每一条都同时写着「是死链」和「判定作废」。
     "finding_evidence_control_na": "这一条按状态码判定，不需要同域对照。",
+    #: 软 404 这一族里靠 L2 确定性规则判出来的那些：kind 依赖对照，**这一条不**。
+    #: 实测 tdengine 那条 html_where_text_expected 同时写着 HIGH 与「判定作废」。
+    "finding_evidence_control_rule_only": "这一条靠确定性规则判定（要的是文本文件、"
+    "给回来的是 HTML），不依赖同域对照。",
     "finding_evidence_repro": "复现",
     "finding_naive_title": NAIVE_FIXED_PHRASE + "会说",
     "finding_actual_title": "实际是",

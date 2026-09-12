@@ -194,3 +194,32 @@ def test_the_next_run_sweeps_the_leftover(docs: Path, monkeypatch: pytest.Monkey
     rc = _run(docs, monkeypatch, crash_on=None, domains=("a.com",))
     assert rc == 0
     assert [p.name for p in docs.iterdir() if p.name.startswith(STAGING)] == []
+
+
+# --------------------------------------------------------------------------- #
+# 首页那段「这些数字怎么来的」必须跟着模式走
+# --------------------------------------------------------------------------- #
+
+
+def test_the_index_says_replay_when_it_replayed() -> None:
+    page = build_gallery.render_index(
+        [], recorded_at="2026-09-07", built_at="2026-09-12 10:00 UTC", tool_version="0.1.0"
+    )
+    assert "重放那些字节" in page and "不是实时扫描" in page
+    assert "直接向这些站点发请求" not in page
+
+
+def test_the_index_says_live_when_it_ran_live() -> None:
+    """2026-09-12 踩过：画廊改活网跑之后，首页还印着「不是实时扫描，是重放冻结
+    字节」。那是一句它当时没资格说的话，而且恰好是这个仓库最在意的那类错误 ——
+    页面替测量方式撒谎，读的人没有任何办法从页面上看出来。"""
+    page = build_gallery.render_index(
+        [],
+        recorded_at="2026-09-07",
+        built_at="2026-09-12 10:00 UTC",
+        tool_version="0.1.0",
+        live=True,
+    )
+    assert "直接向这些站点发请求" in page
+    assert "2026-09-12 10:00 UTC" in page
+    assert "重放" not in page and "不是实时扫描" not in page
