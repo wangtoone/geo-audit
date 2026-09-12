@@ -23,7 +23,7 @@
 
 ## 二、它会否定自己的输出
 
-[gusto.com 那份报告](docs/reports/gusto.com.html)第一行是：
+[gusto.com 那份报告](https://wangtoone.github.io/geo-audit/reports/gusto.com.html)第一行是：
 
 > **这次扫描不可信：18 个核心位置里有 17 个我们没能评估。下面的结论不要当结论用。**
 
@@ -52,19 +52,20 @@ Cloudflare 挡掉了几乎所有位置 —— 而它的 `llms.txt` 其实是真�
 ## 先看报告，再决定要不要装
 
 九份真实站点的真实扫描结果，**2026-09-12 活网跑的**（不是离线回放）。
-索引页：[docs/index.html](docs/index.html)。
+索引页：<https://wangtoone.github.io/geo-audit/> —— 下面表格里每个域名也都直接点得开。
+（clone 之后想离线看，同一批文件在仓库的 `docs/` 下。）
 
 | 报告 | 位置 | 通过 | 读错 | 未能评估 | 首屏那句话 |
 |---|---|---|---|---|---|
-| [tdengine.com](docs/reports/tdengine.com.html) | 30 | 4 | 7 | 0 | 7 个位置会被读错 |
-| [gusto.com](docs/reports/gusto.com.html) | 28 | 2 | 4 | 21 | 这次扫描不可信 |
-| [deepgram.com](docs/reports/deepgram.com.html) | 21 | 5 | 2 | 5 | 2 个位置会被读错 |
-| [minimax.io](docs/reports/minimax.io.html) | 26 | 10 | 2 | 7 | 2 个位置会被读错 |
-| [saleor.io](docs/reports/saleor.io.html) | 21 | 12 | 1 | 1 | 1 个位置会被读错 |
-| [modal.com](docs/reports/modal.com.html) | 29 | 12 | 1 | 6 | 1 个位置会被读错 |
-| [mistral.ai](docs/reports/mistral.ai.html) | 41 | 10 | 1 | 18 | 这次扫描不可信 |
-| [openstatus.dev](docs/reports/openstatus.dev.html) | 54 | 6 | 1 | 24 | 这次扫描不可信 |
-| [rustdesk.com](docs/reports/rustdesk.com.html) | 15 | 10 | 0 | 0 | 零发现：10 个位置全部通过 |
+| [tdengine.com](https://wangtoone.github.io/geo-audit/reports/tdengine.com.html) | 30 | 4 | 7 | 0 | 7 个位置会被读错 |
+| [gusto.com](https://wangtoone.github.io/geo-audit/reports/gusto.com.html) | 28 | 2 | 4 | 21 | 这次扫描不可信 |
+| [deepgram.com](https://wangtoone.github.io/geo-audit/reports/deepgram.com.html) | 21 | 5 | 2 | 5 | 2 个位置会被读错 |
+| [minimax.io](https://wangtoone.github.io/geo-audit/reports/minimax.io.html) | 26 | 10 | 2 | 7 | 2 个位置会被读错 |
+| [saleor.io](https://wangtoone.github.io/geo-audit/reports/saleor.io.html) | 21 | 12 | 1 | 1 | 1 个位置会被读错 |
+| [modal.com](https://wangtoone.github.io/geo-audit/reports/modal.com.html) | 29 | 12 | 1 | 6 | 1 个位置会被读错 |
+| [mistral.ai](https://wangtoone.github.io/geo-audit/reports/mistral.ai.html) | 41 | 10 | 1 | 18 | 这次扫描不可信 |
+| [openstatus.dev](https://wangtoone.github.io/geo-audit/reports/openstatus.dev.html) | 54 | 6 | 1 | 24 | 这次扫描不可信 |
+| [rustdesk.com](https://wangtoone.github.io/geo-audit/reports/rustdesk.com.html) | 15 | 10 | 0 | 0 | 零发现：10 个位置全部通过 |
 
 **三份首屏写着「这次扫描不可信」，原因逐条可查**，不是报告写坏了：
 
