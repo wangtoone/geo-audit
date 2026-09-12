@@ -761,4 +761,3 @@ def test_every_measured_override_explains_itself(soft404: dict[str, Any]) -> Non
         assert row["expect_verdict"] != row["measured_verdict"], (
             f"{row['id']} 的 measured_verdict 与 expect_verdict 相同，这条覆盖是多余的"
         )
-

@@ -642,3 +642,64 @@ def test_c03_c04_c12_ids_are_inferred_not_from_the_spec() -> None:
     inferred = {c["id"] for c in CASES if c.get("id_assignment") == "inferred"}
     assert inferred == {"C03", "C04", "C12"}
     assert "C03、C04、C12" in META["count_note"] or "C03/C04/C12" in META["count_note"]
+
+
+def test_a_dead_link_finding_carries_the_status_it_measured() -> None:
+    """说「这条链接死了」就得带上它测到的状态码。
+
+    原来这里挂的是 ``_evidence_for_url``（「没有响应体可挂时的最小 Evidence」）——
+    可这时明明有响应。``curl_repro`` 在，所以 claim 可复核，但读的人得自己跑一遍
+    才知道是 404 还是 410，而 404 与 410 在「这条建议该怎么写」上不是一回事。
+
+    反过来一条也钉住：**判活的那条不许因此多出一条 finding** —— 这个改动只该
+    影响证据的厚度，不该影响判定。
+    """
+    dead_url = "https://www.inngest.com/docs/gone"
+    text = f"- [dead]({dead_url})\n- [alive](https://www.inngest.com/docs/here)\n"
+    prober = FakeProber({dead_url: Verdict.REAL404}, default=Verdict.OK)
+    findings = check_index_links(
+        "inngest.com",
+        _index_probe("https://www.inngest.com/llms.txt", text),
+        fetcher=prober,
+        user_agent="geo-audit/test (contact: ci@geo-audit.invalid)",
+    )
+    (f,) = findings
+    assert f.kind == "index_link_dead"
+    assert f.target.url == dead_url
+    assert f.target.http_status == 404, "报告说它死了，却不带测到的状态码"
+    assert f.target.final_url == dead_url
+    assert f.target.curl_repro, "curl 复现命令是硬要求（A35）"
+
+
+def test_the_evidence_falls_back_when_the_ledger_has_no_observation() -> None:
+    """手工构造的账本（测试里到处都是）没有 evidence_by_url，仍要能出 finding。
+
+    没有这条回落，`findings_from_index_report` 会在任何不是由 `probe_index_links`
+    造出来的账本上炸 —— 而「账本」本来就是可以手工构造的中间物。
+    """
+    from geo_audit.checks.ai_path import IndexLinkReport, findings_from_index_report
+
+    link = IndexLink(
+        line_no=1,
+        abs_url="https://www.inngest.com/docs/gone",
+        norm_url="www.inngest.com/docs/gone",
+        anchor_text="gone",
+        extractor="markdown",
+    )
+    report = IndexLinkReport(
+        index_url="https://www.inngest.com/llms.txt",
+        links=(link,),
+        probed=(link,),
+        sampled=False,
+        sampled_of=1,
+        excluded=(),
+        alive=(),
+        dead=(link,),
+        unknown=(),
+        status=Status.FAIL,
+        severity=Severity.LOW,
+        counted_as_hit=True,
+    )
+    (f,) = findings_from_index_report(report, domain="inngest.com", user_agent="ua")
+    assert f.target.http_status is None
+    assert f.target.curl_repro

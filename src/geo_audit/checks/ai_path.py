@@ -24,7 +24,7 @@ from __future__ import annotations
 
 import re
 from collections.abc import Mapping, Sequence
-from dataclasses import dataclass, replace
+from dataclasses import dataclass, field, replace
 from typing import Literal, Protocol, cast
 from urllib.parse import urljoin, urlsplit, urlunsplit
 
@@ -1123,6 +1123,15 @@ class IndexLinkReport:
     #: 没传对照页时是 None（「没测过」，不是 False）。
     mechanism_alive: bool | None = None
     unknown_reasons: tuple[str, ...] = ()
+    #: ``abs_url -> Evidence``，探到的那些链接各自的观测。
+    #:
+    #: 为什么要留着：一份说「这条链接死了」的报告，原来不带它测到的状态码 ——
+    #: ``_evidence_for_url`` 是「没有响应体可挂时的最小 Evidence」，而这里明明
+    #: 有响应。``curl_repro`` 在，所以 claim 可复核，但读的人看不见它到底返回了
+    #: 什么，得自己跑一遍才知道是 404 还是 410。
+    #:
+    #: 空字典 = 这份账本没带观测（手工构造的测试账本），调用方回落到最小 Evidence。
+    evidence_by_url: Mapping[str, Evidence] = field(default_factory=dict)
 
     @property
     def n_links(self) -> int:
@@ -1176,6 +1185,7 @@ def probe_index_links(
     fetcher: Prober,
     control: HostProfile | None = None,
     mechanism_probe: Probe | None = None,
+    user_agent: str = "",
 ) -> IndexLinkReport:
     """抽取 → 去噪 → 抽样 → 探活 → 分级。**探测前必须过一遍去噪表**：saleor 的
     ``.../docs/{path}.mdx`` 只有 ``url_template_placeholder`` 这一条路能排除
@@ -1216,12 +1226,15 @@ def probe_index_links(
     dead: list[IndexLink] = []
     unknown: list[IndexLink] = []
     reasons: list[str] = []
+    evidence_by_url: dict[str, Evidence] = {}
     for link in sample:
         probe = by_url.get(link.abs_url)
         if probe is None:
             unknown.append(link)
             reasons.append("not_fetched")
             continue
+        if probe.response is not None:
+            evidence_by_url[link.abs_url] = evidence_of(probe.response, user_agent=user_agent)
         state = _link_state_of(probe)
         if state == "alive":
             alive.append(link)
@@ -1246,6 +1259,7 @@ def probe_index_links(
         status=status,
         severity=severity,
         counted_as_hit=counted,
+        evidence_by_url=evidence_by_url,
         alive_claims_unreliable=unreliable,
         mechanism_alive=(
             None if mechanism_probe is None else mechanism_probe.verdict is Verdict.OK
@@ -1275,6 +1289,7 @@ def check_index_links(
         fetcher=fetcher,
         control=control,
         mechanism_probe=mechanism_probe,
+        user_agent=user_agent,
     )
     return findings_from_index_report(report, domain=domain, user_agent=user_agent)
 
@@ -1311,7 +1326,8 @@ def findings_from_index_report(
                 title=f"llms.txt 里列的 {link.abs_url} 是死链",
                 severity=report.severity,
                 stage=Stage.INDEX_LINKS,
-                target=_evidence_for_url(link.abs_url, user_agent=user_agent),
+                target=report.evidence_by_url.get(link.abs_url)
+                or _evidence_for_url(link.abs_url, user_agent=user_agent),
                 norm_url=link.norm_url,
                 domain=domain,
                 found_on=report.index_url,
