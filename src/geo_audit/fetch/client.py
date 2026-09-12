@@ -708,7 +708,7 @@ class Fetcher:
         ):
             cls = self._confirm_soft404(url, resp, expect, cls)
 
-        if expect is Expect.TEXT_FILE and self.config.second_ruler and not liveness_only:
+        if self._wants_second_ruler(expect, liveness_only, resp, cls):
             cls = self._second_ruler(url, resp, cls)
 
         return Probe(url, expect, resp, cls)
@@ -730,6 +730,34 @@ class Fetcher:
     #: 把那些也算成差异会让每份报告都挂满噪声，而噪声正是这个仓库
     #: 40.5% 假阳性那一课的来源。
     _RULER_DIFF_KINDS: Final = ("状态码", "正文类型")
+
+    #: 主尺子这一侧根本没拿到答案时，第二把尺子无从对比 —— 一条请求都不发。
+    #: 判据是 reason 而不是状态码：这几条的共同点是「我们没测到」，
+    #: 拿另一把尺子再问一遍既不会产生对比，也不会变出第一次没有的信息。
+    _NO_FIRST_READING: Final = frozenset(
+        {"not_fetched", "robots_disallowed", "interrupted", "network_error", "timeout"}
+    )
+
+    def _wants_second_ruler(
+        self, expect: Expect, liveness_only: bool, resp: HttpResponse, cls: Classification
+    ) -> bool:
+        """要不要为这个位置多花一条请求。
+
+        只有文本位置量两把尺子（普通页面本来就该是 HTML，量了没有可读的差异），
+        ``liveness_only`` 的外链存活检查不量（那问的是「在不在」不是「是什么」），
+        主尺子没读数的也不量（见 :data:`_NO_FIRST_READING`）。
+
+        最后一条不只是省钱：replay 语料里多数站内位置就是「没录过」，
+        照量会给每个这样的位置加一次 2 秒限速等待，画廊重建从几分钟涨到十几分钟，
+        换来的全是「第二把尺子也没测到」这种一句有效信息都没有的证据行。
+        """
+        return (
+            expect is Expect.TEXT_FILE
+            and self.config.second_ruler
+            and not liveness_only
+            and cls.reason not in self._NO_FIRST_READING
+            and not resp.transport_error
+        )
 
     def _second_ruler(self, url: str, first: HttpResponse, cls: Classification) -> Classification:
         """用 ``Accept: */*`` 再量一次这个文本位置，两把尺子不一致就判 UNKNOWN。
@@ -782,13 +810,16 @@ class Fetcher:
             Verdict.UNKNOWN,
             "accept_negotiated",
             (
-                *cls.evidence,
                 f"这个位置的答案取决于请求头：{'；'.join(diffs)}",
                 f"主尺子 Accept: {ACCEPT_TEXT} -> {self._ruler_line(first)}",
                 f"第二把尺子 Accept: {ACCEPT_STAR} -> {self._ruler_line(second)}",
                 f"复现：curl -sSL -H 'Accept: {ACCEPT_TEXT}' -o /dev/null "
                 f"-w '%{{http_code}} %{{content_type}} %{{size_download}}' {url}"
                 f"，再把 Accept 换成 {ACCEPT_STAR} 跑一遍",
+                # 原判定的证据降级留在后面：它是**主尺子那一侧**的判读，不是这个
+                # 位置的结论。不加这个前缀，报告读起来会是「HTTP 404（状态码正确）」
+                # 紧跟着「答案取决于请求头」—— 前半句听着像已经定案了。
+                *(f"（主尺子那一侧的判读：{e}）" for e in cls.evidence),
             ),
             naive_would_say=cls.naive_would_say,
             needs_js=cls.needs_js,
