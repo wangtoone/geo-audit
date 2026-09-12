@@ -35,17 +35,19 @@ Cloudflare 挡掉了几乎所有位置 —— 而它的 `llms.txt` 其实是真�
 
 ## 它输出的是这种句子
 
-（下面这段是 [mistral.ai 的报告](docs/reports/mistral.ai.html)里的原话，
-不是示意文案）：
+（原话，不是示意文案。来自 2026-09-12 那次取消预算上限的 mistral.ai 实跑 ——
+画廊里那份跑默认参数，这 75 条在默认 120 请求上限下验不完，报告如实写
+「待验证 · 超出本次预算上限」。）：
 
 > **HIGH · AI 通道内部 · ④ 索引内链存活**
 > `llms.txt` 里列的 `https://docs.mistral.ai/docs/deployment/cloud/sfcortex.md` 是死链。
-> 该索引 **75 条死 / 0 条活**。
+> 该索引 **75 条死 / 0 条活 / 0 条判不了**。
 > 只探根路径、不做对照探测的实现会说：未采纳（没探这个位置）。
 > 实际是：索引里列的这条链接死了（75/75 条判死）。
+> 改成 `https://docs.mistral.ai/deployment/cloud/sfcortex` ← 我们请求过，200。
 > 复现：`curl -sSL -A 'geo-audit/0.1.0 (…)' 'https://docs.mistral.ai/docs/deployment/cloud/sfcortex.md'`
 >
-> 改 1 处 → 修 75 条：补页面或改指到现存页。
+> 改 1 处 → 修 75 条（75 个链接实例）：补页面或改指到现存页。
 
 ## 先看报告，再决定要不要装
 
@@ -55,12 +57,12 @@ Cloudflare 挡掉了几乎所有位置 —— 而它的 `llms.txt` 其实是真�
 | 报告 | 位置 | 通过 | 读错 | 未能评估 | 首屏那句话 |
 |---|---|---|---|---|---|
 | [tdengine.com](docs/reports/tdengine.com.html) | 30 | 4 | 7 | 0 | 7 个位置会被读错 |
-| [gusto.com](docs/reports/gusto.com.html) | 28 | 2 | 4 | 20 | 这次扫描不可信 |
+| [gusto.com](docs/reports/gusto.com.html) | 28 | 2 | 4 | 21 | 这次扫描不可信 |
 | [deepgram.com](docs/reports/deepgram.com.html) | 21 | 5 | 2 | 5 | 2 个位置会被读错 |
 | [minimax.io](docs/reports/minimax.io.html) | 26 | 10 | 2 | 7 | 2 个位置会被读错 |
 | [saleor.io](docs/reports/saleor.io.html) | 21 | 12 | 1 | 1 | 1 个位置会被读错 |
 | [modal.com](docs/reports/modal.com.html) | 29 | 12 | 1 | 6 | 1 个位置会被读错 |
-| [mistral.ai](docs/reports/mistral.ai.html) | 40 | 10 | 1 | 17 | 这次扫描不可信 |
+| [mistral.ai](docs/reports/mistral.ai.html) | 41 | 10 | 1 | 18 | 这次扫描不可信 |
 | [openstatus.dev](docs/reports/openstatus.dev.html) | 54 | 6 | 1 | 24 | 这次扫描不可信 |
 | [rustdesk.com](docs/reports/rustdesk.com.html) | 15 | 10 | 0 | 0 | 零发现：10 个位置全部通过 |
 
@@ -68,14 +70,27 @@ Cloudflare 挡掉了几乎所有位置 —— 而它的 `llms.txt` 其实是真�
 
 - **gusto.com** —— Cloudflare 挡掉 17 个位置（12 条挑战页 + 5 条拦截状态码）。
   而它的 `llms.txt` 其实是真文件。
-- **mistral.ai** —— 9 个位置 `robots.txt` 禁止抓，8 个撞上默认 120 请求上限。
-  但它那条最值钱的证据不依赖这些：`docs.mistral.ai/llms.txt` 里列的内链
-  **75 条死 / 0 条活**，76 条 finding 收敛成 **1 处根因**，每条附 `curl`。
+- **mistral.ai** —— 9 个位置 `robots.txt` 禁止抓，其余撞上默认 120 请求上限：
+  `docs.mistral.ai/llms.txt` 那 75 条内链**在默认预算下验不完**，报告如实写
+  「75 条内链待验证 · 超出本次预算上限」，而不是拿一个没验的数充数。
+  取消上限重跑就能看到那 75 条（下一段有命令和结果）。
 - **openstatus.dev** —— 10 个位置 robots 禁止、6 个撞预算，另外 **8 个位置
   「答案取决于请求头」**（见下面「两把尺子」）。
 
 核心位置里超过一半无法判断时，报告就这么写，CLI 退出码是 2。
 **把「我们没看到」写成「你没问题」是这类工具最常见的骗法。**
+
+### 取消预算上限之后（同一个域，同一天）
+
+    geo-audit mistral.ai --fix-candidates --max-requests 0 --index-links-full
+    完成 · 40 个位置：3 读错 / 9 无法判断 / 14 通过 / 14 不适用
+          请求 532 / 上限 不限 · 用时 1949s
+    ④ 索引内链存活  FAIL 77 死 / 64 活   （docs.mistral.ai 那份：75 条内链 0 活 / 75 死）
+    ⑦ 修复目标      精确 39 / 降级 0 / 查过没有 36 / 没能查 2
+
+**39 条死链带着验证过 200 的替代地址**（`.../docs/agents/mcp.md` → `.../agents/mcp`
+这一类），36 条是逐个试过确实没有，2 条如实记「没能查」。
+画廊里那份不开这个开关，因为**画廊一律跑默认参数** —— 装完就是那套，数字才有可比性。
 
 ## 跑一次
 

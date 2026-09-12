@@ -1294,6 +1294,20 @@ def check_index_links(
     return findings_from_index_report(report, domain=domain, user_agent=user_agent)
 
 
+def _target_evidence(report: IndexLinkReport, link: IndexLink, *, user_agent: str) -> Evidence:
+    """死链 finding 的 target：有观测就用观测，没有就退回最小 Evidence。
+
+    ``curl_repro`` **一律按这里的 ``user_agent`` 重算**：账本可能是
+    ``probe_index_links`` 直接造的（pipeline 就是这么调的），那一层没有 UA，
+    于是证据里的复现命令会印成 `contact: 未注入`。UA 是复现命令的一部分 ——
+    换个 UA 站点可能换个答案 —— 所以这里不能沿用一个空的。
+    """
+    observed = report.evidence_by_url.get(link.abs_url)
+    if observed is None:
+        return _evidence_for_url(link.abs_url, user_agent=user_agent)
+    return replace(observed, curl_repro=_curl_repro(observed.url, user_agent))
+
+
 def findings_from_index_report(
     report: IndexLinkReport, *, domain: str, user_agent: str = ""
 ) -> tuple[Finding, ...]:
@@ -1326,8 +1340,7 @@ def findings_from_index_report(
                 title=f"llms.txt 里列的 {link.abs_url} 是死链",
                 severity=report.severity,
                 stage=Stage.INDEX_LINKS,
-                target=report.evidence_by_url.get(link.abs_url)
-                or _evidence_for_url(link.abs_url, user_agent=user_agent),
+                target=_target_evidence(report, link, user_agent=user_agent),
                 norm_url=link.norm_url,
                 domain=domain,
                 found_on=report.index_url,

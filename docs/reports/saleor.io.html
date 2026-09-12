@@ -643,7 +643,7 @@ ol.tight li {
   <div class="shell">
     <div class="meta">
       <span class="dom">geo-audit · saleor.io</span>
-      <span>2026-09-12 10:18 UTC</span>
+      <span>2026-09-12 11:50 UTC</span>
       <span>0.1.0</span>
       <span>UA: geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: 152046194+wangtoone@users.noreply.github.com)</span>
       <span>去噪清单: denoise/2026-09-07.1</span>
@@ -735,7 +735,7 @@ ol.tight li {
         <span class="tag">200</span>
         <span class="tag">text/html</span>
 <span class="tag">74,335 B</span>      </div>
-<div class="small mono">&lt;title&gt;Saleor Documentation | Saleor Commerce Documentation&lt;/title&gt;</div><div class="small">saleor documentation | saleor commerce documentation skip to main content 🔧 let&#39;s build together. join saleor dev community on discord. join the community search sign up overview quickstart why saleor product cloud core concepts recipes api</div>      <div class="small">同域对照本身不可用，所以这一条的判定作废，已按「无法评估」处理。</div>
+<div class="small mono">&lt;title&gt;Saleor Documentation | Saleor Commerce Documentation&lt;/title&gt;</div><div class="small">saleor documentation | saleor commerce documentation skip to main content 🔧 let&#39;s build together. join saleor dev community on discord. join the community search sign up overview quickstart why saleor product cloud core concepts recipes api</div>      <div class="small">这一条靠确定性规则判定（要的是文本文件、给回来的是 HTML），不依赖同域对照。</div>
       <div><strong>复现</strong></div>
       <pre>curl -sSL -A &#39;geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: 152046194+wangtoone@users.noreply.github.com)&#39; &#39;https://docs.saleor.io/docs/llms-full.txt&#39;</pre>
     </div>
@@ -818,7 +818,7 @@ geo-audit saleor.io --ignore GA-B9E590057E</pre>
           <td class="num">—</td>
           <td>
             <span class="st st-pass">通过</span>
-            对照探测 https://saleor.io/geo-audit-probe-96bdb5038ea9c44c9a4811db 返回 HTTP 404 / text/html，与本响应可区分，判为真实内容
+            对照探测 https://saleor.io/geo-audit-probe-47a5ac09743770548233293a 返回 HTTP 404 / text/html，与本响应可区分，判为真实内容
           </td>
         </tr>
         <tr class="box-pass">
@@ -831,7 +831,7 @@ geo-audit saleor.io --ignore GA-B9E590057E</pre>
           <td class="num">—</td>
           <td>
             <span class="st st-pass">通过</span>
-            对照探测 https://www.saleor.io/geo-audit-probe-71a42713b1b938c587c74655 返回 HTTP 404 / text/html，与本响应可区分，判为真实内容
+            对照探测 https://www.saleor.io/geo-audit-probe-a1e153d894d8f8faaa44bffb 返回 HTTP 404 / text/html，与本响应可区分，判为真实内容
           </td>
         </tr>
         <tr class="box-pass">
@@ -844,7 +844,7 @@ geo-audit saleor.io --ignore GA-B9E590057E</pre>
           <td class="num">—</td>
           <td>
             <span class="st st-pass">通过</span>
-            对照探测 https://docs.saleor.io/geo-audit-probe-0449cbaf0fd9b5672a8ceff6 返回 HTTP 404 / text/html，与本响应可区分，判为真实内容
+            对照探测 https://docs.saleor.io/geo-audit-probe-baa463941df375bfe98aebdf 返回 HTTP 404 / text/html，与本响应可区分，判为真实内容
           </td>
         </tr>
         <tr class="box-unknown">
@@ -866,11 +866,11 @@ geo-audit saleor.io --ignore GA-B9E590057E</pre>
           <td class="num">200</td>
           <td>text/plain</td>
           <td class="num">2,043</td>
-          <td class="rawurl">https://saleor.io/geo-audit-probe-96bdb5038ea9c44c9a4811db</td>
+          <td class="rawurl">https://saleor.io/geo-audit-probe-47a5ac09743770548233293a</td>
           <td class="num">404</td>
           <td>
             <span class="st st-pass">通过</span>
-            对照探测 https://saleor.io/geo-audit-probe-96bdb5038ea9c44c9a4811db 返回 HTTP 404 / text/html，与本响应可区分，判为真实内容；用 Accept: */* 再量一次，状态码、正文类型都一致
+            对照探测 https://saleor.io/geo-audit-probe-47a5ac09743770548233293a 返回 HTTP 404 / text/html，与本响应可区分，判为真实内容；用 Accept: */* 再量一次，状态码、正文类型都一致
             <details><summary>curl</summary><pre>curl -sSL -A &#39;geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: 152046194+wangtoone@users.noreply.github.com)&#39; &#39;https://saleor.io/llms.txt&#39;</pre></details>
           </td>
         </tr>
@@ -880,7 +880,7 @@ geo-audit saleor.io --ignore GA-B9E590057E</pre>
           <td class="num">404</td>
           <td>text/html</td>
           <td class="num">38,789</td>
-          <td class="rawurl">https://saleor.io/geo-audit-probe-96bdb5038ea9c44c9a4811db</td>
+          <td class="rawurl">https://saleor.io/geo-audit-probe-47a5ac09743770548233293a</td>
           <td class="num">404</td>
           <td>
             <span class="st st-na">不适用</span>
@@ -894,11 +894,11 @@ geo-audit saleor.io --ignore GA-B9E590057E</pre>
           <td class="num">200</td>
           <td>text/plain</td>
           <td class="num">2,043</td>
-          <td class="rawurl">https://www.saleor.io/geo-audit-probe-71a42713b1b938c587c74655</td>
+          <td class="rawurl">https://www.saleor.io/geo-audit-probe-a1e153d894d8f8faaa44bffb</td>
           <td class="num">404</td>
           <td>
             <span class="st st-pass">通过</span>
-            对照探测 https://www.saleor.io/geo-audit-probe-71a42713b1b938c587c74655 返回 HTTP 404 / text/html，与本响应可区分，判为真实内容；用 Accept: */* 再量一次，状态码、正文类型都一致
+            对照探测 https://www.saleor.io/geo-audit-probe-a1e153d894d8f8faaa44bffb 返回 HTTP 404 / text/html，与本响应可区分，判为真实内容；用 Accept: */* 再量一次，状态码、正文类型都一致
             <details><summary>curl</summary><pre>curl -sSL -A &#39;geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: 152046194+wangtoone@users.noreply.github.com)&#39; &#39;https://www.saleor.io/llms.txt&#39;</pre></details>
           </td>
         </tr>
@@ -908,7 +908,7 @@ geo-audit saleor.io --ignore GA-B9E590057E</pre>
           <td class="num">404</td>
           <td>text/html</td>
           <td class="num">38,789</td>
-          <td class="rawurl">https://www.saleor.io/geo-audit-probe-71a42713b1b938c587c74655</td>
+          <td class="rawurl">https://www.saleor.io/geo-audit-probe-a1e153d894d8f8faaa44bffb</td>
           <td class="num">404</td>
           <td>
             <span class="st st-na">不适用</span>
@@ -922,11 +922,11 @@ geo-audit saleor.io --ignore GA-B9E590057E</pre>
           <td class="num">200</td>
           <td>text/plain</td>
           <td class="num">3,947</td>
-          <td class="rawurl">https://docs.saleor.io/geo-audit-probe-0449cbaf0fd9b5672a8ceff6</td>
+          <td class="rawurl">https://docs.saleor.io/geo-audit-probe-baa463941df375bfe98aebdf</td>
           <td class="num">404</td>
           <td>
             <span class="st st-pass">通过</span>
-            对照探测 https://docs.saleor.io/geo-audit-probe-0449cbaf0fd9b5672a8ceff6 返回 HTTP 404 / text/html，与本响应可区分，判为真实内容；用 Accept: */* 再量一次，状态码、正文类型都一致
+            对照探测 https://docs.saleor.io/geo-audit-probe-baa463941df375bfe98aebdf 返回 HTTP 404 / text/html，与本响应可区分，判为真实内容；用 Accept: */* 再量一次，状态码、正文类型都一致
             <details><summary>curl</summary><pre>curl -sSL -A &#39;geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: 152046194+wangtoone@users.noreply.github.com)&#39; &#39;https://docs.saleor.io/llms.txt&#39;</pre></details>
           </td>
         </tr>
@@ -936,7 +936,7 @@ geo-audit saleor.io --ignore GA-B9E590057E</pre>
           <td class="num">404</td>
           <td>text/html</td>
           <td class="num">9,404</td>
-          <td class="rawurl">https://docs.saleor.io/geo-audit-probe-0449cbaf0fd9b5672a8ceff6</td>
+          <td class="rawurl">https://docs.saleor.io/geo-audit-probe-baa463941df375bfe98aebdf</td>
           <td class="num">404</td>
           <td>
             <span class="st st-na">不适用</span>
@@ -950,7 +950,7 @@ geo-audit saleor.io --ignore GA-B9E590057E</pre>
           <td class="num">404</td>
           <td>text/html</td>
           <td class="num">38,829</td>
-          <td class="rawurl">https://saleor.io/geo-audit-probe-96bdb5038ea9c44c9a4811db</td>
+          <td class="rawurl">https://saleor.io/geo-audit-probe-47a5ac09743770548233293a</td>
           <td class="num">404</td>
           <td>
             <span class="st st-na">不适用</span>
@@ -964,7 +964,7 @@ geo-audit saleor.io --ignore GA-B9E590057E</pre>
           <td class="num">404</td>
           <td>text/html</td>
           <td class="num">38,829</td>
-          <td class="rawurl">https://www.saleor.io/geo-audit-probe-71a42713b1b938c587c74655</td>
+          <td class="rawurl">https://www.saleor.io/geo-audit-probe-a1e153d894d8f8faaa44bffb</td>
           <td class="num">404</td>
           <td>
             <span class="st st-na">不适用</span>
@@ -978,7 +978,7 @@ geo-audit saleor.io --ignore GA-B9E590057E</pre>
           <td class="num">200</td>
           <td>text/html</td>
           <td class="num">74,335</td>
-          <td class="rawurl">https://docs.saleor.io/geo-audit-probe-0449cbaf0fd9b5672a8ceff6</td>
+          <td class="rawurl">https://docs.saleor.io/geo-audit-probe-baa463941df375bfe98aebdf</td>
           <td class="num">404</td>
           <td>
             <span class="st st-fail">读错</span>
@@ -1152,7 +1152,7 @@ geo-audit saleor.io --ignore GA-B9E590057E</pre>
           <td class="rawurl">https://saleor.io/</td>
           <td>不在朴素探测集内</td>
           <td>它往这个 host 打过请求（只打了两条根路径）</td>
-          <td>对照探测 https://saleor.io/geo-audit-probe-96bdb5038ea9c44c9a4811db 返回 HTTP 404 / text/html，与本响应可区分，判为真实内容</td>
+          <td>对照探测 https://saleor.io/geo-audit-probe-47a5ac09743770548233293a 返回 HTTP 404 / text/html，与本响应可区分，判为真实内容</td>
           <td>n</td>
           <td class="num">1</td>
           <td>一致</td>
@@ -1161,7 +1161,7 @@ geo-audit saleor.io --ignore GA-B9E590057E</pre>
           <td class="rawurl">https://www.saleor.io/</td>
           <td>不在朴素探测集内</td>
           <td>它往这个 host 打过请求（只打了两条根路径）</td>
-          <td>对照探测 https://www.saleor.io/geo-audit-probe-71a42713b1b938c587c74655 返回 HTTP 404 / text/html，与本响应可区分，判为真实内容</td>
+          <td>对照探测 https://www.saleor.io/geo-audit-probe-a1e153d894d8f8faaa44bffb 返回 HTTP 404 / text/html，与本响应可区分，判为真实内容</td>
           <td>n</td>
           <td class="num">1</td>
           <td>一致</td>
@@ -1170,7 +1170,7 @@ geo-audit saleor.io --ignore GA-B9E590057E</pre>
           <td class="rawurl">https://docs.saleor.io/</td>
           <td>不在朴素探测集内</td>
           <td>它从没往这个 host 打过请求</td>
-          <td>对照探测 https://docs.saleor.io/geo-audit-probe-0449cbaf0fd9b5672a8ceff6 返回 HTTP 404 / text/html，与本响应可区分，判为真实内容</td>
+          <td>对照探测 https://docs.saleor.io/geo-audit-probe-baa463941df375bfe98aebdf 返回 HTTP 404 / text/html，与本响应可区分，判为真实内容</td>
           <td>n</td>
           <td class="num">2</td>
           <td>一致</td>
@@ -1188,7 +1188,7 @@ geo-audit saleor.io --ignore GA-B9E590057E</pre>
           <td class="rawurl">https://saleor.io/llms.txt</td>
           <td>GET https://saleor.io/llms.txt，跟随跳转，只看最终状态码</td>
           <td>已采纳（200）</td>
-          <td>对照探测 https://saleor.io/geo-audit-probe-96bdb5038ea9c44c9a4811db 返回 HTTP 404 / text/html，与本响应可区分，判为真实内容；用 Accept: */* 再量一次，状态码、正文类型都一致</td>
+          <td>对照探测 https://saleor.io/geo-audit-probe-47a5ac09743770548233293a 返回 HTTP 404 / text/html，与本响应可区分，判为真实内容；用 Accept: */* 再量一次，状态码、正文类型都一致</td>
           <td>n</td>
           <td class="num">1</td>
           <td>一致</td>
@@ -1206,7 +1206,7 @@ geo-audit saleor.io --ignore GA-B9E590057E</pre>
           <td class="rawurl">https://www.saleor.io/llms.txt</td>
           <td>GET https://www.saleor.io/llms.txt，跟随跳转，只看最终状态码</td>
           <td>已采纳（200）</td>
-          <td>对照探测 https://www.saleor.io/geo-audit-probe-71a42713b1b938c587c74655 返回 HTTP 404 / text/html，与本响应可区分，判为真实内容；用 Accept: */* 再量一次，状态码、正文类型都一致</td>
+          <td>对照探测 https://www.saleor.io/geo-audit-probe-a1e153d894d8f8faaa44bffb 返回 HTTP 404 / text/html，与本响应可区分，判为真实内容；用 Accept: */* 再量一次，状态码、正文类型都一致</td>
           <td>n</td>
           <td class="num">1</td>
           <td>一致</td>
@@ -1224,7 +1224,7 @@ geo-audit saleor.io --ignore GA-B9E590057E</pre>
           <td class="rawurl">https://docs.saleor.io/llms.txt</td>
           <td>不在朴素探测集内</td>
           <td>未采纳（没探这个位置）</td>
-          <td>对照探测 https://docs.saleor.io/geo-audit-probe-0449cbaf0fd9b5672a8ceff6 返回 HTTP 404 / text/html，与本响应可区分，判为真实内容；用 Accept: */* 再量一次，状态码、正文类型都一致</td>
+          <td>对照探测 https://docs.saleor.io/geo-audit-probe-baa463941df375bfe98aebdf 返回 HTTP 404 / text/html，与本响应可区分，判为真实内容；用 Accept: */* 再量一次，状态码、正文类型都一致</td>
           <td>n</td>
           <td class="num">2</td>
           <td>一致</td>

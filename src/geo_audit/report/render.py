@@ -60,6 +60,7 @@ from jinja2 import Environment, StrictUndefined, select_autoescape
 
 from ..models import (
     CONTROL_DEPENDENT_KINDS,
+    CONTROL_DEPENDENT_REASONS,
     POSITION_LABEL,
     STAGE_LABEL,
     UNKNOWN_REMEDY,
@@ -400,6 +401,7 @@ def render_html(report: Report) -> str:
         STAGE_LABEL=STAGE_LABEL,
         POSITION_LABEL=POSITION_LABEL,
         CONTROL_DEPENDENT_KINDS=CONTROL_DEPENDENT_KINDS,
+        CONTROL_DEPENDENT_REASONS=CONTROL_DEPENDENT_REASONS,
         UNKNOWN_REMEDY=UNKNOWN_REMEDY,
         copy=COPY_ZH,
         grouped=group_by_root_cause(report),

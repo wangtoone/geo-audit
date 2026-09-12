@@ -643,7 +643,7 @@ ol.tight li {
   <div class="shell">
     <div class="meta">
       <span class="dom">geo-audit · deepgram.com</span>
-      <span>2026-09-12 10:13 UTC</span>
+      <span>2026-09-12 11:45 UTC</span>
       <span>0.1.0</span>
       <span>UA: geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: 152046194+wangtoone@users.noreply.github.com)</span>
       <span>去噪清单: denoise/2026-09-07.1</span>
@@ -717,7 +717,7 @@ ol.tight li {
       <dt>位置</dt>
       <dd><a href="https://help.deepgram.com/">https://help.deepgram.com/</a></dd>
       <dt>实际是</dt>
-      <dd>对照探测 https://help.deepgram.com/geo-audit-probe-a279893c12f1b9a7571dc77d 返回 HTTP 404 / text/html，与本响应可区分，判为真实内容；但正文需要 JS 渲染才可读：empty_shell(visible=20,raw=2882), empty_spa_mount, noscript_demands_js, no_content_elements</dd>
+      <dd>对照探测 https://help.deepgram.com/geo-audit-probe-2ccf5a5c25fa504d5f159a53 返回 HTTP 404 / text/html，与本响应可区分，判为真实内容；但正文需要 JS 渲染才可读：empty_shell(visible=20,raw=2882), empty_spa_mount, noscript_demands_js, no_content_elements</dd>
       <dt>补救办法</dt>
       <dd>服务端 HTML 里正文不足 200 字符，正文由 JS 渲染。纯 HTTP 客户端在这类页面上会系统性低估。实测参照：help.spoton.com 正文只有一行「SpotOn Knowledge Base」、docs.lawmatics.com（Redoc）只有一行「Lawmatics OAuth API v1.22.0」——它们的「零发现」是抓取能力问题，不是站点干净。</dd>
     </dl>
@@ -833,7 +833,7 @@ ol.tight li {
           <td class="num">—</td>
           <td>
             <span class="st st-pass">通过</span>
-            对照探测 https://deepgram.com/geo-audit-probe-2a4790cb66db918078e51995 返回 HTTP 404 / text/html，与本响应可区分，判为真实内容
+            对照探测 https://deepgram.com/geo-audit-probe-5b6738ae865ffe14b2e519c1 返回 HTTP 404 / text/html，与本响应可区分，判为真实内容
           </td>
         </tr>
         <tr class="box-pass">
@@ -846,7 +846,7 @@ ol.tight li {
           <td class="num">—</td>
           <td>
             <span class="st st-pass">通过</span>
-            对照探测 https://www.deepgram.com/geo-audit-probe-a09eabef6db99bdedcb307c3 返回 HTTP 404 / text/html，与本响应可区分，判为真实内容
+            对照探测 https://www.deepgram.com/geo-audit-probe-974f2f7956efc1f7ba48e48e 返回 HTTP 404 / text/html，与本响应可区分，判为真实内容
           </td>
         </tr>
         <tr class="box-fail">
@@ -924,7 +924,7 @@ ol.tight li {
           <td class="num">—</td>
           <td>
             <span class="st st-unknown">无法判断</span>
-            对照探测 https://help.deepgram.com/geo-audit-probe-a279893c12f1b9a7571dc77d 返回 HTTP 404 / text/html，与本响应可区分，判为真实内容；但正文需要 JS 渲染才可读：empty_shell(visible=20,raw=2882), empty_spa_mount, noscript_demands_js, no_content_elements
+            对照探测 https://help.deepgram.com/geo-audit-probe-2ccf5a5c25fa504d5f159a53 返回 HTTP 404 / text/html，与本响应可区分，判为真实内容；但正文需要 JS 渲染才可读：empty_shell(visible=20,raw=2882), empty_spa_mount, noscript_demands_js, no_content_elements
           </td>
         </tr>
         <tr class="box-pass">
@@ -933,11 +933,11 @@ ol.tight li {
           <td class="num">200</td>
           <td>text/plain</td>
           <td class="num">9,242</td>
-          <td class="rawurl">https://deepgram.com/geo-audit-probe-2a4790cb66db918078e51995</td>
+          <td class="rawurl">https://deepgram.com/geo-audit-probe-5b6738ae865ffe14b2e519c1</td>
           <td class="num">404</td>
           <td>
             <span class="st st-pass">通过</span>
-            对照探测 https://deepgram.com/geo-audit-probe-2a4790cb66db918078e51995 返回 HTTP 404 / text/html，与本响应可区分，判为真实内容；用 Accept: */* 再量一次，状态码、正文类型都一致
+            对照探测 https://deepgram.com/geo-audit-probe-5b6738ae865ffe14b2e519c1 返回 HTTP 404 / text/html，与本响应可区分，判为真实内容；用 Accept: */* 再量一次，状态码、正文类型都一致
             <details><summary>curl</summary><pre>curl -sSL -A &#39;geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: 152046194+wangtoone@users.noreply.github.com)&#39; &#39;https://deepgram.com/llms.txt&#39;</pre></details>
           </td>
         </tr>
@@ -947,7 +947,7 @@ ol.tight li {
           <td class="num">404</td>
           <td>text/html</td>
           <td class="num">146,322</td>
-          <td class="rawurl">https://deepgram.com/geo-audit-probe-2a4790cb66db918078e51995</td>
+          <td class="rawurl">https://deepgram.com/geo-audit-probe-5b6738ae865ffe14b2e519c1</td>
           <td class="num">404</td>
           <td>
             <span class="st st-na">不适用</span>
@@ -961,11 +961,11 @@ ol.tight li {
           <td class="num">200</td>
           <td>text/plain</td>
           <td class="num">9,242</td>
-          <td class="rawurl">https://www.deepgram.com/geo-audit-probe-a09eabef6db99bdedcb307c3</td>
+          <td class="rawurl">https://www.deepgram.com/geo-audit-probe-974f2f7956efc1f7ba48e48e</td>
           <td class="num">404</td>
           <td>
             <span class="st st-pass">通过</span>
-            对照探测 https://www.deepgram.com/geo-audit-probe-a09eabef6db99bdedcb307c3 返回 HTTP 404 / text/html，与本响应可区分，判为真实内容；用 Accept: */* 再量一次，状态码、正文类型都一致
+            对照探测 https://www.deepgram.com/geo-audit-probe-974f2f7956efc1f7ba48e48e 返回 HTTP 404 / text/html，与本响应可区分，判为真实内容；用 Accept: */* 再量一次，状态码、正文类型都一致
             <details><summary>curl</summary><pre>curl -sSL -A &#39;geo-audit/0.1.0 (+https://github.com/wangtoone/geo-audit; contact: 152046194+wangtoone@users.noreply.github.com)&#39; &#39;https://www.deepgram.com/llms.txt&#39;</pre></details>
           </td>
         </tr>
@@ -974,8 +974,8 @@ ol.tight li {
           <td><a href="https://www.deepgram.com/llms-full.txt">https://www.deepgram.com/llms-full.txt</a></td>
           <td class="num">404</td>
           <td>text/html</td>
-          <td class="num">146,322</td>
-          <td class="rawurl">https://www.deepgram.com/geo-audit-probe-a09eabef6db99bdedcb307c3</td>
+          <td class="num">146,365</td>
+          <td class="rawurl">https://www.deepgram.com/geo-audit-probe-974f2f7956efc1f7ba48e48e</td>
           <td class="num">404</td>
           <td>
             <span class="st st-na">不适用</span>
@@ -989,7 +989,7 @@ ol.tight li {
           <td class="num">404</td>
           <td>text/html</td>
           <td class="num">146,336</td>
-          <td class="rawurl">https://deepgram.com/geo-audit-probe-2a4790cb66db918078e51995</td>
+          <td class="rawurl">https://deepgram.com/geo-audit-probe-5b6738ae865ffe14b2e519c1</td>
           <td class="num">404</td>
           <td>
             <span class="st st-na">不适用</span>
@@ -1003,7 +1003,7 @@ ol.tight li {
           <td class="num">404</td>
           <td>text/html</td>
           <td class="num">146,336</td>
-          <td class="rawurl">https://www.deepgram.com/geo-audit-probe-a09eabef6db99bdedcb307c3</td>
+          <td class="rawurl">https://www.deepgram.com/geo-audit-probe-974f2f7956efc1f7ba48e48e</td>
           <td class="num">404</td>
           <td>
             <span class="st st-na">不适用</span>
@@ -1148,7 +1148,7 @@ ol.tight li {
           <td class="rawurl">https://deepgram.com/</td>
           <td>不在朴素探测集内</td>
           <td>它往这个 host 打过请求（只打了两条根路径）</td>
-          <td>对照探测 https://deepgram.com/geo-audit-probe-2a4790cb66db918078e51995 返回 HTTP 404 / text/html，与本响应可区分，判为真实内容</td>
+          <td>对照探测 https://deepgram.com/geo-audit-probe-5b6738ae865ffe14b2e519c1 返回 HTTP 404 / text/html，与本响应可区分，判为真实内容</td>
           <td>n</td>
           <td class="num">1</td>
           <td>一致</td>
@@ -1157,7 +1157,7 @@ ol.tight li {
           <td class="rawurl">https://www.deepgram.com/</td>
           <td>不在朴素探测集内</td>
           <td>它往这个 host 打过请求（只打了两条根路径）</td>
-          <td>对照探测 https://www.deepgram.com/geo-audit-probe-a09eabef6db99bdedcb307c3 返回 HTTP 404 / text/html，与本响应可区分，判为真实内容</td>
+          <td>对照探测 https://www.deepgram.com/geo-audit-probe-974f2f7956efc1f7ba48e48e 返回 HTTP 404 / text/html，与本响应可区分，判为真实内容</td>
           <td>n</td>
           <td class="num">1</td>
           <td>一致</td>
@@ -1211,7 +1211,7 @@ ol.tight li {
           <td class="rawurl">https://help.deepgram.com/</td>
           <td>不在朴素探测集内</td>
           <td>它从没往这个 host 打过请求</td>
-          <td>对照探测 https://help.deepgram.com/geo-audit-probe-a279893c12f1b9a7571dc77d 返回 HTTP 404 / text/html，与本响应可区分，判为真实内容；但正文需要 JS 渲染才可读：empty_shell(visible=20,raw=2882), empty_spa_mount, noscript_demands_js, no_content_elements</td>
+          <td>对照探测 https://help.deepgram.com/geo-audit-probe-2ccf5a5c25fa504d5f159a53 返回 HTTP 404 / text/html，与本响应可区分，判为真实内容；但正文需要 JS 渲染才可读：empty_shell(visible=20,raw=2882), empty_spa_mount, noscript_demands_js, no_content_elements</td>
           <td>n</td>
           <td class="num">2</td>
           <td>一致</td>
@@ -1220,7 +1220,7 @@ ol.tight li {
           <td class="rawurl">https://deepgram.com/llms.txt</td>
           <td>GET https://deepgram.com/llms.txt，跟随跳转，只看最终状态码</td>
           <td>已采纳（200）</td>
-          <td>对照探测 https://deepgram.com/geo-audit-probe-2a4790cb66db918078e51995 返回 HTTP 404 / text/html，与本响应可区分，判为真实内容；用 Accept: */* 再量一次，状态码、正文类型都一致</td>
+          <td>对照探测 https://deepgram.com/geo-audit-probe-5b6738ae865ffe14b2e519c1 返回 HTTP 404 / text/html，与本响应可区分，判为真实内容；用 Accept: */* 再量一次，状态码、正文类型都一致</td>
           <td>n</td>
           <td class="num">1</td>
           <td>一致</td>
@@ -1238,7 +1238,7 @@ ol.tight li {
           <td class="rawurl">https://www.deepgram.com/llms.txt</td>
           <td>GET https://www.deepgram.com/llms.txt，跟随跳转，只看最终状态码</td>
           <td>已采纳（200）</td>
-          <td>对照探测 https://www.deepgram.com/geo-audit-probe-a09eabef6db99bdedcb307c3 返回 HTTP 404 / text/html，与本响应可区分，判为真实内容；用 Accept: */* 再量一次，状态码、正文类型都一致</td>
+          <td>对照探测 https://www.deepgram.com/geo-audit-probe-974f2f7956efc1f7ba48e48e 返回 HTTP 404 / text/html，与本响应可区分，判为真实内容；用 Accept: */* 再量一次，状态码、正文类型都一致</td>
           <td>n</td>
           <td class="num">1</td>
           <td>一致</td>
