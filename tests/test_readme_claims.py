@@ -59,7 +59,9 @@ def _readme_rows() -> dict[str, str]:
     for line in README.read_text(encoding="utf-8").splitlines():
         if not line.strip().startswith("|"):
             continue
-        m = re.search(r"docs/reports/([A-Za-z0-9.\-]+)\.html", line)
+        # 两种写法都认：相对路径 docs/reports/x.html 与线上画廊
+        # https://…/geo-audit/reports/x.html。判据是「哪个域」，不是链接长什么样。
+        m = re.search(r"reports/([A-Za-z0-9.\-]+)\.html", line)
         if m:
             rows[m.group(1)] = line
     return rows
@@ -109,3 +111,20 @@ def test_zero_finding_claims_match_the_headline() -> None:
         if all_pass and not claims_zero:
             bad.append(f"{dom}：报告首屏是「{head}」，README 却没标「零发现」")
     assert bad == [], "README 与报告首屏不一致：\n  " + "\n  ".join(bad)
+
+
+@needs_reports
+def test_readme_report_links_point_at_the_published_gallery() -> None:
+    """README 里指向报告的链接必须是**线上画廊**的绝对地址。
+
+    相对路径（`docs/reports/x.html`）在 github.com 上点开是**一屏 HTML 源码**，
+    不是渲染后的报告 —— 一个卖「看报告再决定要不要装」的项目，最有说服力的
+    东西点进去是乱码般的源文件。clone 下来离线看的人走 `docs/` 目录，
+    README 里单独说明了，不靠这些链接。
+    """
+    bad = [
+        line.strip()
+        for line in README.read_text(encoding="utf-8").splitlines()
+        if "](docs/" in line
+    ]
+    assert bad == [], "这些链接在 GitHub 上会打开源码视图：\n  " + "\n  ".join(bad)
