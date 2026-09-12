@@ -1,0 +1,32 @@
+{
+  "accept_variant": "star",
+  "body_bytes": 4259,
+  "body_file": "snapshots/docs.customer.io/llms.txt-accept-star-59b6dc70.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://docs.customer.io/llms.txt [accept=star]",
+  "handwritten": false,
+  "headers": {
+    "accept-ranges": "bytes",
+    "access-control-allow-origin": "*",
+    "age": "2",
+    "cache-control": "public,max-age=0,must-revalidate",
+    "cache-status": "\"Netlify Edge\"; fwd=miss; fwd-status=200; stored",
+    "content-encoding": "gzip",
+    "content-type": "text/plain; charset=UTF-8",
+    "date": "Sat, 12 Sep 2026 09:28:56 GMT",
+    "etag": "W/\"a8799e3cdbdb90b35c05a6f29acce303-ssl-df\"",
+    "server": "Netlify",
+    "strict-transport-security": "max-age=31536000",
+    "transfer-encoding": "chunked",
+    "vary": "Accept-Encoding",
+    "x-nf-request-id": "01M2AF5KKBAHCVD1MA82GK0QTX"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "bec44af0197e2dafdff43e9b3670bb60",
+  "recorded_at": "2026-09-12T09:28:55Z",
+  "status": 200,
+  "stored_bytes": 4259,
+  "transport_error": null,
+  "url": "https://docs.customer.io/llms.txt"
+}

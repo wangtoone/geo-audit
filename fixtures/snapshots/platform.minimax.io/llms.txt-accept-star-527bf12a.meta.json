@@ -1,0 +1,33 @@
+{
+  "accept_variant": "star",
+  "body_bytes": 43681,
+  "body_file": "snapshots/platform.minimax.io/llms.txt-accept-star-527bf12a.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://platform.minimax.io/llms.txt [accept=star]",
+  "handwritten": false,
+  "headers": {
+    "alb_receive_time": "1789205437.486",
+    "alb_request_id": "8694051d1af8ff587c56400ad8bc510270fdbc81",
+    "cache-control": "max-age=0, no-cache, no-store",
+    "connection": "keep-alive, Transfer-Encoding",
+    "content-encoding": "gzip",
+    "content-security-policy": "frame-ancestors 'none';",
+    "content-type": "text/html; charset=utf-8",
+    "date": "Sat, 12 Sep 2026 09:30:37 GMT",
+    "etag": "\"113yapzw1cuxoo\"",
+    "expires": "Sat, 12 Sep 2026 09:30:37 GMT",
+    "pragma": "no-cache",
+    "transfer-encoding": "chunked",
+    "vary": "Accept-Encoding",
+    "x-frame-options": "DENY",
+    "x-from": "ak"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "101059936db83f54cfc98198582c99b7",
+  "recorded_at": "2026-09-12T09:30:37Z",
+  "status": 404,
+  "stored_bytes": 43681,
+  "transport_error": null,
+  "url": "https://platform.minimax.io/llms.txt"
+}

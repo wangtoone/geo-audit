@@ -46,6 +46,7 @@ import httpx
 from .fetch.resolve import Resolution
 
 __all__ = [
+    "ACCEPT_STAR",
     "BODY_FULL_MAX",
     "BODY_TRUNCATED_MAX",
     "DNS_ABSENT_KEY",
@@ -63,9 +64,11 @@ __all__ = [
     "UrlSpec",
     "body_storage_for",
     "canon_url",
+    "fixture_key",
     "load_urls_txt",
     "parse_urls_txt",
     "snapshot_path",
+    "split_fixture_key",
 ]
 
 # --------------------------------------------------------------------------- #
@@ -165,6 +168,44 @@ def canon_url(url: str) -> str:
     return urlunsplit((scheme, netloc, path, parts.query, ""))
 
 
+#: 第二把尺子的 Accept 头。主尺子是 ``client.ACCEPT_TEXT``（里面点名要
+#: ``text/markdown``），而实测有 9 个位置的答案**取决于这个头**：
+#: openstatus.dev 与 dev.wix.com 的 llms.txt / llms-full.txt 对主尺子答 404、
+#: 对 ``*/*`` 答 200 真文件；ecwid / attio / pipedrive / printify /
+#: moderntreasury 反过来 —— 对主尺子给 markdown、对 ``*/*`` 给 HTML 页面。
+#: 所以同一个 URL 要能存两份快照，键上带这个变体标记。
+ACCEPT_STAR: Final = "*/*"
+
+#: 变体键的后缀模板。空格与方括号在 canon URL 里不会出现（``canon_url`` 不会
+#: 产出带空格的键），所以这个后缀是安全的命名空间。
+_VARIANT_SUFFIX = " [accept={variant}]"
+_VARIANT_RE = re.compile(r"^(?P<url>.*?) \[accept=(?P<variant>[a-z]+)\]$")
+
+
+def fixture_key(url: str, variant: str | None = None) -> str:
+    """索引键：默认尺子就是 ``canon_url``，第二把尺子在后面挂一个变体标记。
+
+    传进来的 ``url`` 本身可以已经带标记（幂等），这样 ``has`` / ``get`` /
+    ``body`` 这些方法不用各自分情况处理。
+    """
+    base, existing = split_fixture_key(url)
+    variant = variant or existing
+    canon = canon_url(base)
+    if not variant:
+        return canon
+    if _VARIANT_RE.match(canon):  # pragma: no cover —— 只可能是调用方自己拼错
+        raise ValueError(f"URL 里不能含变体标记：{url!r}")
+    return canon + _VARIANT_SUFFIX.format(variant=variant)
+
+
+def split_fixture_key(key: str) -> tuple[str, str | None]:
+    """``"https://x/y [accept=star]"`` -> ``("https://x/y", "star")``。"""
+    m = _VARIANT_RE.match(key.strip())
+    if m is None:
+        return key, None
+    return m.group("url"), m.group("variant")
+
+
 def _slug_of(canon: str) -> str:
     """从规范 URL 造人能看懂的文件名前缀。
 
@@ -189,10 +230,12 @@ def snapshot_path(url: str) -> str:
     只承担可读性（所以 slug 可以被截断、可以撞车）。sha1 在这里纯做短哈希，
     不涉及任何安全性质，故 ``usedforsecurity=False``。
     """
-    canon = canon_url(url)
-    host = urlsplit(canon).netloc or "_nohost"
-    digest = hashlib.sha1(canon.encode("utf-8"), usedforsecurity=False).hexdigest()[:8]
-    return f"snapshots/{host}/{_slug_of(canon)}-{digest}"
+    key = fixture_key(url)
+    base, variant = split_fixture_key(key)
+    host = urlsplit(base).netloc or "_nohost"
+    digest = hashlib.sha1(key.encode("utf-8"), usedforsecurity=False).hexdigest()[:8]
+    suffix = f"-accept-{variant}" if variant else ""
+    return f"snapshots/{host}/{_slug_of(base)}{suffix}-{digest}"
 
 
 # --------------------------------------------------------------------------- #
@@ -226,7 +269,7 @@ DRIFT_PLAYBOOK: Final = {
 # urls.txt 解析（§8.2 的三种指令）
 # --------------------------------------------------------------------------- #
 
-UrlSpecKind = Literal["url", "control", "expand", "pair"]
+UrlSpecKind = Literal["url", "control", "expand", "pair", "accept_star"]
 
 #: ``@expand`` 支持的抽取器（§8.2 里出现过的四个，逐个有出处）。
 EXPAND_EXTRACTORS: Final = ("markdown", "bare", "relative", "html_a")
@@ -264,7 +307,9 @@ class UrlSpec:
         if self.kind == "pair":
             assert self.pair_url is not None
             return (self.url, self.pair_url)
-        if self.kind == "control":
+        if self.kind in ("control", "accept_star"):
+            # 这两种录的不是「这一行的 URL 本身」：control 录的是探针，
+            # accept_star 录的是同一个 URL 在另一个 Accept 头下的答案（变体键）。
             return ()
         return (self.url,)
 
@@ -278,6 +323,7 @@ def parse_urls_txt(text: str) -> list[UrlSpec]:
         @control <url>                       为 <url> 录同 host 对照探针
         @expand <url> <extractor> <limit>    从已录的 <url> 正文里展开链接并逐条录制
         @pair <index_url> <full_url>         llms.txt / llms-full.txt 配对，两条都录
+        @accept-star <url>                   同一条 URL 再录一份 ``Accept: */*`` 的答案
     """
     out: list[UrlSpec] = []
     by_url: dict[str, str] = {}  # canon_url -> comment，给 @control 继承注释用
@@ -309,6 +355,22 @@ def parse_urls_txt(text: str) -> list[UrlSpec]:
                     kind="control",
                     url=target,
                     comment=comment,
+                    raw_comment=raw_comment,
+                    lineno=lineno,
+                )
+            )
+            continue
+
+        if head == "@accept-star":
+            if len(fields) != 2:
+                raise ValueError(f"urls.txt:{lineno} @accept-star 只接受一个 URL：{line!r}")
+            target = fields[1]
+            inherited = by_url.get(canon_url(target))
+            out.append(
+                UrlSpec(
+                    kind="accept_star",
+                    url=target,
+                    comment=raw_comment or (f"{inherited}（Accept: */*）" if inherited else ""),
                     raw_comment=raw_comment,
                     lineno=lineno,
                 )
@@ -748,12 +810,12 @@ class FixtureStore:
         """全部已录快照的 canon_url，排序后返回（第 4b 步的自验命令数它）。"""
         return sorted(self._index)
 
-    def has(self, url: str) -> bool:
-        return canon_url(url) in self._index
+    def has(self, url: str, *, variant: str | None = None) -> bool:
+        return fixture_key(url, variant) in self._index
 
-    def get(self, url: str) -> Snapshot:
+    def get(self, url: str, *, variant: str | None = None) -> Snapshot:
         """取一条快照。**找不到就抛，绝不回落真网络。**"""
-        canon = canon_url(url)
+        canon = fixture_key(url, variant)
         entry = self._index.get(canon)
         if entry is None:
             raise FixtureMissing(
@@ -847,7 +909,7 @@ class FixtureStore:
         return dict(d) if d else None
 
     def _entry(self, url: str) -> dict[str, Any]:
-        canon = canon_url(url)
+        canon = fixture_key(url)
         entry = self._index.get(canon)
         if entry is None:
             raise FixtureMissing(f"没有 {canon} 的索引条目。补录：\n  " + capture_command(canon))
@@ -938,6 +1000,37 @@ class FixtureStore:
     #: ``strict=False`` 下缺快照时的合成状态码。见 :meth:`transport`。
     MISSING_STATUS = 599
 
+    #: 第二把尺子（``Accept: */*``）没录过变体快照时的合成状态码。
+    #: 与 599 分开是因为**两件事不同**：599 是「这条 URL 我们没录过」，
+    #: 598 是「这条 URL 录过，但没量过第二把尺子」。后者在 strict 下也不抛 ——
+    #: 见 :meth:`_variant_not_recorded`。
+    MISSING_VARIANT_STATUS = 598
+
+    def _variant_not_recorded(self, request: httpx.Request, url: str) -> httpx.Response:
+        """第二把尺子缺变体快照 -> 598 合成响应（**strict 下也不抛**）。
+
+        为什么这里可以不抛，而主尺子缺快照必须抛：主尺子缺快照时，判定要么
+        没有输入、要么会拿别的东西冒充，那是我们的 fixture 不全，必须当场红。
+        第二把尺子缺的是**一次对照测量**，它的缺席有一个诚实的说法 ——
+        「这个位置我们没量过 ``*/*``」—— 而且上层（``Fetcher._second_ruler``）
+        会把这句话原样写进证据，不会把它读成「两把尺子一致」。
+
+        绝不回落到主尺子那份快照：那等于拿 A 的测量结果冒充 B 的。
+        """
+        return httpx.Response(
+            self.MISSING_VARIANT_STATUS,
+            headers={
+                "content-type": "text/plain",
+                "x-geo-audit-fixture": "accept-variant-missing",
+            },
+            content=(
+                f"accept variant not recorded for {url}\n"
+                f"补录：在 fixtures/urls.txt 里加一行 `@accept-star {url}` 再跑 "
+                "scripts/capture_fixtures.py"
+            ).encode(),
+            request=request,
+        )
+
     def _replay_lenient(self, request: httpx.Request) -> httpx.Response:
         """缺快照 -> 599 合成响应（而不是抛异常）。见 :meth:`transport`。"""
         try:
@@ -954,8 +1047,19 @@ class FixtureStore:
             )
 
     def replay(self, request: httpx.Request) -> httpx.Response:
-        """一条请求 -> 一条冻结响应。缺快照就抛 :class:`FixtureMissing`。"""
+        """一条请求 -> 一条冻结响应。缺快照就抛 :class:`FixtureMissing`。
+
+        **Accept 头参与选快照**：同一个 URL 在主尺子和 ``*/*`` 下可能是两个
+        不同的响应（实测 9 个位置如此），所以第二把尺子的请求要取它自己那份。
+        没录过变体时**不回落到主尺子那份** —— 那等于拿 A 的测量结果冒充 B 的，
+        正是这个仓库一路在防的事；缺就是缺，让上层如实记「第二把尺子没测到」。
+        """
         url = self.url_of_request(request)
+        if request.headers.get("accept", "") == ACCEPT_STAR:
+            variant = fixture_key(url, "star")
+            if variant not in self._index:
+                return self._variant_not_recorded(request, url)
+            url = variant
         snap = self.get(url)
 
         if snap.transport_error:
@@ -1045,6 +1149,7 @@ class FixtureStore:
         overwrite: bool = False,
         contact: str | None = None,
         user_agent: str | None = None,
+        accept_variant: str | None = None,
     ) -> Snapshot:
         """落一条快照并更新索引。**默认不覆盖已有快照。**
 
@@ -1056,7 +1161,7 @@ class FixtureStore:
         留在内存里时（digest_only 档），传 ``body=b""`` 加 ``body_bytes`` 与
         ``raw_md5``（边流边算的那两个值）。
         """
-        canon = canon_url(url)
+        canon = fixture_key(url, accept_variant)
         if canon in self._index and not overwrite:
             return self.get(canon)
 
@@ -1103,6 +1208,7 @@ class FixtureStore:
         lower_headers = {str(k).lower(): str(v) for k, v in headers.items()}
         meta = {
             "canon_url": canon,
+            "accept_variant": accept_variant,
             "url": url,
             "status": status,
             "headers": lower_headers,
@@ -1153,7 +1259,7 @@ class FixtureStore:
         found: dict[str, dict[str, Any]] = {}
         for meta_path in sorted((self.root / "snapshots").rglob("*.meta.json")):
             meta = json.loads(meta_path.read_text(encoding="utf-8"))
-            canon = canon_url(str(meta["canon_url"]))
+            canon = fixture_key(str(meta["canon_url"]), meta.get("accept_variant"))
             stem = meta_path.relative_to(self.root).as_posix()[: -len(".meta.json")]
             prev = self._index.get(canon, {})
             lower_headers = {str(k).lower(): str(v) for k, v in dict(meta["headers"]).items()}

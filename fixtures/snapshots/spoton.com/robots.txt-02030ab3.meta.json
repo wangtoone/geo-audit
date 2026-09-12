@@ -1,0 +1,24 @@
+{
+  "accept_variant": null,
+  "body_bytes": 110,
+  "body_file": "snapshots/spoton.com/robots.txt-02030ab3.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://spoton.com/robots.txt",
+  "handwritten": false,
+  "headers": {
+    "connection": "keep-alive",
+    "content-length": "110",
+    "content-type": "text/html",
+    "date": "Sat, 12 Sep 2026 09:31:02 GMT",
+    "location": "https://www.spoton.com:443/robots.txt",
+    "server": "awselb/2.0"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "f366e0e18b589cb6f243bf43ce75e83c",
+  "recorded_at": "2026-09-12T09:31:02Z",
+  "status": 302,
+  "stored_bytes": 110,
+  "transport_error": null,
+  "url": "https://spoton.com/robots.txt"
+}

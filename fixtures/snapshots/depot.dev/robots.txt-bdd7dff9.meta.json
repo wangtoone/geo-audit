@@ -1,0 +1,33 @@
+{
+  "accept_variant": null,
+  "body_bytes": 301,
+  "body_file": "snapshots/depot.dev/robots.txt-bdd7dff9.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://depot.dev/robots.txt",
+  "handwritten": false,
+  "headers": {
+    "accept-ranges": "bytes",
+    "age": "545",
+    "alt-svc": "h3=\":443\"; ma=86400",
+    "cache-control": "public, max-age=3600",
+    "connection": "keep-alive",
+    "content-length": "301",
+    "content-type": "text/plain; charset=utf-8",
+    "date": "Sat, 12 Sep 2026 09:17:42 GMT",
+    "etag": "W/\"12d-1a092eb1cc8\"",
+    "last-modified": "Sat, 12 Sep 2026 00:01:17 GMT",
+    "vary": "Accept-Encoding",
+    "via": "1.1 17bb6e07471ff75cf9b6580236b364a2.cloudfront.net (CloudFront)",
+    "x-amz-cf-id": "g1oJ6_U7uIa_LGSvMYNQjRr7Dei30D2IaTg1kuRsrnmUz99F1NQndg==",
+    "x-amz-cf-pop": "LAX50-P5",
+    "x-cache": "Hit from cloudfront"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "4951ced00f5c9e5061cc8106ba73375f",
+  "recorded_at": "2026-09-12T09:26:47Z",
+  "status": 200,
+  "stored_bytes": 301,
+  "transport_error": null,
+  "url": "https://depot.dev/robots.txt"
+}

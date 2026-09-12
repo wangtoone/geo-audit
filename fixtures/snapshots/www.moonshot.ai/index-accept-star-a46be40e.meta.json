@@ -1,0 +1,32 @@
+{
+  "accept_variant": "star",
+  "body_bytes": 93655,
+  "body_file": "snapshots/www.moonshot.ai/index-accept-star-a46be40e.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://www.moonshot.ai/ [accept=star]",
+  "handwritten": false,
+  "headers": {
+    "cache-control": "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0",
+    "cf-cache-status": "DYNAMIC",
+    "cf-ray": "a39de73449f27587-SJC",
+    "connection": "keep-alive",
+    "content-encoding": "gzip",
+    "content-type": "text/html",
+    "date": "Sat, 12 Sep 2026 09:32:08 GMT",
+    "last-modified": "Saturday, 12-Sep-2026 09:32:08 UTC",
+    "server": "cloudflare",
+    "set-cookie": "__cf_bm=2o.mX4GEsCrmbj1Bz7ujbbaZL_SIhGHGzmGkLyCoxQI-1789205527.728124-1.0.1.1-4_IrMYNRLhZjr_Je9S4zZUBza0Y8TmQ_QE8R0iozYiAJ7WAmvL3uj5BcMWBeL.dhP0IG68IyL0CD_sto.TCtj4NpvFb6bnbb1lhB8y1lxnQNeGXUV3sS9LOl3G9.WFcJ; HttpOnly; SameSite=None; Secure; Path=/; Domain=moonshot.ai; Expires=Sat, 12 Sep 2026 10:02:08 GMT",
+    "strict-transport-security": "max-age=31536000; includeSubDomains",
+    "transfer-encoding": "chunked",
+    "vary": "accept-encoding",
+    "x-internal-adhoc-canary": "1064953750"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "2f74cf62a001406861a09307a6c9b1b4",
+  "recorded_at": "2026-09-12T09:32:08Z",
+  "status": 200,
+  "stored_bytes": 93655,
+  "transport_error": null,
+  "url": "https://www.moonshot.ai/"
+}

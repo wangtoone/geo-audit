@@ -1,0 +1,32 @@
+{
+  "accept_variant": "star",
+  "body_bytes": 24305,
+  "body_file": "snapshots/developers.pipedrive.com/llms.txt-accept-star-fecee1c1.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://developers.pipedrive.com/llms.txt [accept=star]",
+  "handwritten": false,
+  "headers": {
+    "alt-svc": "h3=\":443\"; ma=86400",
+    "cf-cache-status": "DYNAMIC",
+    "cf-ray": "a39de0d55cf3bffc-SJC",
+    "connection": "keep-alive",
+    "content-encoding": "gzip",
+    "content-type": "text/html",
+    "date": "Sat, 12 Sep 2026 09:27:46 GMT",
+    "server": "cloudflare",
+    "set-cookie": "__cf_bm=Deq35WW5Vva3TvFCrGA9uWxYTzKUcZFzSPZBu0smGYc-1789205266.7741354-1.0.1.1-y1soerk0S4uwPOKmyFPOvHtB7MG885gJuTF6TBgj7ZXQxCkt6vNFAL7.rktLWqLfXZD6ilClMMFZHl5ikocI2rX8ng8GkqtJKRIoFGwkGyTK9xVntTYjFJcf.2gjCFdW; HttpOnly; SameSite=None; Secure; Path=/; Domain=pipedrive.com; Expires=Sat, 12 Sep 2026 09:57:46 GMT",
+    "strict-transport-security": "max-age=31536000; includeSubDomains",
+    "transfer-encoding": "chunked",
+    "vary": "accept-encoding",
+    "x-content-type-options": "nosniff",
+    "x-xss-protection": "1; mode=block"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "f5584b0cec63fd83fc43d8226efc25b2",
+  "recorded_at": "2026-09-12T09:27:46Z",
+  "status": 200,
+  "stored_bytes": 24305,
+  "transport_error": null,
+  "url": "https://developers.pipedrive.com/llms.txt"
+}

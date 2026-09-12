@@ -1,0 +1,33 @@
+{
+  "body_bytes": 168,
+  "body_file": "snapshots/docs.dify.ai/robots.txt-cf973af8.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://docs.dify.ai/robots.txt",
+  "handwritten": false,
+  "headers": {
+    "cache-control": "public, max-age=0, must-revalidate",
+    "cf-cache-status": "EXPIRED",
+    "cf-ray": "a39d8158b9958bcd-SIN",
+    "content-encoding": "gzip",
+    "content-security-policy": "worker-src * blob: data: 'unsafe-eval' 'unsafe-inline'; object-src data: ; base-uri 'self'; upgrade-insecure-requests; frame-ancestors 'self' https://dashboard.mintlify.com https://app.mintlify.com; form-action 'self' https://codesandbox.io;",
+    "content-type": "text/plain",
+    "date": "Sat, 12 Sep 2026 08:22:35 GMT",
+    "last-modified": "Sat, 12 Sep 2026 08:22:36 GMT",
+    "server": "Vercel",
+    "strict-transport-security": "max-age=63072000",
+    "transfer-encoding": "chunked",
+    "vary": "rsc, accept-encoding",
+    "x-frame-options": "DENY",
+    "x-matched-path": "/_sites/[subdomain]/robots.txt",
+    "x-vercel-cache": "MISS",
+    "x-vercel-id": "sin1:sin1:iad1::iad1::7vs4h-1789201355565-6f00d0087631"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "02f5b99bf8bb3cb30a0751b0e697033d",
+  "recorded_at": "2026-09-12T08:22:36Z",
+  "status": 200,
+  "stored_bytes": 168,
+  "transport_error": null,
+  "url": "https://docs.dify.ai/robots.txt"
+}

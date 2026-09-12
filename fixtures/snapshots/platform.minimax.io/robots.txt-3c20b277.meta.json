@@ -1,0 +1,33 @@
+{
+  "body_bytes": 130,
+  "body_file": "snapshots/platform.minimax.io/robots.txt-3c20b277.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://platform.minimax.io/robots.txt",
+  "handwritten": false,
+  "headers": {
+    "accept-ranges": "bytes",
+    "alb_receive_time": "1789201359.679",
+    "alb_request_id": "3e1d8996bbf19687de563a68ecb606df3e3b1ddc",
+    "cache-control": "max-age=0, no-cache, no-store",
+    "connection": "keep-alive",
+    "content-length": "130",
+    "content-security-policy": "frame-ancestors 'none';",
+    "content-type": "text/plain; charset=UTF-8",
+    "date": "Sat, 12 Sep 2026 08:22:39 GMT",
+    "etag": "W/\"82-1a08b2a6ea8\"",
+    "expires": "Sat, 12 Sep 2026 08:22:39 GMT",
+    "last-modified": "Thu, 10 Sep 2026 11:53:29 GMT",
+    "pragma": "no-cache",
+    "vary": "Accept-Encoding",
+    "x-frame-options": "DENY",
+    "x-from": "ak"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "c4e49fbb3132e2dd1c08df22cedc1002",
+  "recorded_at": "2026-09-12T08:22:39Z",
+  "status": 200,
+  "stored_bytes": 130,
+  "transport_error": null,
+  "url": "https://platform.minimax.io/robots.txt"
+}

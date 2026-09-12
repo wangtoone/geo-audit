@@ -1,0 +1,30 @@
+{
+  "accept_variant": null,
+  "body_bytes": 3918,
+  "body_file": "snapshots/docs.snipcart.com/robots.txt-d6731502.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://docs.snipcart.com/robots.txt",
+  "handwritten": false,
+  "headers": {
+    "age": "1183",
+    "cache-control": "public,max-age=0,must-revalidate",
+    "cache-status": "\"Netlify Edge\"; hit; ttl=31534817",
+    "content-encoding": "gzip",
+    "content-length": "1221",
+    "content-type": "text/html; charset=utf-8",
+    "date": "Sat, 12 Sep 2026 09:29:26 GMT",
+    "etag": "1548267464-ssl-df",
+    "server": "Netlify",
+    "strict-transport-security": "max-age=31536000",
+    "vary": "Accept-Encoding",
+    "x-nf-request-id": "01M2AF6HXFZDECV7NN92JC46QZ"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "cbcbe85fe14c6833b1d64480f66bf929",
+  "recorded_at": "2026-09-12T09:29:26Z",
+  "status": 404,
+  "stored_bytes": 3918,
+  "transport_error": null,
+  "url": "https://docs.snipcart.com/robots.txt"
+}

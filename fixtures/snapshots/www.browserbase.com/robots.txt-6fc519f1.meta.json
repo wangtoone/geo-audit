@@ -1,0 +1,30 @@
+{
+  "accept_variant": null,
+  "body_bytes": 69,
+  "body_file": "snapshots/www.browserbase.com/robots.txt-6fc519f1.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://www.browserbase.com/robots.txt",
+  "handwritten": false,
+  "headers": {
+    "age": "0",
+    "cache-control": "public, max-age=0, must-revalidate",
+    "content-encoding": "gzip",
+    "content-type": "text/plain",
+    "date": "Sat, 12 Sep 2026 09:31:23 GMT",
+    "server": "Vercel",
+    "strict-transport-security": "max-age=63072000",
+    "transfer-encoding": "chunked",
+    "vary": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch",
+    "x-matched-path": "/robots.txt",
+    "x-vercel-cache": "MISS",
+    "x-vercel-id": "sin1::iad1::lqjmd-1789205483078-dd171f510973"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "0b2815c6b83ef859caaaf5b71c7379e4",
+  "recorded_at": "2026-09-12T09:31:23Z",
+  "status": 200,
+  "stored_bytes": 69,
+  "transport_error": null,
+  "url": "https://www.browserbase.com/robots.txt"
+}

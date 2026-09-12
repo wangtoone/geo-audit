@@ -1,0 +1,30 @@
+{
+  "accept_variant": "star",
+  "body_bytes": 268184,
+  "body_file": "snapshots/www.printful.com/llms.txt-accept-star-463daa1d.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://www.printful.com/llms.txt [accept=star]",
+  "handwritten": false,
+  "headers": {
+    "alt-svc": "h3=\":443\"; ma=86400",
+    "cf-ray": "a39de786189f3df4-SIN",
+    "connection": "keep-alive",
+    "content-encoding": "gzip",
+    "content-type": "text/plain",
+    "date": "Sat, 12 Sep 2026 09:32:22 GMT",
+    "etag": "W/\"3d937424107d3b2efd10ec933832139a\"",
+    "server": "cloudflare",
+    "set-cookie": "__cf_bm=lo4855GcguiWc15461HYk.BYJX0eJdGSXxVAgqD0yKY-1789205540.8191967-1.0.1.1-ON0RDwrcC1oIkPuDUKLuIRg1SBL3Q98108nz7Y72Hj7Aecgh3VjuAAOOZMPTApyh2Imnj_D1WdRg1UWYMrik_CsY05pb9Yexcuq8bAN3nV9mS50R_FRt5o2jsI8V0yiT; HttpOnly; SameSite=None; Secure; Path=/; Domain=printful.com; Expires=Sat, 12 Sep 2026 10:02:22 GMT",
+    "strict-transport-security": "max-age=31536000; includeSubDomains; preload",
+    "transfer-encoding": "chunked",
+    "x-content-type-options": "nosniff"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "3d937424107d3b2efd10ec933832139a",
+  "recorded_at": "2026-09-12T09:32:22Z",
+  "status": 200,
+  "stored_bytes": 268184,
+  "transport_error": null,
+  "url": "https://www.printful.com/llms.txt"
+}

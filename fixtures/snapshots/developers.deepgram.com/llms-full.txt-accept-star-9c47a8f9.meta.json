@@ -1,0 +1,30 @@
+{
+  "accept_variant": "star",
+  "body_bytes": 15,
+  "body_file": "snapshots/developers.deepgram.com/llms-full.txt-accept-star-9c47a8f9.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://developers.deepgram.com/llms-full.txt [accept=star]",
+  "handwritten": false,
+  "headers": {
+    "cache-control": "public, max-age=0, must-revalidate",
+    "content-security-policy": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://app.buildwithfern.com https: blob:; style-src 'self' 'unsafe-inline' https://app.buildwithfern.com https:; img-src 'self' https://app.buildwithfern.com https: data: blob:; font-src 'self' https://app.buildwithfern.com https: data:; connect-src 'self' https://app.buildwithfern.com https: wss: ws: data: blob:; media-src 'self' https://app.buildwithfern.com https: data: blob:; object-src 'self' https://app.buildwithfern.com https: data: blob:; frame-src 'self' https://app.buildwithfern.com https: data: blob:; base-uri 'self'; form-action 'self' https://app.buildwithfern.com https:",
+    "content-type": "text/plain",
+    "date": "Sat, 12 Sep 2026 09:27:28 GMT",
+    "location": "https://developers.deepgram.com/llms.txt",
+    "permissions-policy": "camera=(self), microphone=(self), geolocation=()",
+    "referrer-policy": "strict-origin-when-cross-origin",
+    "server": "Vercel",
+    "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+    "transfer-encoding": "chunked",
+    "x-content-type-options": "nosniff",
+    "x-vercel-id": "sin1::hfjs9-1789205248869-56a3d0f8dd8f"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "42c939d0ba4bbdc4c7eab1b5c34aaf71",
+  "recorded_at": "2026-09-12T09:27:28Z",
+  "status": 301,
+  "stored_bytes": 15,
+  "transport_error": null,
+  "url": "https://developers.deepgram.com/llms-full.txt"
+}

@@ -171,6 +171,7 @@ Reason = Literal[
     "body_truncated",
     "not_fetched",
     "unexpected_status",
+    "accept_negotiated",
 ]
 
 #: Which reason codes mean "we could not evaluate this position".  Report
@@ -194,6 +195,7 @@ NOT_EVALUATED_REASONS: frozenset[str] = frozenset(
         "body_truncated",
         "not_fetched",
         "unexpected_status",
+        "accept_negotiated",
     }
 )
 
@@ -844,6 +846,17 @@ UNKNOWN_REMEDY: dict[str, str] = {
     "control_unavailable": (
         "同域对照探测自身不可用（被拦或出错），无法判定本响应是真文件还是兜底页。"
         "判定作废，绝不退化成「没问题」。"
+    ),
+    "accept_negotiated": (
+        "这个位置的答案取决于请求头：换一个 Accept 头就换一个结果，"
+        "所以「它是什么」没有单一答案，得看是谁在读。证据里两把尺子的读数都在，"
+        "各自带 curl 复现命令。要让所有抓取器看到同一份东西，"
+        "就别对这个路径做内容协商（常见成因：文档平台把「要 markdown」的请求 "
+        "rewrite 到另一个 handler）。"
+        "实测参照：www.openstatus.dev 与 dev.wix.com 的 llms.txt 对带 text/markdown 的"
+        "请求返回 404、对 */* 返回 200 真文件；api-docs.ecwid.com、developers.attio.com、"
+        "developers.pipedrive.com、developers.printify.com、docs.moderntreasury.com "
+        "反过来 —— 对带 text/markdown 的请求给 markdown 正文、对 */* 给 HTML 页面。"
     ),
     "body_truncated": "响应体超过 8 MiB 读取上限被截断，不做指纹判定。",
     "not_fetched": (

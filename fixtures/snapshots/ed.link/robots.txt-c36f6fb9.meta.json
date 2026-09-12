@@ -1,0 +1,32 @@
+{
+  "accept_variant": null,
+  "body_bytes": 168,
+  "body_file": "snapshots/ed.link/robots.txt-c36f6fb9.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://ed.link/robots.txt",
+  "handwritten": false,
+  "headers": {
+    "access-control-allow-origin": "*",
+    "alt-svc": "h3=\":443\"; ma=2592000",
+    "cache-control": "max-age=14400, must-revalidate",
+    "content-length": "168",
+    "content-type": "text/plain; charset=utf-8",
+    "date": "Sat, 12 Sep 2026 09:29:33 GMT",
+    "referrer-policy": "no-referrer",
+    "strict-transport-security": "max-age=15552000; includeSubDomains",
+    "via": "1.1 google",
+    "x-content-type-options": "nosniff",
+    "x-download-options": "noopen",
+    "x-frame-options": "SAMEORIGIN",
+    "x-permitted-cross-domain-policies": "none",
+    "x-xss-protection": "0"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "30cde0c43c8ba0fc6710f584b7dcd5d7",
+  "recorded_at": "2026-09-12T09:29:32Z",
+  "status": 200,
+  "stored_bytes": 168,
+  "transport_error": null,
+  "url": "https://ed.link/robots.txt"
+}

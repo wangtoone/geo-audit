@@ -1,0 +1,29 @@
+{
+  "accept_variant": null,
+  "body_bytes": 205,
+  "body_file": "snapshots/juicefs.com/robots.txt-f3e8824e.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://juicefs.com/robots.txt",
+  "handwritten": false,
+  "headers": {
+    "connection": "keep-alive",
+    "content-encoding": "gzip",
+    "content-language": "en",
+    "content-length": "113",
+    "content-type": "text/plain",
+    "date": "Sat, 12 Sep 2026 09:29:59 GMT",
+    "referrer-policy": "same-origin",
+    "server": "nginx/1.18.0 (Ubuntu)",
+    "vary": "Accept-Encoding, Accept-Language, Cookie",
+    "x-content-type-options": "nosniff",
+    "x-frame-options": "SAMEORIGIN"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "4cebc73b58bcdefa6332d9c2c0e344a9",
+  "recorded_at": "2026-09-12T09:29:59Z",
+  "status": 200,
+  "stored_bytes": 205,
+  "transport_error": null,
+  "url": "https://juicefs.com/robots.txt"
+}

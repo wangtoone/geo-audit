@@ -1,0 +1,32 @@
+{
+  "body_bytes": 1327,
+  "body_file": "snapshots/www.printful.com/robots.txt-4f662b98.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://www.printful.com/robots.txt",
+  "handwritten": false,
+  "headers": {
+    "alt-svc": "h3=\":443\"; ma=86400",
+    "cache-control": "no-store, no-cache, must-revalidate",
+    "cf-cache-status": "BYPASS",
+    "cf-ray": "a39d81076de66490-SIN",
+    "connection": "keep-alive",
+    "content-encoding": "gzip",
+    "content-type": "text/plain;charset=UTF-8",
+    "date": "Sat, 12 Sep 2026 08:22:22 GMT",
+    "expires": "Thu, 19 Nov 1981 08:52:00 GMT",
+    "server": "cloudflare",
+    "set-cookie": "_session=6a9bae877a3e3e853297fecabdb8599a; path=/; secure; HttpOnly; SameSite=none, dsr_setting=287309f52d2478f81f9158bd738e5eacc021cc83ac2ffeec95fc116e33bbd52ea%3A2%3A%7Bi%3A0%3Bs%3A11%3A%22dsr_setting%22%3Bi%3A1%3Bs%3A30%3A%22%7B%22region%22%3A16%2C%22requirement%22%3A36%7D%22%3B%7D; expires=Tue, 13 Oct 2026 08:22:22 GMT; Max-Age=2678400; path=/; domain=printful.com; HttpOnly; SameSite=Lax; secure; SameSite=none, _pf_ab_visitor_id=5b2ab425e81666a8d8c2d8b93eec42140c69602341236b2332d73e4f87247a39a%3A2%3A%7Bi%3A0%3Bs%3A17%3A%22_pf_ab_visitor_id%22%3Bi%3A1%3Bs%3A64%3A%220e89b34abe428b6169d4f495aeecb6998zJsN3JbSS9t6JV4GGmC14FAnQpBsNGw%22%3B%7D; expires=Sun, 12 Sep 2027 08:22:22 GMT; Max-Age=31536000; path=/; domain=printful.com; HttpOnly; SameSite=Lax; secure; SameSite=none, __cf_bm=sSqDqR_RYfagIkNVtR7Z0oXhinBvuSgyZ3agfc1G8Ng-1789201342.6287477-1.0.1.1-mrxT7ngu8Au.cWNVVdybNDgZCgH9iZUbfeZmyMASxcZrbPDr9CV4vo3KKkfL5F2qjPNwAgLM5yT1MHpRnb9CCp4NXqi6_Uu0Q9yUdhGZ7lYjyMzaPGHeUP1QBwa0cIhm; HttpOnly; SameSite=None; Secure; Path=/; Domain=printful.com; Expires=Sat, 12 Sep 2026 08:52:22 GMT",
+    "strict-transport-security": "max-age=31536000; includeSubDomains; preload",
+    "transfer-encoding": "chunked",
+    "vary": "Accept-Encoding",
+    "x-content-type-options": "nosniff"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "4d48472202df266f167d6ed68d00da44",
+  "recorded_at": "2026-09-12T08:22:22Z",
+  "status": 200,
+  "stored_bytes": 1327,
+  "transport_error": null,
+  "url": "https://www.printful.com/robots.txt"
+}

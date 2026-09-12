@@ -962,7 +962,8 @@
         "needs_js",
         "body_truncated",
         "not_fetched",
-        "unexpected_status"
+        "unexpected_status",
+        "accept_negotiated"
       ]
     },
     "RedirectHop": {

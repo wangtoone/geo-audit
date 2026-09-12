@@ -715,3 +715,50 @@ def test_denoise_extra_inline_display_none_is_synthetic(
     assert x13["synthetic"] is True
     assert 'style="display:none"' in x13["anchor_html"]
     assert x13["expect_rule"] not in {r["expect_rule"] for r in _jsonl("deadlink_labels.jsonl")}
+
+
+# --------------------------------------------------------------------------- #
+# measured_* 覆盖：标注说的与我们今天量到的不一样时，怎么写才不算「改断言让它绿」
+# --------------------------------------------------------------------------- #
+
+#: 允许带 measured_* 覆盖的行，以及**为什么**。钉死在这里，新增一条必须动这个
+#: 常量 —— 也就是必须被 review 看见。这是 measured_* 唯一的闸：没有它，
+#: 「量到什么就写什么」会退化成「红了就写上」。
+MEASURED_OVERRIDES: dict[str, str] = {
+    # 站点对「要 markdown」的请求 rewrite 到 /api/markdown/<path>，那里没有
+    # llms.txt。标注里的 200 50,680 B 是用 */* 量的，两把尺子都对，位置落
+    # UNKNOWN/accept_negotiated（详见 NOTES-terminal.md 2026-09-12 ⑧）。
+    "B17": "accept_negotiated",
+    # 该 host 的对照探针被 Cloudflare 挡住（robots.txt 与随机路径一律 403，
+    # 隔离复验四次）。目标本身仍是 200 真文件 —— 但没有对照就判不了真伪，
+    # 按 §6.4 R1 落 UNKNOWN。§8.1 的 unreachable 分支。
+    "B13": "control_unavailable",
+}
+
+
+def test_measured_overrides_are_pinned(soft404: dict[str, Any]) -> None:
+    """带 measured_* 的行必须**正好**是 MEASURED_OVERRIDES 里那几条。
+
+    多一条少一条都红：多了说明有人拿 measured_* 抹平了一个新的分歧而没让人看见，
+    少了说明某个分歧自己消失了（那是好事，但要回来把这条记录删掉）。
+    """
+    rows = [r for group in ("b", "c", "c_unknown") for r in soft404[group]]
+    have = {r["id"]: r.get("measured_rule") for r in rows if r.get("measured_verdict")}
+    assert have == MEASURED_OVERRIDES, (
+        f"measured_* 覆盖的集合变了：{have} != {MEASURED_OVERRIDES}。"
+        "新增一条要在这里写明理由，删一条要说明分歧为什么没了。"
+    )
+
+
+def test_every_measured_override_explains_itself(soft404: dict[str, Any]) -> None:
+    """每条覆盖都要有 measured_note，且要说人话（不是「见上」这种）。"""
+    rows = [r for group in ("b", "c", "c_unknown") for r in soft404[group]]
+    for row in rows:
+        if not row.get("measured_verdict"):
+            continue
+        note = row.get("measured_note") or ""
+        assert len(note) >= 40, f"{row['id']} 的 measured_note 太短，说不清为什么：{note!r}"
+        assert row["expect_verdict"] != row["measured_verdict"], (
+            f"{row['id']} 的 measured_verdict 与 expect_verdict 相同，这条覆盖是多余的"
+        )
+

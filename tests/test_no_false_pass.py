@@ -32,16 +32,37 @@ from geo_audit.fetch.cache import HttpCache
 from geo_audit.fetch.classify import _SERVER_ERROR, classify_response
 from geo_audit.fetch.client import Fetcher, FetcherConfig, build_user_agent
 from geo_audit.fetch.ratelimit import DomainLimiter
-from geo_audit.fixtures import FixtureStore
+from geo_audit.fixtures import FixtureMissing, FixtureStore
 from geo_audit.models import Classification, Expect, Verdict
 from geo_audit.pipeline import StopTransport
 
 CONTACT = "ci@geo-audit.invalid"
 
 #: 没有对照探针快照的实录位置（strict 下 probe_url 会抛）。
-#: 选 upstash 是因为它在 B 表里，标注写着「是真文件」—— 正好是最容易被
-#: 「伪造对照 -> 判 OK」蒙过去的形状。
-NO_CONTROL_URL = "https://upstash.com/llms.txt"
+#: 选 cloudflare 是因为它是 200 text/plain 17 KB 的规范真文件 —— 正好是最容易被
+#: 「伪造对照 -> 判 OK」蒙过去的形状，而它那个 host 一条对照探针都没录过。
+#:
+#: 原来选的是 upstash，2026-09-12 补录 11 条对照探针时它有了真探针，这条测试的
+#: 前提就没了。**前提没了必须红，不许静默通过** —— 所以下面
+#: :func:`test_the_no_control_url_really_has_no_control` 是绊线：哪天这个 host 也
+#: 录了探针，那条先红，回来换一个仍然没探针的位置，而不是让本文件这条主测试
+#: 悄悄变成「有对照时也判 OK」的空转。
+#:
+#: 注意判据是**整个 host 没有探针**，不是「这条 URL 没有 probe_for」——
+#: ``FixtureStore.probe_url`` 同 host 会互相借用（对照探针的语义按 host 成立）。
+NO_CONTROL_URL = "https://www.cloudflare.com/llms.txt"
+
+
+def test_the_no_control_url_really_has_no_control() -> None:
+    """绊线：``NO_CONTROL_URL`` 必须真的没有对照探针快照。
+
+    没有这条，给它补录一次对照探针就会让下面那条主测试从「缺对照 -> 不许判 OK」
+    悄悄变成「有对照 -> 判 OK 也通过」—— 断言还在，守的东西没了。
+    """
+    store = FixtureStore.default()
+    assert store.has(NO_CONTROL_URL), f"{NO_CONTROL_URL} 连自己的快照都没有了"
+    with pytest.raises(FixtureMissing):
+        store.probe_url(NO_CONTROL_URL)
 
 
 def _classify(status: int) -> Classification:

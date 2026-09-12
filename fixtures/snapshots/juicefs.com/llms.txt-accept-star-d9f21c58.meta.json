@@ -1,0 +1,29 @@
+{
+  "accept_variant": "star",
+  "body_bytes": 15836,
+  "body_file": "snapshots/juicefs.com/llms.txt-accept-star-d9f21c58.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://juicefs.com/llms.txt [accept=star]",
+  "handwritten": false,
+  "headers": {
+    "connection": "keep-alive",
+    "content-encoding": "gzip",
+    "content-language": "en",
+    "content-length": "7188",
+    "content-type": "text/html; charset=utf-8",
+    "date": "Sat, 12 Sep 2026 09:30:01 GMT",
+    "referrer-policy": "same-origin",
+    "server": "nginx/1.18.0 (Ubuntu)",
+    "vary": "Accept-Encoding, Accept-Language, Cookie",
+    "x-content-type-options": "nosniff",
+    "x-frame-options": "SAMEORIGIN"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "ad7f2330b0f14234025cbc8a58571d2a",
+  "recorded_at": "2026-09-12T09:30:01Z",
+  "status": 404,
+  "stored_bytes": 15836,
+  "transport_error": null,
+  "url": "https://juicefs.com/llms.txt"
+}

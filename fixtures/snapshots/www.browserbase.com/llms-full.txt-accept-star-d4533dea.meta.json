@@ -1,0 +1,29 @@
+{
+  "accept_variant": "star",
+  "body_bytes": 15,
+  "body_file": "snapshots/www.browserbase.com/llms-full.txt-accept-star-d4533dea.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://www.browserbase.com/llms-full.txt [accept=star]",
+  "handwritten": false,
+  "headers": {
+    "cache-control": "public, max-age=0, must-revalidate",
+    "content-type": "text/plain",
+    "date": "Sat, 12 Sep 2026 09:31:25 GMT",
+    "location": "/sign-in?redirect=https%3A%2F%2Fwww.browserbase.com%2Fllms-full.txt",
+    "server": "Vercel",
+    "strict-transport-security": "max-age=63072000",
+    "transfer-encoding": "chunked",
+    "x-clerk-auth-reason": "session-token-and-uat-missing",
+    "x-clerk-auth-status": "signed-out",
+    "x-clerk-redirect-to": "true",
+    "x-vercel-id": "sin1::lp27x-1789205485559-1b61fb8dd858"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "42c939d0ba4bbdc4c7eab1b5c34aaf71",
+  "recorded_at": "2026-09-12T09:31:25Z",
+  "status": 307,
+  "stored_bytes": 15,
+  "transport_error": null,
+  "url": "https://www.browserbase.com/llms-full.txt"
+}

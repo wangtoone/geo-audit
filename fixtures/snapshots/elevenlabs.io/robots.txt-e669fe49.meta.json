@@ -1,0 +1,29 @@
+{
+  "body_bytes": 1287,
+  "body_file": "snapshots/elevenlabs.io/robots.txt-e669fe49.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://elevenlabs.io/robots.txt",
+  "handwritten": false,
+  "headers": {
+    "alt-svc": "h3=\":443\"; ma=2592000",
+    "cache-control": "public, max-age=3600, stale-while-revalidate=604800",
+    "content-encoding": "gzip",
+    "content-security-policy": "frame-ancestors 'self' https://payload.elevenlabs.io;",
+    "content-type": "text/plain; charset=utf-8",
+    "date": "Sat, 12 Sep 2026 08:22:11 GMT",
+    "server": "nginx/1.30.4",
+    "strict-transport-security": "max-age=1800;",
+    "transfer-encoding": "chunked",
+    "vary": "Accept-Encoding, rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch",
+    "via": "1.1 google",
+    "x-nextjs-cache": "HIT"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "b1366b45418357a32572b6de746aa440",
+  "recorded_at": "2026-09-12T08:22:11Z",
+  "status": 200,
+  "stored_bytes": 1287,
+  "transport_error": null,
+  "url": "https://elevenlabs.io/robots.txt"
+}

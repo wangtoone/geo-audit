@@ -1,0 +1,33 @@
+{
+  "accept_variant": null,
+  "body_bytes": 52,
+  "body_file": "snapshots/docs.canvasmedical.com/robots.txt-63bae06f.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://docs.canvasmedical.com/robots.txt",
+  "handwritten": false,
+  "headers": {
+    "accept-ranges": "bytes",
+    "age": "35159",
+    "alt-svc": "h3=\":443\"; ma=86400",
+    "cache-control": "public, max-age=0, s-maxage=31536000",
+    "connection": "keep-alive",
+    "content-length": "52",
+    "content-type": "text/plain",
+    "date": "Fri, 11 Sep 2026 23:41:56 GMT",
+    "etag": "\"d631767a2940f1832c4a2a40757413e1\"",
+    "last-modified": "Fri, 11 Sep 2026 23:37:08 GMT",
+    "server": "AmazonS3",
+    "via": "1.1 37141df361655af766631b5a37106772.cloudfront.net (CloudFront)",
+    "x-amz-cf-id": "eC0INTF5Hq758LkSut6_v1Hx7LkqxaHP8VqTLjLeMycxaf_wkWls6A==",
+    "x-amz-cf-pop": "SIN3-P4",
+    "x-cache": "Hit from cloudfront"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "d631767a2940f1832c4a2a40757413e1",
+  "recorded_at": "2026-09-12T09:27:55Z",
+  "status": 200,
+  "stored_bytes": 52,
+  "transport_error": null,
+  "url": "https://docs.canvasmedical.com/robots.txt"
+}
