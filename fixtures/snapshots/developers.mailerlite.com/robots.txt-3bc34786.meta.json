@@ -1,0 +1,30 @@
+{
+  "accept_variant": null,
+  "body_bytes": 79,
+  "body_file": "snapshots/developers.mailerlite.com/robots.txt-3bc34786.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://developers.mailerlite.com/robots.txt",
+  "handwritten": false,
+  "headers": {
+    "alt-svc": "h3=\":443\"; ma=86400",
+    "cache-control": "public, max-age=0, must-revalidate",
+    "cf-cache-status": "HIT",
+    "cf-ray": "a39de074fb730ad8-SIN",
+    "connection": "keep-alive",
+    "content-encoding": "gzip",
+    "content-type": "text/plain",
+    "date": "Sat, 12 Sep 2026 09:27:31 GMT",
+    "etag": "W/\"8d707adb73a1d2c8c19dcfe7f19ad1dd\"",
+    "server": "cloudflare",
+    "transfer-encoding": "chunked",
+    "vary": "accept-encoding"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "3e7c00bd79d185e023115d9baba93261",
+  "recorded_at": "2026-09-12T09:27:31Z",
+  "status": 200,
+  "stored_bytes": 79,
+  "transport_error": null,
+  "url": "https://developers.mailerlite.com/robots.txt"
+}

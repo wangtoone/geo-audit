@@ -1,0 +1,33 @@
+{
+  "accept_variant": null,
+  "body_bytes": 135,
+  "body_file": "snapshots/liveblocks.io/robots.txt-bd0c419d.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://liveblocks.io/robots.txt",
+  "handwritten": false,
+  "headers": {
+    "accept-ranges": "bytes",
+    "access-control-allow-origin": "*",
+    "age": "156030",
+    "cache-control": "public, max-age=0, must-revalidate",
+    "content-disposition": "inline; filename=\"robots.txt\"",
+    "content-length": "135",
+    "content-type": "text/plain; charset=utf-8",
+    "date": "Sat, 12 Sep 2026 09:30:02 GMT",
+    "etag": "\"0d3f2a83d3f76f3eda51dd6383a18b5d\"",
+    "last-modified": "Thu, 10 Sep 2026 14:09:31 GMT",
+    "server": "Vercel",
+    "strict-transport-security": "max-age=63072000",
+    "x-matched-path": "/robots.txt",
+    "x-vercel-cache": "HIT",
+    "x-vercel-id": "sin1::xn5vb-1789205402155-5149e0760de9"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "0d3f2a83d3f76f3eda51dd6383a18b5d",
+  "recorded_at": "2026-09-12T09:30:01Z",
+  "status": 200,
+  "stored_bytes": 135,
+  "transport_error": null,
+  "url": "https://liveblocks.io/robots.txt"
+}

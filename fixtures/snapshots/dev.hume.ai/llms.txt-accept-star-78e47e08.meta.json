@@ -1,0 +1,29 @@
+{
+  "accept_variant": "star",
+  "body_bytes": 4567,
+  "body_file": "snapshots/dev.hume.ai/llms.txt-accept-star-78e47e08.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://dev.hume.ai/llms.txt [accept=star]",
+  "handwritten": false,
+  "headers": {
+    "cache-control": "private, max-age=0, no-store, no-cache, must-revalidate, post-check=0, pre-check=0",
+    "cf-ray": "a39ddf91384ccf29-SJC",
+    "connection": "keep-alive",
+    "content-encoding": "gzip",
+    "content-type": "text/html; charset=UTF-8",
+    "date": "Sat, 12 Sep 2026 09:26:54 GMT",
+    "expires": "Thu, 01 Jan 1970 00:00:01 GMT",
+    "referrer-policy": "same-origin",
+    "server": "cloudflare",
+    "transfer-encoding": "chunked",
+    "x-frame-options": "SAMEORIGIN"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "3f793c74da8c8e6b41d244adcc861a45",
+  "recorded_at": "2026-09-12T09:26:54Z",
+  "status": 403,
+  "stored_bytes": 4567,
+  "transport_error": null,
+  "url": "https://dev.hume.ai/llms.txt"
+}

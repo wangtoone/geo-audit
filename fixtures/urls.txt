@@ -74,18 +74,27 @@ https://saleor.io/llms.txt                            # B-08 200 2,043 B（报 8
 https://rustdesk.com/llms.txt                         # B-09 200 2,355 B 四类全零的域（零发现渲染样本）
 @control https://rustdesk.com/llms.txt
 https://upstash.com/llms.txt                          # B-10 200 5,833 B
+@control https://upstash.com/llms.txt
 https://developers.deepgram.com/llms.txt              # B-11 200 73,878 B md5 e7475c34…
+@control https://developers.deepgram.com/llms.txt
 https://elevenlabs.io/docs/llms.txt                   # B-12 200 206,764 B md5 b8b73517…
+@control https://elevenlabs.io/docs/llms.txt
 https://dev.hume.ai/llms.txt                          # B-13 200 16,412 B md5 fd5cc659…
+@control https://dev.hume.ai/llms.txt
 https://factorialhr.com/llms-full.txt                 # B-14 200 861,887 B（含 Generated: 2026-04-01）
+@control https://factorialhr.com/llms-full.txt
 https://www.printful.com/llms.txt                     # B-15 200 268,184 B（报 42,108，字节争议样本）
+@control https://www.printful.com/llms.txt
 https://docs.commercelayer.io/llms.txt                # B-16 200 9,051 B（报 3,598，字节争议样本）
+@control https://docs.commercelayer.io/llms.txt
 https://www.openstatus.dev/llms.txt                   # B-17 200 50,680 B
+@control https://www.openstatus.dev/llms.txt
 https://platform.kimi.ai/docs/llms.txt                # B-18 200 15.6 KB ← moonshot 的真文件在别的注册域
 https://gusto.com/llms.txt                            # B-19 **403 Cloudflare「Just a moment...」**，真文件 8,217 B
 https://www.pipedrive.com/llms.txt                    # B-20 **429**，真文件 8,501 B
 https://platform.minimax.io/docs/llms.txt             # B-21 200 text/plain 24 KB ← minimax 的真文件（假阴锚点）
 https://platform.minimax.io/llms.txt                  # B-22 **真 404**（证明"根路径 404 但 /docs 有"这个形态）
+@control https://platform.minimax.io/llms.txt
 
 # ─────────────────────────────────────────────────────────────────────────
 # C 组 · 诚实 404（正文形态不参与判定）
@@ -93,7 +102,9 @@ https://platform.minimax.io/llms.txt                  # B-22 **真 404**（证�
 https://snipcart.com/llms.txt                         # C-01 404 + Nuxt SPA 兜底页 -> REAL404
 https://docs.snipcart.com/llms.txt                    # C-02 同型
 https://www.llamaindex.ai/llms.txt                    # C-03 404 + 168 KB SPA HTML
+@control https://www.llamaindex.ai/llms.txt
 https://docs.dify.ai/llms-full.txt                    # C-04 404 + 97 KB 错误页
+@control https://docs.dify.ai/llms-full.txt
 https://tdengine.com/llms.txt                         # C-05 真 404 -> no_ai_channel 分支的样本
 https://www.juicefs.com/llms.txt                      # C-06 真 404
 https://docs.lawmatics.com/llms.txt                   # C-07 真 404（与它的 needs_js 分开判）
@@ -574,3 +585,120 @@ https://docs.mistral.ai/studio-api/observability                            # FI
 https://docs.mistral.ai/docs/guides/other-resources                            # FIX 候选
 https://docs.mistral.ai/guides/prompting_capabilities                            # FIX 候选
 https://docs.mistral.ai/capabilities/completion/sampling                            # FIX 候选
+
+# ─────────────────────────────────────────────────────────────────────────
+# S 组 · 第二把尺子（Accept: */*）· 2026-09-12 补录
+#
+# 我们的主尺子是 ACCEPT_TEXT，里面点名要 text/markdown。实测这 100 个 AI 路径
+# 位置里有 9 个的答案**取决于这个头**：
+#   www.openstatus.dev / dev.wix.com 的 llms.txt 与 llms-full.txt
+#     主尺子 -> 404（站点把「要 markdown」的请求 rewrite 到 /api/markdown/<path>）
+#     */*    -> 200 真文件（52,530 B / 6,619 B / …）
+#   api-docs.ecwid.com、developers.attio.com、developers.pipedrive.com、
+#   developers.printify.com、docs.moderntreasury.com 反过来：
+#     主尺子 -> markdown 正文；*/* -> HTML 页面壳
+# 每条都用独立进程、双向顺序复验过（gusto 那条一开始也进了名单，隔离重测
+# 三种 Accept 全是 403 —— 是 Cloudflare 状态不是 Accept，已剔除）。
+#
+# 所以每个文本位置都要有第二把尺子的冻结读数，判定层才敢说「两把尺子一致」。
+# ─────────────────────────────────────────────────────────────────────────
+@accept-star https://api-docs.ecwid.com/llms.txt                          # 第二把尺子（Accept: */*）
+@accept-star https://attio.com/apps/llms.txt                              # 第二把尺子（Accept: */*）
+@accept-star https://attio.com/customers/legora/llms.txt                  # 第二把尺子（Accept: */*）
+@accept-star https://attio.com/customers/llms.txt                         # 第二把尺子（Accept: */*）
+@accept-star https://attio.com/customers/seedcamp/llms.txt                # 第二把尺子（Accept: */*）
+@accept-star https://attio.com/customers/snackpass/llms.txt               # 第二把尺子（Accept: */*）
+@accept-star https://attio.com/platform/ai/llms.txt                       # 第二把尺子（Accept: */*）
+@accept-star https://attio.com/platform/reporting/llms.txt                # 第二把尺子（Accept: */*）
+@accept-star https://business.pinterest.com/llms.txt                      # 第二把尺子（Accept: */*）
+@accept-star https://close.com/llms.txt                                   # 第二把尺子（Accept: */*）
+@accept-star https://depot.dev/llms.txt                                   # 第二把尺子（Accept: */*）
+@accept-star https://dev.hume.ai/llms-full.txt                            # 第二把尺子（Accept: */*）
+@accept-star https://dev.hume.ai/llms.txt                                 # 第二把尺子（Accept: */*）
+@accept-star https://dev.wix.com/docs/llms-full.txt                       # 第二把尺子（Accept: */*）
+@accept-star https://dev.wix.com/docs/llms.txt                            # 第二把尺子（Accept: */*）
+@accept-star https://developer.squareup.com/docs/llms-full.txt            # 第二把尺子（Accept: */*）
+@accept-star https://developer.squareup.com/llms-full.txt                 # 第二把尺子（Accept: */*）
+@accept-star https://developer.squareup.com/llms.txt                      # 第二把尺子（Accept: */*）
+@accept-star https://developers.attio.com/llms.txt                        # 第二把尺子（Accept: */*）
+@accept-star https://developers.brevo.com/docs/llms.txt                   # 第二把尺子（Accept: */*）
+@accept-star https://developers.brevo.com/llms.txt                        # 第二把尺子（Accept: */*）
+@accept-star https://developers.deepgram.com/llms-full.txt                # 第二把尺子（Accept: */*）
+@accept-star https://developers.deepgram.com/llms.txt                     # 第二把尺子（Accept: */*）
+@accept-star https://developers.mailerlite.com/llms.txt                   # 第二把尺子（Accept: */*）
+@accept-star https://developers.pinterest.com/llms-full.txt               # 第二把尺子（Accept: */*）
+@accept-star https://developers.pinterest.com/llms.txt                    # 第二把尺子（Accept: */*）
+@accept-star https://developers.pipedrive.com/llms.txt                    # 第二把尺子（Accept: */*）
+@accept-star https://developers.printify.com/llms.txt                     # 第二把尺子（Accept: */*）
+@accept-star https://docs.bigcommerce.com/llms-full.txt                   # 第二把尺子（Accept: */*）
+@accept-star https://docs.bigcommerce.com/llms.txt                        # 第二把尺子（Accept: */*）
+@accept-star https://docs.canvasmedical.com/llms-full.txt                 # 第二把尺子（Accept: */*）
+@accept-star https://docs.commercelayer.io/llms-full.txt                  # 第二把尺子（Accept: */*）
+@accept-star https://docs.commercelayer.io/llms.txt                       # 第二把尺子（Accept: */*）
+@accept-star https://docs.customer.io/ai/llms.txt                         # 第二把尺子（Accept: */*）
+@accept-star https://docs.customer.io/get-started/llms.txt                # 第二把尺子（Accept: */*）
+@accept-star https://docs.customer.io/llms-full.txt                       # 第二把尺子（Accept: */*）
+@accept-star https://docs.customer.io/llms.txt                            # 第二把尺子（Accept: */*）
+@accept-star https://docs.dify.ai/llms-full.txt                           # 第二把尺子（Accept: */*）
+@accept-star https://docs.gusto.com/llms-full.txt                         # 第二把尺子（Accept: */*）
+@accept-star https://docs.lawmatics.com/llms.txt                          # 第二把尺子（Accept: */*）
+@accept-star https://docs.mistral.ai/llms-full.txt                        # 第二把尺子（Accept: */*）
+@accept-star https://docs.mistral.ai/llms.txt                             # 第二把尺子（Accept: */*）
+@accept-star https://docs.moderntreasury.com/llms-full.txt                # 第二把尺子（Accept: */*）
+@accept-star https://docs.snipcart.com/llms.txt                           # 第二把尺子（Accept: */*）
+@accept-star https://docs.zilliz.com/llms.txt                             # 第二把尺子（Accept: */*）
+@accept-star https://ed.link/llms.txt                                     # 第二把尺子（Accept: */*）
+@accept-star https://elevenlabs.io/docs/llms-full.txt                     # 第二把尺子（Accept: */*）
+@accept-star https://elevenlabs.io/docs/llms.txt                          # 第二把尺子（Accept: */*）
+@accept-star https://factorialhr.com/llms-full.txt                        # 第二把尺子（Accept: */*）
+@accept-star https://factorialhr.com/llms.txt                             # 第二把尺子（Accept: */*）
+@accept-star https://gethealthie.com/llms.txt                             # 第二把尺子（Accept: */*）
+@accept-star https://gusto.com/llms.txt                                   # 第二把尺子（Accept: */*）
+@accept-star https://help.close.com/llms.txt                              # 第二把尺子（Accept: */*）
+@accept-star https://hookdeck.com/llms.txt                                # 第二把尺子（Accept: */*）
+@accept-star https://juicefs.com/llms.txt                                 # 第二把尺子（Accept: */*）
+@accept-star https://liveblocks.io/llms-full.txt                          # 第二把尺子（Accept: */*）
+@accept-star https://liveblocks.io/llms.txt                               # 第二把尺子（Accept: */*）
+@accept-star https://mistral.ai/docs/llms-full.txt                        # 第二把尺子（Accept: */*）
+@accept-star https://mistral.ai/llms-full.txt                             # 第二把尺子（Accept: */*）
+@accept-star https://mistral.ai/llms.txt                                  # 第二把尺子（Accept: */*）
+@accept-star https://modal.com/llms-full.txt                              # 第二把尺子（Accept: */*）
+@accept-star https://modal.com/llms.txt                                   # 第二把尺子（Accept: */*）
+@accept-star https://platform.kimi.ai/docs/llms.txt                       # 第二把尺子（Accept: */*）
+@accept-star https://platform.minimax.io/docs/llms-full.txt               # 第二把尺子（Accept: */*）
+@accept-star https://platform.minimax.io/docs/llms.txt                    # 第二把尺子（Accept: */*）
+@accept-star https://platform.minimax.io/llms.txt                         # 第二把尺子（Accept: */*）
+@accept-star https://replicate.com/llms.txt                               # 第二把尺子（Accept: */*）
+@accept-star https://resend.com/docs/llms-full.txt                        # 第二把尺子（Accept: */*）
+@accept-star https://resend.com/docs/llms.txt                             # 第二把尺子（Accept: */*）
+@accept-star https://resend.com/llms-full.txt                             # 第二把尺子（Accept: */*）
+@accept-star https://resend.com/llms.txt                                  # 第二把尺子（Accept: */*）
+@accept-star https://rustdesk.com/llms-full.txt                           # 第二把尺子（Accept: */*）
+@accept-star https://rustdesk.com/llms.txt                                # 第二把尺子（Accept: */*）
+@accept-star https://saleor.io/llms.txt                                   # 第二把尺子（Accept: */*）
+@accept-star https://snipcart.com/llms.txt                                # 第二把尺子（Accept: */*）
+@accept-star https://spoton.com/llms.txt                                  # 第二把尺子（Accept: */*）
+@accept-star https://support.freshbooks.com/llms.txt                      # 第二把尺子（Accept: */*）
+@accept-star https://tdengine.com/llms.txt                                # 第二把尺子（Accept: */*）
+@accept-star https://turso.tech/llms.txt                                  # 第二把尺子（Accept: */*）
+@accept-star https://upstash.com/llms-full.txt                            # 第二把尺子（Accept: */*）
+@accept-star https://upstash.com/llms.txt                                 # 第二把尺子（Accept: */*）
+@accept-star https://www.browserbase.com/llms-full.txt                    # 第二把尺子（Accept: */*）
+@accept-star https://www.browserbase.com/llms.txt                         # 第二把尺子（Accept: */*）
+@accept-star https://www.browserbase.com/sign-in?redirect=https%3A%2F%2Fwww.browserbase.com%2Fllms-full.txt  # 第二把尺子（Accept: */*）
+@accept-star https://www.bytebase.com/llms.txt                            # 第二把尺子（Accept: */*）
+@accept-star https://www.canvasmedical.com/llms.txt                       # 第二把尺子（Accept: */*）
+@accept-star https://www.cloudflare.com/llms.txt                          # 第二把尺子（Accept: */*）
+@accept-star https://www.gethealthie.com/llms.txt                         # 第二把尺子（Accept: */*）
+@accept-star https://www.inngest.com/llms.txt                             # 第二把尺子（Accept: */*）
+@accept-star https://www.juicefs.com/llms.txt                             # 第二把尺子（Accept: */*）
+@accept-star https://www.llamaindex.ai/llms.txt                           # 第二把尺子（Accept: */*）
+@accept-star https://www.medplum.com/llms.txt                             # 第二把尺子（Accept: */*）
+@accept-star https://www.minimax.io/llms.txt                              # 第二把尺子（Accept: */*）
+@accept-star https://www.moonshot.ai/llms.txt                             # 第二把尺子（Accept: */*）
+@accept-star https://www.openstatus.dev/llms-full.txt                     # 第二把尺子（Accept: */*）
+@accept-star https://www.openstatus.dev/llms.txt                          # 第二把尺子（Accept: */*）
+@accept-star https://www.pingcap.com/llms.txt                             # 第二把尺子（Accept: */*）
+@accept-star https://www.pipedrive.com/llms.txt                           # 第二把尺子（Accept: */*）
+@accept-star https://www.printful.com/llms.txt                            # 第二把尺子（Accept: */*）
+@accept-star https://www.spoton.com/llms.txt                              # 第二把尺子（Accept: */*）

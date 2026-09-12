@@ -493,6 +493,13 @@
     "poisoned": false,
     "resolver": "system"
   },
+  "juicefs.com": {
+    "addresses": [
+      "47.93.5.40"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
   "liveblocks.io": {
     "addresses": [
       "64.239.123.65",
@@ -800,6 +807,14 @@
     "poisoned": false,
     "resolver": "system"
   },
+  "www.gethealthie.com": {
+    "addresses": [
+      "2620:cb:2000::1",
+      "198.202.211.1"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
   "www.gusto.com": {
     "addresses": [
       "172.64.154.69",
@@ -957,6 +972,14 @@
     "addresses": [
       "172.64.145.93",
       "104.18.42.163"
+    ],
+    "poisoned": false,
+    "resolver": "system"
+  },
+  "www.spoton.com": {
+    "addresses": [
+      "216.150.1.65",
+      "216.150.16.65"
     ],
     "poisoned": false,
     "resolver": "system"

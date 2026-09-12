@@ -1,0 +1,32 @@
+{
+  "body_bytes": 15,
+  "body_file": "snapshots/docs.dify.ai/geo-audit-probe-f21e71695059a226d08abd9e.txt-8f6be58b.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://docs.dify.ai/geo-audit-probe-f21e71695059a226d08abd9e.txt",
+  "handwritten": false,
+  "headers": {
+    "cache-control": "public, max-age=0, must-revalidate",
+    "cf-cache-status": "MISS",
+    "cf-ray": "a39d816958bfda4a-SIN",
+    "content-encoding": "gzip",
+    "content-type": "text/plain;charset=UTF-8",
+    "date": "Sat, 12 Sep 2026 08:22:38 GMT",
+    "server": "Vercel",
+    "server-timing": "cfCacheStatus;desc=\"MISS\", cfEdge;dur=4,cfOrigin;dur=0,cfWorker;dur=610",
+    "strict-transport-security": "max-age=63072000",
+    "transfer-encoding": "chunked",
+    "vary": "rsc, accept-encoding",
+    "x-frame-options": "DENY",
+    "x-matched-path": "/_mintlify/static/[subdomain]/[...path]",
+    "x-vercel-cache": "MISS",
+    "x-vercel-id": "sin1:sin1:iad1::iad1::x5x6t-1789201358268-b877ba9b05fe"
+  },
+  "note": null,
+  "probe_for": "https://docs.dify.ai/llms-full.txt",
+  "raw_md5": "3f0c9658216718b5628e02745d8e7d2f",
+  "recorded_at": "2026-09-12T08:22:38Z",
+  "status": 404,
+  "stored_bytes": 15,
+  "transport_error": null,
+  "url": "https://docs.dify.ai/geo-audit-probe-f21e71695059a226d08abd9e.txt"
+}

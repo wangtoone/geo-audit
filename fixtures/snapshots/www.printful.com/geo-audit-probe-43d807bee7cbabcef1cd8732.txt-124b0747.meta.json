@@ -1,0 +1,32 @@
+{
+  "body_bytes": 335492,
+  "body_file": "snapshots/www.printful.com/geo-audit-probe-43d807bee7cbabcef1cd8732.txt-124b0747.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://www.printful.com/geo-audit-probe-43d807bee7cbabcef1cd8732.txt",
+  "handwritten": false,
+  "headers": {
+    "alt-svc": "h3=\":443\"; ma=86400",
+    "cache-control": "no-store, no-cache, must-revalidate",
+    "cf-cache-status": "DYNAMIC",
+    "cf-ray": "a39d81169aa86490-SIN",
+    "connection": "keep-alive",
+    "content-encoding": "gzip",
+    "content-type": "text/html; charset=UTF-8",
+    "date": "Sat, 12 Sep 2026 08:22:25 GMT",
+    "expires": "Thu, 19 Nov 1981 08:52:00 GMT",
+    "server": "cloudflare",
+    "set-cookie": "_session=a125825fb5a6c7e028cd73cc8f3081e7; path=/; secure; HttpOnly; SameSite=none, dsr_setting=287309f52d2478f81f9158bd738e5eacc021cc83ac2ffeec95fc116e33bbd52ea%3A2%3A%7Bi%3A0%3Bs%3A11%3A%22dsr_setting%22%3Bi%3A1%3Bs%3A30%3A%22%7B%22region%22%3A16%2C%22requirement%22%3A36%7D%22%3B%7D; expires=Tue, 13 Oct 2026 08:22:25 GMT; Max-Age=2678400; path=/; domain=printful.com; HttpOnly; SameSite=Lax; secure; SameSite=none, _pf_ab_visitor_id=6fd5729aa4bc686c4fea53789598b049496f47b92914308d766d7fdb8bc9e7a8a%3A2%3A%7Bi%3A0%3Bs%3A17%3A%22_pf_ab_visitor_id%22%3Bi%3A1%3Bs%3A64%3A%22f41b450ea23112b9758777230640c279R8NywruFbvuAnlgjU1DxTOGATOZq06j6%22%3B%7D; expires=Sun, 12 Sep 2027 08:22:25 GMT; Max-Age=31536000; path=/; domain=printful.com; HttpOnly; SameSite=Lax; secure, _csrf=da10907fad02d395a1294841f5d5fb14a5fe9710803227e480a0981c915ed345a%3A2%3A%7Bi%3A0%3Bs%3A5%3A%22_csrf%22%3Bi%3A1%3Bs%3A32%3A%22Z5jdXGqOGATNcBVZ-9tlrOtnD-_dbHyK%22%3B%7D; path=/; secure; HttpOnly; SameSite=Lax; SameSite=none, __cf_bm=PvOwmgd7A5ThALVmEqrZ.K3ZXIat61ZnLLopaWvMTkk-1789201345.0606318-1.0.1.1-Lqai96H3RxRDKtk_UnY.sz72EAKIb43nWOHeAcdwZXNOOnlXfdV350MnungCUmDoogaXcFc5w65Pz7syURRVM8on5vJYsUzdPtaZt0dewkhJpIRseA3cKievUA6.wGr.; HttpOnly; SameSite=None; Secure; Path=/; Domain=printful.com; Expires=Sat, 12 Sep 2026 08:52:25 GMT",
+    "strict-transport-security": "max-age=31536000; includeSubDomains; preload",
+    "transfer-encoding": "chunked",
+    "vary": "Accept-Encoding",
+    "x-content-type-options": "nosniff"
+  },
+  "note": null,
+  "probe_for": "https://www.printful.com/llms.txt",
+  "raw_md5": "fe7f2044d39cf8d565f1b3dfdc686ad7",
+  "recorded_at": "2026-09-12T08:22:25Z",
+  "status": 404,
+  "stored_bytes": 335492,
+  "transport_error": null,
+  "url": "https://www.printful.com/geo-audit-probe-43d807bee7cbabcef1cd8732.txt"
+}

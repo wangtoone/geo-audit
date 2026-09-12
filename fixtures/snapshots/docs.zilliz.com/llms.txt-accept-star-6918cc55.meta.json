@@ -1,0 +1,26 @@
+{
+  "accept_variant": "star",
+  "body_bytes": 218,
+  "body_file": "snapshots/docs.zilliz.com/llms.txt-accept-star-6918cc55.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://docs.zilliz.com/llms.txt [accept=star]",
+  "handwritten": false,
+  "headers": {
+    "accept-ranges": "bytes",
+    "connection": "keep-alive",
+    "content-length": "218",
+    "content-type": "text/plain",
+    "date": "Sat, 12 Sep 2026 09:29:32 GMT",
+    "etag": "\"6aa2ad25-da\"",
+    "last-modified": "Thu, 10 Sep 2026 13:14:13 GMT",
+    "server": "nginx/1.28.3"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "3958941daac1e61f4ea34261331c8c7a",
+  "recorded_at": "2026-09-12T09:29:32Z",
+  "status": 200,
+  "stored_bytes": 218,
+  "transport_error": null,
+  "url": "https://docs.zilliz.com/llms.txt"
+}

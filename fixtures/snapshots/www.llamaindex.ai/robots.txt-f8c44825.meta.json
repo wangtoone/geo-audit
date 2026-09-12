@@ -1,0 +1,31 @@
+{
+  "body_bytes": 23,
+  "body_file": "snapshots/www.llamaindex.ai/robots.txt-f8c44825.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://www.llamaindex.ai/robots.txt",
+  "handwritten": false,
+  "headers": {
+    "accept-ranges": "bytes",
+    "access-control-allow-origin": "*",
+    "age": "15020",
+    "cache-control": "public, max-age=0, must-revalidate",
+    "content-disposition": "inline; filename=\"robots.txt\"",
+    "content-length": "23",
+    "content-type": "text/plain; charset=utf-8",
+    "date": "Sat, 12 Sep 2026 08:22:32 GMT",
+    "etag": "\"5e0bd1c281a62a380d7a948085bfe2d1\"",
+    "last-modified": "Sat, 12 Sep 2026 04:12:12 GMT",
+    "server": "Vercel",
+    "strict-transport-security": "max-age=63072000",
+    "x-vercel-cache": "HIT",
+    "x-vercel-id": "sin1::777lz-1789201352977-27af8d9fc758"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "5e0bd1c281a62a380d7a948085bfe2d1",
+  "recorded_at": "2026-09-12T08:22:32Z",
+  "status": 200,
+  "stored_bytes": 23,
+  "transport_error": null,
+  "url": "https://www.llamaindex.ai/robots.txt"
+}

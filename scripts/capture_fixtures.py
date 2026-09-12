@@ -36,6 +36,13 @@
 ``@pair <index_url> <full_url>``
     llms.txt / llms-full.txt 配对，两条都录。
 
+``@accept-star <url>``
+    同一条 URL 再录一份 ``Accept: */*`` 下的答案，存进变体键
+    ``<url> [accept=star]``。实测 9 个 AI 路径位置的响应取决于 Accept 头
+    （openstatus.dev / dev.wix.com 对主尺子答 404、对 ``*/*`` 答 200 真文件；
+    ecwid / attio / pipedrive / printify / moderntreasury 反过来），
+    所以「第二把尺子」要有自己的冻结快照，不能拿主尺子那份冒充。
+
 录制脚本自己也守 2.0s/域（走 ``DomainLimiter``，与生产同一把闸）、也要
 ``--contact``（UA 里必须有真实联系方式）。
 """
@@ -62,6 +69,7 @@ from geo_audit.fetch.cache import HttpCache  # noqa: E402
 from geo_audit.fetch.client import Fetcher, FetcherConfig, build_user_agent  # noqa: E402
 from geo_audit.fetch.resolve import resolve_host  # noqa: E402
 from geo_audit.fixtures import (  # noqa: E402
+    ACCEPT_STAR,
     REPLAY_STRIPPED_HEADERS,
     BodyNotStored,
     DnsFixtureMissing,
@@ -69,6 +77,7 @@ from geo_audit.fixtures import (  # noqa: E402
     FixtureStore,
     UrlSpec,
     canon_url,
+    fixture_key,
     hosts_of,
     parse_urls_txt,
     sample_deterministic,
@@ -126,7 +135,14 @@ class RecordingTransport(httpx.BaseTransport):
     def set_context(
         self, *, comment: str | None, probe_for: str | None = None, probe_url: str | None = None
     ) -> None:
-        """下一次 fetch 期间录到的快照带上这些标注。"""
+        """下一次 fetch 期间录到的快照带上这些标注。
+
+        **变体键不在这里定**：它由每条请求自己的 Accept 头决定
+        （:meth:`_variant_of`）。第一版是按上下文定的，结果 ``@accept-star``
+        那一段里连 robots.txt 都被打上了 ``[accept=star]`` —— 而 robots 是用
+        ``Accept: text/plain`` 发的，重放时永远不会走变体键，等于录了 78 份
+        永远取不到的死快照。按请求头定就不可能错，也不会漏给下一行。
+        """
         self._comment = comment
         self._probe_for = canon_url(probe_for) if probe_for else None
         self._probe_url = canon_url(probe_url) if probe_url else None
@@ -135,22 +151,28 @@ class RecordingTransport(httpx.BaseTransport):
 
     def handle_request(self, request: httpx.Request) -> httpx.Response:
         url = FixtureStore.url_of_request(request)  # 与重放共用同一把索引键
-        if self._store.has(url) and not self._overwrite:
-            self.skipped.append(url)
+        variant = self._variant_of(request)
+        if self._store.has(url, variant=variant) and not self._overwrite:
+            self.skipped.append(fixture_key(url, variant))
             return self._store.replay(request)
         try:
             resp = self._inner.handle_request(request)
         except httpx.HTTPError as exc:
             err = f"{type(exc).__name__}: {exc}"
             self.errors.append((url, err))
-            self._put(url, status=0, headers={}, body=b"", transport_error=err)
+            self._put(url, status=0, headers={}, body=b"", transport_error=err, variant=variant)
             raise
         resp.read()
         content = resp.content
         headers = {k.lower(): v for k, v in resp.headers.items()}
-        self._put(url, status=resp.status_code, headers=headers, body=content)
+        self._put(url, status=resp.status_code, headers=headers, body=content, variant=variant)
         out = {k: v for k, v in headers.items() if k not in REPLAY_STRIPPED_HEADERS}
         return httpx.Response(resp.status_code, headers=out, content=content, request=request)
+
+    @staticmethod
+    def _variant_of(request: httpx.Request) -> str | None:
+        """这条请求用的是哪把尺子 —— 只看它自己的 Accept 头。"""
+        return "star" if request.headers.get("accept", "") == ACCEPT_STAR else None
 
     def close(self) -> None:
         self._inner.close()
@@ -165,10 +187,12 @@ class RecordingTransport(httpx.BaseTransport):
         headers: Mapping[str, str],
         body: bytes,
         transport_error: str | None = None,
+        variant: str | None = None,
     ) -> None:
+        key = fixture_key(url, variant)
         if self._dry_run:
-            print(f"  [dry-run] {status} {url} ({len(body):,} B)")
-            self.recorded.append(url)
+            print(f"  [dry-run] {status} {key} ({len(body):,} B)")
+            self.recorded.append(key)
             return
         # probe_for 只贴在探针 URL 那一跳上：探针如果自己也跳转，反查索引应当
         # 指向探针本身，而不是让 store.probe_url() 有两个候选。
@@ -187,9 +211,10 @@ class RecordingTransport(httpx.BaseTransport):
             # 快照要进公开仓库，所以录制者的邮箱必须在落盘前换掉。
             contact=self._contact,
             user_agent=self._user_agent,
+            accept_variant=variant,
         )
-        self.recorded.append(url)
-        drift = self._store.check_expect(url, raw_md5=snap.raw_md5, body_bytes=snap.body_bytes)
+        self.recorded.append(key)
+        drift = self._store.check_expect(key, raw_md5=snap.raw_md5, body_bytes=snap.body_bytes)
         for line in drift:
             print(f"  ⚠ {url} 与 expect 不符 —— {line}")
             print("    走 §8.1 的 drift 四分支：python scripts/refresh_fixtures.py --explain")
@@ -317,6 +342,15 @@ def _do_spec(
         print(f"@control {spec.url} -> {probe}")
         recorder.set_context(comment=spec.comment, probe_for=spec.url, probe_url=probe)
         fetcher.fetch(probe, expect=Expect.ANY, use_cache=False)
+        return 1
+
+    if spec.kind == "accept_star":
+        if store.has(spec.url, variant="star") and not args.overwrite:
+            print(f"@accept-star {spec.url} -> 已有 */* 变体，跳过")
+            return 0
+        print(f"@accept-star {spec.url}")
+        recorder.set_context(comment=spec.comment)
+        fetcher.fetch(spec.url, expect=Expect.ANY, use_cache=False, accept_override=ACCEPT_STAR)
         return 1
 
     if spec.kind == "expand":

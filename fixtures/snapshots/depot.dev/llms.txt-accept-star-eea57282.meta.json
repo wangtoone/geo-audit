@@ -1,0 +1,32 @@
+{
+  "accept_variant": "star",
+  "body_bytes": 81825,
+  "body_file": "snapshots/depot.dev/llms.txt-accept-star-eea57282.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://depot.dev/llms.txt [accept=star]",
+  "handwritten": false,
+  "headers": {
+    "alt-svc": "h3=\":443\"; ma=86400",
+    "cache-control": "public, max-age=3600",
+    "connection": "keep-alive",
+    "content-encoding": "gzip",
+    "content-type": "text/plain; charset=utf-8",
+    "date": "Sat, 12 Sep 2026 09:26:49 GMT",
+    "link": "<https://depot.dev/llms.txt>; rel=\"describedby\"; type=\"text/plain\"",
+    "transfer-encoding": "chunked",
+    "vary": "Accept-Encoding",
+    "via": "1.1 17bb6e07471ff75cf9b6580236b364a2.cloudfront.net (CloudFront)",
+    "x-amz-cf-id": "DSG7woZI3hR4-RvZR02xCfo_I42jFlPvpYCpDIBJoWmP0SpcIdDQaw==",
+    "x-amz-cf-pop": "LAX50-P5",
+    "x-cache": "Miss from cloudfront",
+    "x-powered-by": "Express"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "54048456475a0aae8c7b8d87f220edda",
+  "recorded_at": "2026-09-12T09:26:49Z",
+  "status": 200,
+  "stored_bytes": 81825,
+  "transport_error": null,
+  "url": "https://depot.dev/llms.txt"
+}

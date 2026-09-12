@@ -1,0 +1,33 @@
+{
+  "accept_variant": "star",
+  "body_bytes": 317643,
+  "body_file": "snapshots/www.canvasmedical.com/index-accept-star-153e7f3f.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://www.canvasmedical.com/ [accept=star]",
+  "handwritten": false,
+  "headers": {
+    "age": "0",
+    "cache-control": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "content-encoding": "gzip",
+    "content-type": "text/html; charset=utf-8",
+    "date": "Sat, 12 Sep 2026 09:31:38 GMT",
+    "link": "</_next/static/media/open_sans_v44_latin_600-s.p.0_eexel.ci.l..woff2>; rel=preload; as=\"font\"; crossorigin=\"\"; type=\"font/woff2\", </_next/static/media/open_sans_v44_latin_700-s.p.11q0zvtxmu8sd.woff2>; rel=preload; as=\"font\"; crossorigin=\"\"; type=\"font/woff2\", </_next/static/media/open_sans_v44_latin_regular-s.p.0_lnrv79a2jvt.woff2>; rel=preload; as=\"font\"; crossorigin=\"\"; type=\"font/woff2\", </_next/static/media/space_mono_v17_latin_700-s.p.0.8rp-r1~zo07.woff2>; rel=preload; as=\"font\"; crossorigin=\"\"; type=\"font/woff2\", </_next/static/media/space_mono_v17_latin_regular-s.p.0-jau7~ksv-8p.woff2>; rel=preload; as=\"font\"; crossorigin=\"\"; type=\"font/woff2\", </_next/static/chunks/05n.l0-8b9okb.css>; rel=preload; as=\"style\", </_next/static/chunks/0fqiootcp~kj0.css>; rel=preload; as=\"style\"",
+    "server": "Vercel",
+    "set-cookie": "ph_distinct_id=273eee6e-db3e-4839-aec4-d6cc8c131008; Path=/; Expires=Sun, 12 Sep 2027 09:31:38 GMT; Max-Age=31536000; Secure; SameSite=lax, ph_distinct_id=273eee6e-db3e-4839-aec4-d6cc8c131008; Path=/; Expires=Sun, 12 Sep 2027 09:31:38 GMT; Max-Age=31536000; Secure; SameSite=lax",
+    "strict-transport-security": "max-age=63072000",
+    "transfer-encoding": "chunked",
+    "vary": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch",
+    "x-matched-path": "/",
+    "x-powered-by": "Next.js",
+    "x-vercel-cache": "MISS",
+    "x-vercel-id": "sin1::iad1::7vs4h-1789205498438-b50a55f69a7f"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "2ecc20165c8d1dba82ffbba2e113f14d",
+  "recorded_at": "2026-09-12T09:31:38Z",
+  "status": 200,
+  "stored_bytes": 317643,
+  "transport_error": null,
+  "url": "https://www.canvasmedical.com/"
+}

@@ -1,0 +1,30 @@
+{
+  "accept_variant": null,
+  "body_bytes": 166,
+  "body_file": "snapshots/gethealthie.com/robots.txt-103a93d4.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://gethealthie.com/robots.txt",
+  "handwritten": false,
+  "headers": {
+    "alt-svc": "h3=\":443\"; ma=86400",
+    "cache-control": "private",
+    "cf-cache-status": "BYPASS",
+    "cf-ray": "a39de3bd9dbdfd1b-SIN",
+    "connection": "keep-alive",
+    "content-length": "166",
+    "content-type": "text/html",
+    "date": "Sat, 12 Sep 2026 09:29:46 GMT",
+    "location": "https://www.gethealthie.com/robots.txt",
+    "server": "cloudflare",
+    "set-cookie": "_cfuvid=rLft0sBitIDt1CO9MdAj11mWzghDLiaE143_ATkv_kc-1789205385.8529806-1.0.1.1-HqKgrn6TOzo0iNXLC4ZsGUNvHkPL0alhxGwvLlirR2E; HttpOnly; SameSite=None; Secure; Path=/; Domain=gethealthie.com",
+    "x-wf-region": "us-east-1"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "3ea1c8d079b38532a6e01a96216ba5e2",
+  "recorded_at": "2026-09-12T09:29:45Z",
+  "status": 301,
+  "stored_bytes": 166,
+  "transport_error": null,
+  "url": "https://gethealthie.com/robots.txt"
+}

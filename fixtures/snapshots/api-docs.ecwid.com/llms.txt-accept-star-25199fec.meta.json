@@ -1,0 +1,27 @@
+{
+  "accept_variant": "star",
+  "body_bytes": 0,
+  "body_file": "snapshots/api-docs.ecwid.com/llms.txt-accept-star-25199fec.body.gz",
+  "body_storage": "full",
+  "canon_url": "https://api-docs.ecwid.com/llms.txt [accept=star]",
+  "handwritten": false,
+  "headers": {
+    "connection": "keep-alive",
+    "content-length": "0",
+    "date": "Sat, 12 Sep 2026 09:26:15 GMT",
+    "location": "https://docs.ecwid.com",
+    "server": "CloudFront",
+    "via": "1.1 dea310182adc0039c16f39c12748a7f4.cloudfront.net (CloudFront)",
+    "x-amz-cf-id": "oMy4EI5BMLQ7d-NG1_bysNXnCKr2K5NmW12uyNc_vpyQBMqOryFrKA==",
+    "x-amz-cf-pop": "LAX50-P2",
+    "x-cache": "FunctionGeneratedResponse from cloudfront"
+  },
+  "note": null,
+  "probe_for": null,
+  "raw_md5": "d41d8cd98f00b204e9800998ecf8427e",
+  "recorded_at": "2026-09-12T09:26:15Z",
+  "status": 302,
+  "stored_bytes": 0,
+  "transport_error": null,
+  "url": "https://api-docs.ecwid.com/llms.txt"
+}

@@ -45,11 +45,13 @@ import time
 import urllib.robotparser
 from collections.abc import Callable, Iterable, Sequence
 from concurrent.futures import ThreadPoolExecutor
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
+from typing import Final
 from urllib.parse import urljoin, urlsplit, urlunsplit
 
 import httpx
 
+from ..fixtures import ACCEPT_STAR, FixtureStore
 from ..models import (
     Classification,
     Expect,
@@ -63,7 +65,7 @@ from ..models import (
 )
 from . import fingerprints as fp
 from .cache import MAX_CACHE_BODY, HttpCache
-from .classify import classify_response, looks_like_html
+from .classify import classify_response, is_blocked, looks_like_html
 from .normalize import (
     NORM_BODY_CAP,
     norm_sha256,
@@ -103,6 +105,11 @@ class FetcherConfig:
     #: mark them BLOCKED without spending a request.  Saves budget; the general
     #: status rule still decides anything not on the list.
     probe_known_hostile: bool = False
+    #: 文本位置（llms.txt 这类）判完之后，再用 ``Accept: */*`` 量一次，
+    #: 两把尺子答案不同就判 UNKNOWN/accept_negotiated。见
+    #: :meth:`Fetcher._second_ruler`。关掉它等于**只用一把尺子报结论** ——
+    #: 实测那会在 9/100 个位置上给出与另一类抓取器相反的结论。
+    second_ruler: bool = True
 
 
 def build_user_agent(contact: str) -> str:
@@ -392,9 +399,16 @@ class Fetcher:
         expect: Expect = Expect.ANY,
         liveness_only: bool = False,
         use_cache: bool = True,
+        accept_override: str | None = None,
     ) -> HttpResponse:
-        """Fetch ``url``, following redirects and recording the chain."""
-        accept = ACCEPT_TEXT if expect is Expect.TEXT_FILE else ACCEPT_HTML
+        """Fetch ``url``, following redirects and recording the chain.
+
+        ``accept_override`` 换掉按 ``expect`` 推出来的 Accept 头。**这不是调味
+        品**：实测 9 个 AI 路径位置的答案取决于这个头（见 ``ACCEPT_STAR`` 与
+        :meth:`_second_ruler`），所以「用哪把尺子量的」必须由调用方说了算，
+        而且要能进证据。缓存键本来就含 accept，两把尺子不会互相顶掉。
+        """
+        accept = accept_override or (ACCEPT_TEXT if expect is Expect.TEXT_FILE else ACCEPT_HTML)
         byte_cap = LIVENESS_BYTE_CAP if liveness_only else CONTENT_BYTE_CAP
 
         # ---- robots 闸。**排在缓存之前** ------------------------------------
@@ -694,7 +708,141 @@ class Fetcher:
         ):
             cls = self._confirm_soft404(url, resp, expect, cls)
 
+        if expect is Expect.TEXT_FILE and self.config.second_ruler and not liveness_only:
+            cls = self._second_ruler(url, resp, cls)
+
         return Probe(url, expect, resp, cls)
+
+    # ------------------------------------------------------------------ #
+    # 第二把尺子（Accept 对照）
+    # ------------------------------------------------------------------ #
+
+    #: 主尺子与第二把尺子之间，什么样的差异**算差异**。
+    #:
+    #: 只认两条，都是「换个 Accept 头就换一个结论」级别的：
+    #:
+    #: 1. 2xx 与非 2xx（一边说有、一边说没有）；
+    #: 2. HTML 与非 HTML（一边拿到文本文件、一边拿到页面壳 —— 后者正是
+    #:    ``html_where_text_expected`` 这条软 404 判据要抓的东西）。
+    #:
+    #: **不认**：字节数差几十（时间戳、nonce）、``text/markdown`` 与
+    #: ``text/plain``（同一份文本的两种叫法，实测 6 个 host 如此）。
+    #: 把那些也算成差异会让每份报告都挂满噪声，而噪声正是这个仓库
+    #: 40.5% 假阳性那一课的来源。
+    _RULER_DIFF_KINDS: Final = ("状态码", "正文类型")
+
+    def _second_ruler(self, url: str, first: HttpResponse, cls: Classification) -> Classification:
+        """用 ``Accept: */*`` 再量一次这个文本位置，两把尺子不一致就判 UNKNOWN。
+
+        **为什么值得多花一条请求**：我们的主尺子（``ACCEPT_TEXT``）里点名要
+        ``text/markdown``，而实测 100 个 AI 路径位置里有 9 个的答案取决于这个头：
+
+        - ``www.openstatus.dev`` 与 ``dev.wix.com`` 的 llms.txt / llms-full.txt：
+          主尺子拿到 **404**（站点把「要 markdown」的请求 rewrite 到
+          ``/api/markdown/<path>``，那里没有 llms.txt），``*/*`` 拿到 **200 真文件**。
+          只用主尺子报，就是对一个健在的文件说「它 404」。
+        - ``api-docs.ecwid.com`` / ``developers.attio.com`` /
+          ``developers.pipedrive.com`` / ``developers.printify.com`` /
+          ``docs.moderntreasury.com``：反过来 —— 主尺子拿到 markdown 正文，
+          ``*/*`` 拿到 HTML 页面壳。只用主尺子报，就是把一个对多数抓取器表现为
+          页面壳的位置说成「通过」。
+
+        两个方向都是同一个病：**拿一把尺子的读数去讲另一把尺子下的事实**。
+        所以这里不挑边、也不替读者决定哪一把才算数 —— 两把不一致时，这个位置
+        的诚实结论是「取决于请求头」，按 §6.4 R1 落 UNKNOWN 并把两边读数都写进
+        证据（每一边都带各自的 curl 复现命令）。
+
+        一致时**不动原判定**，只加一行「两把尺子一致」的证据 —— 那是这条结论
+        的强化，不是新结论。
+        """
+        second = self.fetch(url, expect=Expect.TEXT_FILE, accept_override=ACCEPT_STAR)
+        if second.status == FixtureStore.MISSING_VARIANT_STATUS:
+            return replace(
+                cls,
+                evidence=(
+                    *cls.evidence,
+                    f"第二把尺子（Accept: {ACCEPT_STAR}）在本位置没有测量数据",
+                ),
+            )
+
+        blocked = self._ruler_blocked(url, first, second)
+        if blocked:
+            return replace(cls, evidence=(*cls.evidence, blocked))
+
+        diffs = self._ruler_diffs(first, second)
+        if not diffs:
+            return replace(
+                cls,
+                evidence=(
+                    *cls.evidence,
+                    f"用 Accept: {ACCEPT_STAR} 再量一次，{'、'.join(self._RULER_DIFF_KINDS)}都一致",
+                ),
+            )
+        return Classification(
+            Verdict.UNKNOWN,
+            "accept_negotiated",
+            (
+                *cls.evidence,
+                f"这个位置的答案取决于请求头：{'；'.join(diffs)}",
+                f"主尺子 Accept: {ACCEPT_TEXT} -> {self._ruler_line(first)}",
+                f"第二把尺子 Accept: {ACCEPT_STAR} -> {self._ruler_line(second)}",
+                f"复现：curl -sSL -H 'Accept: {ACCEPT_TEXT}' -o /dev/null "
+                f"-w '%{{http_code}} %{{content_type}} %{{size_download}}' {url}"
+                f"，再把 Accept 换成 {ACCEPT_STAR} 跑一遍",
+            ),
+            naive_would_say=cls.naive_would_say,
+            needs_js=cls.needs_js,
+            control_used=cls.control_used,
+            control_discriminates=cls.control_discriminates,
+            secondary_reasons=cls.all_reasons if cls.reason != "accept_negotiated" else (),
+        )
+
+    @staticmethod
+    def _ruler_blocked(url: str, first: HttpResponse, second: HttpResponse) -> str | None:
+        """有一边被拦住了就不许比 —— **拦截不是答案**。
+
+        实测撞到两次，两次都会被误读成「答案取决于请求头」：
+
+        - ``dev.hume.ai/llms.txt``：录第二把尺子那天我们的 IP 已经被 Cloudflare
+          盯上，``*/*`` 拿到 403 挑战页，而主尺子那份是五天前录的 200。
+        - ``gusto.com/llms.txt``：反过来，主尺子那份是 403、第二把尺子 200。
+          隔离复验（独立进程、双向顺序、不复用 cookie）三种 Accept 全是 403 ——
+          差异来自 WAF 的状态，与 Accept 无关。
+
+        把这种差异归因给 Accept，等于用一句听起来很具体的话掩盖「我们没量到」。
+        """
+        for label, resp in (("主尺子", first), ("第二把尺子", second)):
+            hit = is_blocked(resp.status, dict(resp.headers), resp.text, url=url)
+            if hit:
+                return (
+                    f"{label}这一侧被拦住了（{hit[2]}），两把尺子不可比 —— "
+                    "本位置没有 Accept 层面的结论"
+                )
+        return None
+
+    @staticmethod
+    def _ruler_diffs(first: HttpResponse, second: HttpResponse) -> tuple[str, ...]:
+        """两把尺子之间**算数**的差异。判据见 :data:`_RULER_DIFF_KINDS`。"""
+        out: list[str] = []
+        ok1, ok2 = 200 <= first.status < 300, 200 <= second.status < 300
+        if ok1 != ok2:
+            out.append(f"状态码 {first.status} vs {second.status}")
+        if not (ok1 and ok2):
+            # 非 2xx 的正文类型没有可比性：404 页与 301 的空正文长什么样都不说明
+            # 这个位置「是什么」。只在两边都 2xx 时比正文类型。
+            return tuple(out)
+        html1 = looks_like_html(first.text, first.headers.get("content-type", ""))
+        html2 = looks_like_html(second.text, second.headers.get("content-type", ""))
+        if html1 != html2:
+            out.append(
+                "正文类型 " + " vs ".join("HTML 页面" if h else "文本文件" for h in (html1, html2))
+            )
+        return tuple(out)
+
+    @staticmethod
+    def _ruler_line(resp: HttpResponse) -> str:
+        ct = resp.headers.get("content-type", "").split(";")[0].strip() or "（无 content-type）"
+        return f"{resp.status} {ct} {len(resp.body):,} 字节"
 
     def _confirm_soft404(
         self, url: str, resp: HttpResponse, expect: Expect, first: Classification

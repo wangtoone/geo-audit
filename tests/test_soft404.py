@@ -612,8 +612,21 @@ def _fixture_fetcher(store: object, tmp_path: Path) -> object:
 _NO_FROZEN_CASE = [r for r in B_TABLE + C_TABLE + C_UNKNOWN if not r.get("real_cases_case")]
 
 
+def _param(row: dict[str, Any]) -> Any:
+    """``drift == "gone"`` 的行标 ``xfail(strict=True)``（§8.1）。
+
+    规程原话：现象没了就**不改断言**，标 gone + xfail，现象回来则 XPASS 变红、
+    回来重新裁决。把「站方修好了」处理成「改断言让它绿」，就是把回归测试变成
+    许愿池。
+    """
+    marks = []
+    if row.get("drift") == "gone":
+        marks.append(pytest.mark.xfail(strict=True, reason=f"{row['id']}：{row['note']}"))
+    return pytest.param(row, marks=marks, id=str(row["id"]))
+
+
 @real_index_needed
-@pytest.mark.parametrize("row", _NO_FROZEN_CASE, ids=lambda r: str(r["id"]))
+@pytest.mark.parametrize("row", [_param(r) for r in _NO_FROZEN_CASE])
 def test_rows_without_frozen_case_go_through_the_real_fetch_path(
     row: dict[str, Any], tmp_path: Path
 ) -> None:
@@ -639,11 +652,18 @@ def test_rows_without_frozen_case_go_through_the_real_fetch_path(
                 "缺的是这个 host 的**对照探针**）"
             )
         cls = probe.classification
-        assert cls.verdict.value == row["expect_verdict"], (
+        # measured_verdict：标注说的（expect_verdict）与**我们今天量到的**不一样，
+        # 且差异有据可查时，写在这里。标注那一栏一个字不改 —— 它是 challenge 原文
+        # 的反向验证清单，改了它 test_b_group_is_18_ok_plus_2_blocked 的算术就白做了。
+        # 允许它存在的代价由 test_measured_overrides_are_pinned 收：每一条都要有
+        # measured_note，且总数与 id 集合被钉死，新增一条必须过那关。
+        want = row.get("measured_verdict") or row["expect_verdict"]
+        want_rule = row.get("measured_rule") if row.get("measured_verdict") else row["expect_rule"]
+        assert cls.verdict.value == want, (
             f"{row['id']} {row['url']}：判 {cls.verdict.value}/{cls.reason}，"
-            f"期望 {row['expect_verdict']}。{row['note']}"
+            f"期望 {want}。{row.get('measured_note') or row['note']}"
         )
-        if row.get("expect_rule") is not None:
-            assert cls.reason == row["expect_rule"], f"{row['id']}：{row['note']}"
+        if want_rule is not None:
+            assert cls.reason == want_rule, f"{row['id']}：{row.get('measured_note') or row['note']}"
     finally:
         fetcher.close()  # type: ignore[attr-defined]
