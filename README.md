@@ -49,34 +49,33 @@ Cloudflare 挡掉了几乎所有位置 —— 而它的 `llms.txt` 其实是真�
 
 ## 先看报告，再决定要不要装
 
-九份真实站点的真实扫描结果。索引页：[docs/index.html](docs/index.html)。
+九份真实站点的真实扫描结果，**2026-09-12 活网跑的**（不是离线回放）。
+索引页：[docs/index.html](docs/index.html)。
 
-**先说清楚：这九份现在首屏全是「这次扫描不可信」。** 不是报告写错了，是它第一次
-说了实话 —— 这批报告跑在**离线 replay 语料**上，而语料没覆盖到探测集里的多数
-位置（每份报告的覆盖披露里逐条写着缺哪些）。原先那些「零发现、N 个位置全部
-通过」里有一大半，是靠「一个从没抓过的 URL + 一个恰好录过的对照探针」判出来的：
-判定层的 `ok_control_discriminates` 分支（「这个 host 对不存在的路径给 404，
-而这个路径给了别的，所以文件是真的」）没问一句「这个响应是真观测来的吗」。
+| 报告 | 位置 | 通过 | 读错 | 未能评估 | 首屏那句话 |
+|---|---|---|---|---|---|
+| [tdengine.com](docs/reports/tdengine.com.html) | 30 | 4 | 7 | 0 | 7 个位置会被读错 |
+| [gusto.com](docs/reports/gusto.com.html) | 28 | 2 | 4 | 20 | 这次扫描不可信 |
+| [deepgram.com](docs/reports/deepgram.com.html) | 21 | 5 | 2 | 5 | 2 个位置会被读错 |
+| [minimax.io](docs/reports/minimax.io.html) | 26 | 10 | 2 | 7 | 2 个位置会被读错 |
+| [saleor.io](docs/reports/saleor.io.html) | 21 | 12 | 1 | 1 | 1 个位置会被读错 |
+| [modal.com](docs/reports/modal.com.html) | 29 | 12 | 1 | 6 | 1 个位置会被读错 |
+| [mistral.ai](docs/reports/mistral.ai.html) | 40 | 10 | 1 | 17 | 这次扫描不可信 |
+| [openstatus.dev](docs/reports/openstatus.dev.html) | 54 | 6 | 1 | 24 | 这次扫描不可信 |
+| [rustdesk.com](docs/reports/rustdesk.com.html) | 15 | 10 | 0 | 0 | 零发现：10 个位置全部通过 |
 
-| 报告 | 位置 | 通过 | 读错 | 未能评估 |
-|---|---|---|---|---|
-| [mistral.ai](docs/reports/mistral.ai.html) | 21 | 7 | 1 | 11 |
-| [saleor.io](docs/reports/saleor.io.html) | 23 | 7 | 0 | 15 |
-| [modal.com](docs/reports/modal.com.html) | 16 | 7 | 0 | 9 |
-| [rustdesk.com](docs/reports/rustdesk.com.html) | 16 | 6 | 0 | 9 |
-| [deepgram.com](docs/reports/deepgram.com.html) | 19 | 3 | 0 | 15 |
-| [tdengine.com](docs/reports/tdengine.com.html) | 19 | 3 | 0 | 14 |
-| [openstatus.dev](docs/reports/openstatus.dev.html) | 13 | 2 | 0 | 10 |
-| [minimax.io](docs/reports/minimax.io.html) | 9 | 0 | 2 | 6 |
-| [gusto.com](docs/reports/gusto.com.html) | 19 | 0 | 1 | 17 |
+**三份首屏写着「这次扫描不可信」，原因逐条可查**，不是报告写坏了：
 
-**mistral.ai 那份仍然是完整的证据链**：`docs.mistral.ai/llms.txt` 里列的内链
-**75 条死 / 0 条活**，76 条 finding 收敛成 **1 处根因**，每条附 `curl`。
-那部分不依赖缺失的语料。
+- **gusto.com** —— Cloudflare 挡掉 17 个位置（12 条挑战页 + 5 条拦截状态码）。
+  而它的 `llms.txt` 其实是真文件。
+- **mistral.ai** —— 9 个位置 `robots.txt` 禁止抓，8 个撞上默认 120 请求上限。
+  但它那条最值钱的证据不依赖这些：`docs.mistral.ai/llms.txt` 里列的内链
+  **75 条死 / 0 条活**，76 条 finding 收敛成 **1 处根因**，每条附 `curl`。
+- **openstatus.dev** —— 10 个位置 robots 禁止、6 个撞预算，另外 **8 个位置
+  「答案取决于请求头」**（见下面「两把尺子」）。
 
-**这个「不可信」判决本身就是这个工具的重点**：一份主要在说「没能看」的报告，
-比一份把「没能看」写成「没问题」的报告有用。九份全部这么写，是因为语料确实不够
-—— 修的办法是补语料或改成活网跑，不是把判据放松回去。
+核心位置里超过一半无法判断时，报告就这么写，CLI 退出码是 2。
+**把「我们没看到」写成「你没问题」是这类工具最常见的骗法。**
 
 ## 跑一次
 
@@ -116,6 +115,20 @@ robots.txt  遵守（被 Disallow 的位置标「无法评估 · robots 禁止�
 还是只是看起来存在。每一条判定都跟一个**对照探测**：我们同时请求一个随机编造的
 路径（`/geo-audit-probe-<随机十六进制>.txt`），两边一比才下结论。
 拿回来的东西和编造路径拿回来的是同一份骨架 → 那不是你的索引，是你的页面外壳。
+
+**两把尺子**：文本位置还会用 `Accept: */*` 再量一次。原因是我们量出来的 ——
+100 个真实 AI 路径位置里，**9 个的答案取决于请求头**：
+
+    openstatus.dev / dev.wix.com 的 llms.txt
+      带 text/markdown -> 404 几百字节      */* -> 200 真文件
+    ecwid / attio / pipedrive / printify / moderntreasury 的 llms.txt
+      带 text/markdown -> markdown 正文     */* -> HTML 页面壳
+
+第二类更要命：只用一把尺子的话，工具拿到 markdown 就判「通过」，而发 `*/*` 的
+抓取器拿到的是页面壳 —— **正是这个工具专门在找的那种缺陷，被请求头挡住了**。
+两把尺子不一致时这个位置判「无法判断 · 答案取决于请求头」，两边读数各带
+`curl` 复现命令写进报告。我们不替你决定哪一把才算数：那要先有「AI 抓取器实际
+发什么 Accept」的分布数据，而我们没量过。
 
 **② 死链** —— 只报「人和 AI 都会点、点了就 404」的链接，按**根因**归并、按**位置**
 分级。销售路径上的一条和页脚社交图标上的一条，我们不当成同一件事。
