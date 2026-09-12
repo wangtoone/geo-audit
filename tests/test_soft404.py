@@ -664,6 +664,7 @@ def test_rows_without_frozen_case_go_through_the_real_fetch_path(
             f"期望 {want}。{row.get('measured_note') or row['note']}"
         )
         if want_rule is not None:
-            assert cls.reason == want_rule, f"{row['id']}：{row.get('measured_note') or row['note']}"
+            why = row.get("measured_note") or row["note"]
+            assert cls.reason == want_rule, f"{row['id']}：{why}"
     finally:
         fetcher.close()  # type: ignore[attr-defined]

@@ -37,7 +37,7 @@ formatter 排一次 import 就破了「与搬入前 0 行差异」这条验收�
 `test_no_hardcoded_digests_in_tests` 用 grep 守着这条。
 
 补录快照：先把 URL 加进 `fixtures/urls.txt`（语法见文件头的注释：
-裸 URL / `@control` / `@expand` / `@pair`），然后
+裸 URL / `@control` / `@expand` / `@pair` / `@accept-star`），然后
 
 ```bash
 python scripts/capture_fixtures.py --contact you@example.com --from-file fixtures/urls.txt
@@ -51,6 +51,24 @@ python scripts/capture_fixtures.py --contact you@example.com --from-file fixture
 
 已冻结的快照默认**不覆盖**（`put_snapshot(overwrite=False)`）。覆盖它等于改测试：
 要覆盖必须显式 `--overwrite`，且单独一个 commit，message 前缀 `fixture:`。
+
+### 同一个 URL 的两份快照（`@accept-star`）
+
+文本位置要量两把尺子：主尺子 `ACCEPT_TEXT`（里面点名要 `text/markdown`）和
+第二把尺子 `Accept: */*`。实测 100 个 AI 路径位置有 9 个的答案取决于这个头，
+所以两份读数都得有自己的冻结快照。索引键是 `<canon_url> [accept=star]`，
+落盘文件名带 `-accept-star-`。
+
+三条纪律，改这一层之前先读一遍：
+
+1. **变体由请求自己的 Accept 头决定**，不由录制上下文决定。按上下文定会把同一段
+   里发出的 `robots.txt`（它用 `Accept: text/plain`）也打上变体标 —— 那种快照
+   重放时永远取不到。
+2. **缺变体绝不回落到主尺子那份**。回落等于拿 A 的测量结果冒充 B 的，报告会因此
+   说出「两把尺子一致」这句它没资格说的话。缺变体时重放返回 `598`
+   （与「整条 URL 没录过」的 `599` 分开），判定层如实记「没有测量数据」。
+3. **`strict` 只管主尺子**。主尺子缺快照是我们 fixture 不全，必须当场红；
+   第二把尺子缺的是一次对照测量，有诚实的说法。
 
 ### 活网漂移的四分支（§8.1）
 
