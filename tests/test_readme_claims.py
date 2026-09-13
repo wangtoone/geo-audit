@@ -122,9 +122,11 @@ def test_readme_report_links_point_at_the_published_gallery() -> None:
     东西点进去是乱码般的源文件。clone 下来离线看的人走 `docs/` 目录，
     README 里单独说明了，不靠这些链接。
     """
+    # 只管 .html：图片走 ](docs/assets/x.png) 是没问题的（GitHub 直接内联渲染，
+    # 不会打开源码视图）—— 这条守的是「点进去看到的是源码」那个具体毛病。
     bad = [
         line.strip()
         for line in README.read_text(encoding="utf-8").splitlines()
-        if "](docs/" in line
+        if re.search(r"\]\(docs/[^)]*\.html", line)
     ]
     assert bad == [], "这些链接在 GitHub 上会打开源码视图：\n  " + "\n  ".join(bad)

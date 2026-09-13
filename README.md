@@ -4,7 +4,44 @@
 
 不是 SEO 打分，不是「AI 友好度 87 分」。
 
+[![tdengine.com 报告首屏](https://wangtoone.github.io/geo-audit/assets/report-first-screen.png)](https://wangtoone.github.io/geo-audit/reports/tdengine.com.html)
+
+<sub>[tdengine.com 那份](https://wangtoone.github.io/geo-audit/reports/tdengine.com.html)的首屏 · 2026-09-12 活网跑 · 数字会随重跑变化，这张是当时的快照 · [另外八份](https://wangtoone.github.io/geo-audit/)</sub>
+
 两个实测数字说明它跟同类工具的差别在哪。
+
+---
+
+## English (short version)
+
+**Give it a domain, get one self-contained HTML report: which places on your
+site an AI crawler reads wrong, or cannot read at all.** Not an "AI-friendliness
+score" — every finding names a position, a root cause, and ships a `curl` command
+that reproduces it.
+
+```
+uvx geo-audit yourdomain.com --contact you@yourco.com
+```
+
+- **Zero LLM in the judgment path.** `llm_calls` is always 0 and a CI gate greps
+  for it. Same input, same verdict. LLMs are allowed to ask questions and draft
+  suggestions — never to decide whether something is a defect.
+- **Every verdict comes with a control probe.** We request an invented path
+  (`/geo-audit-probe-<hex>.txt`) on the same host and compare. A response that
+  looks like the invented one is your page shell, not your index file.
+- **Measured, not claimed:** on the same 42 dead-link candidates, judging by
+  first-hop status code gives **40.5% false positives**; this tool gives
+  **3.85%, with zero misses**. `scripts/fp_gate.py` recomputes it on every CI run.
+- **"Cannot tell" is its own state, never folded into "pass."** Three of the nine
+  published reports open with *"this scan is not trustworthy"* — because they are.
+- Politeness is not optional: 1 request / 2s per domain (`--rate` only slows it
+  down), `robots.txt` respected, contact e-mail required in the User-Agent,
+  no WAF bypassing, no CAPTCHA solving, no residential proxies.
+
+Nine real scans of real sites: **<https://wangtoone.github.io/geo-audit/>**.
+Docs, report copy and code comments are in Chinese; the CLI and report are too.
+
+---
 
 ## 一、去噪：假阳性 40.5% → 3.85%，漏报 0
 
