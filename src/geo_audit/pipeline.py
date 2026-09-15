@@ -1134,6 +1134,34 @@ def _progress_state(status: Status) -> str:
     }[status]
 
 
+def _index_links_status(report: IndexLinkReport) -> Status:
+    """判不了的内链占多数时，这一格是 UNKNOWN，不是 PASS。
+
+    ``grade()`` 按 §4.3:2135 把 unknown 剔出分母 —— 那个口径对**严重度**是对的
+    （2 条死链不该因为旁边有 40 条没测到就升级成 HIGH），但它让位置状态只由
+    「测到的那几条」决定。于是 49 条内链里 42 条判不了、7 条里 2 条是死链的
+    那一格，状态是 PASS。
+
+    PASS 会一路传到首屏：``make_headline`` 只看 ``positions_unknown``，
+    而这 42 条 unknown 在位置四格里一个都不出现，于是整份报告落到
+    ``zero_clean`` —— 首屏那句话变成「N 个位置全部通过」。
+    **那正是 README 第二节点名的那种骗法**：把「我们没看到」写成「你没问题」。
+    实测 open-design.ai 两轮，底层的 42 条 unknown 一条没变，首屏却从
+    「抽样率 12.7%，不能外推」翻成了「全部通过」。
+
+    阈值取「判不了的比测到的多」，跟 ``make_headline`` 里「核心位置超过一半
+    无法判断 → 这次扫描不可信」是同一条线，不另立新口径。
+
+    已经判成 FAIL 的不翻转：「这个位置会被读错」比「判不了」信息量更大，
+    而那些 unknown 会由调用点记进覆盖缺口，不会消失。
+    """
+    if report.status is Status.FAIL:
+        return report.status
+    if report.n_unknown > report.n_alive + report.n_dead:
+        return Status.UNKNOWN
+    return report.status
+
+
 def _stage_index_links(
     st: RunState, options: AuditOptions, fetcher: Fetcher, prog: ProgressSink
 ) -> None:
@@ -1195,7 +1223,11 @@ def _stage_index_links(
             continue  # 格子留 UNKNOWN(not_fetched)
         host = (urlsplit(probe.url).hostname or "").lower()
         report = probe_index_links(
-            options.domain, probe, fetcher=fetcher, control=st.controls.get(host)
+            options.domain,
+            probe,
+            fetcher=fetcher,
+            control=st.controls.get(host),
+            full=options.index_links_full,
         )
         st.index_reports.append(report)
         st.requests_made += len(report.probed)
@@ -1244,6 +1276,7 @@ def _stage_index_links(
             f"{report.n_unknown} 判不了"
         )
         reason = report.unknown_reasons[0] if report.unknown_reasons else "not_fetched"
+        status = _index_links_status(report)
         _fill(
             st,
             PositionResult(
@@ -1252,19 +1285,37 @@ def _stage_index_links(
                     key=key,
                     kind="aggregate",
                     probe_url=key,
-                    status=report.status,
+                    status=status,
                     detail=detail,
                     aggregate_of=report.n_links,
-                    unknown_reason=reason if report.status is Status.UNKNOWN else None,
+                    unknown_reason=reason if status is Status.UNKNOWN else None,
                     unknown_remedy=(
-                        UNKNOWN_REMEDY.get(reason) if report.status is Status.UNKNOWN else None
+                        UNKNOWN_REMEDY.get(reason) if status is Status.UNKNOWN else None
                     ),
                 ),
                 evidence=evidence_of(resp, user_agent=fetcher.user_agent),
                 finding_ids=tuple(f.finding_id for f in findings),
             ),
         )
-        prog.row(_progress_state(report.status), key, detail)
+        if report.n_unknown:
+            # 少数判不了的链接不翻转这一格，但**一条都不许静默**：
+            # 位置四格里看不见它们，覆盖披露里必须看得见。
+            st.coverage_gaps.append(
+                CoverageGap(
+                    where=f"④ 索引内链存活 · {report.index_url}",
+                    reason=reason,
+                    detail=(
+                        f"这份索引的 {report.n_links} 条内链里，"
+                        f"{report.n_unknown} 条我们没能判定存活（{reason}）。"
+                        f"本格的「{report.n_alive} 活 / {report.n_dead} 死」"
+                        f"只覆盖其余 {report.n_alive + report.n_dead} 条。"
+                    ),
+                    remedy=UNKNOWN_REMEDY.get(
+                        reason, "这些链接的存活结论缺失，不要当成「都活着」。"
+                    ),
+                )
+            )
+        prog.row(_progress_state(status), key, detail)
     # 索引内链的根因归并（§5.4）。放在这一段的收尾：此时本段全部死链实例已收齐。
     # mistral 的 75 条内链归成 1 条根因 —— 它们全部来自同一份 llms.txt 的同一次
     # 路径迁移，报 75 条等于把「改 1 处修 75 条」拆成 75 个待办。

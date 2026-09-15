@@ -212,6 +212,42 @@ def redirect_discarded_path(
     return None
 
 
+def _truncation_is_decidable(status: int, control: HostProfile | None) -> bool:
+    """截断的正文还能不能判？**只有一种情况能：对照探测用状态码区分。**
+
+    ``body_truncated`` 原来是一条无条件短路 —— 正文被截断就判 UNKNOWN。那条规则
+    本身有道理：L3 的「与对照页同一个壳」靠的是归一化正文哈希与相似度，拿截断的
+    正文去比会得出「不相同」，于是一个兜底页会被放过成 OK。**那是假通过，比误判更坏。**
+
+    但它一刀切得太宽，代价在实测里出现两次：
+
+      * 阶段 ⑦ 找替代地址：75 条候选里 73 条判成 UNKNOWN/body_truncated
+        （见 ``pipeline._stage_fix_candidates`` 里那段注释），当时的修法是改用
+        完整内容路径 —— 对那一段是对的，因为「这页适不适合当替代」是内容问题。
+      * 阶段 ④ 索引内链存活：open-design.ai 的 llms.txt 49 条内链里 **42 条**
+        判成 UNKNOWN/body_truncated。它的页面正好卡在 ``LIVENESS_BYTE_CAP``
+        的 64 KiB 上。而「这条链接在不在」是**存活**问题，不是内容问题 ——
+        手动逐条复核：43 条 200、2 条 404，工具一条都没能判。
+
+    区别在这里：当同域对照探测（一条编造出来的路径）返回**非 2xx** 时，
+    这个 host 是用状态码区分「存在」与「不存在」的。那么目标返回 2xx 这件事
+    本身就是答案，**指纹不是必需的**，截不截断都不影响这个推理。
+
+    反过来，对照探测也返回 2xx 的 host（platform.kimi.ai 对 /docs/<任意>
+    都回 Quickstart 页）只能靠正文指纹区分 —— 那里截断确实让判定失去依据，
+    必须继续返回 UNKNOWN。``liveness_only`` 的响应连 digest 都没算
+    （``finalize_response(want_digests=not liveness_only)``），更没有别的出路。
+
+    所以放行条件是三个且缺一不可：2xx、对照探测可用、对照探测用状态码区分。
+    """
+    return (
+        200 <= status < 300
+        and control is not None
+        and control.usable
+        and control.status_discriminates
+    )
+
+
 def classify_response(
     status: int,
     headers: dict[str, str],
@@ -362,11 +398,13 @@ def classify_response(
             (f"HTTP {status}，服务端错误，无法判定内容是否存在",),
         )
 
-    if body_truncated:
+    if body_truncated and not _truncation_is_decidable(status, control):
         return Classification(
             Verdict.UNKNOWN,
             "body_truncated",
             (f"响应体超过读取上限被截断（{len(body)} 字符），不做指纹判定",),
+            control_used=control is not None,
+            control_discriminates=(control.status_discriminates if control else None),
         )
 
     evidence: list[str] = []
@@ -454,6 +492,12 @@ def classify_response(
                 f"对照探测 {control.probe_url} 返回 HTTP {control.status} / "
                 f"{control.content_type or '未声明'}，与本响应可区分，判为真实内容"
             )
+            if body_truncated:
+                # 披露：这一条是靠状态码判的，正文没读全，没做指纹。
+                evidence.append(
+                    f"正文超过读取上限被截断（{len(body)} 字符），本条判定只用状态码"
+                    f"与对照探测，未做正文指纹"
+                )
             js = detect_js_dependency(status, headers, body, url=url)
             if js.required and expect is Expect.HTML_PAGE:
                 return Classification(
