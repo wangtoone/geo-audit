@@ -711,9 +711,19 @@ def sampled_ratio(cov: Coverage) -> float:
 
 
 def make_headline(
-    c: Counts, *, has_ai_channel: bool, sampled_ratio: float, interrupted: bool
+    c: Counts,
+    *,
+    has_ai_channel: bool,
+    sampled_ratio: float,
+    interrupted: bool,
+    index_links_unresolved: int = 0,
+    index_links_unprobed: int = 0,
 ) -> tuple[str, VerdictKind]:
-    """§6.1:3074 六分支逐字，互斥且穷尽。返回 ``(headline, verdict_kind)``。"""
+    """§6.1:3074 六分支逐字，互斥且穷尽。返回 ``(headline, verdict_kind)``。
+
+    ``index_links_unresolved`` 是后加的第七条，插在 ``zero_clean`` 之前
+    —— 规格那六条谁也没覆盖「探了但没判出来的索引内链」这一格，见下面的注释。
+    """
     core = max(c.positions - c.positions_na, 1)
 
     if interrupted:  # 卡点 B24：中断优先于一切
@@ -750,6 +760,29 @@ def make_headline(
     if sampled_ratio < 0.5:
         return (
             f"抽到的链接里没有发现问题。抽样率 {sampled_ratio:.1%}，这个结论不能外推到全站。",
+            "zero_with_unknown",
+        )
+    if index_links_unresolved or index_links_unprobed:
+        # 位置四格全绿、抽样率也够，但索引里还有链接**探过、没判出来**。
+        #
+        # 这些链接在四格里不可见（一份索引是 1 格，那一格只能有一个状态），
+        # 也不在 ``sampled_ratio`` 里（它的分子把 unknown 算作「已覆盖」，
+        # 量的是有没有去探，不是探出结论没有）。两条既有出口都漏。
+        #
+        # ``_index_links_status`` 只在 unknown 占多数时把那一格翻成 UNKNOWN。
+        # 少数的情形照旧是 PASS —— 那是有意的（少数判不了不该让整格作废），
+        # 但少数也不等于零：49 条里 24 条判不了、剩下 25 条全活，
+        # 首屏原来照样写「全部通过」。那还是「把我们没看到写成你没问题」，
+        # 只是量小一点。
+        #
+        # 所以 ``zero_clean`` 的门槛是**零条未决**，不是「大部分有结论」。
+        parts = []
+        if index_links_unresolved:
+            parts.append(f"{index_links_unresolved} 条我们探过、没能判出存活")
+        if index_links_unprobed:
+            parts.append(f"{index_links_unprobed} 条因为抽样一个请求都没发")
+        return (
+            f"没有发现被读错的位置。但索引内链里{'，'.join(parts)}，所以这不能算「全部通过」。",
             "zero_with_unknown",
         )
     return (
@@ -1869,6 +1902,8 @@ def _assemble(
         links_unknown=st.links_unknown,
         pages_fetched=st.pages_fetched,
         index_links_sampled=st.index_links_sampled,
+        index_links_unresolved=sum(r.n_unknown for r in st.index_reports),
+        index_links_unprobed=sum(max(0, r.sampled_of - len(r.probed)) for r in st.index_reports),
         sampling_note=st.sampling_note,
         robots_respected=not options.ignore_robots,
         requests_made=st.requests_made + (sitemap.requests_spent if sitemap is not None else 0),
@@ -1882,6 +1917,8 @@ def _assemble(
         has_ai_channel=channel,
         sampled_ratio=sampled_ratio(coverage),
         interrupted=interrupted,
+        index_links_unresolved=coverage.index_links_unresolved,
+        index_links_unprobed=coverage.index_links_unprobed,
     )
     return Report(
         schema_version=SCHEMA_VERSION,

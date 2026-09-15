@@ -162,6 +162,12 @@
         "index_links_sampled": {
           "type": "boolean"
         },
+        "index_links_unprobed": {
+          "type": "integer"
+        },
+        "index_links_unresolved": {
+          "type": "integer"
+        },
         "interrupted": {
           "type": "boolean"
         },
