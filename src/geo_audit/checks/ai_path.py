@@ -1058,7 +1058,9 @@ def parse_index_links(text: str, base_url: str) -> list[IndexLink]:
     return sorted(out, key=lambda link: link.line_no)
 
 
-def sample_index_links(links: list[IndexLink], *, domain: str = "") -> tuple[list[IndexLink], bool]:
+def sample_index_links(
+    links: list[IndexLink], *, domain: str = "", full: bool = False
+) -> tuple[list[IndexLink], bool]:
     """<= 120 条：全量。> 120 条：确定性分层抽 60 条 = 前 20 + 中段等距 20 + 后 20。
 
     不用纯随机：死链集中在「旧路径前缀」和「文件尾部新增条目」两处。中段的
@@ -1066,8 +1068,12 @@ def sample_index_links(links: list[IndexLink], *, domain: str = "") -> tuple[lis
 
     ``domain`` 在函数体里用不到（抽样与域名无关，spec_gaps 第 23 条），保留是为了
     跟规格签名一致；给了默认值，调用点不必编一个。
+
+    ``full`` = CLI 的 ``--index-links-full``：跳过阈值，一律全量。这个开关原来
+    只到 ``AuditOptions.index_links_full`` 为止，**全仓没有第二个读它的地方** ——
+    帮助文案写着「一律全量验证」，实际一条链接都没多验。
     """
-    if len(links) <= INDEX_LINKS_FULL_THRESHOLD:
+    if full or len(links) <= INDEX_LINKS_FULL_THRESHOLD:
         return links, False
     head, tail = links[:20], links[-20:]
     mid = links[20:-20]
@@ -1186,6 +1192,7 @@ def probe_index_links(
     control: HostProfile | None = None,
     mechanism_probe: Probe | None = None,
     user_agent: str = "",
+    full: bool = False,
 ) -> IndexLinkReport:
     """抽取 → 去噪 → 抽样 → 探活 → 分级。**探测前必须过一遍去噪表**：saleor 的
     ``.../docs/{path}.mdx`` 只有 ``url_template_placeholder`` 这一条路能排除
@@ -1214,7 +1221,7 @@ def probe_index_links(
             continue
         eligible.append(link)
 
-    sample, sampled = sample_index_links(eligible, domain=domain)
+    sample, sampled = sample_index_links(eligible, domain=domain, full=full)
     results = (
         fetcher.probe_many([link.abs_url for link in sample], expect=Expect.ANY, liveness_only=True)
         if sample
