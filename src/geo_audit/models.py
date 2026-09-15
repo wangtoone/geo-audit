@@ -1041,6 +1041,22 @@ class Coverage:
     links_unknown: int = 0
     pages_fetched: int = 0
     index_links_sampled: bool = False
+    #: 索引内链里**探了但没能判出存活**的条数（跨全部索引文件求和）。
+    #:
+    #: 为什么单独记一格：这些链接在位置四格里一个都不出现 —— 一份索引是 1 格，
+    #: 那一格的状态只能有一个。于是 49 条里 42 条判不了也能报 PASS，整份报告
+    #: 落到 ``zero_clean``，首屏写「全部通过」。``sampled_ratio`` 也救不了：
+    #: 它的分子是 ``links_verified + links_unknown``，量的是「有没有去探」，
+    #: 不是「探出结论没有」，而且分母只收可点击路径那一段的链接。
+    index_links_unresolved: int = 0
+    #: 索引内链里**一个请求都没发**的条数：超过 120 条阈值后被抽样丢掉的那些
+    #: （去噪排除的不算，它们各自进 ``excluded``）。
+    #:
+    #: 和 ``index_links_unresolved`` 是两种状态，所以分两格记：那边是「探了，
+    #: 没判出来」，这边是「没探」。两者都不进位置四格，也都不进 ``sampled_ratio``
+    #: —— 实测 modal.com 的 llms.txt 有 308 条内链，抽样只探 60 条，
+    #: 剩下 248 条在报告里没有任何一个数字代表它们。
+    index_links_unprobed: int = 0
     sampling_note: str = ""
     robots_respected: bool = True
     #: 逻辑 URL 计数（同一 URL 只算一次、对照探针按 host 算一次）。

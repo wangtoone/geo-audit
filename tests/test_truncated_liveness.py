@@ -29,8 +29,8 @@ from geo_audit.checks.ai_path import (
     sample_index_links,
 )
 from geo_audit.fetch.classify import classify_response
-from geo_audit.models import Expect, HostProfile, Severity, Status, Verdict
-from geo_audit.pipeline import _index_links_status
+from geo_audit.models import Counts, Expect, HostProfile, Severity, Status, Verdict
+from geo_audit.pipeline import _index_links_status, make_headline
 
 #: 一个超过 LIVENESS_BYTE_CAP 的正文被截断后剩下的样子：只有开头那一截。
 #: 内容刻意不含任何「找不到」文案，也不含 HTML —— 单看它判不出任何东西，
@@ -248,3 +248,115 @@ def test_clean_cells_stay_pass() -> None:
     """零 unknown 的一格原样通过 —— 改动不许给干净的报告加噪声。"""
     report = _report(alive=47, dead=2, unknown=0, status=Status.PASS)
     assert _index_links_status(report) is Status.PASS
+
+
+# --------------------------------------------------------------------------- #
+# 缺陷三之二 · zero_clean 的门槛是「零条未决」，不是「大部分有结论」
+# --------------------------------------------------------------------------- #
+
+
+def _clean_counts(**over: int) -> Counts:
+    """位置四格全绿的一份 Counts：7 通过、0 读错、0 判不了。"""
+    base: dict[str, object] = {
+        "positions": 15,
+        "positions_pass": 7,
+        "positions_fail": 0,
+        "positions_unknown": 0,
+        "positions_na": 8,
+        "findings": 0,
+        "findings_counted": 0,
+        "occurrences": 0,
+        "root_causes": 0,
+        "by_severity": {},
+        "naive_divergences": 0,
+    }
+    base.update(over)
+    return Counts(**base)  # type: ignore[arg-type]
+
+
+def _headline(unresolved: int, *, ratio: float = 1.0, unprobed: int = 0) -> tuple[str, str]:
+    return make_headline(
+        _clean_counts(),
+        has_ai_channel=True,
+        sampled_ratio=ratio,
+        interrupted=False,
+        index_links_unresolved=unresolved,
+        index_links_unprobed=unprobed,
+    )
+
+
+def test_zero_unresolved_index_links_is_the_only_way_to_zero_clean() -> None:
+    """一条未决都没有才算「全部通过」。"""
+    headline, kind = _headline(0)
+    assert kind == "zero_clean"
+    assert "全部通过" in headline
+
+
+def test_a_minority_of_unresolved_index_links_still_blocks_zero_clean() -> None:
+    """49 条里 24 条判不了：``_index_links_status`` 不翻格（少数不作废），
+    ``sampled_ratio`` 也看不见（它的分子把 unknown 算作已覆盖，而且只收
+    可点击路径那一段）。没有这一条，首屏照样写「全部通过」。
+    """
+    headline, kind = _headline(24)
+    assert kind == "zero_with_unknown"
+    assert "24" in headline
+    assert "全部通过" not in headline.replace("不能算「全部通过」", "")
+
+
+def test_one_unresolved_link_is_enough() -> None:
+    """门槛是零，不是某个比例 —— 1 条也挡。"""
+    assert _headline(1)[1] == "zero_with_unknown"
+
+
+def test_existing_branches_keep_priority() -> None:
+    """新分支插在 zero_clean 之前，前面六条谁也不让位。"""
+    # 位置级 unknown 仍然先说话（那句文案讲的是位置，不是链接）。
+    headline, kind = make_headline(
+        _clean_counts(positions_unknown=3),
+        has_ai_channel=True,
+        sampled_ratio=1.0,
+        interrupted=False,
+        index_links_unresolved=24,
+    )
+    assert kind == "zero_with_unknown"
+    assert "3 个位置" in headline
+    # 抽样率不足也先说话。
+    headline, kind = _headline(24, ratio=0.127)
+    assert kind == "zero_with_unknown"
+    assert "抽样率" in headline
+    # 有读错的位置永远优先。
+    headline, kind = make_headline(
+        _clean_counts(positions_fail=2),
+        has_ai_channel=True,
+        sampled_ratio=1.0,
+        interrupted=False,
+        index_links_unresolved=24,
+    )
+    assert kind == "has_fail"
+
+
+def test_default_keeps_the_old_behaviour() -> None:
+    """不传这个参数时行为与改动前逐字相同（调用点漏传不会静默改判）。"""
+    assert make_headline(
+        _clean_counts(), has_ai_channel=True, sampled_ratio=1.0, interrupted=False
+    ) == _headline(0)
+
+
+def test_sampled_away_index_links_also_block_zero_clean() -> None:
+    """modal.com 实测：308 条内链，超阈值抽 60 条，**剩下 248 条一个请求都没发**。
+
+    它们不在 ``n_unknown``（没探过就没有判定），不在位置四格，也不在
+    ``sampled_ratio``（那个分母只收可点击路径那一段）。报告里原来没有任何
+    一个数字代表这 248 条，首屏却可以写「全部通过」。
+    """
+    headline, kind = _headline(0, unprobed=248)
+    assert kind == "zero_with_unknown"
+    assert "248" in headline
+    assert "抽样" in headline
+
+
+def test_both_kinds_are_named_separately() -> None:
+    """「探了没判出来」和「没探」是两种状态，首屏要分开说，不许合成一个数。"""
+    headline, _ = _headline(33, unprobed=248)
+    assert "33" in headline and "248" in headline
+    assert "没能判出存活" in headline and "一个请求都没发" in headline
