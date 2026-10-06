@@ -611,6 +611,13 @@ def print_naive_table(report: Report) -> None:
 
 def main(argv: Sequence[str] | None = None) -> int:
     """返回进程退出码。决策顺序见 §7.1 与 §7.5。"""
+    args_in = list(sys.argv[1:] if argv is None else argv)
+    if args_in and args_in[0] == "page":
+        # 子命令：单页原始 HTML 检查。「page」不是合法域名（没有点），不会与整站体检的
+        # 位置参数 DOMAIN 冲突。
+        from geo_audit.pagecli import main as page_main
+
+        return page_main(args_in[1:])
     parser = build_parser()
     try:
         return _run(parser, argv)
