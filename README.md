@@ -159,6 +159,21 @@ robots.txt  遵守（被 Disallow 的位置标「无法评估 · robots 禁止�
 不用装任何东西。（那个 workflow **刻意不自动发到 Pages**：把别人家域名的体检结果
 推成公开页面，是我们没有权利做的事。artifact 保留 30 天，谁跑谁看。）
 
+## 两个单点子命令
+
+不走整站体检，只看你点名的东西；不改报告格式，输出自成一份小 JSON（`--json`）。
+
+    # 一个页面的原始 HTML（不跑 JS，多数 AI 爬虫看到的那份）+ 对账你的期望
+    uvx geo-audit page https://yourdomain.com/pricing --contact you@yourco.com \
+        --h1-contains "Pricing" --schema Product --price 20 --no-js-shell
+
+    # robots.txt 对各家 AI 爬虫（训练 / 检索 / 实时抓取）分别怎么说，哪一组规则决定了它
+    uvx geo-audit robots yourdomain.com --contact you@yourco.com
+
+两条都沿用同一套抓取约束（≤0.5 req/s、遵守 robots、带联系邮箱的诚实 UA、不冒充任何爬虫），
+**没抓到 / 被拦 / 没读到就是「无法判断」，不是通过也不是失败**（退出码 3）。
+`robots` 报的是事实：「拦训练、放检索」是正当策略，不算缺陷。
+
 ## 它只查两类东西，都是零 LLM 的机械判定
 
 报告里 `llm_calls` 恒等于 0，且有 CI 门禁 grep 着判定层不许出现任何 LLM 调用。
