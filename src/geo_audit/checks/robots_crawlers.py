@@ -160,17 +160,37 @@ class _Rule:
     raw: str  # 规则行原文（去注释、去首尾空白后）
 
     def matches(self, path: str) -> bool:
-        return _compile(self.pattern).match(path) is not None
+        return _glob(self.pattern, path)
 
 
 _RULE_LINE = re.compile(r"^\s*([A-Za-z-]+)\s*:\s*(.*?)\s*$")
 
 
-def _compile(pattern: str) -> re.Pattern[str]:
+def _glob(pattern: str, path: str) -> bool:
+    """RFC 9309 路径匹配：``*`` 通配任意串，末尾 ``$`` 锚定。**线性、不回溯。**
+
+    原来是把模式编成正则（``*`` → ``.*``）再 ``re.match``：多个 ``*`` 时回溯是
+    路径长度的 n 次方（4 个 ``*a`` 对 300 字符的路径要 9 秒，5 个跑不完）。
+    robots.txt 是**别人站点上的不受信文本**，这不能当成「极端输入」。
+    做法：按 ``*`` 切段，首段必须是前缀，中间各段贪心 ``find``，末段在锚定时必须贴尾。
+    """
     anchored = pattern.endswith("$")
-    body = pattern[:-1] if anchored else pattern
-    rx = ".*".join(re.escape(part) for part in body.split("*"))
-    return re.compile(rx + ("$" if anchored else ""), re.DOTALL)
+    parts = (pattern[:-1] if anchored else pattern).split("*")
+    first = parts[0]
+    if not path.startswith(first):
+        return False
+    if len(parts) == 1:
+        return path == first if anchored else True
+    pos = len(first)
+    for mid in parts[1:-1]:
+        at = path.find(mid, pos)
+        if at < 0:
+            return False
+        pos = at + len(mid)
+    last = parts[-1]
+    if anchored:
+        return path.endswith(last) and len(path) - len(last) >= pos
+    return path.find(last, pos) >= 0
 
 
 def parse_robots(text: str) -> dict[str, list[_Rule]]:
@@ -178,7 +198,7 @@ def parse_robots(text: str) -> dict[str, list[_Rule]]:
     groups: dict[str, list[_Rule]] = {}
     current: list[str] = []  # 当前组的 agent 列表
     in_agents = False  # 上一行是不是 User-agent（连续的 UA 行共享一组）
-    for line in text.lstrip("﻿").splitlines():
+    for line in re.split(r"\r\n|\r|\n", text.lstrip(chr(0xFEFF))):
         content = line.split("#", 1)[0]
         m = _RULE_LINE.match(content)
         if not m:
@@ -191,9 +211,14 @@ def parse_robots(text: str) -> dict[str, list[_Rule]]:
             groups.setdefault(value.lower(), [])
             in_agents = True
             continue
+        if field not in ("allow", "disallow"):
+            # Sitemap / Crawl-delay / 未知字段**不结束** User-agent 列表（Google 参考解析器
+            # 同样）：``User-agent: A`` ``Crawl-delay: 5`` ``User-agent: B`` ``Disallow: /``
+            # 里 A 和 B 是同一组。只有 Allow / Disallow（哪怕值为空）才结束它。
+            continue
         in_agents = False
-        if field not in ("allow", "disallow") or not current or not value:
-            continue  # 无主规则 / 空规则 / 别的字段（Sitemap、Crawl-delay …）
+        if not current or not value:
+            continue  # 无主规则 / 空规则
         rule = _Rule(allow=(field == "allow"), pattern=value, raw=f"{m.group(1)}: {value}")
         for agent in current:
             groups[agent].append(rule)
@@ -215,15 +240,25 @@ def _decide(rules: Iterable[_Rule], path: str) -> _Rule | None:
     return best
 
 
+#: 判「全站不许」时探的路径。只看根路径会把 ``Disallow: /$``（只禁根页面本身）读成全站禁止。
+_BLOCK_PROBES = ("/", "/a", "/a/b/c")
+
+
 def _classify(rules: list[_Rule]) -> tuple[Access, str]:
     disallows = [r for r in rules if not r.allow]
     if not disallows:
         return Access.ALLOWED, ""
     root = _decide(rules, "/")
+    # 只放行 /robots.txt 的 Allow 不算「开了口子」：内容照样进不去。
+    reopening = [r for r in rules if r.allow and r.pattern != "/robots.txt"]
+    if (
+        root is not None
+        and not root.allow
+        and not reopening
+        and all((h := _decide(rules, p)) is not None and not h.allow for p in _BLOCK_PROBES)
+    ):
+        return Access.BLOCKED_ALL, root.raw
     if root is not None and not root.allow:
-        # 根被禁。有没有任何 Allow 能重新开口？没有 = 全站不许。
-        if not any(r.allow for r in rules):
-            return Access.BLOCKED_ALL, root.raw
         return Access.PARTIAL, root.raw
     return Access.PARTIAL, disallows[0].raw
 

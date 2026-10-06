@@ -136,7 +136,10 @@ def test_wildcard_and_end_anchor() -> None:
 
 
 def test_comments_bom_crlf_and_orphan_rules() -> None:
-    raw = "﻿Disallow: /orphan\r\n# c\r\nUser-agent: GPTBot # inline\r\nDisallow: / # all\r\n"
+    raw = (
+        chr(0xFEFF)
+        + "Disallow: /orphan\r\n# c\r\nUser-agent: GPTBot # inline\r\nDisallow: / # all\r\n"
+    )
     assert _answer(raw, "GPTBot").access is Access.BLOCKED_ALL
     # 第一组之前的规则无主，不会漏给任何人
     assert _answer(raw, "CCBot").access is Access.ALLOWED
@@ -234,3 +237,73 @@ def test_corpus_root_decision_matches_stdlib_robotparser() -> None:
             if mine != std:
                 disagreements.append(f"{url} {c.token}: mine={mine} stdlib={std}")
     assert disagreements == []
+
+
+# ── 独立 review 查出并复现的四处缺陷（每条先在修复前复现过）───────────────────
+def test_root_only_disallow_is_not_a_site_wide_block() -> None:
+    # `/$` 只禁根页面本身；/about 照样能抓
+    raw = "User-agent: *\nDisallow: /$\n"
+    a = _answer(raw, "OAI-SearchBot")
+    assert a.access is Access.PARTIAL
+    assert judge_path(raw, "OAI-SearchBot", "/") is False
+    assert judge_path(raw, "OAI-SearchBot", "/about") is True
+    # 对照：真的全站禁止仍是 blocked_all，`/*` 也是
+    assert _answer("User-agent: *\nDisallow: /\n", "GPTBot").access is Access.BLOCKED_ALL
+    assert _answer("User-agent: *\nDisallow: /*\n", "GPTBot").access is Access.BLOCKED_ALL
+
+
+def test_allow_robots_txt_alone_does_not_reopen_the_site() -> None:
+    raw = "User-agent: *\nDisallow: /\nAllow: /robots.txt\n"
+    assert _answer(raw, "GPTBot").access is Access.BLOCKED_ALL
+    # 但 Allow 了真内容路径就不是了
+    raw2 = "User-agent: *\nDisallow: /\nAllow: /docs/\n"
+    assert _answer(raw2, "GPTBot").access is Access.PARTIAL
+
+
+def test_non_rule_field_between_user_agents_does_not_split_the_group() -> None:
+    raw = "User-agent: GPTBot\nCrawl-delay: 5\nUser-agent: ClaudeBot\nDisallow: /\n"
+    assert _answer(raw, "GPTBot").access is Access.BLOCKED_ALL
+    assert _answer(raw, "ClaudeBot").access is Access.BLOCKED_ALL
+    raw2 = "User-agent: GPTBot\nSitemap: https://x.test/s.xml\nUser-agent: ClaudeBot\nDisallow: /\n"
+    assert _answer(raw2, "GPTBot").access is Access.BLOCKED_ALL
+    # 但 Allow / Disallow（哪怕值是空的）会结束 UA 列表
+    raw3 = "User-agent: GPTBot\nDisallow:\nUser-agent: ClaudeBot\nDisallow: /\n"
+    assert _answer(raw3, "GPTBot").access is Access.ALLOWED
+    assert _answer(raw3, "ClaudeBot").access is Access.BLOCKED_ALL
+
+
+def test_many_wildcards_do_not_backtrack_catastrophically() -> None:
+    import time
+
+    raw = "User-agent: *\nDisallow: /" + "*a" * 10 + "*b\n"
+    started = time.monotonic()
+    assert judge_path(raw, "GPTBot", "/" + "a" * 3000) is True  # 没有 b → 不匹配 → 允许
+    assert time.monotonic() - started < 1.0
+
+
+def test_unicode_line_separators_do_not_cut_rules() -> None:
+    # str.splitlines 会在 \x85 / \x0b / \x0c 处断行，robots.txt 只认 CR / LF / CRLF
+    raw = "User-agent: *\nDisallow: /a\x85Allow: /\n"
+    assert judge_path(raw, "GPTBot", "/b") is True
+    assert parse_robots(raw)["*"][0].pattern == "/a\x85Allow: /"
+
+
+def test_glob_matcher_agrees_with_the_regex_it_replaced() -> None:
+    """旧实现（``*``→``.*`` 的正则）当参照：小字母表上穷举，两边必须逐个一致。"""
+    import itertools
+    import re
+
+    from geo_audit.checks.robots_crawlers import _glob
+
+    def regex(pattern: str, path: str) -> bool:
+        anchored = pattern.endswith("$")
+        body = pattern[:-1] if anchored else pattern
+        rx = ".*".join(re.escape(part) for part in body.split("*"))
+        return re.compile(rx + ("$" if anchored else ""), re.DOTALL).match(path) is not None
+
+    pat_alpha = "/ab*$"
+    pats = {"".join(c) for n in range(1, 6) for c in itertools.product(pat_alpha, repeat=n)}
+    paths = {"/" + "".join(c) for n in range(0, 6) for c in itertools.product("ab", repeat=n)}
+    assert len(pats) > 500 and len(paths) > 50
+    bad = [(p, q) for p in pats for q in paths if _glob(p, q) != regex(p, q)]
+    assert bad[:5] == []
