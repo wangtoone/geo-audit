@@ -366,7 +366,10 @@ def is_dead(
     并且必须先过 waf_challenge / third_party_no_control / geo_redirect /
     network_timeout / upstream_error / host_unprobeable / login_wall
     —— 那七条在 :func:`classify_link` 里跑，本函数假设它们已经放行。
-    202 算 ALIVE（app.baseten.co 系列返 202）；400/405/451/5xx 一律 UNKNOWN。
+    没有挑战头的 202 算 ALIVE；400/405/451/5xx 一律 UNKNOWN。
+    （这一条原来的出处写的是「app.baseten.co 系列返 202」。2026-10-07 实测那些 202 是
+    AWS WAF 的挑战页（202 + ``x-amzn-waf-action: challenge``），不是内容 —— 现在由
+    ``is_blocked`` 先拦下、走 waf_challenge 判 UNKNOWN，到不了这里。）
 
     ⚠️ 卡点 S4：命中 ``disposition == "needs_review"`` 的规则（目前只有
     ``class_hidden_anchor``）**不改变本函数的结论**，只置
@@ -431,6 +434,18 @@ def _is_challenge(probe: Probe) -> bool:
     if probe.classification.verdict is Verdict.BLOCKED:
         return True
     return resp.status in fp.BLOCKED_STATUSES
+
+
+def _alive_probe(probe: Probe | None) -> bool:
+    """这个探针能不能当「host 活着」的证据：2xx **且不是挑战页**。
+
+    被挑战的 2xx 不是活着的证据：AWS WAF 的 Challenge 就是 202（加 ``x-amzn-waf-action``
+    头），拿它当存活对照，会让同 host 上一条诚实的 404 因为「根路径是活的」而被判成
+    **DEAD** —— 而那个根路径根本没被我们读到。
+    """
+    if probe is None or probe.response is None:
+        return False
+    return 200 <= probe.response.status < 300 and not _is_challenge(probe)
 
 
 def _hostile_400(url: str, probe: Probe) -> bool:
@@ -568,7 +583,7 @@ def _host_facts(
 
     root_status = root.response.status if root is not None and root.response is not None else None
     alive: tuple[tuple[str, int], ...] = ()
-    if root_status is not None and 200 <= root_status < 300:
+    if root_status is not None and _alive_probe(root):
         alive = ((root_url, root_status),)
     facts = HostFacts(
         host=host,
@@ -612,7 +627,7 @@ def _collect_confirmations(
             continue
         probe = _probe(cand, fetcher=fetcher, client=client)
         spent += 1
-        if probe is not None and probe.response is not None and 200 <= probe.response.status < 300:
+        if probe is not None and probe.response is not None and _alive_probe(probe):
             out.append((cand, probe.response.status))
     if out:
         return tuple(out), spent
@@ -622,7 +637,7 @@ def _collect_confirmations(
     if parent and parent.rstrip("/") != f"{parts.scheme}://{parts.netloc}":
         probe = _probe(parent, fetcher=fetcher, client=client)
         spent += 1
-        if probe is not None and probe.response is not None and 200 <= probe.response.status < 300:
+        if probe is not None and probe.response is not None and _alive_probe(probe):
             return ((parent, probe.response.status),), spent
 
     fresh = host_cache is None or host not in host_cache
@@ -856,7 +871,9 @@ def classify_link(
             # 归因给 host 级事实：这个 host 的根路径与随机路径都不可信，
             # 于是它上面**全部**链接 UNKNOWN。自动构造，不需要人工白名单。
             return _unknown("host_unprobeable", "根路径与随机路径都不可信，该 host 整体判不了")
-        return _unknown("waf_challenge", "命中 WAF/挑战页指纹或拦截型状态码，被拦截 != 不存在")
+        return _unknown(
+            "waf_challenge", "命中 WAF/挑战页（响应头或正文指纹）或拦截型状态码，被拦截 != 不存在"
+        )
 
     if _geo_redirect(url, probe, source_page=source_page):
         return _unknown("geo_redirect", "路径头被插入了源页没有的地区段之后才 404")

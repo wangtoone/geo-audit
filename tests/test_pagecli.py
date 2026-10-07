@@ -207,7 +207,7 @@ def test_waf_challenge_page_is_unknown_not_a_failed_expectation(
 
 
 def test_a_plain_202_page_is_still_read(capsys: pytest.CaptureFixture[str]) -> None:
-    """反方向：没有挑战头的 202（app.baseten.co 的真实页面就这样）照常读取、照常对账。"""
+    """反方向：状态码 202 本身不是挑战的证据 —— 没有厂商头的 202 照常读取、照常对账。"""
 
     def handler(req: httpx.Request) -> httpx.Response:
         if req.url.path == "/robots.txt":

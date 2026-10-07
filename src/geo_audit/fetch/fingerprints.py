@@ -97,9 +97,18 @@ CHALLENGE_BODY_PATTERNS: tuple[tuple[str, re.Pattern[str]], ...] = (
 #:   x-amzn-waf-action: challenge | captcha
 #:       AWS WAF, waf-captcha-and-challenge-actions: Challenge -> this header
 #:       with value ``challenge`` and HTTP 202; CAPTCHA -> value ``captcha`` and
-#:       HTTP 405.  Observed: www.meshy.ai on 2026-10-07 answered curl on the
-#:       home page and 17 locale home pages with 202 + this header.  Zero of the
-#:       1124 frozen snapshots carry it, so only handwritten tests cover it.
+#:       HTTP 405.  Observed (reproducible): app.baseten.co on 2026-10-07 --
+#:       202 + this header + ``server: awselb/2.0``; a 2023-byte JS interstitial
+#:       for ``Accept: text/html`` and a **0-byte body** for ``Accept: text/plain``
+#:       (tests/data/aws_waf_challenge_app.baseten.co_2026-10-07.json holds both).
+#:       Reported second-hand by the study pack, not reproduced by us: www.meshy.ai
+#:       answering curl on 2026-10-07 with the same 202 + header (our own
+#:       0.5 req/s requests got 200).  Zero of the 1124 frozen snapshots carry it.
+#:
+#: Seen in the corpus but deliberately NOT in the table: ``x-vercel-mitigated:
+#: challenge`` (tenderly.co, 3 snapshots, all HTTP 429 and so already caught by
+#: status).  The Vercel documentation pages we checked do not describe the
+#: header, and nothing observed shows it on a 2xx response.
 CHALLENGE_HEADERS: tuple[tuple[str, frozenset[str]], ...] = (
     ("cf-mitigated", frozenset({"challenge"})),
     ("x-amzn-waf-action", frozenset({"challenge", "captcha"})),
