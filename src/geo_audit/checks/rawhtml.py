@@ -272,13 +272,22 @@ class ExpectResult:
 
 
 def unusable_reason(
-    *, status: int, content_type: str, transport_error: str | None, blocked: bool
+    *,
+    status: int,
+    content_type: str,
+    transport_error: str | None,
+    blocked: bool,
+    blocked_evidence: str | None = None,
 ) -> str | None:
-    """这次抓取能不能拿来对账。能 → None；不能 → 一句理由（期望将全部 ``unknown``）。"""
+    """这次抓取能不能拿来对账。能 → None；不能 → 一句理由（期望将全部 ``unknown``）。
+
+    ``blocked_evidence`` 是**为什么**判成被拦（例如响应头 ``x-amzn-waf-action: challenge``）；
+    2xx 的挑战页（AWS WAF 的 Challenge 就是 202）只有靠它才看得出来，写进理由里读的人才能核对。
+    """
     if transport_error:
         return f"没抓到（{transport_error}）"
     if blocked:
-        return f"被站方拦截（HTTP {status}），拦截 ≠ 页面内容"
+        return f"被站方拦截（{blocked_evidence or f'HTTP {status}'}），拦截 ≠ 页面内容"
     if not 200 <= status < 300:
         return f"HTTP {status}，不是一个可读的页面"
     if content_type and content_type not in ("text/html", "application/xhtml+xml"):

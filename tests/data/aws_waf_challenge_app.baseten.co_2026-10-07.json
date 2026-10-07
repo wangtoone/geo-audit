@@ -1,0 +1,45 @@
+{
+ "provenance": {
+  "url": "https://app.baseten.co/",
+  "captured_at": "2026-10-07T13:06:59Z (text/html) and 2026-10-07T13:07:03Z (text/plain), from the response `date` headers",
+  "how": "plain curl GET by a review subagent during the 2026-10-07 night session; not recorded through scripts/capture_fixtures.py, so it is NOT part of fixtures/ and is not replayed",
+  "why": "first reproducible real-world response carrying x-amzn-waf-action (0 of the 1124 frozen snapshots do); also the site dead_links.py used to cite as a real header-less 202 page",
+  "redaction": "the opaque key / iv / context values inside window.gokuProps were replaced with [REDACTED-3P-TOKEN]; they are per-request challenge parameters"
+ },
+ "shapes": [
+  {
+   "request_accept": "text/html",
+   "status": 202,
+   "headers": {
+    "server": "awselb/2.0",
+    "date": "Wed, 07 Oct 2026 13:06:59 GMT",
+    "content-length": "2023",
+    "x-amzn-waf-action": "challenge",
+    "cache-control": "no-store, max-age=0",
+    "content-type": "text/html; charset=UTF-8",
+    "access-control-allow-origin": "*",
+    "access-control-max-age": "86400",
+    "access-control-allow-methods": "OPTIONS,GET,POST",
+    "access-control-expose-headers": "x-amzn-waf-action"
+   },
+   "body": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n    <meta charset=\"utf-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n    <title></title>\n    <style>\n        body {\n            font-family: \"Arial\";\n        }\n    </style>\n    <script type=\"text/javascript\">\n    window.awsWafCookieDomainList = [];\n    window.gokuProps = {\n\"key\":\"[REDACTED-3P-TOKEN]\",\n          \"iv\":\"[REDACTED-3P-TOKEN]\",\n          \"context\":\"[REDACTED-3P-TOKEN]\"\n};\n    </script>\n    <script src=\"https://1cb65431eb03.b85108b7.us-west-2.token.awswaf.com/1cb65431eb03/236d3953a07e/d83c13683208/challenge.js\"></script>\n</head>\n<body>\n    <div id=\"challenge-container\"></div>\n    <script type=\"text/javascript\">\n        AwsWafIntegration.saveReferrer();\n        AwsWafIntegration.checkForceRefresh().then((forceRefresh) => {\n            if (forceRefresh) {\n                AwsWafIntegration.forceRefreshToken().then(() => {\n                    window.location.reload(true);\n                });\n            } else {\n                AwsWafIntegration.getToken().then(() => {\n                    window.location.reload(true);\n                });\n            }\n        });\n    </script>\n    <noscript>\n        <h1>JavaScript is disabled</h1>\n        In order to continue, we need to verify that you're not a robot.\n        This requires JavaScript. Enable JavaScript and then reload the page.\n    </noscript>\n</body>\n</html>"
+  },
+  {
+   "request_accept": "text/plain",
+   "status": 202,
+   "headers": {
+    "server": "awselb/2.0",
+    "date": "Wed, 07 Oct 2026 13:07:03 GMT",
+    "content-length": "0",
+    "x-amzn-waf-action": "challenge",
+    "cache-control": "no-store, max-age=0",
+    "content-type": "text/html; charset=UTF-8",
+    "access-control-allow-origin": "*",
+    "access-control-max-age": "86400",
+    "access-control-allow-methods": "OPTIONS,GET,POST",
+    "access-control-expose-headers": "x-amzn-waf-action"
+   },
+   "body": ""
+  }
+ ]
+}

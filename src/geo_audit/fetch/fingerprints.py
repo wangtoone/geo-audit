@@ -75,6 +75,45 @@ CHALLENGE_BODY_PATTERNS: tuple[tuple[str, re.Pattern[str]], ...] = (
     ("generic_bot_verification", re.compile(r"<title>\s*bot verification", re.I)),
 )
 
+#: Response headers a WAF/CDN sets **only** when it answered with a challenge
+#: instead of the page.  Matched on the header, never on the status code or the
+#: body, and the value is compared token by token (never as a substring).
+#:
+#: Why headers, and why status-independent: AWS WAF's Challenge action answers
+#: **202**, a "success" status that sails past BLOCKED_STATUSES; and when the
+#: request's Accept lacks ``text/html`` -- ours does for text files -- AWS sends
+#: the header with **no interstitial body at all**, so CHALLENGE_BODY_PATTERNS
+#: can never see it.  Observed through the classifier before this table existed:
+#: 202 + ``x-amzn-waf-action: challenge`` + an empty body was classified OK, and
+#: the same response with an HTML shell was reported as a HIGH soft_404.
+#:
+#: Anchors (vendor documentation + what we observed):
+#:   cf-mitigated: challenge
+#:       Cloudflare, cloudflare-challenges/challenge-types/challenge-pages/
+#:       detect-response: "the Challenge Page response (regardless of the
+#:       Challenge Page type) will have the cf-mitigated header present and set
+#:       to challenge".  Observed in 9 frozen snapshots (gusto.com x6, npmjs.com
+#:       x2, api.factorialhr.com x1), all HTTP 403 -- so no verdict changes there.
+#:   x-amzn-waf-action: challenge | captcha
+#:       AWS WAF, waf-captcha-and-challenge-actions: Challenge -> this header
+#:       with value ``challenge`` and HTTP 202; CAPTCHA -> value ``captcha`` and
+#:       HTTP 405.  Observed (reproducible): app.baseten.co on 2026-10-07 --
+#:       202 + this header + ``server: awselb/2.0``; a 2023-byte JS interstitial
+#:       for ``Accept: text/html`` and a **0-byte body** for ``Accept: text/plain``
+#:       (tests/data/aws_waf_challenge_app.baseten.co_2026-10-07.json holds both).
+#:       Reported second-hand by the study pack, not reproduced by us: www.meshy.ai
+#:       answering curl on 2026-10-07 with the same 202 + header (our own
+#:       0.5 req/s requests got 200).  Zero of the 1124 frozen snapshots carry it.
+#:
+#: Seen in the corpus but deliberately NOT in the table: ``x-vercel-mitigated:
+#: challenge`` (tenderly.co, 3 snapshots, all HTTP 429 and so already caught by
+#: status).  The Vercel documentation pages we checked do not describe the
+#: header, and nothing observed shows it on a 2xx response.
+CHALLENGE_HEADERS: tuple[tuple[str, frozenset[str]], ...] = (
+    ("cf-mitigated", frozenset({"challenge"})),
+    ("x-amzn-waf-action", frozenset({"challenge", "captcha"})),
+)
+
 #: Paths that are authentication endpoints.  A 401/403 here is not information
 #: about content.  Anchor: api.factorialhr.com/en/users/sign_in?... -> 403.
 LOGIN_PATH_RE = re.compile(

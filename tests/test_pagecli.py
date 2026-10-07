@@ -171,3 +171,57 @@ def test_politeness_is_preserved_between_robots_and_page(_no_real_sleep: list[fl
     # robots.txt 一次、页面一次，同一域 → 第二次请求前必须被要求等满 ~2s
     assert _no_real_sleep, "没有任何限速等待：同域连发两次请求却没有被拉开"
     assert max(_no_real_sleep) > 1.5
+
+
+# ── 防火墙挑战：202 + 厂商头 → 无法判断，不是「不满足」───────────────────────────
+def _challenged_fetcher() -> Fetcher:
+    def handler(req: httpx.Request) -> httpx.Response:
+        if req.url.path == "/robots.txt":
+            return httpx.Response(404)
+        return httpx.Response(
+            202,
+            headers={"content-type": "text/html", "x-amzn-waf-action": "challenge"},
+            text="<html><head><script src='/challenge.js'></script></head><body></body></html>",
+        )
+
+    return Fetcher(
+        FetcherConfig(contact="ci@geo-audit.invalid", interval=2.0),
+        HttpCache(":memory:"),
+        DomainLimiter(2.0),
+        transport=httpx.MockTransport(handler),
+    )
+
+
+def test_waf_challenge_page_is_unknown_not_a_failed_expectation(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    rc = run(
+        ["https://x.test/pricing", *ARGS, "--h1-contains", "Pricing", "--price", "20"],
+        fetcher=_challenged_fetcher(),
+    )
+    out = capsys.readouterr().out
+    assert rc == 3  # 修复前：1（两条期望都判 ✗）
+    assert "✗" not in out
+    assert out.count("? ") == 2
+    assert "x-amzn-waf-action: challenge" in out  # 理由里要有可核对的证据
+
+
+def test_a_plain_202_page_is_still_read(capsys: pytest.CaptureFixture[str]) -> None:
+    """反方向：状态码 202 本身不是挑战的证据 —— 没有厂商头的 202 照常读取、照常对账。"""
+
+    def handler(req: httpx.Request) -> httpx.Response:
+        if req.url.path == "/robots.txt":
+            return httpx.Response(404)
+        return httpx.Response(202, headers={"content-type": "text/html"}, text=PRICING_OK)
+
+    f = Fetcher(
+        FetcherConfig(contact="ci@geo-audit.invalid", interval=2.0),
+        HttpCache(":memory:"),
+        DomainLimiter(2.0),
+        transport=httpx.MockTransport(handler),
+    )
+    rc = run(
+        ["https://x.test/pricing", *ARGS, "--h1-contains", "Official Pricing Plans"], fetcher=f
+    )
+    assert rc == 0
+    assert "✓ H1 含" in capsys.readouterr().out

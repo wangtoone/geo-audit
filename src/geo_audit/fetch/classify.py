@@ -39,6 +39,7 @@ Two rules that were explicitly deleted from the earlier draft, and why:
 from __future__ import annotations
 
 import re
+from collections.abc import Mapping
 from urllib.parse import urlsplit
 
 from ..models import (
@@ -93,6 +94,26 @@ def looks_like_html(body: str, content_type: str) -> bool:
     return bool(_HTML_START_RE.match(body[:2048]))
 
 
+def challenge_header(headers: Mapping[str, str]) -> tuple[str, str] | None:
+    """The WAF/CDN header that says "this is a challenge page", if there is one.
+
+    Returns ``(header_name, matched_value)`` or ``None``.  Pure and status-blind
+    on purpose -- see ``fingerprints.CHALLENGE_HEADERS`` for why a challenge can
+    arrive as HTTP 202 with no body.  Header names are matched case-insensitively
+    and the value token-wise, so ``cf-mitigated: challenge`` hits but
+    ``cf-ray: ...`` or ``x-amzn-waf-action: allow`` do not.
+    """
+    lowered = {k.lower(): v for k, v in headers.items()}
+    for name, values in fp.CHALLENGE_HEADERS:
+        raw = lowered.get(name)
+        if raw is None:
+            continue
+        hit = {t.strip().lower() for t in raw.split(",")} & values
+        if hit:
+            return name, sorted(hit)[0]
+    return None
+
+
 def is_blocked(
     status: int,
     headers: dict[str, str],
@@ -116,6 +137,18 @@ def is_blocked(
     it.  Both directions have to be handled or the P0 check lies.
     """
     host = _host_of(url)
+
+    # 响应头先于正文：头是厂商文档保证的、不依赖状态码也不依赖有没有正文
+    # （AWS WAF 的 Challenge 是 202，且请求的 Accept 不含 text/html 时根本没有正文）。
+    # reason 沿用 waf_challenge_body：新增 reason 要改对外 schema 的枚举，这里不扩。
+    header_hit = challenge_header(headers)
+    if header_hit is not None:
+        name, value = header_hit
+        return (
+            True,
+            "waf_challenge_body",
+            f"响应头 {name}: {value} —— 防火墙下发的是挑战页，不是内容（HTTP {status}）",
+        )
 
     for rule_id, pattern in fp.CHALLENGE_BODY_PATTERNS:
         if pattern.search(body[:20000]):
@@ -373,7 +406,11 @@ def classify_response(
             Verdict.BLOCKED,
             reason,  # type: ignore[arg-type]
             (blocked_evidence, "被拦截 != 不存在：本位置计入「未能评估」，不计入死链也不计入存活"),
-            naive_would_say="朴素实现会报「没有这个文件 / 这条链接是死的」",
+            naive_would_say=(
+                "朴素实现只看状态码 2xx，会判「文件存在 / 链接存活」"
+                if 200 <= status < 300
+                else "朴素实现会报「没有这个文件 / 这条链接是死的」"
+            ),
         )
 
     # ---- L1  honest 404 --------------------------------------------------
