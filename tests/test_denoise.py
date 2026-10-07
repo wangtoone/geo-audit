@@ -635,7 +635,8 @@ def test_is_dead_whitelist() -> None:
     profile = _profile("saleor.io")
     assert is_dead(_probe("https://saleor.io/x", 404), profile, (), ()) is True
     assert is_dead(_probe("https://saleor.io/x", 410), profile, (), ()) is True
-    # app.baseten.co 系列返 202
+    # 没有挑战头的 202 不判死。（这一条原先写的出处是「app.baseten.co 系列返 202」；
+    # 2026-10-07 实测那个站的 202 是 AWS WAF 的挑战页，见 test_waf_challenge_headers.py。）
     assert is_dead(_probe("https://app.baseten.co/x", 202, "<h1>ok</h1>"), profile, (), ()) is False
     for status in (400, 405, 451, 500, 503):
         assert is_dead(_probe("https://saleor.io/x", status), profile, (), ()) is False

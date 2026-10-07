@@ -31,7 +31,7 @@ from urllib.parse import urljoin, urlsplit
 import httpx
 
 from ..fetch import fingerprints as fp
-from ..fetch.classify import classify_response
+from ..fetch.classify import challenge_header, classify_response
 from ..fetch.client import Fetcher
 from ..fetch.denoise import EligibilityExclusion, classify_link_pre, position_class_of
 from ..fetch.ratelimit import registrable_domain
@@ -367,9 +367,10 @@ def is_dead(
     network_timeout / upstream_error / host_unprobeable / login_wall
     —— 那七条在 :func:`classify_link` 里跑，本函数假设它们已经放行。
     没有挑战头的 202 算 ALIVE；400/405/451/5xx 一律 UNKNOWN。
-    （这一条原来的出处写的是「app.baseten.co 系列返 202」。2026-10-07 实测那些 202 是
-    AWS WAF 的挑战页（202 + ``x-amzn-waf-action: challenge``），不是内容 —— 现在由
-    ``is_blocked`` 先拦下、走 waf_challenge 判 UNKNOWN，到不了这里。）
+    （这一条原来的出处写的是「app.baseten.co 系列返 202」。2026-10-07 实测 app.baseten.co
+    返回的 202 是 AWS WAF 的挑战页（202 + ``x-amzn-waf-action: challenge``），不是内容。
+    当年那批 202 很可能是同一回事，但当时的响应没有冻结，无法核对 —— 这是推断，不是事实。
+    有挑战头的 202 现在由 ``is_blocked`` 先拦下、走 waf_challenge 判 UNKNOWN，到不了这里。）
 
     ⚠️ 卡点 S4：命中 ``disposition == "needs_review"`` 的规则（目前只有
     ``class_hidden_anchor``）**不改变本函数的结论**，只置
@@ -437,15 +438,22 @@ def _is_challenge(probe: Probe) -> bool:
 
 
 def _alive_probe(probe: Probe | None) -> bool:
-    """这个探针能不能当「host 活着」的证据：2xx **且不是挑战页**。
+    """这个探针能不能当「host 活着」的证据：2xx **且响应头没有挑战标记**。
 
     被挑战的 2xx 不是活着的证据：AWS WAF 的 Challenge 就是 202（加 ``x-amzn-waf-action``
     头），拿它当存活对照，会让同 host 上一条诚实的 404 因为「根路径是活的」而被判成
     **DEAD** —— 而那个根路径根本没被我们读到。
+
+    **只看响应头，不用 ``_is_challenge``。** ``_is_challenge`` 带着 ``is_blocked`` 的正文指纹
+    （``g-recaptcha`` / ``datadome`` / ``perimeterx`` / ``Just a moment`` …），而正常页面会内嵌
+    这些脚本；拿它排除存活证据，会让一条真死链因为「根路径上有个验证码表单」从 DEAD 退成
+    UNKNOWN（复现过：同一输入 main 上是 DEAD）。响应头只在防火墙真的下发了挑战时才出现，
+    Cloudflare 的各种挑战页都带 ``cf-mitigated``，所以不会因此放过真挑战。
     """
     if probe is None or probe.response is None:
         return False
-    return 200 <= probe.response.status < 300 and not _is_challenge(probe)
+    resp = probe.response
+    return 200 <= resp.status < 300 and challenge_header(resp.headers) is None
 
 
 def _hostile_400(url: str, probe: Probe) -> bool:

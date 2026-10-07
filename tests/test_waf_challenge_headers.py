@@ -17,8 +17,9 @@
 真实数据：``tests/data/aws_waf_challenge_app.baseten.co_2026-10-07.json`` 是 2026-10-07 对
 app.baseten.co 的两次真实抓取（202 + 头；``Accept: text/html`` 得 2 KB 的 JS 挑战页，
 ``Accept: text/plain`` 得 0 字节）。**那个站正是 dead_links.py 里「202 算 ALIVE」那条的出处
-—— 原来它不是内容，是挑战页。** 所以这里不再有「某个站真的返回没有挑战头的 202 内容页」
-这种前提：「没有头的 202 仍按原样处理」守的只是**不要把状态码 202 本身当成挑战的证据**。
+—— 今天实测它的 202 是挑战页，不是内容；当年那批 202 很可能是同一回事，但没有冻结的响应可核对，
+这是推断。** 所以这里不再有「某个站真的返回没有挑战头的 202 内容页」这种前提：「没有头的 202
+仍按原样处理」守的只是**不要把状态码 202 本身当成挑战的证据**。
 
 不碰网络；真实快照那条走 ``fixtures/``。
 """
@@ -392,8 +393,14 @@ def test_a_challenged_parent_page_does_not_confirm_either() -> None:
             {"link": f"{HOST}/docs/a/gone"},
             "/docs/a/",
         ),
+        # 状态码 202 本身不是挑战的证据 —— 和 main 上的行为一致，只有厂商头才排除
+        (
+            {"/": httpx.Response(202, headers={"content-type": "text/html"}, text=ALIVE_PAGE)},
+            {},
+            "/",
+        ),
     ],
-    ids=["root", "candidate", "parent"],
+    ids=["root", "candidate", "parent", "root-202-without-header"],
 )
 def test_an_honest_alive_page_still_confirms_a_dead_link(
     responses: dict[str, httpx.Response], kw: dict[str, object], confirmed_by: str
@@ -402,6 +409,34 @@ def test_an_honest_alive_page_still_confirms_a_dead_link(
     v = _classify(responses, **kw)  # type: ignore[arg-type]
     assert v.state is LinkState.DEAD
     assert [u.removeprefix(HOST) for u, _ in v.confirmations] == [confirmed_by]
+
+
+# 正常页面会内嵌验证码 / 机器人防护厂商的脚本；正文里出现厂商名不等于这页是挑战页。
+# （冻结语料对这条是盲的：570 条 2xx 响应在前 20,000 字符里一条都不命中，所以守卫是合成的。）
+@pytest.mark.parametrize(
+    "widget",
+    [
+        '<div class="g-recaptcha" data-sitekey="k"></div>',
+        '<script src="https://js.datadome.co/tags.js"></script>',
+        '<script src="/px/perimeterx/init.js"></script>',
+        '<script src="https://hcaptcha.com/captcha/v1/api.js"></script>',
+        "<noscript>Just a moment... loading your dashboard</noscript>",
+    ],
+    ids=["recaptcha", "datadome", "perimeterx", "hcaptcha", "just-a-moment"],
+)
+def test_a_normal_page_that_embeds_a_bot_vendor_script_still_confirms_a_dead_link(
+    widget: str,
+) -> None:
+    """修复第一版时的回归：用 _is_challenge（含正文指纹）排除存活证据，这些页面就不再算活着，
+    真死链从 DEAD 退成 UNKNOWN。现在只看响应头。"""
+    root = httpx.Response(
+        200,
+        headers={"content-type": "text/html"},
+        text=f"<html><body><h1>Acme</h1>{'<p>widgets</p>' * 30}{widget}</body></html>",
+    )
+    v = _classify({"/": root})
+    assert v.state is LinkState.DEAD
+    assert [u.removeprefix(HOST) for u, _ in v.confirmations] == ["/"]
 
 
 def test_a_link_that_is_itself_challenged_is_unknown_not_alive() -> None:
