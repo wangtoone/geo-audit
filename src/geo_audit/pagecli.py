@@ -29,6 +29,7 @@ from geo_audit.checks.rawhtml import (
     unusable_reason,
 )
 from geo_audit.fetch.cache import HttpCache
+from geo_audit.fetch.classify import challenge_header
 from geo_audit.fetch.client import Fetcher, FetcherConfig, build_user_agent
 from geo_audit.fetch.ratelimit import DomainLimiter
 from geo_audit.pipeline import EXIT_FINDINGS, EXIT_OK, EXIT_UNREACHABLE, EXIT_USAGE
@@ -98,11 +99,15 @@ class PageOutcome:
 
 def audit_page(fetcher: Fetcher, spec: PageSpec) -> PageOutcome:
     resp = fetcher.fetch(spec.url)
+    # 只看响应头，不跑 is_blocked 的正文指纹：很多正常页面会内嵌 DataDome / reCAPTCHA 的脚本，
+    # 正文里出现厂商名不等于这页是挑战页；而响应头只在防火墙真的下发了挑战时才出现。
+    hit = challenge_header(resp.headers)
     why = unusable_reason(
         status=resp.status,
         content_type=resp.content_type,
         transport_error=resp.transport_error,
-        blocked=resp.blocked,
+        blocked=resp.blocked or hit is not None,
+        blocked_evidence=f"响应头 {hit[0]}: {hit[1]}，HTTP {resp.status}" if hit else None,
     )
     if why is not None:
         return PageOutcome(spec.url, why, None, tuple(evaluate_spec(None, spec, why_unusable=why)))
