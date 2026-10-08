@@ -31,7 +31,7 @@ from urllib.parse import urljoin, urlsplit
 import httpx
 
 from ..fetch import fingerprints as fp
-from ..fetch.classify import challenge_header, classify_response
+from ..fetch.classify import challenge_header, classify_response, mark_blocked
 from ..fetch.client import Fetcher
 from ..fetch.denoise import EligibilityExclusion, classify_link_pre, position_class_of
 from ..fetch.ratelimit import registrable_domain
@@ -531,12 +531,14 @@ def _probe_with_client(client: httpx.Client, url: str, *, expect: Expect) -> Pro
             url=url, final_url=url, status=0, headers={}, body=b"", transport_error=str(exc)
         )
     else:
-        resp = HttpResponse(
-            url=url,
-            final_url=str(raw.url),
-            status=raw.status_code,
-            headers={k.lower(): v for k, v in raw.headers.items()},
-            body=raw.content,
+        resp = mark_blocked(
+            HttpResponse(
+                url=url,
+                final_url=str(raw.url),
+                status=raw.status_code,
+                headers={k.lower(): v for k, v in raw.headers.items()},
+                body=raw.content,
+            )
         )
     cls = classify_response(
         resp.status,
@@ -779,7 +781,13 @@ def classify_link(
     # ---- 探测 ---------------------------------------------------------- #
     probe = _probe(url, fetcher=fetcher, client=client)
     spent += 1
-    if probe is None:
+    # 缺快照有两种形态：strict 回放时 _probe 返回 None；lenient 回放（整站体检用的）给一个
+    # 合成的 599 + ``x-geo-audit-fixture: missing``，分类成 UNKNOWN/not_fetched。
+    # **两种都是「我们没观察过」。** 原来只处理了前一种：后一种一路走到末尾的
+    # ``state = DEAD if dead else ALIVE``，被记成 ALIVE（reason 仍写着 not_fetched）——
+    # replay 里 601 条存活判定有 573 条是这种，「N 条链接全部活着」在 replay 里因此偏乐观。
+    # 线上不会出现合成 599，所以对线上结果没有影响。
+    if probe is None or probe.classification.reason == "not_fetched":
         return LinkVerdict(
             url=url,
             state=LinkState.UNKNOWN,

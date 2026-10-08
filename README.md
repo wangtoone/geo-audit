@@ -159,6 +159,36 @@ robots.txt  遵守（被 Disallow 的位置标「无法评估 · robots 禁止�
 不用装任何东西。（那个 workflow **刻意不自动发到 Pages**：把别人家域名的体检结果
 推成公开页面，是我们没有权利做的事。artifact 保留 30 天，谁跑谁看。）
 
+## 两个单点子命令
+
+不走整站体检，只看你点名的东西；不改报告格式，输出自成一份小 JSON（`--json`）。
+
+    # 一个页面的原始 HTML（不跑 JS，多数 AI 爬虫看到的那份）+ 对账你的期望
+    uvx geo-audit page https://yourdomain.com/pricing --contact you@yourco.com \
+        --h1-contains "Pricing" --schema Product --price 20 --no-js-shell
+
+    # robots.txt 对各家 AI 爬虫（训练 / 检索 / 实时抓取）分别怎么说，哪一组规则决定了它
+    uvx geo-audit robots yourdomain.com --contact you@yourco.com
+
+两条都沿用同一套抓取约束（≤0.5 req/s、遵守 robots、带联系邮箱的诚实 UA、不冒充任何爬虫），
+**没抓到 / 被拦 / 没读到就是「无法判断」，不是通过也不是失败**（退出码 3）。
+`robots` 报的是事实：「拦训练、放检索」是正当策略，不算缺陷。它还做几件事：
+
+- **读不到 ≠ 站点没有 ≠ 站点禁止。** 5xx、网络错误、防火墙挑战页（AWS 的 Challenge 是 202 + 响应头，
+  Cloudflare 的是 403 + `cf-mitigated`）、限流、跳转超限都记「没读到」；401 / 403 这类说不清是
+  「没有」还是「被拦」的 4xx，RFC 9309 视为放行，但也不写成「站点没有」。只有**观察到的** 404 / 410
+  才是干净的缺席。`/robots.txt` 的跳转会跟（至少 5 跳），读上限 512 KiB（RFC 要求至少 500 KiB）。
+- **厂商列。** 每个爬虫都带着它的官方文档怎么说它遵不遵守 robots.txt：用户点名的实时抓取
+  （ChatGPT-User、Perplexity-User、meta-externalfetcher、Amzn-User）文档写明**可能不遵守**，
+  所以被禁止了也可能照样来，文字输出里标 ⚠；文档没明说的（目前是 PerplexityBot）标
+  「厂商文档未明说是否遵守」，不替厂商补一句。Google-Extended / Applebot-Extended 是**控制标记**，
+  不是爬虫；Applebot 没被点名时按 Googlebot 的组走（Apple 文档），Bingbot 按 bingbot → msnbot → `*`
+  的顺序只认一组（Bing 官方博客）。Amazon 的文档对 Amzn-SearchBot 另有说明（没点名它、但放行了别的
+  搜索爬虫时，它按那些爬虫的规则走），这种情况下它那一行会带 ⓘ 提醒，而不是直接报「全站禁止」。
+  JSON 里每个爬虫都有 `honors_robots`（yes / no_by_design / unstated）和 `doc`（我们读过的页面，
+  写的是页面自己声明的规范地址）。
+- 用法错（拼错的参数、`--timeout` 不是大于 0 的数）退出码 4，与整站体检一致。
+
 ## 它只查两类东西，都是零 LLM 的机械判定
 
 报告里 `llm_calls` 恒等于 0，且有 CI 门禁 grep 着判定层不许出现任何 LLM 调用。
@@ -188,8 +218,8 @@ robots.txt  遵守（被 Disallow 的位置标「无法评估 · robots 禁止�
 
 ## 它明确不查
 
-锚点腐烂、sitemap、robots 对 AI 爬虫的放行、图片/CSS 资源、**事实是否自相冲突**、
-**内容是否过期**。
+锚点腐烂、sitemap、图片/CSS 资源、**事实是否自相冲突**、**内容是否过期**。
+（robots 对 AI 爬虫的放行不在整站体检里查，单点命令 `geo-audit robots` 才查。）
 
 最后两项不是没想到，是试过之后砍掉的，理由是我们自己的实测数字：
 
@@ -230,7 +260,10 @@ mistral.ai 那份里 76 条 finding 收敛成 **1 处根因**——「改 1 处 
 - User-Agent 里必须带你的联系邮箱（`--contact` 缺失直接退出 4，
   `--replay-fixtures` 和 `--from` 也不豁免）；
 - 默认遵守 `robots.txt`；被 Disallow 的位置标「无法判断 · robots 禁止」，
-  不会标成「通过」；
+  不会标成「通过」；`robots.txt` 自己读不到（5xx / 网络错误 / 跳转成环）时保守地不抓这个 host
+  （RFC 9309 对 5xx 与网络错误就是这么要求的），位置标「无法判断 · robots.txt 读不到」——
+  **不是**「你的 robots.txt 禁止」；防火墙挑战页、限流、401 / 403 按 RFC 是「不可用」，照常抓，
+  每个位置会各自带上具体的挑战证据；
 - 只抓无需登录的公开页；**不绕 WAF、不解 CAPTCHA、不用住宅代理**。
   遇到挑战页就标「无法判断」然后走开；
 - 单域请求硬上限默认 120（`--max-requests`），超限的位置标「无法判断 · 超出预算」，

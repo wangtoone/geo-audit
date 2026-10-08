@@ -28,6 +28,7 @@ from geo_audit.checks.rawhtml import (
     inspect_raw_html,
     unusable_reason,
 )
+from geo_audit.cliutil import UsageParser, parse_args, positive_seconds
 from geo_audit.fetch.cache import HttpCache
 from geo_audit.fetch.classify import challenge_header
 from geo_audit.fetch.client import Fetcher, FetcherConfig, build_user_agent
@@ -101,12 +102,15 @@ def audit_page(fetcher: Fetcher, spec: PageSpec) -> PageOutcome:
     resp = fetcher.fetch(spec.url)
     # 只看响应头，不跑 is_blocked 的正文指纹：很多正常页面会内嵌 DataDome / reCAPTCHA 的脚本，
     # 正文里出现厂商名不等于这页是挑战页；而响应头只在防火墙真的下发了挑战时才出现。
+    # **也不用 ``resp.blocked``**：那个字段现在是完整的 is_blocked 结论（抓取层填的），其中挑战页
+    # 独有的正文指纹在任何长度下都算 —— 一页很长、恰好引用了「Pardon Our Interruption」的正常文档
+    # 会被拒绝评估；状态码层面的不可用（403 / 429 …）由 unusable_reason 自己按状态码判。
     hit = challenge_header(resp.headers)
     why = unusable_reason(
         status=resp.status,
         content_type=resp.content_type,
         transport_error=resp.transport_error,
-        blocked=resp.blocked or hit is not None,
+        blocked=hit is not None,
         blocked_evidence=f"响应头 {hit[0]}: {hit[1]}，HTTP {resp.status}" if hit else None,
     )
     if why is not None:
@@ -182,7 +186,7 @@ def exit_code(outcomes: Sequence[PageOutcome]) -> int:
 
 
 def build_parser() -> argparse.ArgumentParser:
-    p = argparse.ArgumentParser(
+    p = UsageParser(
         prog=PROG,
         description=(
             "不跑 JS，读页面原始 HTML（多数 AI 爬虫看到的那份），并对账你的期望。"
@@ -213,7 +217,9 @@ def build_parser() -> argparse.ArgumentParser:
     g.add_argument("--indexable", action="store_true", help="必须没有 noindex")
     g.add_argument("--no-js-shell", action="store_true", help="必须不是 JS 空壳")
     p.add_argument("--ignore-robots", action="store_true")
-    p.add_argument("--timeout", type=float, default=15.0)
+    p.add_argument(
+        "--timeout", type=positive_seconds, default=15.0, help="单次读取超时（秒），默认 15"
+    )
     p.add_argument("--json", action="store_true", help="输出 JSON 而不是文本")
     return p
 
@@ -221,8 +227,9 @@ def build_parser() -> argparse.ArgumentParser:
 def run(argv: Sequence[str], *, fetcher: Fetcher | None = None) -> int:
     import os
 
-    parser = build_parser()
-    args = parser.parse_args(list(argv))
+    args, code = parse_args(build_parser(), argv)
+    if args is None:  # 用法错 → 4，--help → 0
+        return code
     try:
         specs: dict[str, PageSpec] = {}
         if args.spec:

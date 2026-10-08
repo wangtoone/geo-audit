@@ -1085,16 +1085,26 @@ def _stage_ai_path(
             continue
         if dh.host.lower() in probed_hosts:
             continue  # 探到了，不是盲区
+        if dh.reason in ("robots_disallowed", "robots_unreadable"):
+            # robots 闸在请求之前就拦了：根路径**没有**发请求，robots.txt 是读了的（读不读得到
+            # 是原因本身）。不能套下面那句「根路径也请求了」—— 那是假话。
+            detail = (
+                f"这个 host 解析通了，但 robots.txt 这一关没过（{dh.reason}），所以根路径一个请求"
+                "都没发，它的 AI 路径（llms.txt / llms-full.txt / .md 通道）一条都没探。"
+                "这不是「这个 host 没问题」，是「我们没能看」。"
+            )
+        else:
+            detail = (
+                f"这个 host 解析通了、根路径也请求了，但判不了"
+                f"（{dh.reason}），于是它的 AI 路径（llms.txt / llms-full.txt /"
+                f" .md 通道）一条都没探，robots.txt 与 sitemap.xml 也没读。"
+                "这不是「这个 host 没问题」，是「我们没能看」。"
+            )
         st.coverage_gaps.append(
             CoverageGap(
                 where=f"① 入口发现 · https://{dh.host}/",
                 reason=dh.reason,
-                detail=(
-                    f"这个 host 解析通了、根路径也请求了，但判不了"
-                    f"（{dh.reason}），于是它的 AI 路径（llms.txt / llms-full.txt /"
-                    f" .md 通道）一条都没探，robots.txt 与 sitemap.xml 也没读。"
-                    "这不是「这个 host 没问题」，是「我们没能看」。"
-                ),
+                detail=detail,
                 remedy=UNKNOWN_REMEDY.get(
                     dh.reason,
                     "先让这个 host 的根路径能判定，它下面的位置才进得了账本。",
