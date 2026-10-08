@@ -12,7 +12,7 @@ from __future__ import annotations
 
 import re
 
-TABLE_VERSION = "2026-09-07.1"
+TABLE_VERSION = "2026-10-08.1"
 
 # --------------------------------------------------------------------------- #
 # WAF / bot-challenge fingerprints  ->  Verdict.BLOCKED
@@ -105,13 +105,18 @@ CHALLENGE_BODY_PATTERNS: tuple[tuple[str, re.Pattern[str]], ...] = (
 #:       answering curl on 2026-10-07 with the same 202 + header (our own
 #:       0.5 req/s requests got 200).  Zero of the 1124 frozen snapshots carry it.
 #:
-#: Seen in the corpus but deliberately NOT in the table: ``x-vercel-mitigated:
-#: challenge`` (tenderly.co, 3 snapshots, all HTTP 429 and so already caught by
-#: status).  The Vercel documentation pages we checked do not describe the
-#: header, and nothing observed shows it on a 2xx response.
+#:   x-vercel-mitigated: challenge
+#:       Vercel Firewall.  **Observed only -- no Vercel page we could find defines
+#:       this header** (the firewall docs describe the Challenge action, the
+#:       response-headers reference does not list it).  Anchors: tenderly.co, 3 frozen
+#:       snapshots, HTTP 429 with ``x-vercel-challenge-token``; and public community
+#:       reports of a 403 HTML challenge page carrying it.  The value ``deny`` (a 403
+#:       block, caught by status anyway) is deliberately not matched.
+#:
 CHALLENGE_HEADERS: tuple[tuple[str, frozenset[str]], ...] = (
     ("cf-mitigated", frozenset({"challenge"})),
     ("x-amzn-waf-action", frozenset({"challenge", "captcha"})),
+    ("x-vercel-mitigated", frozenset({"challenge"})),
 )
 
 #: Paths that are authentication endpoints.  A 401/403 here is not information

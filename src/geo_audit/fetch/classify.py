@@ -140,13 +140,14 @@ def is_blocked(
 
     # 响应头先于正文：头是厂商文档保证的、不依赖状态码也不依赖有没有正文
     # （AWS WAF 的 Challenge 是 202，且请求的 Accept 不含 text/html 时根本没有正文）。
-    # reason 沿用 waf_challenge_body：新增 reason 要改对外 schema 的枚举，这里不扩。
+    # reason 是 waf_challenge_header，不是 waf_challenge_body：两者的证据强度不同，
+    # 报告里该说清楚是哪一种触发的。
     header_hit = challenge_header(headers)
     if header_hit is not None:
         name, value = header_hit
         return (
             True,
-            "waf_challenge_body",
+            "waf_challenge_header",
             f"响应头 {name}: {value} —— 防火墙下发的是挑战页，不是内容（HTTP {status}）",
         )
 
@@ -366,6 +367,19 @@ def classify_response(
         )
     if status == 0:
         err = (transport_error or "").lower()
+        if err.startswith("robots_unreadable"):
+            # robots.txt 不可达（5xx / 网络错误：RFC 9309 §2.3.1.4 要求不抓；跳转成环或超限：
+            # RFC 只是允许当作不可用，我们取保守一侧）。
+            # **和 robots_disallowed 是两件事**：后者是站方写了 Disallow，前者是我们没能看。
+            # 把前者写成「你的 robots.txt 禁止抓」对站点是假话。
+            return Classification(
+                Verdict.UNKNOWN,
+                "robots_unreadable",
+                (
+                    f"没读到 robots.txt（{(transport_error or '').split(':', 1)[-1].strip()}），"
+                    "读不到时按完全不许抓处理，本位置未评估 —— 这不是站点写了禁止",
+                ),
+            )
         if err.startswith("robots_disallowed"):
             # fetch() 在 robots 不许抓时返回的标记响应。**必须在这里认出来**，
             # 否则会落到下面的 network_error —— 把「我们没被允许看」写成

@@ -65,7 +65,7 @@ from ..models import (
 )
 from . import fingerprints as fp
 from .cache import MAX_CACHE_BODY, HttpCache
-from .classify import classify_response, is_blocked, looks_like_html
+from .classify import challenge_header, classify_response, is_blocked, looks_like_html
 from .normalize import (
     NORM_BODY_CAP,
     norm_sha256,
@@ -549,6 +549,13 @@ class Fetcher:
                         f"from system+{','.join(('8.8.8.8', '1.1.1.1'))}: {resolution.error}",
                         time.monotonic(),
                     )
+
+            if challenge_header(resp.headers) is not None:
+                # 响应头说这是防火墙下发的挑战页：那是对「我们」（UA / IP）的判决，不是负载信号。
+                # 放慢没用，重试也不会变 —— Cloudflare 的 503 挑战重试两次只是多打两个请求，
+                # Vercel 的 429 挑战会把整个域的间隔 2→4→8→16→30 s 拉宽，一个全站被挑战的域
+                # 就要按 30 s 一个请求去跑完预算。真正的限流（没有挑战头的 429 / 503）不受影响。
+                return resp
 
             if resp.status == 429 or (resp.status in RETRY_STATUSES):
                 wait = self.limiter.note_throttled(host, resp.headers.get("retry-after"))
