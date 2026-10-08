@@ -46,7 +46,7 @@ import urllib.robotparser
 from collections.abc import Callable, Iterable, Sequence
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, replace
-from typing import Final
+from typing import Final, Literal
 from urllib.parse import urljoin, urlsplit, urlunsplit
 
 import httpx
@@ -79,6 +79,9 @@ __version__ = "0.1.0"
 
 MAX_REDIRECTS = 10
 LIVENESS_BYTE_CAP = 64 * 1024
+#: RFC 9309 §2.5：爬虫「必须能解析至少 500 KiB」的 robots.txt。原来读 LIVENESS_BYTE_CAP（64 KiB），
+#: 一份 200 KiB 的 robots.txt 在 64 KiB 之后的规则全丢 —— 而丢掉的常常是尾部的 Disallow。
+ROBOTS_BYTE_CAP = 512 * 1024
 CONTENT_BYTE_CAP = MAX_CACHE_BODY
 
 #: Retried: transient transport failures and gateway errors only.
@@ -126,6 +129,80 @@ def build_user_agent(contact: str) -> str:
             "抓取合规要求 User-Agent 里带真实联系方式，做成可选等于没有。"
         )
     return f"geo-audit/{__version__} (+https://github.com/wangtoone/geo-audit; contact: {contact})"
+
+
+def interpret_robots_response(
+    resp: HttpResponse,
+) -> tuple[Literal["parsed", "allow_all", "disallow_all"], str, str, bool]:
+    """一次 ``/robots.txt`` 抓取 → ``(policy, 要解析的文本, why, readable)``。纯函数。
+
+    **两件事分开：``policy`` 是我们怎么做，``readable`` 是我们知道多少。** 混在一起会出两种错：
+    为了「别说假话」把挑战页也当成全禁止，整站体检就不再往下抓（实测 gusto.com 从 19 个位置掉到
+    14 个，原来每个位置上具体的「防火墙挑战」证据全没了）；或者为了「别丢覆盖」继续报「站点没有」。
+
+    ``policy`` 按 RFC 9309 §2.3.1：2xx 按内容；4xx 是「不可用」→ 可以访问全部（MAY）；5xx / 网络
+    错误是「不可达」→ **必须**视同完全不许抓（§2.3.1.4）。跳转成环 / 超过 10 跳，RFC §2.3.1.2 只说
+    「爬虫 MAY 当作不可用」（= 放行）；这里取更保守的一侧不抓 —— 那是我们的选择，不是 RFC 的要求。
+    ``readable`` 只在**真读到了一份 robots.txt（含观察到的 404 / 410）**时为 True。
+
+    ======================  ============  =========  ==========================================
+    读到的                    policy        readable   说明
+    ======================  ============  =========  ==========================================
+    2xx（含跟跳转之后）        parsed        True       按内容办；空正文 → allow_all
+    404 / 410                allow_all     True       **观察到的**缺席，``why`` 里只有跳转说明
+    其余 4xx（401 / 403 …）    allow_all     False      RFC 视为「没有」；防火墙 / 鉴权也会给 403
+    429                      allow_all     False      限流，没读到（原来的行为：放行）
+    任何状态码 + 挑战头         allow_all     False      防火墙下发的挑战页不是 robots.txt（AWS 的
+                                                    是 **202**，Cloudflare 的是 403）
+    3xx 没有 Location         allow_all     False      跳不过去
+    5xx / 网络错误            disallow_all  False      RFC 9309 §2.3.1.4（MUST）：视同完全不许抓
+    跳转成环 / 超过 10 跳      disallow_all  False      RFC 只是允许当作「不可用」；我们取保守一侧
+    replay 缺快照（合成 599）   allow_all     False      不是站点的事实，why 里写明
+    ======================  ============  =========  ==========================================
+
+    ``why`` 是给人看的原因，进 ``RobotsInfo.why``。
+    """
+    status = resp.status
+    hops = len(resp.redirects)
+    via = f"经 {hops} 次跳转取自 {resp.final_url}" if hops else ""
+    if resp.headers.get("x-geo-audit-fixture") == "missing":
+        return "allow_all", "", "replay：没有这份 robots.txt 的冻结快照，不是站点的事实", False
+    if status == 0:
+        return "disallow_all", "", f"没读到：{resp.transport_error or '无响应'}", False
+    hit = challenge_header(resp.headers)
+    if hit is not None:
+        why = f"响应头 {hit[0]}: {hit[1]}（HTTP {status}）：防火墙下发的是挑战页，不是 robots.txt"
+        return "allow_all", "", why, False
+    if 200 <= status < 300:
+        # RFC 9309 §2.2：必须是 UTF-8。用 utf-8-sig 去掉开头的 BOM（Windows 记事本存出来的
+        # robots.txt 常带）—— 否则第一行 ``\ufeffUser-agent: *`` 认不出来，后面的 Disallow 变成
+        # 无主规则，整份文件读成「全放行」。也不按 Content-Type 的 charset 解码：协议没给它位置。
+        raw = resp.body.decode("utf-8-sig", errors="replace")
+        notes = [via] if via else []
+        if resp.body_truncated:
+            notes.append(
+                f"超过 {ROBOTS_BYTE_CAP // 1024} KiB，只解析了前 {ROBOTS_BYTE_CAP // 1024} KiB"
+            )
+        has_rules = any(
+            line.strip().lower().startswith(("user-agent:", "allow:", "disallow:", "sitemap:"))
+            for line in raw.splitlines()
+        )
+        if raw and not has_rules and looks_like_html(raw, resp.content_type):
+            notes.append("返回的是 HTML 页面（多半是 SPA 外壳），没有任何规则")
+        return ("parsed" if raw else "allow_all"), raw, "；".join(notes), True
+    if status in (404, 410):
+        return "allow_all", "", via, True
+    if status == 429:
+        return "allow_all", "", "HTTP 429 限流，没读到", False
+    if status >= 500:
+        return "disallow_all", "", f"HTTP {status}（服务端错误），没读到", False
+    if 300 <= status < 400:
+        return "allow_all", "", f"HTTP {status} 没有可跟的 Location，没读到", False
+    why = (
+        f"HTTP {status}：按 RFC 9309 视为没有 robots.txt，但这也可能是防火墙 / 鉴权拦了我们，"
+        "不能当成「站点没有这个文件」"
+    )
+    return "allow_all", "", why, False
 
 
 class _NoCookies(httpx.Cookies):
@@ -309,35 +386,18 @@ class Fetcher:
         if cached is not None:
             return cached
         robots_url = f"{scheme}://{host}/robots.txt"
-        with self.limiter.hold(host):
-            resp = self._raw_request(robots_url, accept="text/plain", byte_cap=LIVENESS_BYTE_CAP)
-        # RFC 9309 §2.3.1 把三种结果分开，**我们原来全按「没有 robots.txt」处理**：
-        #   2xx      → 按内容执行
-        #   4xx      → 视为「没有 robots.txt」，放行全部
-        #   5xx / 网络错误 → 「unreachable」，**可以按完全不许抓处理**
-        #
-        # 原来写的是 `raw = resp.text if resp.status == 200 else ""`，于是 503、
-        # 超时、DNS 失败都得到一个空 parser，而空 parser 的 can_fetch() 恒为 True
-        # —— **robots.txt 临时 503 的站会被完整抓一遍**，而且结果缓存一整轮。
-        #
-        # 这里选「5xx/网络错误 → 全部不许抓」。RFC 用的词是 MAY 而不是 MUST，
-        # 但对一个把「我们没被允许看」当成合法结论的工具，宁可少看不要多抓：
-        # 那些位置会如实进「未能评估」区，而不是变成「没问题」。
-        raw = resp.text if 200 <= resp.status < 300 else ""
-        # **合成的「缺快照」响应不算 unreachable。**
-        #
-        # 差点撞出灾难：replay 下缺 robots.txt 快照会得到 `599 +
-        # x-geo-audit-fixture: missing`，而 599 >= 500。语料里 143 个 host 只有
-        # 13 个录了 robots.txt —— 按 unreachable 处理的话 130 个 host 全部变成
-        # 「不许抓」，九份报告会 100% 变成 robots_disallowed。
-        #
-        # 区分点在于 **robots 管的是「我们可不可以发这个请求」，而 replay 模式
-        # 下我们不发请求** —— 那些请求在录制时就已经发生过了。所以缺快照是
-        # 语料完整性的事，不是站方的决定，放行；真 5xx / 网络错误才是 unreachable。
-        replayed_gap = resp.headers.get("x-geo-audit-fixture") == "missing"
-        unreachable = not replayed_gap and (resp.status == 0 or resp.status >= 500)
+        # 走 _fetch_chain，不再是单发的 _raw_request：
+        #   * 跟跳转（RFC 9309 §2.3.1.2：至少跟 5 跳，「可达就必须按文件里的规则办」）。
+        #     原来 301 / 308 的 robots.txt 被当成「没有 robots.txt」放行全部；
+        #   * 每一跳都过限流器、5xx 重试、DNS 二次确认。原来一次 503、一次 DNS 抖动
+        #     就让这个 host 在这一轮里**全部**不许抓，而且结果缓存一整轮；
+        #   * 读上限 512 KiB（RFC 要求至少解析 500 KiB），原来是 64 KiB。
+        resp = self._fetch_chain(
+            robots_url, accept="text/plain", byte_cap=ROBOTS_BYTE_CAP, robots=True
+        )
+        policy, raw, why, readable = interpret_robots_response(resp)
         parser = urllib.robotparser.RobotFileParser()
-        if unreachable:
+        if policy == "disallow_all":
             parser.parse(["User-agent: *", "Disallow: /"])
         else:
             parser.parse(raw.splitlines())
@@ -361,32 +421,58 @@ class Fetcher:
             crawl_delay=delay,
             sitemaps=sitemaps,
             raw=raw,
-            policy=("disallow_all" if unreachable else ("parsed" if raw else "allow_all")),
+            policy=policy,
+            why=why,
+            readable=readable,
         )
         with self._robots_lock:
             self._robots[host] = info
             self._robots_parsers[host] = parser
         return info
 
-    def robots_allows(self, url: str) -> bool:
-        """Honour robots.txt for everything except /robots.txt itself.
+    def robots_verdict(self, url: str) -> Literal["allowed", "disallowed", "unreadable"]:
+        """robots 闸的三态结果。**「没读到」与「站方写了禁止」是两件事**。
 
-        A robots-blocked position becomes UNKNOWN / robots_disallowed, i.e. it
-        lands in the report's 未能评估 region.  That is the honest outcome:
-        "we were not allowed to look" is a true statement, "no problem here"
-        is not.  --no-robots exists for auditing your own property.
+        * ``disallowed``  读到了 robots.txt，它对我们的 UA 说不许抓这个路径；
+        * ``unreadable``  不可达：5xx / 网络错误（RFC 9309 §2.3.1.4 **要求**视同完全不许抓），
+          以及跳转成环 / 超限（RFC §2.3.1.2 只是**允许**当作不可用；我们取保守一侧）。照样不抓 ——
+          但报告里不能写成「你的 robots.txt 禁止」，那对站点是假话：站点什么都没禁止，是我们没能看。
+          （防火墙挑战页、429、其余 4xx 是 RFC 的「不可用」，照常抓；它们在
+          ``RobotsInfo.readable`` 里记为没读到，位置各自的判定会带上具体证据。）
         """
         if not self.config.respect_robots:
-            return True
+            return "allowed"
         if urlsplit(url).path == "/robots.txt":
-            return True
+            return "allowed"
         host = (urlsplit(url).hostname or "").lower()
         if host not in self._robots_parsers:
             self.robots_for(url)
+        info = self._robots.get(host)
+        if info is not None and info.policy == "disallow_all":
+            return "unreadable"
         parser = self._robots_parsers.get(host)
         if parser is None:
-            return True
-        return parser.can_fetch(self.user_agent, url)
+            return "allowed"
+        return "allowed" if parser.can_fetch(self.user_agent, url) else "disallowed"
+
+    def robots_allows(self, url: str) -> bool:
+        """Honour robots.txt for everything except /robots.txt itself.
+
+        A robots-blocked position becomes UNKNOWN / robots_disallowed, and one whose
+        robots.txt we could not read becomes UNKNOWN / robots_unreadable; both land in
+        the report's 未能评估 region.  That is the honest outcome:
+        "we were not allowed to look" is a true statement, "no problem here"
+        is not.  --no-robots exists for auditing your own property.
+        """
+        return self.robots_verdict(url) == "allowed"
+
+    def _robots_block_marker(self, url: str, verdict: str) -> str:
+        """``classify_response`` 认的 transport_error 前缀。"""
+        if verdict == "unreadable":
+            host = (urlsplit(url).hostname or "").lower()
+            info = self._robots.get(host)
+            return f"robots_unreadable: {(info.why if info else '') or 'robots.txt 读不到'}"
+        return f"robots_disallowed: {urlsplit(url).path or '/'}"
 
     # ------------------------------------------------------------------ #
     # fetch with redirects + retries + DNS second opinion
@@ -424,17 +510,19 @@ class Fetcher:
         # 放在缓存命中**之前**：一条早先（比如 --no-robots 那轮）缓存过的响应
         # 不该让这次绕过检查。robots.txt 自身由 `robots_allows` 里的路径判断豁免，
         # 它走 `_raw_request` 不经过这里。
-        if not self.robots_allows(url):
+        gate = self.robots_verdict(url)
+        if gate != "allowed":
             resp = HttpResponse(
                 url=url,
                 final_url=url,
                 status=0,
                 headers={},
                 body=b"",
-                # classify_response 认这个前缀 → UNKNOWN/robots_disallowed。
+                # classify_response 认这个前缀 → UNKNOWN/robots_disallowed（站方写了禁止）
+                # 或 UNKNOWN/robots_unreadable（我们没读到 robots.txt）。
                 # 不用 status 403 之类的真状态码：那会被判成「站点拦了我们」，
                 # 而这里是**我们自己决定不抓**，两件事在报告里不该长得一样。
-                transport_error=f"robots_disallowed: {urlsplit(url).path or '/'}",
+                transport_error=self._robots_block_marker(url, gate),
             )
             return resp
 
@@ -465,7 +553,9 @@ class Fetcher:
         self.cache.put(resp, accept)
         return resp
 
-    def _fetch_chain(self, url: str, *, accept: str, byte_cap: int) -> HttpResponse:
+    def _fetch_chain(
+        self, url: str, *, accept: str, byte_cap: int, robots: bool = False
+    ) -> HttpResponse:
         current = url
         hops: list[RedirectHop] = []
         seen: set[str] = set()
@@ -483,7 +573,7 @@ class Fetcher:
                 )
             seen.add(current)
 
-            resp = self._attempt(current, accept=accept, byte_cap=byte_cap)
+            resp = self._attempt(current, accept=accept, byte_cap=byte_cap, robots=robots)
 
             if 300 <= resp.status < 400 and "location" in resp.headers:
                 target = urljoin(current, resp.headers["location"])
@@ -513,8 +603,17 @@ class Fetcher:
             transport_error=f"too many redirects (>{MAX_REDIRECTS})",
         )
 
-    def _attempt(self, url: str, *, accept: str, byte_cap: int) -> HttpResponse:
-        """One hop, with retries, throttle backoff and the DNS second opinion."""
+    def _attempt(
+        self, url: str, *, accept: str, byte_cap: int, robots: bool = False
+    ) -> HttpResponse:
+        """One hop, with retries, throttle backoff and the DNS second opinion.
+
+        ``robots=True``：这一跳属于 /robots.txt 的读取。它的 5xx 只做重试间的退避睡眠，**不**
+        调 :meth:`DomainLimiter.note_throttled`。限速桶是 registrable domain，那个调用会把整个域
+        的间隔翻倍且本轮不回落 —— 一个 host 的 robots.txt 503 两次，同域下健康的兄弟 host 这一轮
+        每条请求都慢 4 倍（实测 6 条请求 14 s → 112 s）；robots.txt 一直 503 的 host 本身按 RFC 就
+        整个不抓了，没有「抓得太快」可言。429 仍是服务端明说的「慢点」，照常拉宽。
+        """
         host = (urlsplit(url).hostname or "").lower()
         last: HttpResponse | None = None
 
@@ -558,7 +657,10 @@ class Fetcher:
                 return resp
 
             if resp.status == 429 or (resp.status in RETRY_STATUSES):
-                wait = self.limiter.note_throttled(host, resp.headers.get("retry-after"))
+                if robots and resp.status != 429:
+                    wait = RETRY_BACKOFF[min(attempt, 1)]
+                else:
+                    wait = self.limiter.note_throttled(host, resp.headers.get("retry-after"))
                 if attempt < RETRY_ATTEMPTS - 1 and resp.status != 429:
                     time.sleep(min(wait, RETRY_BACKOFF[min(attempt, 1)]))
                     continue
@@ -686,12 +788,27 @@ class Fetcher:
         adjacent).  The extra request is spent only on positives -- ~20% of
         positions -- so the budget cost is small and the evidence is tight.
         """
-        if not self.robots_allows(url):
+        gate = self.robots_verdict(url)
+        if gate == "disallowed":
             return Probe(
                 url,
                 expect,
                 None,
                 classify_response(0, {}, "", url=url, expect=expect, robots_disallowed=True),
+            )
+        if gate == "unreadable":
+            return Probe(
+                url,
+                expect,
+                None,
+                classify_response(
+                    0,
+                    {},
+                    "",
+                    url=url,
+                    expect=expect,
+                    transport_error=self._robots_block_marker(url, gate),
+                ),
             )
 
         resp = self.fetch(url, expect=expect, liveness_only=liveness_only)
@@ -742,7 +859,14 @@ class Fetcher:
     #: 判据是 reason 而不是状态码：这几条的共同点是「我们没测到」，
     #: 拿另一把尺子再问一遍既不会产生对比，也不会变出第一次没有的信息。
     _NO_FIRST_READING: Final = frozenset(
-        {"not_fetched", "robots_disallowed", "interrupted", "network_error", "timeout"}
+        {
+            "not_fetched",
+            "robots_disallowed",
+            "robots_unreadable",
+            "interrupted",
+            "network_error",
+            "timeout",
+        }
     )
 
     def _wants_second_ruler(

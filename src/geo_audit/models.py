@@ -545,9 +545,18 @@ class RobotsInfo:
     #: 但一个该放行全部、另一个该全部不许抓。
     #:
     #:   parsed        2xx，按内容执行
-    #:   allow_all     4xx，视为「没有 robots.txt」
-    #:   disallow_all  5xx 或网络错误（unreachable），按完全不许抓处理
+    #:   allow_all     4xx，视为「没有 robots.txt」（RFC：MAY 访问全部），挑战页 / 429 同样放行
+    #:   disallow_all  5xx 或网络错误（RFC 的 unreachable，**必须**不抓）；另外跳转成环 / 超限
+    #:                 —— RFC 只允许当作不可用，这里取保守一侧也不抓
     policy: Literal["parsed", "allow_all", "disallow_all"] = "parsed"
+    #: 给人看的原因（见 ``fetch.client.interpret_robots_response``）：「站点没有 robots.txt」与
+    #: 「我们没读到」靠它区分。空串 = 没有需要说明的（读到了，或 404 / 410 的干净缺席）。
+    why: str = ""
+    #: **我们知道多少**（``policy`` 是我们怎么做）：只有真读到了一份 robots.txt（含观察到的
+    #: 404 / 410）才是 True。防火墙挑战页、429、401 / 403 这类 4xx、跳转不通、replay 缺快照，
+    #: ``policy`` 仍按 RFC 9309 取 ``allow_all``（照常抓），但 ``readable`` 是 False ——
+    #: 报告里不能把它们写成「站点没有 robots.txt」或「站点放行」。
+    readable: bool = True
 
 
 # --------------------------------------------------------------------------- #

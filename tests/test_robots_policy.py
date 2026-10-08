@@ -35,6 +35,9 @@ replay 下缺 robots.txt 快照会得到合成 `599 + x-geo-audit-fixture: missi
 
 from __future__ import annotations
 
+import time
+import types
+
 import httpx
 import pytest
 
@@ -43,6 +46,15 @@ from geo_audit.fetch.classify import classify_response
 from geo_audit.fetch.client import Fetcher, FetcherConfig
 from geo_audit.fetch.ratelimit import DomainLimiter
 from geo_audit.models import Expect, Verdict
+
+
+@pytest.fixture(autouse=True)
+def _fast_clock(monkeypatch: pytest.MonkeyPatch) -> None:
+    """robots.txt 现在会对 5xx 重试（带退避）：限速下限与退避是约束，不能调低，
+    但测试里不必真睡 —— 把睡眠换成空操作。"""
+    fake = types.SimpleNamespace(monotonic=time.monotonic, time=time.time, sleep=lambda s: None)
+    monkeypatch.setattr("geo_audit.fetch.ratelimit.time", fake)
+    monkeypatch.setattr("geo_audit.fetch.client.time", fake)
 
 
 def _fetcher(
