@@ -25,23 +25,26 @@ import unicodedata
 # ``<(script|style|...)\b[^>]*>.*?</\1\s*>``, ``<(script|link|meta)\b[^>]*/?>``,
 # ``<!doctype[^>]*>`` and ``<[^>]+>``.  Every one of them rescans to the end of the input from each
 # opening token that is never closed, so a page with N unclosed ``<script>`` / ``<!--`` / ``<``
-# took O(N^2): 100 KB took 2-6 s, 1 MB of ``<`` took minutes.  And ``Fetcher.fetch`` runs this on
-# EVERY response (``finalize_response`` -> ``normalize_body``), so a hostile -- or merely broken
+# cost O(N^2).  ``Fetcher.fetch`` runs ``finalize_response`` -> ``norm_sha256`` -> ``visible_text``
+# on every full-body response it fetches (not on liveness-only probes, truncated or empty bodies,
+# or cache hits) and the checks normalize the same bodies again, so a hostile -- or merely broken
 # -- page could stall an audit.
 #
-# The helpers below produce byte-identical output (tests keep the regex versions as the oracle and
-# compare them on every frozen response and on thousands of fuzzed documents) using one rule:
-# if an opening token cannot be completed -- there is no ``>`` / ``-->`` / closing tag after it --
-# no LATER opening token of the same kind can be completed either (their search starts further
-# right), so the scan can stop looking for that kind.  ``str.find`` does the actual scanning.
+# The helpers below return exactly what those regexes returned (tests keep the regex versions as
+# the oracle and compare every stage, and the public functions, on every frozen response and on
+# fuzzed documents) using one rule: if an opening token cannot be completed -- there is no ``>`` /
+# ``-->`` / closing tag after it -- no LATER opening token of the same kind can be completed either
+# (their search starts further right), so the scan can stop looking for that kind.  ``str.find``
+# does the actual scanning.
 
 # The opening token of a block (``<script`` etc., ``\b`` after the name); the spelling is captured.
 _BLOCK_OPEN_RE = re.compile(r"<(?P<n>script|style|noscript|svg|template|iframe)\b", re.IGNORECASE)
 # The original per-block pattern, kept verbatim and applied ANCHORED at one opening token.  Not
 # rebuilt from the name: ``\1`` compares the closing tag with the captured text through the regex
-# engine's *lower-casing* (``K`` ~ ``k``, but ``\u017f`` is NOT ``s``), which is not the same
-# equivalence ``re.IGNORECASE`` uses for a literal (``\u017f`` ~ ``s``).  Re-implementing either
-# changes the output for exotic spellings such as ``<\u017fcript>``; reusing the regex cannot.
+# engine's per-character *lower-casing* (``\u0130`` lowers to ``i``, but ``\u017f`` is NOT ``s`` and
+# ``\u0131`` is NOT ``i``), which is not the equivalence ``re.IGNORECASE`` uses for a literal
+# (there ``\u017f`` ~ ``s`` and ``\u0131`` ~ ``i``).  Re-implementing either changes the output for
+# exotic spellings such as ``<\u017fcript>``; reusing the regex cannot.
 _BLOCK_AT_RE = re.compile(
     r"<(script|style|noscript|svg|template|iframe)\b[^>]*>.*?</\1\s*>",
     re.IGNORECASE | re.DOTALL,
@@ -76,11 +79,15 @@ def _strip_blocks(text: str) -> str:
     out: list[str] = []
     keep_from = 0  # start of the text not yet copied to ``out``
     scan = 0  # where to look for the next opening token
-    # Spellings (case-folded) whose closing tag is known not to exist after some point.  A later
-    # opening with the same spelling needs the same closing tag from further right: it cannot
-    # succeed either.  The key is the *spelling*, not the tag name: ``<\u017fcript>`` and
-    # ``<script>`` are different back-references, and a missing ``</\u017fcript>`` says nothing
-    # about ``</script>``.
+    # Spellings whose closing tag is known not to exist after some point.  A later opening with the
+    # same spelling needs the same closing tag from further right: it cannot succeed either.  The
+    # key is the *spelling* lower-cased with ``str.lower()``, not the tag name and not
+    # ``casefold()``: ``<\u017fcript>`` and ``<script>`` are different back-references (a missing
+    # ``</\u017fcript>`` says nothing about ``</script>``), and so are ``<scr\u0131pt>`` and
+    # ``<scrIpt>``; only ASCII case differences never matter.  ``\u0130`` lowers to two characters
+    # here but to ``i`` inside ``\1``, so those spellings are merely keyed apart from the ``i``
+    # ones: a few more scans, never a wrong answer.  Un-lowered spellings would allow ~70x more
+    # failing scans (tests pin the counts).
     unclosed: set[str] = set()
     while True:
         m = _BLOCK_OPEN_RE.search(text, scan)
