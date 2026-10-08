@@ -71,7 +71,9 @@ def to_host(raw: str) -> str:
 
 def audit_host(fetcher: Fetcher, host: str) -> tuple[HostCrawlerPolicy, int]:
     info = fetcher.robots_for(f"https://{host}/")
-    pol = judge_robots_crawlers(host, info.raw, info.policy, status=info.status, why=info.why)
+    pol = judge_robots_crawlers(
+        host, info.raw, info.policy, status=info.status, why=info.why, readable=info.readable
+    )
     return pol, info.status
 
 
@@ -91,13 +93,13 @@ def render_text(pol: HostCrawlerPolicy, status: int) -> str:
     if pol.unreadable:
         if pol.policy == "disallow_all":
             lines.append(
-                "  没读到 robots.txt：下面每一行都不是站方的决定，是我们没能看。"
-                "RFC 9309 对读不到的 robots.txt 视同完全不许抓。"
+                "  没读到 robots.txt：下面每一行都不是站方的决定，是我们没能看"
+                "（整站体检遇到这种情况会保守地不抓这个 host）。"
             )
         else:
             lines.append(
-                f"  robots.txt 返回 HTTP {status}：RFC 9309 视为没有 robots.txt"
-                "（爬虫可以访问全部），但这也可能是防火墙 / 鉴权拦了我们 ——"
+                f"  没读到 robots.txt 的内容（HTTP {status}）：整站体检照常抓（没有可执行的规则），"
+                "但这不是站点说了「没有」—— 防火墙 / 鉴权 / 限流也会这样。"
                 "下面不能当成「站点放行」。"
             )
     for role in Role:

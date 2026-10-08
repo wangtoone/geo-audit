@@ -31,12 +31,17 @@
 **不做**：百分号编码归一化（路径里带 ``%xx`` 的规则会按字面比）、500 KiB 截断。
 这两条都不影响「根路径放不放行」这个主问题。
 
-## 取不到 robots.txt 的三种结果
+## 取不到 robots.txt：只认 ``readable``，不认 ``policy``
 
-沿用 ``RobotsInfo.policy``：``parsed`` 按内容；``allow_all``（4xx，没有 robots.txt）全放行；
-``disallow_all``（5xx / 网络错误）—— 这是**我们没能读到**，不是站方的决定，所以这里
-记成 ``unreadable``，**不许**记成 ``blocked_all``。（``robots_disallowed`` 那条「你的
-robots.txt 禁止抓」在这种情形下对站点是假话，别在这里复制同一个错。）
+``RobotsInfo`` 里两个字段回答两件事：``policy`` 是抓取层**怎么做**（``parsed`` 按内容 /
+``allow_all`` / ``disallow_all``，按 RFC 9309 取，决定会不会继续抓），``readable`` 是我们
+**知道多少**（只有真读到了一份 robots.txt，含观察到的 404 / 410，才是 True）。
+
+这张表回答的是「站点说了什么」，所以只认 ``readable``：防火墙挑战页（AWS 的是 202，状态码
+看不出）、429、401 / 403、跳转不通、5xx / 网络错误、replay 缺快照 —— 哪怕抓取层照常抓
+（``policy`` 是 ``allow_all``），这里一律记成 ``unreadable``，**不许**记成 ``no_robots_txt``
+（站点没有）或 ``blocked_all``（站点禁止）。后者正是 ``robots_disallowed`` 那条「你的 robots.txt
+禁止抓」在读不到时对站点说的假话，别在这里复制同一个错。
 """
 
 from __future__ import annotations
@@ -238,7 +243,7 @@ class Access(str, Enum):
     ALLOWED = "allowed"  # 没有任何对它生效的禁止规则
     PARTIAL = "partial"  # 有禁止规则，但根路径放行；或根路径禁止、但有 Allow 重新开了口子
     BLOCKED_ALL = "blocked_all"  # 根路径被禁止，且没有任何 Allow 能重新开口 —— 全站不许
-    UNREADABLE = "unreadable"  # robots.txt 5xx / 网络错误：我们没读到，不是站方的决定
+    UNREADABLE = "unreadable"  # 没读到 robots.txt（5xx / 网络错误 / 挑战页 …）：不是站方的决定
 
 
 Matched = Literal["specific", "fallback", "wildcard", "none", "no_robots_txt", "unreadable"]
@@ -416,24 +421,29 @@ def judge_robots_crawlers(
     crawlers: tuple[Crawler, ...] = CRAWLERS,
     status: int | None = None,
     why: str = "",
+    readable: bool | None = None,
 ) -> HostCrawlerPolicy:
     """一个 host 的 robots.txt 对每个爬虫的答案。入参就是 ``RobotsInfo`` 的字段。
 
-    **「站点没有 robots.txt」与「我们没读到」要分开**（``status`` 就是为这个传的）：
-    只有**观察到的** 404 / 410（以及没传 status 的老调用方）才是干净的缺席 → 放行；
-    5xx / 网络错误 / 挑战页 / 429 / 跳转超限（policy ``disallow_all``），以及其余 4xx 与
-    replay 缺快照（policy ``allow_all`` 但 status 不是 404/410/2xx），都是 UNREADABLE ——
-    RFC 9309 对 4xx 的处理是「可以访问全部」，但防火墙 / 鉴权也会给 403，
-    那不是站点说了「没有」。
+    **「站点没有 robots.txt」与「我们没读到」要分开。** ``readable`` 是抓取层记下的「我们知道多少」
+    （``RobotsInfo.readable``）：只有真读到了一份 robots.txt（含**观察到的** 404 / 410）才是 True。
+    防火墙挑战页（AWS 的是 202，状态码看不出）、429、401 / 403 这类 4xx、跳转不通、replay 缺快照，
+    抓取层的 ``policy`` 都按 RFC 9309 取 ``allow_all``（照常抓），但它们不是「站点没有」，这里一律
+    UNREADABLE。``disallow_all``（5xx / 网络错误 / 跳转成环）同样 UNREADABLE。
+
+    ``readable=None``（直接调用、手里没有 ``RobotsInfo``）退回按 ``policy`` / ``status`` 推断：
+    只有没传 status 或观察到的 404 / 410（以及 2xx）才算读到了。
     """
     answers: list[CrawlerAnswer] = []
     groups = parse_robots(raw) if policy == "parsed" else {}
-    clean_absence = policy == "allow_all" and (status is None or status in (404, 410))
-    unreadable = policy == "disallow_all" or (
-        policy == "allow_all"
-        and not clean_absence
-        and not (status is not None and 200 <= status < 300)
-    )
+    absent = status is None or status in (404, 410)
+    if readable is None:  # 直接调用、没带 RobotsInfo：按 policy / status 推断
+        readable = policy == "parsed" or (
+            policy == "allow_all" and (absent or 200 <= (status or 0) < 300)
+        )
+    known = readable and policy != "disallow_all"
+    unreadable = not known
+    clean_absence = policy == "allow_all" and known and absent
     for c in crawlers:
         if unreadable:
             answers.append(CrawlerAnswer(c, Access.UNREADABLE, "unreadable"))
@@ -484,6 +494,8 @@ def judge_path(raw: str, token: str, path: str) -> bool:
 def judge_hosts(robots: Mapping[str, RobotsInfo]) -> dict[str, HostCrawlerPolicy]:
     """``SiteMap.robots``（``{host: RobotsInfo}``）整张表一次判完。"""
     return {
-        h: judge_robots_crawlers(h, info.raw, info.policy, status=info.status, why=info.why)
+        h: judge_robots_crawlers(
+            h, info.raw, info.policy, status=info.status, why=info.why, readable=info.readable
+        )
         for h, info in robots.items()
     }

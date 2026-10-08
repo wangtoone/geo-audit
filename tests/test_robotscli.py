@@ -162,8 +162,9 @@ AWS = {"x-amzn-waf-action": "challenge"}
 def test_a_waf_challenge_on_robots_txt_is_unreadable_not_allowed(
     capsys: pytest.CaptureFixture[str],
 ) -> None:
-    """修复前：AWS 的 202 + 空正文被当成真 robots.txt（没有规则）→ 每一行都是「放行」。"""
-    f = _fetcher({"a.test": (202, "")})
+    """修复前：AWS 的 202 + 空正文被当成真 robots.txt（没有规则）→ 每一行都是「放行」。
+
+    现在：整站体检照常抓（没有可执行的规则），但这张表不能把它说成「站点放行」。"""
 
     def handler(req: httpx.Request) -> httpx.Response:
         return httpx.Response(202, headers=AWS, text="")
@@ -178,7 +179,30 @@ def test_a_waf_challenge_on_robots_txt_is_unreadable_not_allowed(
     out = capsys.readouterr().out
     assert rc == 3
     assert "x-amzn-waf-action: challenge" in out and "不是 robots.txt" in out
-    assert "放行" not in out and "没读到 robots.txt" in out
+    assert "没读到 robots.txt 的内容（HTTP 202）" in out and "整站体检照常抓" in out
+    assert "放行  ←" not in out, "有一行把爬虫说成了「放行」"
+
+
+def test_json_marks_a_challenged_robots_txt_unreadable_with_its_policy(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    """JSON 里要分得清「抓取层怎么做」（policy：照常抓）与「读没读到」（unreadable）。"""
+
+    def handler(req: httpx.Request) -> httpx.Response:
+        return httpx.Response(202, headers=AWS, text="")
+
+    f = Fetcher(
+        FetcherConfig(contact="ci@geo-audit.invalid", interval=2.0),
+        HttpCache(":memory:"),
+        DomainLimiter(2.0),
+        transport=httpx.MockTransport(handler),
+    )
+    rc = run(["a.test", "--json", *ARGS], fetcher=f)
+    (host,) = json.loads(capsys.readouterr().out)
+    assert rc == 3
+    assert host["policy"] == "allow_all" and host["unreadable"] is True
+    assert "x-amzn-waf-action" in host["why"]
+    assert {c["access"] for c in host["crawlers"]} == {"unreadable"}
 
 
 def test_a_plain_403_follows_rfc_but_is_not_shown_as_site_allows(

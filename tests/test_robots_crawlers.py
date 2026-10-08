@@ -200,6 +200,25 @@ def test_judge_hosts_maps_robotsinfo() -> None:
     assert out["a.test"].search_blocked_by_wildcard() != ()
 
 
+def test_judge_hosts_carries_readable_from_robotsinfo() -> None:
+    """202 + 挑战头：抓取层 policy 是 allow_all（照常抓），readable 是 False。
+    judge_hosts 若不把 readable 传下去，按状态码（2xx）会把它读成「读到了一份空文件」→ 放行。"""
+    challenge = RobotsInfo(
+        host="a.test",
+        fetched=True,
+        status=202,
+        crawl_delay=None,
+        sitemaps=(),
+        raw="",
+        policy="allow_all",
+        why="响应头 x-amzn-waf-action: challenge（HTTP 202）：防火墙下发的是挑战页",
+        readable=False,
+    )
+    out = judge_hosts({"a.test": challenge})["a.test"]
+    assert out.unreadable and {a.access for a in out.answers} == {Access.UNREADABLE}
+    assert "x-amzn-waf-action" in out.why
+
+
 # ── 真实快照：和标准库 robotparser 在「根路径」上必须一致 ─────────────────────
 #
 # 为什么拿标准库当对照：它是别人写的、独立的实现；两者在「根路径放不放行」上若有
@@ -344,27 +363,58 @@ def test_unstated_is_not_the_same_as_does_not_honor() -> None:
 
 
 # ── 判定要区分「站点没有」与「我们没读到」───────────────────────────────────────────
+#
+# ``policy`` 是抓取层怎么做（RFC 9309），``readable`` 是我们知道多少 —— 这张表只认 ``readable``。
+# 关键行是 ("allow_all", 202, False)：防火墙挑战页，抓取照常进行（没有可执行的规则），
+# 但它不是「站点没有 robots.txt」。
 @pytest.mark.parametrize(
-    ("policy", "status", "access", "matched"),
+    ("policy", "status", "readable", "access", "matched"),
     [
-        ("allow_all", 404, Access.ALLOWED, "no_robots_txt"),  # 观察到的缺席
-        ("allow_all", 410, Access.ALLOWED, "no_robots_txt"),
-        ("allow_all", None, Access.ALLOWED, "no_robots_txt"),  # 老调用方不传 status
-        ("allow_all", 200, Access.ALLOWED, "none"),  # 有文件、正文为空
-        ("allow_all", 403, Access.UNREADABLE, "unreadable"),  # RFC 放行，但不能说成「没有」
-        ("allow_all", 401, Access.UNREADABLE, "unreadable"),
-        ("allow_all", 599, Access.UNREADABLE, "unreadable"),  # replay 缺快照
-        ("disallow_all", 503, Access.UNREADABLE, "unreadable"),
-        ("disallow_all", 202, Access.UNREADABLE, "unreadable"),  # 防火墙挑战页
-        ("disallow_all", 429, Access.UNREADABLE, "unreadable"),
+        ("allow_all", 404, True, Access.ALLOWED, "no_robots_txt"),  # 观察到的缺席
+        ("allow_all", 410, True, Access.ALLOWED, "no_robots_txt"),
+        ("allow_all", 200, True, Access.ALLOWED, "none"),  # 有文件、正文为空
+        ("allow_all", 403, False, Access.UNREADABLE, "unreadable"),  # RFC 放行，但不是「没有」
+        ("allow_all", 401, False, Access.UNREADABLE, "unreadable"),
+        ("allow_all", 202, False, Access.UNREADABLE, "unreadable"),  # 防火墙挑战页：状态码看不出
+        ("allow_all", 429, False, Access.UNREADABLE, "unreadable"),  # 限流，没读到
+        ("allow_all", 599, False, Access.UNREADABLE, "unreadable"),  # replay 缺快照
+        ("allow_all", 404, False, Access.UNREADABLE, "unreadable"),  # readable 说了算，不看状态码
+        ("disallow_all", 503, False, Access.UNREADABLE, "unreadable"),
+        ("disallow_all", 0, False, Access.UNREADABLE, "unreadable"),  # 网络错误
+        ("disallow_all", 200, True, Access.UNREADABLE, "unreadable"),  # 自相矛盾的输入也不放行
     ],
 )
 def test_absence_versus_unreadable(
-    policy: str, status: int | None, access: Access, matched: str
+    policy: str, status: int, readable: bool, access: Access, matched: str
 ) -> None:
-    pol = judge_robots_crawlers("h.test", "", policy, status=status)  # type: ignore[arg-type]
+    pol = judge_robots_crawlers(
+        "h.test",
+        "",
+        policy,  # type: ignore[arg-type]
+        status=status,
+        readable=readable,
+    )
     assert {(a.access, a.matched) for a in pol.answers} == {(access, matched)}
     assert pol.unreadable is (access is Access.UNREADABLE)
+
+
+@pytest.mark.parametrize(
+    ("policy", "status", "access", "matched"),
+    [
+        ("allow_all", None, Access.ALLOWED, "no_robots_txt"),  # 没传 status：老调用方
+        ("allow_all", 404, Access.ALLOWED, "no_robots_txt"),
+        ("allow_all", 200, Access.ALLOWED, "none"),
+        ("allow_all", 403, Access.UNREADABLE, "unreadable"),
+        ("allow_all", 599, Access.UNREADABLE, "unreadable"),
+        ("disallow_all", 503, Access.UNREADABLE, "unreadable"),
+    ],
+)
+def test_without_readable_the_status_decides(
+    policy: str, status: int | None, access: Access, matched: str
+) -> None:
+    """直接调用、手里没有 RobotsInfo（``readable=None``）：退回按 policy / status 推断。"""
+    pol = judge_robots_crawlers("h.test", "", policy, status=status)  # type: ignore[arg-type]
+    assert {(a.access, a.matched) for a in pol.answers} == {(access, matched)}
 
 
 # ── Applebot 的后备组（Apple 文档：没点名它但点名了 Googlebot，就按 Googlebot 的组走）───────
