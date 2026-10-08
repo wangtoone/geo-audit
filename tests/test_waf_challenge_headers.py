@@ -234,10 +234,16 @@ def test_every_frozen_response_carrying_a_challenge_header_is_blocked() -> None:
         # 语料里这 9 条原本就是 403 + Cloudflare 正文，状态码和正文单独就能判被拦，
         # 所以只验「录到的样子」不能证明头起了作用。把状态码改成 200、正文清空，只留头：
         header_only = classify_response(200, snap.headers, "", url=url, expect=Expect.ANY)
-        hits.append((url, recorded.verdict, header_only.verdict))
-    assert len(hits) >= 9, f"语料里只剩 {len(hits)} 条带挑战头的快照，这条回归失去意义"
+        hits.append((url, recorded.verdict, header_only.verdict, recorded.reason))
+    # 9 条 cf-mitigated（gusto.com ×6、npmjs.com ×2、api.factorialhr.com ×1）+ 3 条
+    # x-vercel-mitigated（tenderly.co，429）。
+    assert len(hits) >= 12, f"语料里只剩 {len(hits)} 条带挑战头的快照，这条回归失去意义"
     assert [h for h in hits if h[1] is not Verdict.BLOCKED] == []
     assert [h for h in hits if h[2] is not Verdict.BLOCKED] == []
+    # 理由也要钉：这些快照以前的理由是 waf_challenge_body（Cloudflare）/ rate_limited（Vercel），
+    # 现在是 waf_challenge_header。soft404_expectations.json 的 B19（gusto llms.txt）写的是
+    # 手工冻结样本（real_cases.py，没带这个头）的合成判定，不在这里；真实快照只在这里被钉。
+    assert [h[0] for h in hits if h[3] != "waf_challenge_header"] == []
 
 
 # ── 真实数据 2：app.baseten.co 的两次真实抓取（语料里没有任何 x-amzn-waf-action）─────────

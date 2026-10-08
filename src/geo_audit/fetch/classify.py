@@ -368,7 +368,8 @@ def classify_response(
     if status == 0:
         err = (transport_error or "").lower()
         if err.startswith("robots_unreadable"):
-            # robots.txt 自己没读到（5xx / 网络错误 / 挑战页 / 限流 / 跳转过多）。
+            # robots.txt 不可达（5xx / 网络错误：RFC 9309 §2.3.1.4 要求不抓；跳转成环或超限：
+            # RFC 只是允许当作不可用，我们取保守一侧）。
             # **和 robots_disallowed 是两件事**：后者是站方写了 Disallow，前者是我们没能看。
             # 把前者写成「你的 robots.txt 禁止抓」对站点是假话。
             return Classification(
@@ -376,7 +377,7 @@ def classify_response(
                 "robots_unreadable",
                 (
                     f"没读到 robots.txt（{(transport_error or '').split(':', 1)[-1].strip()}），"
-                    "RFC 9309 要求视同完全不许抓，本位置未评估 —— 这不是站点写了禁止",
+                    "读不到时按完全不许抓处理，本位置未评估 —— 这不是站点写了禁止",
                 ),
             )
         if err.startswith("robots_disallowed"):

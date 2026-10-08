@@ -818,8 +818,9 @@ UNKNOWN_REMEDY: dict[str, str] = {
         "但对纯 HTTP 客户端一律 403 —— 任何不带浏览器的工具都会把你这里报成「没有」。"
     ),
     "waf_challenge_header": (
-        "你的 WAF / CDN 对 geo-audit 的请求下发了挑战页 —— 响应头（cf-mitigated 或 "
-        "x-amzn-waf-action）说明了这一点，而它的状态码可能是 202 而不是 403。"
+        "你的 WAF / CDN 对 geo-audit 的请求下发了挑战页 —— 响应头（cf-mitigated、"
+        "x-amzn-waf-action 或 x-vercel-mitigated）说明了这一点，而它的状态码不一定是 403："
+        "AWS 的可能是 202，Vercel 的可能是 429（那不是限流，调慢没用）。"
         "把 UA 含 geo-audit 的请求加白名单后重跑即可。"
         "实测参照：app.baseten.co（AWS WAF）对纯 HTTP 客户端答 202 + x-amzn-waf-action: challenge，"
         "Accept 含 text/html 时给一页 JS 挑战，不含时是 0 字节 —— 只看状态码和正文的工具会把它读成"
@@ -870,10 +871,11 @@ UNKNOWN_REMEDY: dict[str, str] = {
         "「我们没被允许看」是真话，「这里没问题」是假话。"
     ),
     "robots_unreadable": (
-        "我们没读到你的 robots.txt（5xx、网络错误、防火墙挑战、限流或跳转过多）。"
-        "RFC 9309 要求对读不到的 robots.txt 视同完全不许抓，所以本位置没有被评估 —— "
-        "这不是说你的 robots.txt 写了禁止。让 /robots.txt 对 geo-audit 的 UA 返回 200"
-        "（或明确的 404）后重跑即可；确实要跳过 robots 检查才加 --ignore-robots。"
+        "我们没读到你的 robots.txt（5xx、网络错误，或 /robots.txt 的跳转成环 / 超限）。"
+        "RFC 9309 要求对 5xx 和网络错误视同完全不许抓（跳转成环 / 超限它只是允许当作「没有」，"
+        "我们取更保守的一侧），所以本位置没有被评估 —— 这不是说你的 robots.txt 写了禁止。"
+        "让 /robots.txt 对 geo-audit 的 UA 返回 200（或明确的 404）后重跑即可；"
+        "确实要跳过 robots 检查才加 --ignore-robots。"
     ),
     "control_unavailable": (
         "同域对照探测自身不可用（被拦或出错），无法判定本响应是真文件还是兜底页。"
