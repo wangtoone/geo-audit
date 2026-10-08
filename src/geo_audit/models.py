@@ -41,7 +41,7 @@ SCHEMA_VERSION = "geo-audit/report/1"
 TOOL_VERSION = "0.1.0"
 #: 与 fetch/fingerprints.TABLE_VERSION 同源。去噪规则表一改就要动它，
 #: 否则跨版本的 fp-gate 报告没法比。
-DENOISE_RULESET_VERSION = "denoise/2026-10-08.1"
+DENOISE_RULESET_VERSION = "denoise/2026-10-08.2"
 
 #: JSON 里随环境变化、不参与确定性比对的字段路径。
 #: L 组（§8.8）逐字节比对前先剔掉这些。
