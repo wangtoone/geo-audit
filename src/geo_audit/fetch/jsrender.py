@@ -34,6 +34,8 @@ Decision and its justification (do not revisit without new data):
 from __future__ import annotations
 
 import re
+import sys
+from collections.abc import Iterator
 
 from ..models import JsAssessment
 from .normalize import visible_text
@@ -49,29 +51,172 @@ EMPTY_SHELL_TEXT_LEN = 200
 #: A page with prose but suspiciously little of it relative to its markup.
 THIN_TEXT_LEN = 500
 
-_EMPTY_MOUNT_RE = re.compile(
-    r"<div[^>]+id=[\"'](?:root|app|__next|__nuxt|application|main-content)[\"'][^>]*>\s*</div>",
+# --------------------------------------------------------------------------- #
+# Tag signals -- linear time, on purpose
+# --------------------------------------------------------------------------- #
+# Five of the signals used to be single regexes of the shape ``<div[^>]+id=...[^>]*>...``,
+# ``<script[^>]+src=`` and ``<noscript[^>]*>...``.  ``[^>]+`` takes everything up to the next ``>``
+# (or the end of the page) and then gives characters back one at a time looking for ``id=``, and
+# every ``<div`` start did that again over the same text: N copies of ``<div id='app'`` with no
+# ``>`` cost O(N^3), ``<div `` / ``<script `` / ``<noscript `` x N cost O(N^2).
+# ``classify_response`` runs this on every HTML response, so a hostile -- or merely broken -- page
+# could stall an audit.
+#
+# Each signal is only ever used as a yes/no, so each is computed per TAG instead: the first
+# ``<div`` after a ``>`` fixes where its tag ends (the next ``>``), and any later ``<div`` before
+# that ``>`` has the same end and a shorter attribute span, so it cannot match when the first one
+# does not.  Every tag is therefore looked at once.  The pieces are the original patterns
+# (``re.I``, ``\s`` and all) applied to a bounded range; the tests keep the old single regexes as
+# the oracle and compare yes/no on the frozen corpus and on fuzzed pages.
+
+#: ``re.I`` also accepts look-alike spellings (``ı`` / ``İ`` for ``i``, ``ſ`` for
+#: ``s``) -- keep it on every piece, exactly like the original patterns.
+_DIV_OPEN_RE = re.compile(r"<div", re.I)
+_SCRIPT_OPEN_RE = re.compile(r"<script", re.I)
+_NOSCRIPT_OPEN_RE = re.compile(r"<noscript", re.I)
+
+_SRC_RE = re.compile(r"src=", re.I)
+_MOUNT_ID_RE = re.compile(r"id=[\"'](?:root|app|__next|__nuxt|application|main-content)[\"']", re.I)
+_FRAMEWORK_MOUNT_ID_RE = re.compile(r"id=[\"'](?:root|app|__next|__nuxt)[\"']", re.I)
+_REDOC_ID_RE = re.compile(r"id=[\"']redoc[\"']", re.I)
+
+_WS_RE = re.compile(r"\s*")
+_CLOSE_DIV_RE = re.compile(r"</div>", re.I)
+_EMPTY_DIV_BODY_RE = re.compile(r"\s*</div>", re.I)
+_COMMENT_END_THEN_CLOSE_DIV_RE = re.compile(r"-->\s*</div>", re.I)
+_UP_TO_SCRIPT_RE = re.compile(r"\s*(?:<[^>]+>\s*){0,3}<script", re.I)
+
+#: The API-reference markers that never needed a tag scan (``<div id="redoc"`` does, below).
+_API_DOC_MARKERS_RE = re.compile(
+    r"<redoc\b|<rapi-doc\b|id=[\"']swagger-ui[\"']\s*>\s*</div>|Redoc\.init\(|SwaggerUIBundle\(",
     re.I,
 )
-_MOUNT_THEN_SCRIPT_RE = re.compile(
-    r"<div[^>]+id=[\"'](?:root|app|__next|__nuxt)[\"'][^>]*>\s*(?:<!--.*?-->\s*)?</div>\s*(?:<[^>]+>\s*){0,3}<script",
-    re.I | re.S,
-)
-_API_DOC_SPA_RE = re.compile(
-    r"<redoc\b|<div[^>]+id=[\"']redoc[\"']|<rapi-doc\b|id=[\"']swagger-ui[\"']\s*>\s*</div>"
-    r"|Redoc\.init\(|SwaggerUIBundle\(",
+_NOSCRIPT_CLOSE_RE = re.compile(r"</noscript>", re.I)
+_JS_DEMAND_RE = re.compile(
+    r"enable\s+javascript|requires\s+javascript|javascript\s+(?:is\s+)?(?:required|disabled)"
+    r"|需要?启用\s*javascript|请开启\s*javascript",
     re.I,
 )
-_NOSCRIPT_DEMAND_RE = re.compile(
-    r"<noscript[^>]*>(?:(?!</noscript>).){0,600}"
-    r"(?:enable\s+javascript|requires\s+javascript|javascript\s+(?:is\s+)?(?:required|disabled)"
-    r"|需要?启用\s*javascript|请开启\s*javascript)",
-    re.I | re.S,
-)
-_SCRIPT_SRC_RE = re.compile(r"<script[^>]+src=", re.I)
+#: How far past ``<noscript>`` the demand phrase may start.
+_NOSCRIPT_WINDOW = 600
+#: "no such position": larger than any index.
+_NEVER = sys.maxsize
+
 _NUXT_RE = re.compile(r"window\.__NUXT__|data-server-rendered=[\"']false[\"']", re.I)
 _NEXT_DATA_RE = re.compile(r"id=[\"']__NEXT_DATA__[\"']", re.I)
 _CONTENT_ELEMENT_RE = re.compile(r"<(?:p|li|h2|h3|article|table|dd)\b", re.I)
+
+
+def _tags(text: str, opening: re.Pattern[str]) -> Iterator[tuple[int, int]]:
+    """``(end of the opening token, index of the next ">" or -1)`` for the first ``opening`` after
+    every ``>``.  Later openings before the same ``>`` are skipped (see above).  Nothing follows a
+    ``-1``: with no ``>`` left, no later opening has one either."""
+    pos = 0
+    while True:
+        m = opening.search(text, pos)
+        if m is None:
+            return
+        gt = text.find(">", m.end())
+        yield m.end(), gt
+        if gt < 0:
+            return
+        pos = gt + 1
+
+
+def _skip_ws(text: str, pos: int) -> int:
+    m = _WS_RE.match(text, pos)
+    return m.end() if m else pos
+
+
+def _has_script_src(text: str) -> bool:
+    """``re.search(r"<script[^>]+src=", text, re.I)``"""
+    for end, gt in _tags(text, _SCRIPT_OPEN_RE):
+        # ``[^>]+`` takes at least one character, so ``src=`` starts at ``end + 1`` or later
+        if _SRC_RE.search(text, end + 1, len(text) if gt < 0 else gt):
+            return True
+    return False
+
+
+def _has_empty_mount(text: str) -> bool:
+    r"""``<div[^>]+id=["'](root|app|__next|__nuxt|application|main-content)["'][^>]*>\s*</div>``"""
+    for end, gt in _tags(text, _DIV_OPEN_RE):
+        if gt < 0:
+            return False  # the tag never ends, and the pattern needs its ``>``
+        if _MOUNT_ID_RE.search(text, end + 1, gt) and _EMPTY_DIV_BODY_RE.match(text, gt + 1):
+            return True
+    return False
+
+
+def _comment_then_script(text: str, start: int) -> bool:
+    r"""``<!--.*?-->\s*</div>\s*(?:<[^>]+>\s*){0,3}<script`` anchored at ``start``, where ``<!--``
+    is: some ``-->`` after the comment's own dashes, then ``</div>``, then the rest."""
+    pos = start + 4
+    while True:
+        m = _COMMENT_END_THEN_CLOSE_DIV_RE.search(text, pos)
+        if m is None:
+            return False
+        if _UP_TO_SCRIPT_RE.match(text, m.end()):
+            return True
+        pos = m.start() + 1
+
+
+def _has_mount_then_script(text: str) -> bool:
+    r"""``<div[^>]+id=["'](root|app|__next|__nuxt)["'][^>]*>\s*(?:<!--.*?-->\s*)?</div>\s*
+    (?:<[^>]+>\s*){0,3}<script``"""
+    # Once the comment branch has failed at one place it fails at every later one: the ``-->``
+    # candidates after a later ``<!--`` are a subset of the ones that were just exhausted.
+    comment_dead = False
+    for end, gt in _tags(text, _DIV_OPEN_RE):
+        if gt < 0:
+            return False
+        if not _FRAMEWORK_MOUNT_ID_RE.search(text, end + 1, gt):
+            continue
+        after_tag = _skip_ws(text, gt + 1)
+        if text.startswith("<!--", after_tag):  # then ``</div>`` cannot be right here
+            if comment_dead:
+                continue
+            if _comment_then_script(text, after_tag):
+                return True
+            comment_dead = True
+            continue
+        close = _CLOSE_DIV_RE.match(text, after_tag)
+        if close and _UP_TO_SCRIPT_RE.match(text, close.end()):
+            return True
+    return False
+
+
+def _has_api_doc_spa(text: str) -> bool:
+    r"""``<redoc\b|<div[^>]+id=["']redoc["']|<rapi-doc\b|id=["']swagger-ui["']\s*>\s*</div>
+    |Redoc\.init\(|SwaggerUIBundle\(``"""
+    if _API_DOC_MARKERS_RE.search(text):
+        return True
+    for end, gt in _tags(text, _DIV_OPEN_RE):
+        if _REDOC_ID_RE.search(text, end + 1, len(text) if gt < 0 else gt):
+            return True
+    return False
+
+
+def _has_noscript_demand(text: str) -> bool:
+    r"""``<noscript[^>]*>(?:(?!</noscript>).){0,600}(?:enable\s+javascript|...)``: a demand phrase
+    that starts within 600 characters of the ``<noscript ...>`` tag and not behind its
+    ``</noscript>``."""
+    # The first ``</noscript>`` / demand phrase at or after the latest ``lo``.  The ``lo`` only
+    # grow, so a cached position stays right until ``lo`` passes it: every ``search`` runs forward
+    # once.
+    closing = demand = -1
+    for _, gt in _tags(text, _NOSCRIPT_OPEN_RE):
+        if gt < 0:
+            return False
+        lo = gt + 1
+        if closing < lo:
+            m = _NOSCRIPT_CLOSE_RE.search(text, lo)
+            closing = m.start() if m else _NEVER
+        if demand < lo:
+            m = _JS_DEMAND_RE.search(text, lo)
+            demand = m.start() if m else _NEVER
+        if demand <= min(lo + _NOSCRIPT_WINDOW, closing):
+            return True
+    return False
 
 
 def detect_js_dependency(
@@ -101,24 +246,22 @@ def detect_js_dependency(
     hard: list[str] = []
     soft: list[str] = []
 
-    has_script_src = bool(_SCRIPT_SRC_RE.search(body))
+    has_script_src = _has_script_src(body)
 
     # HARD 1: big markup, no prose.  spoton / lawmatics.
     if vlen < EMPTY_SHELL_TEXT_LEN and has_script_src and rlen > 5 * max(vlen, 1):
         hard.append(f"empty_shell(visible={vlen},raw={rlen})")
 
     # HARD 2: the mount point is empty in the served HTML.
-    if _MOUNT_THEN_SCRIPT_RE.search(body) or (
-        _EMPTY_MOUNT_RE.search(body) and vlen < THIN_TEXT_LEN
-    ):
+    if _has_mount_then_script(body) or (vlen < THIN_TEXT_LEN and _has_empty_mount(body)):
         hard.append("empty_spa_mount")
 
     # HARD 3: API-reference SPAs render entirely client-side.
-    if _API_DOC_SPA_RE.search(body):
+    if _has_api_doc_spa(body):
         hard.append("api_doc_spa(redoc/swagger/rapidoc)")
 
     # SOFT signals
-    if _NOSCRIPT_DEMAND_RE.search(body):
+    if _has_noscript_demand(body):
         soft.append("noscript_demands_js")
     if _NUXT_RE.search(body):
         soft.append("nuxt_client_only")
