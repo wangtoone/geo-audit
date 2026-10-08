@@ -65,7 +65,13 @@ from ..models import (
 )
 from . import fingerprints as fp
 from .cache import MAX_CACHE_BODY, HttpCache
-from .classify import challenge_header, classify_response, is_blocked, looks_like_html
+from .classify import (
+    challenge_header,
+    classify_response,
+    is_blocked,
+    looks_like_html,
+    mark_blocked,
+)
 from .normalize import (
     NORM_BODY_CAP,
     norm_sha256,
@@ -543,7 +549,7 @@ class Fetcher:
         if use_cache:
             hit = self.cache.get("GET", url, accept)
             if hit is not None:
-                return hit
+                return mark_blocked(hit)
 
         host = (urlsplit(url).hostname or "").lower()
         if not self.config.probe_known_hostile and any(
@@ -557,7 +563,7 @@ class Fetcher:
                 body=b"skipped: known bot-hostile vendor host",
             )
             self.cache.put(resp, accept)
-            return resp
+            return mark_blocked(resp)
 
         resp = self._fetch_chain(url, accept=accept, byte_cap=byte_cap)
         # §3.9 适配 #5：读完 body 的这一刻一次性算好三个摘要再入缓存。
@@ -565,7 +571,7 @@ class Fetcher:
         # 跟完整正文的哈希不同，那是测量假象不是发现。
         resp = finalize_response(resp, want_digests=not liveness_only)
         self.cache.put(resp, accept)
-        return resp
+        return mark_blocked(resp)
 
     def _fetch_chain(
         self, url: str, *, accept: str, byte_cap: int, robots: bool = False

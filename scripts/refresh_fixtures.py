@@ -51,7 +51,6 @@ if str(REPO_ROOT / "src") not in sys.path:
     sys.path.insert(0, str(REPO_ROOT / "src"))
 
 from geo_audit.fetch.cache import HttpCache  # noqa: E402
-from geo_audit.fetch.classify import challenge_header  # noqa: E402
 from geo_audit.fetch.client import Fetcher, FetcherConfig  # noqa: E402
 from geo_audit.fixtures import (  # noqa: E402
     DRIFT_PHENOMENA,
@@ -110,9 +109,10 @@ def check_one(fetcher: Fetcher, store: FixtureStore, url: str) -> FreshnessFindi
             f"拿不到了：{resp.transport_error}",
             suggested_branch="unreachable",
         )
-    # `resp.blocked` 是个从没被置 True 过的字段；AWS WAF 的 Challenge 答 202，不在状态名单里，
-    # 只有响应头认得出 —— 认不出就会被当成「内容变了」，剧本随后把 expect 的 md5 改成挑战页的。
-    if resp.status in (401, 403, 429) or resp.blocked or challenge_header(resp.headers):
+    # ``resp.blocked`` 由抓取层按 is_blocked 填好（响应头先于正文指纹）：AWS WAF 的 Challenge
+    # 答 202，不在状态名单里，只有它认得出 —— 认不出就会被当成「内容变了」，剧本随后把 expect
+    # 的 md5 改成挑战页的。
+    if resp.status in (401, 403, 429) or resp.blocked:
         return FreshnessFinding(
             canon, "unreachable", f"活网返回 {resp.status}（挑战页/限流）", "unreachable"
         )

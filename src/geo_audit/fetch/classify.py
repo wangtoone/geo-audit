@@ -40,6 +40,7 @@ from __future__ import annotations
 
 import re
 from collections.abc import Mapping
+from dataclasses import replace
 from urllib.parse import urlsplit
 
 from ..models import (
@@ -200,6 +201,30 @@ def is_blocked(
         return (True, "waf_status", f"HTTP {status} 于已知反爬供应商域（{host}）")
 
     return None
+
+
+def mark_blocked(resp: HttpResponse) -> HttpResponse:
+    """填好 ``HttpResponse.blocked`` —— ``is_blocked()`` 的结论，抓取层在出口统一算一次。
+
+    这个字段原来**从没被置过 True**：``md_convention`` 读它、报告 JSON 里每个 ``response`` 都带它，
+    可没有任何地方写它，于是读它的人得到的永远是 False。缓存也不存它，所以缓存命中的响应同样要在
+    出口补上（该在出口算，不该存）。传输失败（status 0）没有可判的内容，不算。
+
+    用的是**请求的** URL（``resp.url``），与 :func:`classify_response` 喂给 :func:`is_blocked` 的
+    一致：一条判定说「被拦」，这个字段就是 True，反之亦然（测试逐条对着 ``Fetcher.probe`` 的
+    分类核对）。
+
+    ⚠️ ``is_blocked`` 的正文指纹里，挑战页独有的那几条在**任何长度**下都算（``Attention
+    Required! | Cloudflare`` 的页面有 785 个可见字符）。所以一页很长、却恰好引用了其中一句话的
+    正常页面（比如一份讲 Cloudflare 报错的文档）也会得到 ``blocked=True`` —— 方向是「无法判断」
+    而不是「判错」。``geo-audit page`` 因此**不用**这个字段，只认响应头（见
+    ``pagecli.audit_page``）。
+    """
+    if resp.blocked or resp.status == 0:
+        return resp
+    if is_blocked(resp.status, resp.headers, resp.text, url=resp.url) is None:
+        return resp
+    return replace(resp, blocked=True)
 
 
 def find_notfound_copy(body: str) -> tuple[str, str] | None:
