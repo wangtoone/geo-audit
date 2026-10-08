@@ -101,12 +101,15 @@ def audit_page(fetcher: Fetcher, spec: PageSpec) -> PageOutcome:
     resp = fetcher.fetch(spec.url)
     # 只看响应头，不跑 is_blocked 的正文指纹：很多正常页面会内嵌 DataDome / reCAPTCHA 的脚本，
     # 正文里出现厂商名不等于这页是挑战页；而响应头只在防火墙真的下发了挑战时才出现。
+    # **也不用 ``resp.blocked``**：那个字段现在是完整的 is_blocked 结论（抓取层填的），其中挑战页
+    # 独有的正文指纹在任何长度下都算 —— 一页很长、恰好引用了「Pardon Our Interruption」的正常文档
+    # 会被拒绝评估；状态码层面的不可用（403 / 429 …）由 unusable_reason 自己按状态码判。
     hit = challenge_header(resp.headers)
     why = unusable_reason(
         status=resp.status,
         content_type=resp.content_type,
         transport_error=resp.transport_error,
-        blocked=resp.blocked or hit is not None,
+        blocked=hit is not None,
         blocked_evidence=f"响应头 {hit[0]}: {hit[1]}，HTTP {resp.status}" if hit else None,
     )
     if why is not None:
