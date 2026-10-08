@@ -172,7 +172,17 @@ robots.txt  遵守（被 Disallow 的位置标「无法评估 · robots 禁止�
 
 两条都沿用同一套抓取约束（≤0.5 req/s、遵守 robots、带联系邮箱的诚实 UA、不冒充任何爬虫），
 **没抓到 / 被拦 / 没读到就是「无法判断」，不是通过也不是失败**（退出码 3）。
-`robots` 报的是事实：「拦训练、放检索」是正当策略，不算缺陷。
+`robots` 报的是事实：「拦训练、放检索」是正当策略，不算缺陷。它还做几件事：
+
+- **读不到 ≠ 站点没有 ≠ 站点禁止。** 5xx、网络错误、防火墙挑战页（AWS 的 Challenge 是 202 + 响应头，
+  Cloudflare 的是 403 + `cf-mitigated`）、限流、跳转超限都记「没读到」；401 / 403 这类说不清是
+  「没有」还是「被拦」的 4xx，RFC 9309 视为放行，但也不写成「站点没有」。只有**观察到的** 404 / 410
+  才是干净的缺席。`/robots.txt` 的跳转会跟（至少 5 跳），读上限 512 KiB（RFC 要求至少 500 KiB）。
+- **厂商列。** 每个爬虫标着它的官方文档怎么说它遵不遵守 robots.txt：用户点名的实时抓取
+  （ChatGPT-User、Perplexity-User、meta-externalfetcher、Amzn-User）文档写明**可能不遵守**，
+  所以被禁止了也可能照样来；文档没明说的（PerplexityBot、Bingbot）标「未明说」，不替厂商补一句。
+  Google-Extended / Applebot-Extended 是**控制标记**，不是爬虫；Applebot 没被点名时按 Googlebot 的组走
+  （Apple 文档）。每一条的 `doc` 是我们读过的页面（JSON 里有）。
 
 ## 它只查两类东西，都是零 LLM 的机械判定
 
@@ -203,8 +213,8 @@ robots.txt  遵守（被 Disallow 的位置标「无法评估 · robots 禁止�
 
 ## 它明确不查
 
-锚点腐烂、sitemap、robots 对 AI 爬虫的放行、图片/CSS 资源、**事实是否自相冲突**、
-**内容是否过期**。
+锚点腐烂、sitemap、图片/CSS 资源、**事实是否自相冲突**、**内容是否过期**。
+（robots 对 AI 爬虫的放行不在整站体检里查，单点命令 `geo-audit robots` 才查。）
 
 最后两项不是没想到，是试过之后砍掉的，理由是我们自己的实测数字：
 
@@ -245,7 +255,8 @@ mistral.ai 那份里 76 条 finding 收敛成 **1 处根因**——「改 1 处 
 - User-Agent 里必须带你的联系邮箱（`--contact` 缺失直接退出 4，
   `--replay-fixtures` 和 `--from` 也不豁免）；
 - 默认遵守 `robots.txt`；被 Disallow 的位置标「无法判断 · robots 禁止」，
-  不会标成「通过」；
+  不会标成「通过」；`robots.txt` 自己读不到（5xx / 网络错误 / 防火墙挑战页 / 限流）时按 RFC 9309
+  视同完全不许抓，位置标「无法判断 · robots.txt 读不到」——**不是**「你的 robots.txt 禁止」；
 - 只抓无需登录的公开页；**不绕 WAF、不解 CAPTCHA、不用住宅代理**。
   遇到挑战页就标「无法判断」然后走开；
 - 单域请求硬上限默认 120（`--max-requests`），超限的位置标「无法判断 · 超出预算」，

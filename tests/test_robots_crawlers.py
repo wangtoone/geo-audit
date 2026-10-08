@@ -5,6 +5,8 @@
 
 from __future__ import annotations
 
+import pytest
+
 from geo_audit.checks.robots_crawlers import (
     CRAWLERS,
     Access,
@@ -307,3 +309,78 @@ def test_glob_matcher_agrees_with_the_regex_it_replaced() -> None:
     assert len(pats) > 500 and len(paths) > 50
     bad = [(p, q) for p in pats for q in paths if _glob(p, q) != regex(p, q)]
     assert bad[:5] == []
+
+
+# ── 厂商元数据：每一条都能指到我们读过的官方文档原文 ─────────────────────────────────
+def test_registry_vendor_facts() -> None:
+    by = {c.token: c for c in CRAWLERS}
+    # 官方文档写明「可能不遵守 robots.txt」的用户触发抓取（原文见各自 doc）
+    no_by_design = {t for t, c in by.items() if c.honors_robots == "no_by_design"}
+    assert no_by_design == {"ChatGPT-User", "Perplexity-User", "meta-externalfetcher", "Amzn-User"}
+    assert by["Claude-User"].honors_robots == "yes"  # Anthropic 是例外：官方说 robots.txt 可控
+    # 控制 token：没有自己的 UA、不单独抓取
+    assert {t for t, c in by.items() if c.control_token} == {"Google-Extended", "Applebot-Extended"}
+    # 后备组只有 Apple 文档写明的这一条
+    assert {t: c.fallback for t, c in by.items() if c.fallback} == {"Applebot": "Googlebot"}
+    # 承诺或否认都必须能指到文档；没找到文档的只能是 unstated
+    for c in CRAWLERS:
+        if c.honors_robots != "unstated":
+            assert c.doc.startswith("https://"), c.token
+    # OpenAI 的三个爬虫分工（OAI-AdsBot 是广告落地页校验，不属于 AI 可见度，不收）
+    assert {c.token: c.role for c in CRAWLERS if c.operator == "OpenAI"} == {
+        "GPTBot": Role.TRAINING,
+        "OAI-SearchBot": Role.SEARCH,
+        "ChatGPT-User": Role.USER_FETCH,
+    }
+    # 联网检索借用的两个主流索引
+    assert by["Googlebot"].role is Role.SEARCH and by["Bingbot"].role is Role.SEARCH
+
+
+def test_unstated_is_not_the_same_as_does_not_honor() -> None:
+    """PerplexityBot / Bingbot：官方文档我们读到的内容没有明说 —— 标 unstated，不替厂商补一句。"""
+    by = {c.token: c for c in CRAWLERS}
+    assert by["PerplexityBot"].honors_robots == "unstated"
+    assert by["Bingbot"].honors_robots == "unstated"
+
+
+# ── 判定要区分「站点没有」与「我们没读到」───────────────────────────────────────────
+@pytest.mark.parametrize(
+    ("policy", "status", "access", "matched"),
+    [
+        ("allow_all", 404, Access.ALLOWED, "no_robots_txt"),  # 观察到的缺席
+        ("allow_all", 410, Access.ALLOWED, "no_robots_txt"),
+        ("allow_all", None, Access.ALLOWED, "no_robots_txt"),  # 老调用方不传 status
+        ("allow_all", 200, Access.ALLOWED, "none"),  # 有文件、正文为空
+        ("allow_all", 403, Access.UNREADABLE, "unreadable"),  # RFC 放行，但不能说成「没有」
+        ("allow_all", 401, Access.UNREADABLE, "unreadable"),
+        ("allow_all", 599, Access.UNREADABLE, "unreadable"),  # replay 缺快照
+        ("disallow_all", 503, Access.UNREADABLE, "unreadable"),
+        ("disallow_all", 202, Access.UNREADABLE, "unreadable"),  # 防火墙挑战页
+        ("disallow_all", 429, Access.UNREADABLE, "unreadable"),
+    ],
+)
+def test_absence_versus_unreadable(
+    policy: str, status: int | None, access: Access, matched: str
+) -> None:
+    pol = judge_robots_crawlers("h.test", "", policy, status=status)  # type: ignore[arg-type]
+    assert {(a.access, a.matched) for a in pol.answers} == {(access, matched)}
+    assert pol.unreadable is (access is Access.UNREADABLE)
+
+
+# ── Applebot 的后备组（Apple 文档：没点名它但点名了 Googlebot，就按 Googlebot 的组走）───────
+def test_applebot_falls_back_to_the_googlebot_group_then_wildcard() -> None:
+    googlebot_only = "User-agent: Googlebot\nDisallow: /\n"
+    a = _answer(googlebot_only, "Applebot")
+    assert (a.access, a.matched) == (Access.BLOCKED_ALL, "fallback")
+    # 有它自己的组 → 只看自己的组
+    own = "User-agent: Googlebot\nDisallow: /\n\nUser-agent: Applebot\nAllow: /\n"
+    assert _answer(own, "Applebot").matched == "specific"
+    assert _answer(own, "Applebot").access is Access.ALLOWED
+    # 没有 Googlebot 的组 → 落到 *
+    star = "User-agent: *\nDisallow: /private\n"
+    assert _answer(star, "Applebot").matched == "wildcard"
+    # 别的爬虫没有这个后备
+    assert _answer(googlebot_only, "OAI-SearchBot").matched == "none"
+    # judge_path 与 judge_robots_crawlers 用同一套选组
+    assert judge_path(googlebot_only, "Applebot", "/x") is False
+    assert judge_path(googlebot_only, "OAI-SearchBot", "/x") is True

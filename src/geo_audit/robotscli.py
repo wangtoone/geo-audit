@@ -4,8 +4,9 @@
 RFC 9309 判每个爬虫：训练 / 检索 / 对话实时抓取三类，以及**哪一组规则决定了它**。
 输出的是事实，不是缺陷结论 —— 「拦训练、放检索」是正当策略。**不改 Report 契约。**
 
-退出码：0 全部读到了；3 有 host 的 robots.txt 没读到（5xx / 网络错误，那些爬虫记为
-unreadable，**不是**站方禁止）；4 用法错。
+退出码：0 全部读到了；3 有 host 的 robots.txt 没读到（5xx / 网络错误 / 防火墙挑战页 / 限流 / 跳转
+超限，以及 401 / 403 这类说不清是「没有」还是「被拦」的 4xx；那些爬虫记为 unreadable，
+**不是**站方禁止）；4 用法错。
 """
 
 from __future__ import annotations
@@ -21,6 +22,7 @@ from urllib.parse import urlsplit
 
 from geo_audit.checks.robots_crawlers import (
     Access,
+    Crawler,
     HostCrawlerPolicy,
     Role,
     judge_robots_crawlers,
@@ -46,6 +48,7 @@ _ACCESS_TEXT = {
 }
 _MATCHED_TEXT = {
     "specific": "有写它名字的组",
+    "fallback": "没有它的组，按厂商文档指定的后备组走",
     "wildcard": "落到 User-agent: *",
     "none": "没有它的组、也没有 * 组",
     "no_robots_txt": "站点没有 robots.txt",
@@ -68,18 +71,42 @@ def to_host(raw: str) -> str:
 
 def audit_host(fetcher: Fetcher, host: str) -> tuple[HostCrawlerPolicy, int]:
     info = fetcher.robots_for(f"https://{host}/")
-    return judge_robots_crawlers(host, info.raw, info.policy), info.status
+    pol = judge_robots_crawlers(host, info.raw, info.policy, status=info.status, why=info.why)
+    return pol, info.status
+
+
+def _tags(c: Crawler) -> str:
+    tags = []
+    if c.control_token:
+        tags.append("[控制标记]")
+    if c.honors_robots == "no_by_design":
+        tags.append("⚠ 厂商文档说它可能不遵守 robots.txt")
+    return ("  " + " ".join(tags)) if tags else ""
 
 
 def render_text(pol: HostCrawlerPolicy, status: int) -> str:
     lines = [f"== {pol.host}  robots.txt: HTTP {status or '无响应'} · 按 {pol.policy} 处理"]
-    if pol.policy == "disallow_all":
-        lines.append("  没读到 robots.txt（5xx / 网络错误）：下面不是站方的决定，是我们没能看。")
+    if pol.why:
+        lines.append(f"  说明：{pol.why}")
+    if pol.unreadable:
+        if pol.policy == "disallow_all":
+            lines.append(
+                "  没读到 robots.txt：下面每一行都不是站方的决定，是我们没能看。"
+                "RFC 9309 对读不到的 robots.txt 视同完全不许抓。"
+            )
+        else:
+            lines.append(
+                f"  robots.txt 返回 HTTP {status}：RFC 9309 视为没有 robots.txt"
+                "（爬虫可以访问全部），但这也可能是防火墙 / 鉴权拦了我们 ——"
+                "下面不能当成「站点放行」。"
+            )
     for role in Role:
         lines.append(f"  [{_ROLE_TITLE[role]}]")
         for a in pol.by_role(role):
             rule = f"：{a.deciding_rule}" if a.deciding_rule else ""
-            verdict = f"{_ACCESS_TEXT[a.access]}  ← {_MATCHED_TEXT[a.matched]}{rule}"
+            fallback = f"（{a.crawler.fallback}）" if a.matched == "fallback" else ""
+            how = f"{_MATCHED_TEXT[a.matched]}{fallback}{rule}"
+            verdict = f"{_ACCESS_TEXT[a.access]}  ← {how}{_tags(a.crawler)}"
             lines.append(f"    {a.crawler.token:<20} {verdict}")
     wild = pol.search_blocked_by_wildcard()
     if wild:
@@ -95,6 +122,8 @@ def to_dict(pol: HostCrawlerPolicy, status: int) -> dict[str, Any]:
         "host": pol.host,
         "robots_status": status,
         "policy": pol.policy,
+        "why": pol.why,
+        "unreadable": pol.unreadable,
         "crawlers": [
             {
                 "token": a.crawler.token,
@@ -103,6 +132,10 @@ def to_dict(pol: HostCrawlerPolicy, status: int) -> dict[str, Any]:
                 "access": a.access.value,
                 "matched": a.matched,
                 "deciding_rule": a.deciding_rule,
+                "honors_robots": a.crawler.honors_robots,
+                "control_token": a.crawler.control_token,
+                "doc": a.crawler.doc,
+                "note": a.crawler.note,
             }
             for a in pol.answers
         ],
@@ -153,8 +186,7 @@ def run(argv: Sequence[str], *, fetcher: Fetcher | None = None) -> int:
         )
     else:
         sys.stdout.write("\n\n".join(render_text(p, s) for p, s in results) + "\n")
-    unreadable = any(p.policy == "disallow_all" for p, _ in results)
-    return EXIT_UNREACHABLE if unreadable else EXIT_OK
+    return EXIT_UNREACHABLE if any(p.unreadable for p, _ in results) else EXIT_OK
 
 
 def main(argv: Sequence[str] | None = None) -> int:

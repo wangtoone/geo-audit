@@ -54,6 +54,7 @@ __all__ = [
     "Access",
     "Crawler",
     "CrawlerAnswer",
+    "Honors",
     "HostCrawlerPolicy",
     "Role",
     "judge_hosts",
@@ -69,31 +70,167 @@ class Role(str, Enum):
     USER_FETCH = "user_fetch"  # 有人在对话里点名某页面时实时去抓
 
 
+Honors = Literal["yes", "no_by_design", "unstated"]
+
+
 @dataclass(frozen=True, slots=True)
 class Crawler:
     token: str  # robots.txt 里 User-agent 写的产品 token
     operator: str
     role: Role
+    #: 厂商**自己的文档**怎么说它遵不遵守 robots.txt：
+    #:   yes           文档承诺遵守；
+    #:   no_by_design  文档写明可能不遵守（用户点名的实时抓取，如 OpenAI 的
+    #:                 「robots.txt rules may not apply」）——被禁止了也可能照样来；
+    #:   unstated      我们读到的官方文档没有明说（**不等于它不遵守**）。
+    honors_robots: Honors = "unstated"
+    doc: str = ""  # 厂商文档 URL；空 = 没找到可核对的官方文档
+    #: 只是 robots.txt 里的「控制 token」：没有自己的 UA 字符串、不单独抓取，
+    #: 厂商用现有爬虫去抓，再按这个 token 决定拿去做什么（Google-Extended、Applebot-Extended）。
+    control_token: bool = False
+    #: 没有写它名字的组时，厂商文档写明**先看哪个 token 的组**（如 Applebot → Googlebot），
+    #: 再落到 ``*``。
+    fallback: str = ""
+    note: str = ""
 
 
-#: 刻意只收**厂商自己文档写明了 token 与用途**的几个，不求全。
-#: ``Google-Extended`` 严格说是「控制 token」而不是 UA（Google 用现有爬虫去抓，
-#: 只是按这个 token 决定能不能拿去训练），但对 robots.txt 的写法来说它就是一个组名。
+_OPENAI = "https://platform.openai.com/docs/bots"
+_ANTHROPIC = (
+    "https://support.claude.com/en/articles/"
+    "8896518-does-anthropic-crawl-data-from-the-web-and-how-can-site-owners-block-the-crawler"
+)
+_PERPLEXITY = "https://docs.perplexity.ai/guides/bots"
+_GOOGLE = "https://developers.google.com/search/docs/crawling-indexing/google-common-crawlers"
+_APPLE = "https://support.apple.com/en-us/119829"
+_META = "https://developers.facebook.com/docs/sharing/webmasters/web-crawlers"
+_AMAZON = "https://developer.amazon.com/amazonbot"
+_BING = (
+    "https://blogs.bing.com/webmaster/september-2020/"
+    "Bing-Webmaster-Tools-makes-it-easy-to-edit-and-verify-your-robots-txt"
+)
+
+#: 刻意只收**厂商自己文档写明了 token 与用途**的几个，不求全；每条的 ``doc`` 是我们读过的页面。
+#: 读过但文档没明说的（Bingbot、PerplexityBot 是否遵守 robots.txt）标 ``unstated``，
+#: 不替厂商补一句；没找到官方文档的（CCBot、Bytespider、anthropic-ai）``doc`` 为空。
+#: 文档日期：只有 Google（2025-12-10）和 Meta（2026-05-21）页面上有日期，其余请发布前复核。
 CRAWLERS: tuple[Crawler, ...] = (
-    Crawler("GPTBot", "OpenAI", Role.TRAINING),
-    Crawler("OAI-SearchBot", "OpenAI", Role.SEARCH),
-    Crawler("ChatGPT-User", "OpenAI", Role.USER_FETCH),
-    Crawler("ClaudeBot", "Anthropic", Role.TRAINING),
-    Crawler("anthropic-ai", "Anthropic", Role.TRAINING),  # 旧 token，仍常见于存量 robots.txt
-    Crawler("Claude-SearchBot", "Anthropic", Role.SEARCH),
-    Crawler("Claude-User", "Anthropic", Role.USER_FETCH),
-    Crawler("PerplexityBot", "Perplexity", Role.SEARCH),
-    Crawler("Perplexity-User", "Perplexity", Role.USER_FETCH),
-    Crawler("Google-Extended", "Google", Role.TRAINING),
-    Crawler("Applebot-Extended", "Apple", Role.TRAINING),
-    Crawler("CCBot", "Common Crawl", Role.TRAINING),
-    Crawler("Bytespider", "ByteDance", Role.TRAINING),
-    Crawler("meta-externalagent", "Meta", Role.TRAINING),
+    # ── 训练 ──
+    Crawler("GPTBot", "OpenAI", Role.TRAINING, "yes", _OPENAI),
+    Crawler("ClaudeBot", "Anthropic", Role.TRAINING, "yes", _ANTHROPIC),
+    Crawler(
+        "anthropic-ai",
+        "Anthropic",
+        Role.TRAINING,
+        note="旧 token：Anthropic 当前文档只列三个爬虫，已不含它；存量 robots.txt 里仍常见",
+    ),
+    Crawler(
+        "Google-Extended",
+        "Google",
+        Role.TRAINING,
+        "yes",
+        _GOOGLE,
+        control_token=True,
+        note="控制标记，不是爬虫：管 Gemini 的训练与联网检索，不影响 Google 搜索",
+    ),
+    Crawler(
+        "Applebot-Extended",
+        "Apple",
+        Role.TRAINING,
+        "yes",
+        _APPLE,
+        control_token=True,
+        note="控制标记，不单独抓取：只管训练，不影响 Applebot 的搜索",
+    ),
+    Crawler("CCBot", "Common Crawl", Role.TRAINING, note="官方文档我们没核"),
+    Crawler("Bytespider", "ByteDance", Role.TRAINING, note="官方文档我们没核"),
+    Crawler("meta-externalagent", "Meta", Role.TRAINING, "yes", _META),
+    Crawler(
+        "Amazonbot",
+        "Amazon",
+        Role.TRAINING,
+        "yes",
+        _AMAZON,
+        note="用于改进 Amazon 的产品，可能用来训练 Amazon 的模型",
+    ),
+    # ── 检索（建 AI 搜索 / 联网回答借用的索引）──
+    Crawler("OAI-SearchBot", "OpenAI", Role.SEARCH, "yes", _OPENAI),
+    Crawler("Claude-SearchBot", "Anthropic", Role.SEARCH, "yes", _ANTHROPIC),
+    Crawler(
+        "PerplexityBot",
+        "Perplexity",
+        Role.SEARCH,
+        doc=_PERPLEXITY,
+        note="官方文档只建议放行它，没写它是否遵守 robots.txt",
+    ),
+    Crawler(
+        "Googlebot",
+        "Google",
+        Role.SEARCH,
+        "yes",
+        _GOOGLE,
+        note="Google 搜索，含 AI Overviews / AI Mode；Gemini 联网检索借用它的索引",
+    ),
+    Crawler(
+        "Bingbot",
+        "Microsoft",
+        Role.SEARCH,
+        doc=_BING,
+        note="Copilot 与 ChatGPT 的联网检索借用 Bing 索引（Ahrefs 的说法，我们没核）；"
+        "微软文档页我们读到的内容没有明说它是否遵守 robots.txt",
+    ),
+    Crawler(
+        "Applebot",
+        "Apple",
+        Role.SEARCH,
+        "yes",
+        _APPLE,
+        fallback="Googlebot",
+        note="Spotlight / Siri / Safari 的搜索；没点名它时，Apple 文档说它按 Googlebot 的组走",
+    ),
+    Crawler("meta-webindexer", "Meta", Role.SEARCH, "yes", _META, note="Meta AI 的搜索"),
+    Crawler(
+        "Amzn-SearchBot",
+        "Amazon",
+        Role.SEARCH,
+        "yes",
+        _AMAZON,
+        note="没写它名字但允许其他搜索爬虫时，官方说按给其他搜索爬虫的规则走（原话较含糊，"
+        "本表只按 * 组判）",
+    ),
+    # ── 对话中的实时抓取（用户点名某个页面）──
+    Crawler(
+        "ChatGPT-User",
+        "OpenAI",
+        Role.USER_FETCH,
+        "no_by_design",
+        _OPENAI,
+        note="官方：用户触发的动作，「robots.txt rules may not apply」",
+    ),
+    Crawler("Claude-User", "Anthropic", Role.USER_FETCH, "yes", _ANTHROPIC),
+    Crawler(
+        "Perplexity-User",
+        "Perplexity",
+        Role.USER_FETCH,
+        "no_by_design",
+        _PERPLEXITY,
+        note="官方：「generally ignores robots.txt rules」",
+    ),
+    Crawler(
+        "meta-externalfetcher",
+        "Meta",
+        Role.USER_FETCH,
+        "no_by_design",
+        _META,
+        note="官方：「may bypass robots.txt rules」",
+    ),
+    Crawler(
+        "Amzn-User",
+        "Amazon",
+        Role.USER_FETCH,
+        "no_by_design",
+        _AMAZON,
+        note="官方：「may not follow all robots.txt directives」",
+    ),
 )
 
 
@@ -104,7 +241,7 @@ class Access(str, Enum):
     UNREADABLE = "unreadable"  # robots.txt 5xx / 网络错误：我们没读到，不是站方的决定
 
 
-Matched = Literal["specific", "wildcard", "none", "no_robots_txt", "unreadable"]
+Matched = Literal["specific", "fallback", "wildcard", "none", "no_robots_txt", "unreadable"]
 
 
 @dataclass(frozen=True, slots=True)
@@ -113,10 +250,11 @@ class CrawlerAnswer:
     access: Access
     #: 是哪一组规则决定了它：
     #:   specific       有写它名字的组
+    #:   fallback       没有自己的组，按厂商文档指定的后备组走（``Crawler.fallback``）
     #:   wildcard       没有自己的组，落到 ``User-agent: *``
     #:   none           没有它的组，也没有 ``*`` 组 → 没有规则约束它
-    #:   no_robots_txt  站点没有 robots.txt（4xx）
-    #:   unreadable     没读到
+    #:   no_robots_txt  站点没有 robots.txt（**观察到的** 404 / 410，不是「读不到」）
+    #:   unreadable     没读到（5xx / 网络错误 / 挑战页 / 限流 / 其余 4xx / replay 缺快照）
     matched: Matched
     #: 决定性的规则行原文，如 ``Disallow: /``；没有就是空串。给人对着 robots.txt 核对用。
     deciding_rule: str = ""
@@ -128,6 +266,13 @@ class HostCrawlerPolicy:
     answers: tuple[CrawlerAnswer, ...]
     #: robots.txt 本身的状态，原样来自 ``RobotsInfo.policy``。
     policy: Literal["parsed", "allow_all", "disallow_all"]
+    #: 来自 ``RobotsInfo.status`` / ``RobotsInfo.why``：判「站点没有」还是「我们没读到」靠它们。
+    status: int | None = None
+    why: str = ""
+
+    @property
+    def unreadable(self) -> bool:
+        return bool(self.answers) and all(a.access is Access.UNREADABLE for a in self.answers)
 
     def by_role(self, role: Role) -> tuple[CrawlerAnswer, ...]:
         return tuple(a for a in self.answers if a.crawler.role is role)
@@ -269,31 +414,57 @@ def judge_robots_crawlers(
     policy: Literal["parsed", "allow_all", "disallow_all"],
     *,
     crawlers: tuple[Crawler, ...] = CRAWLERS,
+    status: int | None = None,
+    why: str = "",
 ) -> HostCrawlerPolicy:
-    """一个 host 的 robots.txt 对每个爬虫的答案。入参就是 ``RobotsInfo`` 的三个字段。"""
+    """一个 host 的 robots.txt 对每个爬虫的答案。入参就是 ``RobotsInfo`` 的字段。
+
+    **「站点没有 robots.txt」与「我们没读到」要分开**（``status`` 就是为这个传的）：
+    只有**观察到的** 404 / 410（以及没传 status 的老调用方）才是干净的缺席 → 放行；
+    5xx / 网络错误 / 挑战页 / 429 / 跳转超限（policy ``disallow_all``），以及其余 4xx 与
+    replay 缺快照（policy ``allow_all`` 但 status 不是 404/410/2xx），都是 UNREADABLE ——
+    RFC 9309 对 4xx 的处理是「可以访问全部」，但防火墙 / 鉴权也会给 403，
+    那不是站点说了「没有」。
+    """
     answers: list[CrawlerAnswer] = []
     groups = parse_robots(raw) if policy == "parsed" else {}
+    clean_absence = policy == "allow_all" and (status is None or status in (404, 410))
+    unreadable = policy == "disallow_all" or (
+        policy == "allow_all"
+        and not clean_absence
+        and not (status is not None and 200 <= status < 300)
+    )
     for c in crawlers:
-        if policy == "disallow_all":
+        if unreadable:
             answers.append(CrawlerAnswer(c, Access.UNREADABLE, "unreadable"))
             continue
         if policy == "allow_all":
-            answers.append(CrawlerAnswer(c, Access.ALLOWED, "no_robots_txt"))
+            # 干净的缺席，或 2xx 但正文为空（有文件、没有任何规则）
+            answers.append(
+                CrawlerAnswer(c, Access.ALLOWED, "no_robots_txt" if clean_absence else "none")
+            )
             continue
-        matched, rules = _select(groups, c.token)
+        matched, rules = _select(groups, c.token, c.fallback)
         if matched == "none":
             answers.append(CrawlerAnswer(c, Access.ALLOWED, "none"))
             continue
         access, rule_raw = _classify(rules)
         answers.append(CrawlerAnswer(c, access, matched, rule_raw))
-    return HostCrawlerPolicy(host=host, answers=tuple(answers), policy=policy)
+    return HostCrawlerPolicy(
+        host=host, answers=tuple(answers), policy=policy, status=status, why=why
+    )
 
 
-def _select(groups: dict[str, list[_Rule]], token: str) -> tuple[Matched, list[_Rule]]:
-    """RFC 9309 选组：有写它名字的组就只看那一组（哪怕它是空的），否则落到 ``*``。"""
+def _select(
+    groups: dict[str, list[_Rule]], token: str, fallback: str = ""
+) -> tuple[Matched, list[_Rule]]:
+    """RFC 9309 选组：有写它名字的组就只看那一组（哪怕它是空的）；
+    没有的话，先看厂商文档指定的后备组（如 Applebot → Googlebot），再落到 ``*``。"""
     key = token.lower()
     if key in groups:
         return "specific", groups[key]
+    if fallback and fallback.lower() in groups:
+        return "fallback", groups[fallback.lower()]
     if "*" in groups:
         return "wildcard", groups["*"]
     return "none", []
@@ -304,11 +475,15 @@ def judge_path(raw: str, token: str, path: str) -> bool:
 
     按 RFC 9309 选组、最长匹配、等长 Allow 胜。没有它的组也没有 ``*`` 组 → 允许。
     """
-    _, rules = _select(parse_robots(raw), token)
+    fallback = next((c.fallback for c in CRAWLERS if c.token.lower() == token.lower()), "")
+    _, rules = _select(parse_robots(raw), token, fallback)
     hit = _decide(rules, path)
     return hit is None or hit.allow
 
 
 def judge_hosts(robots: Mapping[str, RobotsInfo]) -> dict[str, HostCrawlerPolicy]:
     """``SiteMap.robots``（``{host: RobotsInfo}``）整张表一次判完。"""
-    return {h: judge_robots_crawlers(h, info.raw, info.policy) for h, info in robots.items()}
+    return {
+        h: judge_robots_crawlers(h, info.raw, info.policy, status=info.status, why=info.why)
+        for h, info in robots.items()
+    }
