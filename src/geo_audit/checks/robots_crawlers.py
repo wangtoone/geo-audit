@@ -48,7 +48,7 @@ from __future__ import annotations
 
 import re
 from collections.abc import Iterable, Mapping
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from enum import Enum
 from typing import Literal
 
@@ -97,27 +97,34 @@ class Crawler:
     #: 再落到 ``*``。
     fallback: str = ""
     note: str = ""
+    #: 厂商文档说「没点名它时另有走法」，而本表只能按 ``*`` 组判（Amzn-SearchBot：没点名它、但放行了
+    #: 别的搜索爬虫时，它按那些爬虫的规则走）。别的搜索爬虫在 robots.txt 里被点了名、而它落到 ``*``
+    #: 时，文字输出里这一行要带上这句话 —— 只放在 JSON 的 ``note`` 里，读文字的人看到的就是一条
+    #: 与厂商文档矛盾的「全站禁止」。
+    wildcard_caveat: str = ""
 
 
-_OPENAI = "https://platform.openai.com/docs/bots"
+_OPENAI = "https://developers.openai.com/api/docs/bots"
 _ANTHROPIC = (
     "https://support.claude.com/en/articles/"
     "8896518-does-anthropic-crawl-data-from-the-web-and-how-can-site-owners-block-the-crawler"
 )
-_PERPLEXITY = "https://docs.perplexity.ai/guides/bots"
-_GOOGLE = "https://developers.google.com/search/docs/crawling-indexing/google-common-crawlers"
+_PERPLEXITY = "https://docs.perplexity.ai/docs/resources/perplexity-crawlers"
+_GOOGLE = "https://developers.google.com/crawling/docs/crawlers-fetchers/google-common-crawlers"
 _APPLE = "https://support.apple.com/en-us/119829"
 _META = "https://developers.facebook.com/docs/sharing/webmasters/web-crawlers"
-_AMAZON = "https://developer.amazon.com/amazonbot"
+_AMAZON = "https://developer.amazon.com/en-US/amazonbot"
 _BING = (
-    "https://blogs.bing.com/webmaster/september-2020/"
-    "Bing-Webmaster-Tools-makes-it-easy-to-edit-and-verify-your-robots-txt"
+    "https://blogs.bing.com/webmaster/May-2012/To-crawl-or-not-to-crawl,-that-is-BingBot-s-questi"
 )
 
-#: 刻意只收**厂商自己文档写明了 token 与用途**的几个，不求全；每条的 ``doc`` 是我们读过的页面。
-#: 读过但文档没明说的（Bingbot、PerplexityBot 是否遵守 robots.txt）标 ``unstated``，
-#: 不替厂商补一句；没找到官方文档的（CCBot、Bytespider、anthropic-ai）``doc`` 为空。
-#: 文档日期：只有 Google（2025-12-10）和 Meta（2026-05-21）页面上有日期，其余请发布前复核。
+#: 刻意只收**厂商自己文档写明了 token 与用途**的几个，不求全；每条的 ``doc`` 是我们读过的页面，
+#: 写的是页面自己声明的规范地址（``<link rel=canonical>``）。读过但文档没明说的（PerplexityBot 是否
+#: 遵守 robots.txt）标 ``unstated``，不替厂商补一句；没找到官方文档的（CCBot、Bytespider、
+#: anthropic-ai）``doc`` 为空。
+#: 页面上标的日期（我们读到时）：Google 通用爬虫页 2026-07-14、Apple 2026-09-04、Meta 2026-05-21；
+#: Bing 的那篇博客是 2012-05-03（很旧，但它是 Bing 自己对「按哪一组」的说明）；OpenAI、Anthropic、
+#: Perplexity、Amazon 的页面没有日期。全部请发布前复核。
 CRAWLERS: tuple[Crawler, ...] = (
     # ── 训练 ──
     Crawler("GPTBot", "OpenAI", Role.TRAINING, "yes", _OPENAI),
@@ -179,9 +186,12 @@ CRAWLERS: tuple[Crawler, ...] = (
         "Bingbot",
         "Microsoft",
         Role.SEARCH,
-        doc=_BING,
-        note="Copilot 与 ChatGPT 的联网检索借用 Bing 索引（Ahrefs 的说法，我们没核）；"
-        "微软文档页我们读到的内容没有明说它是否遵守 robots.txt",
+        "yes",
+        _BING,
+        fallback="msnbot",
+        note="Bing 官方博客（2012-05-03）：只认一组，顺序是 bingbot 组 → msnbot 组（向后兼容）"
+        "→ * 组；有 bingbot 组就无视文件里其余所有规则。Copilot 与 ChatGPT 的联网检索借用 "
+        "Bing 索引（Ahrefs 的说法，我们没核）",
     ),
     Crawler(
         "Applebot",
@@ -201,6 +211,8 @@ CRAWLERS: tuple[Crawler, ...] = (
         _AMAZON,
         note="没写它名字但允许其他搜索爬虫时，官方说按给其他搜索爬虫的规则走（原话较含糊，"
         "本表只按 * 组判）",
+        wildcard_caveat="Amazon 文档：没点名它、但放行了别的搜索爬虫时，它按那些爬虫的规则走 —— "
+        "这一行是按 * 组判的，可能不准",
     ),
     # ── 对话中的实时抓取（用户点名某个页面）──
     Crawler(
@@ -263,6 +275,8 @@ class CrawlerAnswer:
     matched: Matched
     #: 决定性的规则行原文，如 ``Disallow: /``；没有就是空串。给人对着 robots.txt 核对用。
     deciding_rule: str = ""
+    #: 这一行**可能不准**的原因（见 ``Crawler.wildcard_caveat``）；空串 = 没有需要提醒的。
+    caveat: str = ""
 
 
 @dataclass(frozen=True, slots=True)
@@ -289,12 +303,13 @@ class HostCrawlerPolicy:
     def search_blocked_by_wildcard(self) -> tuple[str, ...]:
         """检索类里「自己没有组、被 ``*`` 组全站禁止」的爬虫。
 
-        这是最容易被读漏的一种：robots.txt 里没出现它的名字，它照样进不来。
+        这是最容易被读漏的一种：robots.txt 里没出现它的名字，它照样进不来。厂商文档另有说明的
+        （``CrawlerAnswer.caveat``）不在这里报 —— 它们的那一行自己带着提醒。
         """
         return tuple(
             a.crawler.token
             for a in self.by_role(Role.SEARCH)
-            if a.access is Access.BLOCKED_ALL and a.matched == "wildcard"
+            if a.access is Access.BLOCKED_ALL and a.matched == "wildcard" and not a.caveat
         )
 
 
@@ -313,7 +328,18 @@ class _Rule:
         return _glob(self.pattern, path)
 
 
-_RULE_LINE = re.compile(r"^\s*([A-Za-z-]+)\s*:\s*(.*?)\s*$")
+#: ``字段: 值``。**喂给它的行必须已经 strip 过**（见 :func:`_split_rule_line`）：原来这条正则自己带
+#: ``^\s*…(.*?)\s*$``，值里有一长串尾随空白、后面又跟一个非空白字符时，惰性 ``.*?`` 每前进一格就让
+#: ``\s*$`` 把整串空白重扫一遍 —— 平方级（64 KiB 的一行要 9.5 s，在 512 KiB 的读上限下约 10 分钟）。
+#: robots.txt 是别人站点上的不受信文本；本模块的 ``_glob`` 为同一件事专门写成了线性，这里不能留一个
+#: 平方级的入口。
+_RULE_LINE = re.compile(r"([A-Za-z-]+)\s*:\s*(.*)")
+
+
+def _split_rule_line(line: str) -> tuple[str, str] | None:
+    """一行 → ``(字段, 值)``；去注释、去首尾空白，不是 ``字段: 值`` 就 ``None``。线性。"""
+    m = _RULE_LINE.match(line.split("#", 1)[0].strip())
+    return (m.group(1), m.group(2)) if m else None
 
 
 def _glob(pattern: str, path: str) -> bool:
@@ -349,11 +375,11 @@ def parse_robots(text: str) -> dict[str, list[_Rule]]:
     current: list[str] = []  # 当前组的 agent 列表
     in_agents = False  # 上一行是不是 User-agent（连续的 UA 行共享一组）
     for line in re.split(r"\r\n|\r|\n", text.lstrip(chr(0xFEFF))):
-        content = line.split("#", 1)[0]
-        m = _RULE_LINE.match(content)
-        if not m:
+        parsed = _split_rule_line(line)
+        if parsed is None:
             continue
-        field, value = m.group(1).lower(), m.group(2)
+        name, value = parsed
+        field = name.lower()
         if field == "user-agent":
             if not in_agents:
                 current = []
@@ -369,7 +395,7 @@ def parse_robots(text: str) -> dict[str, list[_Rule]]:
         in_agents = False
         if not current or not value:
             continue  # 无主规则 / 空规则
-        rule = _Rule(allow=(field == "allow"), pattern=value, raw=f"{m.group(1)}: {value}")
+        rule = _Rule(allow=(field == "allow"), pattern=value, raw=f"{name}: {value}")
         for agent in current:
             groups[agent].append(rule)
     return groups
@@ -390,8 +416,27 @@ def _decide(rules: Iterable[_Rule], path: str) -> _Rule | None:
     return best
 
 
-#: 判「全站不许」时探的路径。只看根路径会把 ``Disallow: /$``（只禁根页面本身）读成全站禁止。
-_BLOCK_PROBES = ("/", "/a", "/a/b/c")
+#: 判「全站不许」时探的路径：根、一个深路径、再加一批**互不为前缀**的一级路径（小写 / 数字 / 大写 /
+#: 符号开头）。只看根路径会把 ``Disallow: /$``（只禁根页面本身）读成全站禁止；只看 ``/``、``/a``、
+#: ``/a/b/c`` 三条，又会把 ``Disallow: /$`` + ``Disallow: /a`` 读成全站禁止 —— 而 ``/pricing``
+#: 其实放行（评审复现）。判据本身仍是采样，不是证明：采样越散，要把它们全堵住又不是「全站」的
+#: 规则就越离谱。
+_BLOCK_PROBES = (
+    "/",
+    "/a",
+    "/a/b/c",
+    "/b",
+    "/m",
+    "/z",
+    "/0",
+    "/A",
+    "/_x",
+    "/.well-known/x",
+    "/~u",
+    "/%41",
+)
+#: 只放行 robots.txt 自己的 Allow 不算「开了口子」：内容照样进不去（``/robots.txt$`` 是同一件事）。
+_ROBOTS_SELF = frozenset({"/robots.txt", "/robots.txt$"})
 
 
 def _classify(rules: list[_Rule]) -> tuple[Access, str]:
@@ -399,8 +444,7 @@ def _classify(rules: list[_Rule]) -> tuple[Access, str]:
     if not disallows:
         return Access.ALLOWED, ""
     root = _decide(rules, "/")
-    # 只放行 /robots.txt 的 Allow 不算「开了口子」：内容照样进不去。
-    reopening = [r for r in rules if r.allow and r.pattern != "/robots.txt"]
+    reopening = [r for r in rules if r.allow and r.pattern not in _ROBOTS_SELF]
     if (
         root is not None
         and not root.allow
@@ -444,6 +488,7 @@ def judge_robots_crawlers(
     known = readable and policy != "disallow_all"
     unreadable = not known
     clean_absence = policy == "allow_all" and known and absent
+    classified: dict[int, tuple[Access, str]] = {}  # 同一组规则只判一次（按组对象，不按爬虫）
     for c in crawlers:
         if unreadable:
             answers.append(CrawlerAnswer(c, Access.UNREADABLE, "unreadable"))
@@ -458,8 +503,23 @@ def judge_robots_crawlers(
         if matched == "none":
             answers.append(CrawlerAnswer(c, Access.ALLOWED, "none"))
             continue
-        access, rule_raw = _classify(rules)
+        if id(rules) not in classified:
+            classified[id(rules)] = _classify(rules)
+        access, rule_raw = classified[id(rules)]
         answers.append(CrawlerAnswer(c, access, matched, rule_raw))
+    named_search = {
+        a.crawler.token
+        for a in answers
+        if a.crawler.role is Role.SEARCH and a.matched == "specific"
+    }
+    answers = [
+        replace(a, caveat=a.crawler.wildcard_caveat)
+        if a.matched == "wildcard"
+        and a.crawler.wildcard_caveat
+        and named_search - {a.crawler.token}
+        else a
+        for a in answers
+    ]
     return HostCrawlerPolicy(
         host=host, answers=tuple(answers), policy=policy, status=status, why=why
     )

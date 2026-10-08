@@ -1,7 +1,7 @@
 """``geo-audit robots DOMAIN ...``：robots.txt 对各家 AI 爬虫分别怎么说。
 
-每个 host 只取一次 ``/robots.txt``（≤0.5 req/s、带联系邮箱的诚实 UA），然后在本地按
-RFC 9309 判每个爬虫：训练 / 检索 / 对话实时抓取三类，以及**哪一组规则决定了它**。
+每个 host 只读一次 ``/robots.txt``（含它的跳转与 5xx 重试；≤0.5 req/s、带联系邮箱的诚实 UA），
+然后在本地按 RFC 9309 判每个爬虫：训练 / 检索 / 对话实时抓取三类，以及**哪一组规则决定了它**。
 输出的是事实，不是缺陷结论 —— 「拦训练、放检索」是正当策略。**不改 Report 契约。**
 
 退出码：0 全部读到了；3 有 host 的 robots.txt 没读到（5xx / 网络错误 / 防火墙挑战页 / 限流 / 跳转
@@ -27,6 +27,7 @@ from geo_audit.checks.robots_crawlers import (
     Role,
     judge_robots_crawlers,
 )
+from geo_audit.cliutil import UsageParser, parse_args, positive_seconds
 from geo_audit.fetch.cache import HttpCache
 from geo_audit.fetch.client import Fetcher, FetcherConfig, build_user_agent
 from geo_audit.fetch.ratelimit import DomainLimiter
@@ -83,6 +84,9 @@ def _tags(c: Crawler) -> str:
         tags.append("[控制标记]")
     if c.honors_robots == "no_by_design":
         tags.append("⚠ 厂商文档说它可能不遵守 robots.txt")
+    elif c.honors_robots == "unstated":
+        # 「未明说」不等于「不遵守」：我们读到的官方文档没写，不替厂商补一句。
+        tags.append("[厂商文档未明说是否遵守]" if c.doc else "[没找到可核对的官方文档]")
     return ("  " + " ".join(tags)) if tags else ""
 
 
@@ -110,6 +114,8 @@ def render_text(pol: HostCrawlerPolicy, status: int) -> str:
             how = f"{_MATCHED_TEXT[a.matched]}{fallback}{rule}"
             verdict = f"{_ACCESS_TEXT[a.access]}  ← {how}{_tags(a.crawler)}"
             lines.append(f"    {a.crawler.token:<20} {verdict}")
+            if a.caveat:  # 厂商文档另有说明：这一行可能不准（只放在 JSON 里，读文字的人看不到）
+                lines.append(f"    {'':<20} ⓘ {a.caveat}")
     wild = pol.search_blocked_by_wildcard()
     if wild:
         lines.append(
@@ -132,6 +138,7 @@ def to_dict(pol: HostCrawlerPolicy, status: int) -> dict[str, Any]:
                 "operator": a.crawler.operator,
                 "role": a.crawler.role.value,
                 "access": a.access.value,
+                "caveat": a.caveat,
                 "matched": a.matched,
                 "deciding_rule": a.deciding_rule,
                 "honors_robots": a.crawler.honors_robots,
@@ -146,23 +153,27 @@ def to_dict(pol: HostCrawlerPolicy, status: int) -> dict[str, Any]:
 
 
 def build_parser() -> argparse.ArgumentParser:
-    p = argparse.ArgumentParser(
+    p = UsageParser(
         prog=PROG,
         description=(
             "robots.txt 对各家 AI 爬虫（训练 / 检索 / 实时抓取）分别怎么说，以及哪一组规则"
-            "决定了它。每个 host 一次请求，≤0.5 req/s。"
+            "决定了它。每个 host 只读一次 /robots.txt（含跳转与重试），≤0.5 req/s。"
         ),
         epilog="退出码：0 全部读到 · 3 有 host 没读到 robots.txt · 4 用法错",
     )
     p.add_argument("targets", nargs="*", metavar="DOMAIN", help="域名或 URL（只取 host）")
     p.add_argument("--contact", help="联系邮箱，写进 UA（或环境变量 GEO_AUDIT_CONTACT）")
-    p.add_argument("--timeout", type=float, default=15.0)
+    p.add_argument(
+        "--timeout", type=positive_seconds, default=15.0, help="单次读取超时（秒），默认 15"
+    )
     p.add_argument("--json", action="store_true", help="输出 JSON 而不是文本")
     return p
 
 
 def run(argv: Sequence[str], *, fetcher: Fetcher | None = None) -> int:
-    args = build_parser().parse_args(list(argv))
+    args, code = parse_args(build_parser(), argv)
+    if args is None:  # 用法错 → 4，--help → 0
+        return code
     try:
         if not args.targets:
             raise UsageError(

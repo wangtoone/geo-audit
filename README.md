@@ -178,11 +178,16 @@ robots.txt  遵守（被 Disallow 的位置标「无法评估 · robots 禁止�
   Cloudflare 的是 403 + `cf-mitigated`）、限流、跳转超限都记「没读到」；401 / 403 这类说不清是
   「没有」还是「被拦」的 4xx，RFC 9309 视为放行，但也不写成「站点没有」。只有**观察到的** 404 / 410
   才是干净的缺席。`/robots.txt` 的跳转会跟（至少 5 跳），读上限 512 KiB（RFC 要求至少 500 KiB）。
-- **厂商列。** 每个爬虫标着它的官方文档怎么说它遵不遵守 robots.txt：用户点名的实时抓取
+- **厂商列。** 每个爬虫都带着它的官方文档怎么说它遵不遵守 robots.txt：用户点名的实时抓取
   （ChatGPT-User、Perplexity-User、meta-externalfetcher、Amzn-User）文档写明**可能不遵守**，
-  所以被禁止了也可能照样来；文档没明说的（PerplexityBot、Bingbot）标「未明说」，不替厂商补一句。
-  Google-Extended / Applebot-Extended 是**控制标记**，不是爬虫；Applebot 没被点名时按 Googlebot 的组走
-  （Apple 文档）。每一条的 `doc` 是我们读过的页面（JSON 里有）。
+  所以被禁止了也可能照样来，文字输出里标 ⚠；文档没明说的（目前是 PerplexityBot）标
+  「厂商文档未明说是否遵守」，不替厂商补一句。Google-Extended / Applebot-Extended 是**控制标记**，
+  不是爬虫；Applebot 没被点名时按 Googlebot 的组走（Apple 文档），Bingbot 按 bingbot → msnbot → `*`
+  的顺序只认一组（Bing 官方博客）。Amazon 的文档对 Amzn-SearchBot 另有说明（没点名它、但放行了别的
+  搜索爬虫时，它按那些爬虫的规则走），这种情况下它那一行会带 ⓘ 提醒，而不是直接报「全站禁止」。
+  JSON 里每个爬虫都有 `honors_robots`（yes / no_by_design / unstated）和 `doc`（我们读过的页面，
+  写的是页面自己声明的规范地址）。
+- 用法错（拼错的参数、`--timeout` 不是大于 0 的数）退出码 4，与整站体检一致。
 
 ## 它只查两类东西，都是零 LLM 的机械判定
 

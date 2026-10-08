@@ -107,7 +107,8 @@ def test_json_output_shape_and_multiple_hosts(capsys: pytest.CaptureFixture[str]
         "deciding_rule": "Disallow: /",
         "honors_robots": "yes",
         "control_token": False,
-        "doc": "https://platform.openai.com/docs/bots",
+        "doc": "https://developers.openai.com/api/docs/bots",
+        "caveat": "",
         "note": "",
     }
     assert data[1]["policy"] == "allow_all"
@@ -142,11 +143,34 @@ def test_to_host(raw: str, host: str) -> None:
         ["exa mple.com", *ARGS],
         ["example.com"],
         ["example.com", "--contact", "x"],
+        # 评审复现：argparse 自己退 2（在这套 CLI 里 2 是「结果不可信」）；--timeout=-5 是一条
+        # 未捕获的 ValueError 回溯（退 1，「有发现」）
+        ["a.test", "--bogus", *ARGS],
+        ["a.test", "--timeout=abc", *ARGS],
+        ["a.test", "--timeout=-5", *ARGS],
+        ["a.test", "--timeout=0", *ARGS],
+        ["a.test", "--timeout=nan", *ARGS],
+        ["a.test", "--timeout=inf", *ARGS],
     ],
 )
 def test_usage_errors_exit_4(argv: list[str], monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.delenv("GEO_AUDIT_CONTACT", raising=False)
     assert run(argv, fetcher=_fetcher({})) == 4
+
+
+def test_help_exits_0(capsys: pytest.CaptureFixture[str]) -> None:
+    assert run(["--help"], fetcher=_fetcher({})) == 0
+    assert "robots.txt" in capsys.readouterr().out
+
+
+@pytest.mark.parametrize("sub", ["robots", "page"])
+def test_usage_errors_exit_4_through_the_main_dispatch(
+    sub: str, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """``cli.main`` 把子命令分发出去时不在它自己的 SystemExit 处理里：`page --bogus` 以前也退 2。"""
+    monkeypatch.delenv("GEO_AUDIT_CONTACT", raising=False)
+    assert cli.main([sub, "https://a.test/", "--bogus"]) == 4
+    assert cli.main([sub, "https://a.test/", "--timeout=-5", *ARGS]) == 4
 
 
 def test_main_dispatches_robots_and_domain_mode_untouched(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -273,3 +297,100 @@ def test_applebot_follows_the_googlebot_group_when_unnamed(
         ln for ln in capsys.readouterr().out.splitlines() if ln.strip().startswith("Applebot ")
     )
     assert "全站禁止" in line and "后备组" in line and "（Googlebot）" in line
+
+
+# ── 评审补的：没带头的挑战页、混合 host、退出码规则、JSON 字段、文字输出 ──────────────────────────
+def _one_response_fetcher(response: httpx.Response) -> Fetcher:
+    return Fetcher(
+        FetcherConfig(contact="ci@geo-audit.invalid", interval=2.0),
+        HttpCache(":memory:"),
+        DomainLimiter(2.0),
+        transport=httpx.MockTransport(lambda req: response),
+    )
+
+
+def test_a_challenge_page_without_a_header_is_unreadable_not_allowed(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    """评审复现：200 + text/html + 「Just a moment...」正文、**没有** cf-mitigated 头 →
+    22 行全是「放行」、退出码 0。这是 PR 的头一条保证（读不到不许说成放行）被绕过的方式。"""
+    body = (
+        "<html><head><title>Just a moment...</title></head>"
+        "<body>Checking your browser before accessing the site</body></html>"
+    )
+    f = _one_response_fetcher(httpx.Response(200, headers={"content-type": "text/html"}, text=body))
+    rc = run(["a.test", *ARGS], fetcher=f)
+    out = capsys.readouterr().out
+    assert rc == 3
+    assert "放行  ←" not in out and "没读到 robots.txt" in out and "挑战页" in out
+
+
+def test_a_bare_202_is_unreadable_not_an_empty_allow_all_file(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    rc = run(["a.test", *ARGS], fetcher=_one_response_fetcher(httpx.Response(202, text="")))
+    out = capsys.readouterr().out
+    assert rc == 3 and "放行  ←" not in out and "HTTP 202" in out
+
+
+def test_exit_3_when_any_host_is_unreadable_whatever_the_order(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    ok, bad = (200, TRAIN_BLOCKED), (503, "")
+    assert run(["a.test", "b.test", *ARGS], fetcher=_fetcher({"a.test": ok, "b.test": bad})) == 3
+    assert run(["b.test", "a.test", *ARGS], fetcher=_fetcher({"a.test": ok, "b.test": bad})) == 3
+    assert run(["a.test", "b.test", *ARGS], fetcher=_fetcher({"a.test": ok, "b.test": ok})) == 0
+    capsys.readouterr()
+
+
+def test_a_200_empty_file_is_not_called_a_missing_robots_txt(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    """有文件、没有任何规则 ≠ 站点没有 robots.txt：状态码（200 vs 404）必须一路传到判定表。"""
+    rc = run(["a.test", *ARGS], fetcher=_fetcher({"a.test": (200, "")}))
+    out = capsys.readouterr().out
+    assert rc == 0
+    assert "没有它的组、也没有 * 组" in out and "站点没有 robots.txt" not in out
+
+
+def test_json_carries_status_wildcard_list_notes_and_caveat(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    raw = "User-agent: Googlebot\nAllow: /\n\nUser-agent: *\nDisallow: /\n"
+    f = _fetcher({"a.test": (200, raw), "b.test": (404, "")})
+    assert run(["a.test", "b.test", "--json", *ARGS], fetcher=f) == 0
+    a, b = json.loads(capsys.readouterr().out)
+    assert (a["robots_status"], b["robots_status"]) == (200, 404)
+    assert "OAI-SearchBot" in a["search_blocked_by_wildcard"]
+    assert "Amzn-SearchBot" not in a["search_blocked_by_wildcard"]  # 它自带提醒
+    by = {c["token"]: c for c in a["crawlers"]}
+    assert "Amazon 文档" in by["Amzn-SearchBot"]["caveat"] and by["GPTBot"]["caveat"] == ""
+    assert (
+        by["Amzn-SearchBot"]["note"] and by["ChatGPT-User"]["note"] and by["GPTBot"]["note"] == ""
+    )
+
+
+def test_text_shows_the_deciding_rule_and_the_vendor_tags(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    raw = "User-agent: *\nDisallow: /private\n"
+    assert run(["a.test", *ARGS], fetcher=_fetcher({"a.test": (200, raw)})) == 0
+    out = capsys.readouterr().out
+    assert "Disallow: /private" in out  # 对着 robots.txt 核对用
+    line = {ln.split()[0]: ln for ln in out.splitlines() if ln.startswith("    ")}
+    assert "[厂商文档未明说是否遵守]" in line["PerplexityBot"]
+    assert "[没找到可核对的官方文档]" in line["CCBot"]
+    assert "厂商文档未明说" not in line["GPTBot"]
+
+
+def test_amzn_searchbot_caveat_is_in_the_text_output_not_only_in_json(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    """评审复现：Googlebot 放行、* 全站禁止 → 文字输出里 Amzn-SearchBot「全站禁止 ← 落到 *」，
+    而 Amazon 自己的文档说：没点名它但放行了别的搜索爬虫时，它按那些爬虫的规则走。"""
+    raw = "User-agent: Googlebot\nAllow: /\n\nUser-agent: *\nDisallow: /\n"
+    assert run(["a.test", *ARGS], fetcher=_fetcher({"a.test": (200, raw)})) == 0
+    out = capsys.readouterr().out
+    assert "ⓘ Amazon 文档" in out
+    warn = next(ln for ln in out.splitlines() if ln.lstrip().startswith("⚠ 检索类爬虫"))
+    assert "OAI-SearchBot" in warn and "Amzn-SearchBot" not in warn
