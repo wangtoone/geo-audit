@@ -60,6 +60,7 @@ from .normalize import (
     normalize_body,
     similarity_norm,
     structural_fingerprint,
+    visible_text,
 )
 
 _HTML_START_RE = re.compile(r"^\s*(?:<!doctype\s+html|<html\b|<\?xml[^>]*\?>\s*<html\b)", re.I)
@@ -151,9 +152,22 @@ def is_blocked(
             f"响应头 {name}: {value} —— 防火墙下发的是挑战页，不是内容（HTTP {status}）",
         )
 
+    head = body[:20000]
+    gate_shaped: bool | None = None  # 惰性：只有厂商名类规则命中时才算
     for rule_id, pattern in fp.CHALLENGE_BODY_PATTERNS:
-        if pattern.search(body[:20000]):
-            return (True, "waf_challenge_body", f"命中反爬挑战页指纹 {rule_id}（HTTP {status}）")
+        if not pattern.search(head):
+            continue
+        if rule_id in fp.AMBIGUOUS_BODY_RULES:
+            # 厂商名 / 验证码控件在正常页面上也有（见 fingerprints.AMBIGUOUS_BODY_RULES）：
+            # 只有响应长得像拦截页才算。可见文字用**整页**算，不是前 20 KB ——
+            # 很多页面的 <head> 里就有几十 KB 内联脚本，正文在窗口之外。
+            if gate_shaped is None:
+                gate_shaped = (
+                    not (200 <= status < 300) or len(visible_text(body)) < fp.GATE_PAGE_TEXT_LEN
+                )
+            if not gate_shaped:
+                continue
+        return (True, "waf_challenge_body", f"命中反爬挑战页指纹 {rule_id}（HTTP {status}）")
 
     if status == 429:
         retry_after = headers.get("retry-after", "")

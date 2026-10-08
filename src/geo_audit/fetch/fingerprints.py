@@ -12,7 +12,7 @@ from __future__ import annotations
 
 import re
 
-TABLE_VERSION = "2026-10-08.1"
+TABLE_VERSION = "2026-10-08.2"
 
 # --------------------------------------------------------------------------- #
 # WAF / bot-challenge fingerprints  ->  Verdict.BLOCKED
@@ -74,6 +74,29 @@ CHALLENGE_BODY_PATTERNS: tuple[tuple[str, re.Pattern[str]], ...] = (
     ("recaptcha_gate", re.compile(r"g-recaptcha|hcaptcha\.com/captcha", re.I)),
     ("generic_bot_verification", re.compile(r"<title>\s*bot verification", re.I)),
 )
+
+#: 上面这张表里，哪几条匹配的是**厂商名 / 验证码控件**，而不是挑战页本身。
+#: 它们在正常页面上也会出现：
+#:   datadome         DataDome 的接入方式是把 js.datadome.co/tags.js 放进**每一个**页面
+#:   perimeterx       PerimeterX / HUMAN 的传感器脚本同理
+#:   recaptcha_gate   任何带表单的页面都可能有一个 g-recaptcha 控件
+#:   cf_just_a_moment 「Just a moment」是普通英语里的加载提示
+#: 这四条只在响应**长得像拦截页**时才算命中：状态码不是 2xx，或整页可见文字不足
+#: ``GATE_PAGE_TEXT_LEN``（真正的挑战 / 验证码页只有几十个字，实测 Cloudflare 的那页约 70
+#: 字符）。其余规则（cf_chl_opt、attention required、Incapsula incident、
+#: pardon our interruption、<title>bot verification …）匹配的是挑战页**独有**的标记，
+#: 任何状态码、任何长度都算 —— 与原来一致。
+#:
+#: 修复前：一个 200、正文几千字、只是内嵌了验证码控件的正常页面，会被判成「被拦」，
+#: 进「未能评估」；DataDome / PerimeterX 的客户则是**每一页**。语料里 569 条 200 响应没有一条
+#: 在前 20,000 字符内命中这些词，所以这个问题在语料上是看不见的 —— 守卫是合成的。
+AMBIGUOUS_BODY_RULES: frozenset[str] = frozenset(
+    {"cf_just_a_moment", "perimeterx", "datadome", "recaptcha_gate"}
+)
+
+#: 整页可见文字短于这个数，才认为一个 2xx 响应「长得像拦截页」。与 jsrender 的
+#: EMPTY_SHELL_TEXT_LEN 同一个数（空壳页的判据），不另起一个。
+GATE_PAGE_TEXT_LEN = 200
 
 #: Response headers a WAF/CDN sets **only** when it answered with a challenge
 #: instead of the page.  Matched on the header, never on the status code or the
