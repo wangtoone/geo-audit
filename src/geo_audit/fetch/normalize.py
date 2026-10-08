@@ -18,16 +18,153 @@ import hashlib
 import re
 import unicodedata
 
-# Blocks removed wholesale before text extraction.
-_BLOCK_RE = re.compile(
+# --------------------------------------------------------------------------- #
+# Markup stripping -- linear time, on purpose
+# --------------------------------------------------------------------------- #
+# These used to be five ``re.sub`` calls: ``<!--.*?-->``,
+# ``<(script|style|...)\b[^>]*>.*?</\1\s*>``, ``<(script|link|meta)\b[^>]*/?>``,
+# ``<!doctype[^>]*>`` and ``<[^>]+>``.  Every one of them rescans to the end of the input from each
+# opening token that is never closed, so a page with N unclosed ``<script>`` / ``<!--`` / ``<``
+# cost O(N^2).  ``Fetcher.fetch`` runs ``finalize_response`` -> ``norm_sha256`` -> ``visible_text``
+# on every full-body response it fetches (not on liveness-only probes, truncated or empty bodies,
+# or cache hits) and the checks normalize the same bodies again, so a hostile -- or merely broken
+# -- page could stall an audit.
+#
+# The helpers below return exactly what those regexes returned (tests keep the regex versions as
+# the oracle and compare every stage, and the public functions, on every frozen response and on
+# fuzzed documents) using one rule: if an opening token cannot be completed -- there is no ``>`` /
+# ``-->`` / closing tag after it -- no LATER opening token of the same kind can be completed either
+# (their search starts further right), so the scan can stop looking for that kind.  ``str.find``
+# does the actual scanning.
+
+# The opening token of a block (``<script`` etc., ``\b`` after the name); the spelling is captured.
+_BLOCK_OPEN_RE = re.compile(r"<(?P<n>script|style|noscript|svg|template|iframe)\b", re.IGNORECASE)
+# The original per-block pattern, kept verbatim and applied ANCHORED at one opening token.  Not
+# rebuilt from the name: ``\1`` compares the closing tag with the captured text through the regex
+# engine's per-character *lower-casing* (``\u0130`` lowers to ``i``, but ``\u017f`` is NOT ``s`` and
+# ``\u0131`` is NOT ``i``), which is not the equivalence ``re.IGNORECASE`` uses for a literal
+# (there ``\u017f`` ~ ``s`` and ``\u0131`` ~ ``i``).  Re-implementing either changes the output for
+# exotic spellings such as ``<\u017fcript>``; reusing the regex cannot.
+_BLOCK_AT_RE = re.compile(
     r"<(script|style|noscript|svg|template|iframe)\b[^>]*>.*?</\1\s*>",
     re.IGNORECASE | re.DOTALL,
 )
-_SELF_CLOSING_NOISE_RE = re.compile(r"<(script|link|meta)\b[^>]*/?>", re.IGNORECASE)
-_COMMENT_RE = re.compile(r"<!--.*?-->", re.DOTALL)
-_DOCTYPE_RE = re.compile(r"<!doctype[^>]*>", re.IGNORECASE)
-_TAG_RE = re.compile(r"<[^>]+>")
+_NOISE_OPEN_RE = re.compile(r"<(?:script|link|meta)\b", re.IGNORECASE)
+_DOCTYPE_OPEN_RE = re.compile(r"<!doctype", re.IGNORECASE)
+_TITLE_OPEN_RE = re.compile(r"<title", re.IGNORECASE)
+_TITLE_CLOSE_RE = re.compile(r"</title>", re.IGNORECASE)
 _WS_RE = re.compile(r"\s+")
+
+
+def _strip_comments(text: str) -> str:
+    """``re.sub(r"<!--.*?-->", " ", text, flags=re.S)``"""
+    out: list[str] = []
+    keep_from = 0
+    while True:
+        start = text.find("<!--", keep_from)
+        if start < 0:
+            break
+        end = text.find("-->", start + 4)
+        if end < 0:
+            break  # unclosed: no later ``<!--`` can be closed either
+        out.append(text[keep_from:start])
+        out.append(" ")
+        keep_from = end + 3
+    out.append(text[keep_from:])
+    return "".join(out)
+
+
+def _strip_blocks(text: str) -> str:
+    r"""``re.sub(r"<(script|style|noscript|svg|template|iframe)\b[^>]*>.*?</\1\s*>", " ", ...)``"""
+    out: list[str] = []
+    keep_from = 0  # start of the text not yet copied to ``out``
+    scan = 0  # where to look for the next opening token
+    # Spellings whose closing tag is known not to exist after some point.  A later opening with the
+    # same spelling needs the same closing tag from further right: it cannot succeed either.  The
+    # key is the *spelling* lower-cased with ``str.lower()``, not the tag name and not
+    # ``casefold()``: ``<\u017fcript>`` and ``<script>`` are different back-references (a missing
+    # ``</\u017fcript>`` says nothing about ``</script>``), and so are ``<scr\u0131pt>`` and
+    # ``<scrIpt>``; only ASCII case differences never matter.  ``\u0130`` lowers to two characters
+    # here but to ``i`` inside ``\1``, so those spellings are merely keyed apart from the ``i``
+    # ones: a few more scans, never a wrong answer.  Un-lowered spellings would allow ~70x more
+    # failing scans (tests pin the counts).
+    unclosed: set[str] = set()
+    while True:
+        m = _BLOCK_OPEN_RE.search(text, scan)
+        if m is None:
+            break
+        spelling = m.group("n").lower()
+        if spelling in unclosed:
+            scan = m.start() + 1
+            continue
+        if text.find(">", m.end()) < 0:
+            break  # no ``>`` anywhere after this: no later opening token can end either
+        whole = _BLOCK_AT_RE.match(text, m.start())
+        if whole is None:
+            unclosed.add(spelling)
+            scan = m.start() + 1
+            continue
+        out.append(text[keep_from : m.start()])
+        out.append(" ")
+        keep_from = scan = whole.end()
+    out.append(text[keep_from:])
+    return "".join(out)
+
+
+def _strip_open_tags(text: str, opening: re.Pattern[str]) -> str:
+    """``re.sub(<opening>[^>]*>, " ", text)``: from the opening token up to the first ``>``."""
+    out: list[str] = []
+    keep_from = 0
+    scan = 0
+    while True:
+        m = opening.search(text, scan)
+        if m is None:
+            break
+        gt = text.find(">", m.end())
+        if gt < 0:
+            break
+        out.append(text[keep_from : m.start()])
+        out.append(" ")
+        keep_from = scan = gt + 1
+    out.append(text[keep_from:])
+    return "".join(out)
+
+
+def _strip_tags(text: str) -> str:
+    """``re.sub(r"<[^>]+>", " ", text)``"""
+    out: list[str] = []
+    keep_from = 0
+    scan = 0
+    while True:
+        start = text.find("<", scan)
+        if start < 0:
+            break
+        gt = text.find(">", start + 1)
+        if gt < 0:
+            break
+        if gt == start + 1:  # ``<>``: ``[^>]+`` needs at least one character
+            scan = start + 1
+            continue
+        out.append(text[keep_from:start])
+        out.append(" ")
+        keep_from = scan = gt + 1
+    out.append(text[keep_from:])
+    return "".join(out)
+
+
+def _first_title(body: str) -> str | None:
+    """``re.search(r"<title[^>]*>(.*?)</title>", body, re.I | re.S)`` -> group 1, or ``None``."""
+    m = _TITLE_OPEN_RE.search(body)
+    if m is None:
+        return None
+    gt = body.find(">", m.end())
+    if gt < 0:
+        return None
+    close = _TITLE_CLOSE_RE.search(body, gt + 1)
+    if close is None:
+        return None  # a later ``<title`` starts further right: it cannot be closed either
+    return body[gt + 1 : close.start()]
+
 
 # Per-request noise that changes on every hit.  Stripped so control comparison
 # is stable.  Ordering matters: longest/most specific patterns first.
@@ -79,11 +216,11 @@ def visible_text(body: str) -> str:
     ed.link's shell has <title>Edlink Dashboard</title>).
     """
     text = strip_bom(body)
-    text = _COMMENT_RE.sub(" ", text)
-    text = _BLOCK_RE.sub(" ", text)
-    text = _SELF_CLOSING_NOISE_RE.sub(" ", text)
-    text = _DOCTYPE_RE.sub(" ", text)
-    text = _TAG_RE.sub(" ", text)
+    text = _strip_comments(text)
+    text = _strip_blocks(text)
+    text = _strip_open_tags(text, _NOISE_OPEN_RE)
+    text = _strip_open_tags(text, _DOCTYPE_OPEN_RE)
+    text = _strip_tags(text)
     for entity, repl in _ENTITIES.items():
         text = text.replace(entity, repl)
     text = unicodedata.normalize("NFKC", text)
@@ -163,7 +300,6 @@ def similarity(a: str, b: str) -> float:
 
 _TAG_NAME_RE = re.compile(r"<\s*(/?)([a-zA-Z][a-zA-Z0-9-]*)")
 _ID_CLASS_RE = re.compile(r"\b(?:id|class)\s*=\s*[\"\']([^\"\']{0,120})[\"\']", re.I)
-_TITLE_RE = re.compile(r"<title[^>]*>(.*?)</title>", re.I | re.S)
 
 #: A skeleton with fewer tags than this is too thin to identify anything.
 MIN_STRUCT_TAGS = 30
@@ -176,8 +312,8 @@ def structural_fingerprint(body: str) -> tuple[str, int]:
     strings) never enter the skeleton, so the digest is stable across requests
     while remaining specific to one site's shell.
     """
-    stripped = _COMMENT_RE.sub(" ", body)
-    stripped = _BLOCK_RE.sub(" ", stripped)
+    stripped = _strip_comments(body)
+    stripped = _strip_blocks(stripped)
     tags = [f"{slash}{name.lower()}" for slash, name in _TAG_NAME_RE.findall(stripped)]
     tokens: list[str] = []
     for raw in _ID_CLASS_RE.findall(stripped[:200000]):
@@ -187,7 +323,7 @@ def structural_fingerprint(body: str) -> tuple[str, int]:
                 cleaned = pattern.sub("", cleaned)
             if cleaned and not cleaned.isdigit():
                 tokens.append(cleaned.lower())
-    title = _TITLE_RE.search(body)
-    title_text = _WS_RE.sub(" ", (title.group(1) if title else "")).strip().lower()
+    title = _first_title(body)
+    title_text = _WS_RE.sub(" ", title or "").strip().lower()
     skeleton = "|".join(tags[:4000]) + "#" + "|".join(sorted(set(tokens))[:400]) + "#" + title_text
     return hashlib.sha256(skeleton.encode("utf-8")).hexdigest(), len(tags)
