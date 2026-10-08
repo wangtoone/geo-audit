@@ -28,6 +28,7 @@ from geo_audit.checks.rawhtml import (
     inspect_raw_html,
     unusable_reason,
 )
+from geo_audit.cliutil import UsageParser, parse_args, positive_seconds
 from geo_audit.fetch.cache import HttpCache
 from geo_audit.fetch.classify import challenge_header
 from geo_audit.fetch.client import Fetcher, FetcherConfig, build_user_agent
@@ -185,7 +186,7 @@ def exit_code(outcomes: Sequence[PageOutcome]) -> int:
 
 
 def build_parser() -> argparse.ArgumentParser:
-    p = argparse.ArgumentParser(
+    p = UsageParser(
         prog=PROG,
         description=(
             "不跑 JS，读页面原始 HTML（多数 AI 爬虫看到的那份），并对账你的期望。"
@@ -216,7 +217,9 @@ def build_parser() -> argparse.ArgumentParser:
     g.add_argument("--indexable", action="store_true", help="必须没有 noindex")
     g.add_argument("--no-js-shell", action="store_true", help="必须不是 JS 空壳")
     p.add_argument("--ignore-robots", action="store_true")
-    p.add_argument("--timeout", type=float, default=15.0)
+    p.add_argument(
+        "--timeout", type=positive_seconds, default=15.0, help="单次读取超时（秒），默认 15"
+    )
     p.add_argument("--json", action="store_true", help="输出 JSON 而不是文本")
     return p
 
@@ -224,8 +227,9 @@ def build_parser() -> argparse.ArgumentParser:
 def run(argv: Sequence[str], *, fetcher: Fetcher | None = None) -> int:
     import os
 
-    parser = build_parser()
-    args = parser.parse_args(list(argv))
+    args, code = parse_args(build_parser(), argv)
+    if args is None:  # 用法错 → 4，--help → 0
+        return code
     try:
         specs: dict[str, PageSpec] = {}
         if args.spec:

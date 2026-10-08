@@ -618,6 +618,11 @@ def main(argv: Sequence[str] | None = None) -> int:
         from geo_audit.pagecli import main as page_main
 
         return page_main(args_in[1:])
+    if args_in and args_in[0] == "robots":
+        # 子命令：robots.txt 按 AI 爬虫分类。同样不是合法域名，不与 DOMAIN 冲突。
+        from geo_audit.robotscli import main as robots_main
+
+        return robots_main(args_in[1:])
     parser = build_parser()
     try:
         return _run(parser, argv)
