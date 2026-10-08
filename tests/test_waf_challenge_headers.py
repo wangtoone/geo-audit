@@ -100,6 +100,7 @@ def _no_real_sleep(monkeypatch: pytest.MonkeyPatch) -> list[float]:
         ({"X-Amzn-Waf-Action": " CAPTCHA "}, ("x-amzn-waf-action", "captcha")),
         # 逗号分隔的多值：任一 token 命中即可
         ({"cf-mitigated": "foo, challenge"}, ("cf-mitigated", "challenge")),
+        ({"x-vercel-mitigated": "challenge"}, ("x-vercel-mitigated", "challenge")),
         # 同名头被合并成一行时（"challenge, challenge"）
         ({"x-amzn-waf-action": "challenge, challenge"}, ("x-amzn-waf-action", "challenge")),
     ],
@@ -120,16 +121,22 @@ def test_challenge_header_positive(headers: dict[str, str], expected: tuple[str,
         {"cf-mitigated": "notchallenge"},  # 子串陷阱：必须是整个 token
         {"cf-mitigated": ""},
         {"x-amzn-requestid": "challenge"},  # 值对、头名不对
-        {"x-vercel-mitigated": "challenge"},  # 语料里见过，但没有文档依据，刻意不在表里
+        {"x-vercel-mitigated": "deny"},  # deny 是 403 拦截，状态码本来就判被拦；只认 challenge
+        {"x-vercel-id": "sin1::abc"},  # 只是走了 Vercel
     ],
 )
 def test_challenge_header_negative(headers: dict[str, str]) -> None:
     assert challenge_header(headers) is None
 
 
-def test_header_table_is_exactly_the_two_documented_vendors() -> None:
-    """表里每一行都要有厂商文档与实测出处（见 fingerprints.py 的注释），别悄悄多一行。"""
-    assert {name for name, _ in fp.CHALLENGE_HEADERS} == {"cf-mitigated", "x-amzn-waf-action"}
+def test_header_table_has_exactly_the_three_anchored_vendors() -> None:
+    """表里每一行都要有出处（见 fingerprints.py 的注释：Cloudflare / AWS 有厂商文档，
+    Vercel 只有实测），别悄悄多一行。"""
+    assert {name for name, _ in fp.CHALLENGE_HEADERS} == {
+        "cf-mitigated",
+        "x-amzn-waf-action",
+        "x-vercel-mitigated",
+    }
 
 
 # ── is_blocked：头先于正文、与状态码无关 ────────────────────────────────────
@@ -138,7 +145,7 @@ def test_is_blocked_by_header_whatever_the_status(status: int) -> None:
     hit = is_blocked(status, AWS, "", url="https://x.test/llms.txt")
     assert hit is not None
     _, reason, evidence = hit
-    assert reason == "waf_challenge_body"
+    assert reason == "waf_challenge_header"
     assert "x-amzn-waf-action: challenge" in evidence
     assert f"HTTP {status}" in evidence
 
@@ -168,7 +175,7 @@ def test_202_challenge_with_html_shell_is_blocked_not_a_soft404() -> None:
         expect=Expect.TEXT_FILE,
     )
     assert c.verdict is Verdict.BLOCKED  # 修复前：SOFT404 / html_where_text_expected
-    assert c.reason == "waf_challenge_body"
+    assert c.reason == "waf_challenge_header"
     assert "挑战页" in c.evidence[0]
 
 
@@ -197,7 +204,7 @@ def test_blocked_is_an_unknown_position_with_a_remedy() -> None:
     )
     assert c.verdict is Verdict.BLOCKED
     assert verdict_to_status(c.verdict) is Status.UNKNOWN
-    assert c.reason == "waf_challenge_body"
+    assert c.reason == "waf_challenge_header"
     assert c.reason in NOT_EVALUATED_REASONS
     assert c.reason in UNKNOWN_REMEDY
 
@@ -250,7 +257,7 @@ def test_real_aws_waf_challenge_captures_are_blocked(
     )
     # 修复前：text/html 那份判 soft404 / needs_js，text/plain 那份（0 字节）判 ok
     assert c.verdict is Verdict.BLOCKED
-    assert c.reason == "waf_challenge_body"
+    assert c.reason == "waf_challenge_header"
 
 
 def test_real_capture_through_the_real_fetcher_like_the_server_does() -> None:
@@ -272,7 +279,7 @@ def test_real_capture_through_the_real_fetcher_like_the_server_does() -> None:
     ):
         p = f.probe(url, expect=expect)
         assert p.verdict is Verdict.BLOCKED, url
-        assert p.classification.reason == "waf_challenge_body", url
+        assert p.classification.reason == "waf_challenge_header", url
 
 
 # ── 端到端：Fetcher.probe 走真实的抓取层（含对照探针）──────────────────────────
@@ -294,7 +301,7 @@ def _aws_202(req: httpx.Request) -> httpx.Response:
 def test_probe_through_the_real_fetcher_is_blocked() -> None:
     p = _fetcher(_aws_202).probe("https://x.test/llms.txt", expect=Expect.TEXT_FILE)
     assert p.verdict is Verdict.BLOCKED
-    assert p.classification.reason == "waf_challenge_body"
+    assert p.classification.reason == "waf_challenge_header"
 
 
 def test_a_challenged_control_probe_makes_the_host_profile_unusable() -> None:

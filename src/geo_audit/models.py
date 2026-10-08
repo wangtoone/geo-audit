@@ -41,7 +41,7 @@ SCHEMA_VERSION = "geo-audit/report/1"
 TOOL_VERSION = "0.1.0"
 #: 与 fetch/fingerprints.TABLE_VERSION 同源。去噪规则表一改就要动它，
 #: 否则跨版本的 fp-gate 报告没法比。
-DENOISE_RULESET_VERSION = "denoise/2026-09-07.1"
+DENOISE_RULESET_VERSION = "denoise/2026-10-08.1"
 
 #: JSON 里随环境变化、不参与确定性比对的字段路径。
 #: L 组（§8.8）逐字节比对前先剔掉这些。
@@ -155,9 +155,11 @@ Reason = Literal[
     # blocked
     "waf_status",
     "waf_challenge_body",
+    "waf_challenge_header",
     "rate_limited",
     "login_required",
     "robots_disallowed",
+    "robots_unreadable",
     # unknown
     "server_error",
     "dns_unresolved",
@@ -180,9 +182,11 @@ NOT_EVALUATED_REASONS: frozenset[str] = frozenset(
     {
         "waf_status",
         "waf_challenge_body",
+        "waf_challenge_header",
         "rate_limited",
         "login_required",
         "robots_disallowed",
+        "robots_unreadable",
         "server_error",
         "dns_unresolved",
         "dns_poisoned",
@@ -813,6 +817,14 @@ UNKNOWN_REMEDY: dict[str, str] = {
         "实测参照：gusto.com 的 llms.txt 是真文件（浏览器过挑战后 200 text/plain 8,217 B），"
         "但对纯 HTTP 客户端一律 403 —— 任何不带浏览器的工具都会把你这里报成「没有」。"
     ),
+    "waf_challenge_header": (
+        "你的 WAF / CDN 对 geo-audit 的请求下发了挑战页 —— 响应头（cf-mitigated 或 "
+        "x-amzn-waf-action）说明了这一点，而它的状态码可能是 202 而不是 403。"
+        "把 UA 含 geo-audit 的请求加白名单后重跑即可。"
+        "实测参照：app.baseten.co（AWS WAF）对纯 HTTP 客户端答 202 + x-amzn-waf-action: challenge，"
+        "Accept 含 text/html 时给一页 JS 挑战，不含时是 0 字节 —— 只看状态码和正文的工具会把它读成"
+        "「有内容」或「没内容」，都不对：我们没读到。"
+    ),
     "waf_status": (
         "该位置返回了拦截型状态码，不是内容。被拦截 ≠ 不存在，本位置既不计死链也不计存活。"
     ),
@@ -856,6 +868,12 @@ UNKNOWN_REMEDY: dict[str, str] = {
     "robots_disallowed": (
         "你的 robots.txt 禁止抓这个路径，我们遵守了。要检查请加 --ignore-robots。"
         "「我们没被允许看」是真话，「这里没问题」是假话。"
+    ),
+    "robots_unreadable": (
+        "我们没读到你的 robots.txt（5xx、网络错误、防火墙挑战、限流或跳转过多）。"
+        "RFC 9309 要求对读不到的 robots.txt 视同完全不许抓，所以本位置没有被评估 —— "
+        "这不是说你的 robots.txt 写了禁止。让 /robots.txt 对 geo-audit 的 UA 返回 200"
+        "（或明确的 404）后重跑即可；确实要跳过 robots 检查才加 --ignore-robots。"
     ),
     "control_unavailable": (
         "同域对照探测自身不可用（被拦或出错），无法判定本响应是真文件还是兜底页。"
