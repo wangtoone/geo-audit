@@ -15,10 +15,12 @@
 
 from __future__ import annotations
 
+import re
 from typing import get_args
 
 import pytest
 
+from geo_audit.fetch import fingerprints as fp
 from geo_audit.fetch.classify import classify_response, is_blocked
 from geo_audit.models import (
     DENOISE_RULESET_VERSION,
@@ -102,5 +104,9 @@ def test_disallowed_robots_keeps_its_reason() -> None:
     assert c.reason == "robots_disallowed"
 
 
-def test_ruleset_version_was_bumped_with_the_table() -> None:
-    assert DENOISE_RULESET_VERSION == "denoise/2026-10-08.1"
+def test_the_two_version_constants_stay_in_sync() -> None:
+    """models.py 的注释写着 DENOISE_RULESET_VERSION「与 fingerprints.TABLE_VERSION 同源」——
+    指纹表一改就要两处一起动，否则跨版本的 fp-gate 报告没法比。原来全靠人记，现在钉住。"""
+    expected = f"denoise/{fp.TABLE_VERSION}"
+    assert DENOISE_RULESET_VERSION == expected
+    assert re.fullmatch(r"\d{4}-\d{2}-\d{2}\.\d+", fp.TABLE_VERSION)
