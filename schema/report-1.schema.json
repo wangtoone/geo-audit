@@ -1019,6 +1019,9 @@
         "raw": {
           "type": "string"
         },
+        "readable": {
+          "type": "boolean"
+        },
         "sitemaps": {
           "items": {
             "type": "string"
@@ -1027,6 +1030,9 @@
         },
         "status": {
           "type": "integer"
+        },
+        "why": {
+          "type": "string"
         }
       },
       "required": [
