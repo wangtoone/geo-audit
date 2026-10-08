@@ -108,5 +108,5 @@ def test_the_two_version_constants_stay_in_sync() -> None:
     """models.py 的注释写着 DENOISE_RULESET_VERSION「与 fingerprints.TABLE_VERSION 同源」——
     指纹表一改就要两处一起动，否则跨版本的 fp-gate 报告没法比。原来全靠人记，现在钉住。"""
     expected = f"denoise/{fp.TABLE_VERSION}"
-    assert DENOISE_RULESET_VERSION == expected
+    assert expected == DENOISE_RULESET_VERSION
     assert re.fullmatch(r"\d{4}-\d{2}-\d{2}\.\d+", fp.TABLE_VERSION)
