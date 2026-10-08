@@ -1,5 +1,5 @@
 {
   "_meta": "Pin of fingerprints.TABLE_VERSION to a digest of every upper-case constant in fetch/fingerprints.py. Changing the table without bumping the version (or the reverse) turns tests/test_reason_codes.py red. A data file, not a literal in the test: tests/ may not contain 16+ hex runs (test_no_hardcoded_digests_in_tests).",
-  "table_version": "2026-10-08.1",
-  "table_digest": "1182147d4c010d63"
+  "table_version": "2026-10-08.2",
+  "table_digest": "0570d398e93e5ff4"
 }

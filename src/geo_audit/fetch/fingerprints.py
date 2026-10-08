@@ -69,8 +69,10 @@ CHALLENGE_BODY_PATTERNS: tuple[tuple[str, re.Pattern[str]], ...] = (
     ("akamai_access_denied", re.compile(r"access denied.{0,200}reference\s*#\d", re.I | re.S)),
     ("incapsula", re.compile(r"request unsuccessful\.\s*incapsula incident", re.I)),
     ("distil_imperva", re.compile(r"pardon our interruption", re.I)),
-    ("perimeterx", re.compile(r"perimeterx|px-captcha|_pxhd", re.I)),
-    ("datadome", re.compile(r"captcha-delivery\.com|datadome", re.I)),
+    ("perimeterx_challenge", re.compile(r"px-captcha|_pxhd", re.I)),
+    ("perimeterx", re.compile(r"perimeterx", re.I)),
+    ("datadome_challenge", re.compile(r"captcha-delivery\.com", re.I)),
+    ("datadome", re.compile(r"datadome", re.I)),
     ("recaptcha_gate", re.compile(r"g-recaptcha|hcaptcha\.com/captcha", re.I)),
     ("generic_bot_verification", re.compile(r"<title>\s*bot verification", re.I)),
 )
@@ -81,21 +83,36 @@ CHALLENGE_BODY_PATTERNS: tuple[tuple[str, re.Pattern[str]], ...] = (
 #:   perimeterx       PerimeterX / HUMAN 的传感器脚本同理
 #:   recaptcha_gate   任何带表单的页面都可能有一个 g-recaptcha 控件
 #:   cf_just_a_moment 「Just a moment」是普通英语里的加载提示
-#: 这四条只在响应**长得像拦截页**时才算命中：状态码不是 2xx，或整页可见文字不足
-#: ``GATE_PAGE_TEXT_LEN``（真正的挑战 / 验证码页只有几十个字，实测 Cloudflare 的那页约 70
-#: 字符）。其余规则（cf_chl_opt、attention required、Incapsula incident、
-#: pardon our interruption、<title>bot verification …）匹配的是挑战页**独有**的标记，
-#: 任何状态码、任何长度都算 —— 与原来一致。
+#: 这四条只在响应**长得像拦截页**时才算命中（见 ``classify._looks_like_gate``）：
+#:   * 404 / 410 不算 —— 诚实的「没有这个页面」；DataDome 的客户连 404 页也带那段脚本，
+#:     把它判成被拦会连对照探针一起废掉，整个 host 的位置全部「无法判断」；
+#:   * 其余非 2xx 算；
+#:   * 2xx 要整页可见文字不足 ``GATE_PAGE_TEXT_LEN``（真正的验证码页只有几十个字）。
+#: **按标记拆，不按厂商拆**：``captcha-delivery.com``（DataDome 挑战 iframe / 脚本所在的域）与
+#: ``px-captcha`` / ``_pxhd``（PerimeterX 的验证码容器 / cookie 名）只出现在挑战页上，单独成规则
+#: （``datadome_challenge`` / ``perimeterx_challenge``），任何状态码、任何长度都算。它们原来和
+#: 厂商名写在同一条正则里，整条规则被豁免时它们也被一起豁免了。其余规则（cf_chl_opt、
+#: attention required、Incapsula incident、pardon our interruption、<title>bot verification …）
+#: 同样是挑战页**独有**的标记，与原来一致。
 #:
 #: 修复前：一个 200、正文几千字、只是内嵌了验证码控件的正常页面，会被判成「被拦」，
 #: 进「未能评估」；DataDome / PerimeterX 的客户则是**每一页**。语料里 569 条 200 响应没有一条
 #: 在前 20,000 字符内命中这些词，所以这个问题在语料上是看不见的 —— 守卫是合成的。
+#:
+#: **取舍（有意的）**：一个 2xx、可见文字超过 ``GATE_PAGE_TEXT_LEN``、而且**只**带上面这四类歧义
+#: 标记的整页验证码墙（站点页眉页脚 + 一个 reCAPTCHA 控件），现在会被当成普通页面去评估，而不是
+#: 「无法判断」。这是拿「可能多出一条错误结论」去换「少一批错误的无法判断」。语料里两个方向都
+#: 没有实例（13 条命中的响应全是 403），所以这个取舍靠合成用例钉住，不是靠数据。
 AMBIGUOUS_BODY_RULES: frozenset[str] = frozenset(
     {"cf_just_a_moment", "perimeterx", "datadome", "recaptcha_gate"}
 )
 
-#: 整页可见文字短于这个数，才认为一个 2xx 响应「长得像拦截页」。与 jsrender 的
-#: EMPTY_SHELL_TEXT_LEN 同一个数（空壳页的判据），不另起一个。
+#: 2xx 响应整页可见文字短于这个数，才认为它「长得像拦截页」。
+#: 冻结语料里 13 条命中正文指纹的响应（全是 403）实测：Cloudflare「Just a moment...」挑战页的
+#: 可见文字是 16 字符（9 条）；「Attention Required! | Cloudflare」页是 785 字符（4 条）——
+#: 所以后者那条规则必须是「任何长度都算」的独有标记，不能靠长度判。
+#: 200 是**独立取的**，只是目前和 jsrender.EMPTY_SHELL_TEXT_LEN（空壳页的判据）同一个数；
+#: 两边各自调，没有联动。
 GATE_PAGE_TEXT_LEN = 200
 
 #: Response headers a WAF/CDN sets **only** when it answered with a challenge
