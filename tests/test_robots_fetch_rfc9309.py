@@ -210,6 +210,67 @@ def test_a_challenge_page_is_not_a_robots_txt_but_crawling_follows_rfc(
     assert p.classification.reason == "waf_challenge_header"
 
 
+# ── 3b. 没带挑战头的挑战页（评审：200 + 正文是「Just a moment」，整张表读成「放行」）────────────
+CF_BODY = (
+    "<html><head><title>Just a moment...</title></head>"
+    "<body>Checking your browser before accessing the site</body></html>"
+)
+
+
+def test_a_challenge_page_served_as_200_without_a_header_is_not_a_robots_txt() -> None:
+    """评审复现：``/robots.txt`` 回 200 + text/html + 「Just a moment...」正文，**没有**
+    cf-mitigated 头。只认响应头 + 任何 2xx 都算「读到了」→ readable=True、没有规则 →
+    ``robots`` 子命令 22 行全是「放行」，退出码 0。位置判定拿同一个正文会判 BLOCKED。"""
+    f = _fetcher(
+        _only_robots(httpx.Response(200, headers={"content-type": "text/html"}, text=CF_BODY))
+    )
+    info = f.robots_for("https://x.test/")
+    assert info.policy == "allow_all" and info.readable is False  # 照常抓，但没读到
+    assert "挑战页" in info.why and "cf_just_a_moment" in info.why
+
+
+def test_a_long_normal_page_that_merely_quotes_a_challenge_phrase_is_still_read_as_no_rules() -> (
+    None
+):
+    """别矫枉过正：歧义标记只在「长得像拦截页」时才算（#13 的规则），一页几千字的正常 HTML 里
+    出现 Just a moment 不是挑战页。"""
+    quote = "<p>Just a moment, loading your dashboard...</p>"  # 歧义标记；不是 gate-only 的那几条
+    page = "<html><body>" + "<p>Real content about widgets.</p>" * 60 + quote + "</body></html>"
+    info = _fetcher(
+        _only_robots(httpx.Response(200, headers={"content-type": "text/html"}, text=page))
+    ).robots_for("https://x.test/")
+    assert info.policy == "parsed" and info.readable is True and "HTML 页面" in info.why
+
+
+def test_a_plain_text_robots_txt_that_mentions_the_phrase_is_not_a_challenge() -> None:
+    """只有「正文是 HTML」才去问 is_blocked：纯文本里的注释不会把一份真文件读成挑战页。"""
+    body = "# Just a moment please, our rules are being rewritten\n"
+    info = _fetcher(
+        _only_robots(httpx.Response(200, headers={"content-type": "text/plain"}, text=body))
+    ).robots_for("https://x.test/")
+    assert info.readable is True and info.why == ""
+
+
+def test_a_real_rules_file_mislabelled_as_html_is_still_read() -> None:
+    """只在「没有任何规则行」时才问 is_blocked：有规则的文件哪怕被标成 text/html、注释里碰巧有
+    挑战页的词，也照读、照执行。"""
+    body = "User-agent: *\nDisallow: /private\n# Just a moment, we are migrating hosts\n"
+    f = _fetcher(
+        _only_robots(httpx.Response(200, headers={"content-type": "text/html"}, text=body))
+    )
+    info = f.robots_for("https://x.test/")
+    assert info.policy == "parsed" and info.readable is True
+    assert f.robots_verdict("https://x.test/private/a") == "disallowed"
+
+
+@pytest.mark.parametrize("body", ["", RULES], ids=["empty", "with-rules"])
+def test_a_202_without_the_challenge_header_is_not_a_robots_txt(body: str) -> None:
+    """202 =「已接受、还没处理完」，不是这份资源的表示；空正文读成「空文件 = 全放行」是假的。"""
+    info = _fetcher(_only_robots(httpx.Response(202, text=body))).robots_for("https://x.test/")
+    assert info.policy == "allow_all" and info.readable is False and info.raw == ""
+    assert "HTTP 202" in info.why
+
+
 # ── 4. 反方向：别矫枉过正 ────────────────────────────────────────────────────
 def test_404_is_a_clean_absence_and_everything_is_allowed() -> None:
     def handler(req: httpx.Request) -> httpx.Response:
@@ -487,6 +548,8 @@ def _resp(status: int, **kw: object) -> HttpResponse:
         (403, "allow_all", False, "HTTP 403"),
         (418, "allow_all", False, "HTTP 418"),
         (429, "allow_all", False, "429"),
+        (202, "allow_all", False, "HTTP 202"),
+        (204, "allow_all", True, ""),  # 有响应、没有内容 = 空文件
         (304, "allow_all", False, "没有可跟的 Location"),
         (500, "disallow_all", False, "HTTP 500"),
         (502, "disallow_all", False, "HTTP 502"),

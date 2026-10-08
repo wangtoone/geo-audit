@@ -155,6 +155,8 @@ def interpret_robots_response(
     任何状态码 + 挑战头         allow_all     False      防火墙下发的挑战页不是 robots.txt（AWS 的
                                                     是 **202**，Cloudflare 的是 403）
     3xx 没有 Location         allow_all     False      跳不过去
+    202（没有挑战头）          allow_all     False      「已接受、还没处理完」，不是这份文件的表示
+    2xx 的 HTML，正文是挑战页   allow_all     False      没带挑战头的挑战页（旧式 Cloudflare 页等）
     5xx / 网络错误            disallow_all  False      RFC 9309 §2.3.1.4（MUST）：视同完全不许抓
     跳转成环 / 超过 10 跳      disallow_all  False      RFC 只是允许当作「不可用」；我们取保守一侧
     replay 缺快照（合成 599）   allow_all     False      不是站点的事实，why 里写明
@@ -173,6 +175,11 @@ def interpret_robots_response(
     if hit is not None:
         why = f"响应头 {hit[0]}: {hit[1]}（HTTP {status}）：防火墙下发的是挑战页，不是 robots.txt"
         return "allow_all", "", why, False
+    if status == 202:
+        # 202 Accepted =「请求收到了，还没处理完」，不是这份资源的表示（RFC 9110 §15.3.3）。
+        # AWS WAF 的 Challenge 就是 202，带 x-amzn-waf-action 头的上面已经认出来了；没有头的
+        # 202 也不能读成「一份空的 robots.txt」→ 每个爬虫「放行」。
+        return "allow_all", "", "HTTP 202（请求已接受，但没有返回文件），不是 robots.txt", False
     if 200 <= status < 300:
         # RFC 9309 §2.2：必须是 UTF-8。用 utf-8-sig 去掉开头的 BOM（Windows 记事本存出来的
         # robots.txt 常带）—— 否则第一行 ``\ufeffUser-agent: *`` 认不出来，后面的 Disallow 变成
@@ -188,6 +195,13 @@ def interpret_robots_response(
             for line in raw.splitlines()
         )
         if raw and not has_rules and looks_like_html(raw, resp.content_type):
+            # 没带挑战头、但正文就是挑战页（旧式 Cloudflare「Just a moment」页、Incapsula 的
+            # 200 墙）：和位置判定用同一个 is_blocked，「这个站的内容页会被判被拦」与「它的
+            # robots.txt 是挑战页」就不会各说各话。只在没有任何规则行时才问 —— 真有规则的文件，
+            # 哪怕被标成 text/html 也照读。
+            gate = is_blocked(status, resp.headers, raw, url=resp.final_url)
+            if gate is not None:
+                return "allow_all", "", f"返回的是防火墙的挑战页，不是 robots.txt：{gate[2]}", False
             notes.append("返回的是 HTML 页面（多半是 SPA 外壳），没有任何规则")
         return ("parsed" if raw else "allow_all"), raw, "；".join(notes), True
     if status in (404, 410):
