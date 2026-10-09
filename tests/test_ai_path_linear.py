@@ -6,8 +6,8 @@ llms.txt 是被体检的站点自己提供的，一行可以有几 MB。``extrac
 ``finditer``（markdown ``[text](url)``、``/`` 开头的相对路径、内嵌 ``<a href>``），``index_shape``
 对每一行跑一条 ``re.match``（「是不是链接行」）。它们对「开了没法闭合」的开头都把整行余下的部分
 再扫一遍：一行里 N 个 ``<a ``（后面没有 ``href=``）或 N 个 ``[x](``（后面没有 ``)``）是 O(N^2)，
-``\\s*[-*]?\\s*`` 对一长串空白还要回溯。64 KB 的 ``<a `` 要 2.0 s，64 KB 的空白要 2.6 s，
-再大按平方涨。
+``\\s*[-*]?\\s*`` 对一长串空白还要回溯。64 KB 的 ``<a `` 或空白要几秒，再大按平方涨（长度每翻一倍
+慢 4 倍）。
 
 范围：这里只管这四条。同一个文件里的 ``_TITLE_RE`` 只看响应正文的前 2 万个字符（最坏实测 0.12 s），
 没有动。``_LINK_HEADER_RE``（``Link`` 响应头）也没有动，但它**不是**有界的小问题：httpcore 允许整个
@@ -26,15 +26,22 @@ llms.txt 是被体检的站点自己提供的，一行可以有几 MB。``extrac
    结构拼出来的链接列表；它们都断言各种结果出现了足够多次 —— fuzz 不是空转；
 3. 一组逐条写出来的边角：嵌套的 ``[``、同一个标签里的几个 ``href=``、url 里的 ``>``、每个
    ``\\s`` 位置上的每一种空白、大小写；
-4. 超大输入：一行里前面垫 100 KB / 1 MiB / 4 MiB / 8 MiB 的普通文字再接一个链接，前面有一万到
+4. 编辑距离 1 的邻域：二十几条写得规规矩矩的链接行，每个位置删 / 换 / 插一个字符，字符取自约
+   300 个（Latin-1 全部、每个行内的 ``\\s``、全角括号、零宽字符、NUL、反引号、``•``、``·``……）：专打
+   「没有任何字母表想到会出现的字符」（项目符号集里多一个 ``+``、url 的终止符里多一个 NUL、收尾引号
+   里多一个反斜杠……这类放宽字符集的错误，别的测试看不见）；
+5. 超大输入：一行里前面垫 100 KB / 1 MiB / 4 MiB / 8 MiB 的普通文字再接一个链接，前面有一万到
    几十万个「走不通」的开头再接一个链接，单个超过 100 KB / 4 MiB 的文本、url、属性段、空白。
 
 ## 它证明不了什么
 
 * 超大输入只覆盖上面列出的尺寸和形状，证明不了「实现里不存在任何上限」；
-* 计时守卫靠**增长倍数**抓平方级（同一个家族，最大一档 / 四分之一大小的耗时：线性约 4，平方约
-  16），与机器快慢、``--cov`` 插桩无关；绝对时间上限只兜立方 / 指数级的爆炸。靠墙钟抓不到常数级的
-  退化。
+* 计时守卫有两道。**增长倍数**：同一个家族，最大一档 / 四分之一大小的耗时（线性约 4，平方约
+  16），与机器快慢、``--cov`` 插桩无关，但四分之一大小那一档快于 30 ms 的家族（约一半）不看倍数。
+  **绝对上限**：每 MB 10 s 再加 0.5 s，放得很宽；「输出不变但平方」的写法实际上是被它（或超大输入
+  对照测试的 ``SIGALRM`` 期限）杀掉的，增长倍数只是能量得出来的家族上多一层保险。靠墙钟抓不到
+  常数级的退化；Windows 上没有 ``SIGALRM``，超大输入的对照测试遇到平方级退化会挂住而不是失败
+  （POSIX 的几格会先红）。
 """
 
 from __future__ import annotations
@@ -74,6 +81,10 @@ _OLD_MARKDOWN_RE = re.compile(r"\[(?P<text>[^\]]*)\]\((?P<url>[^)\s]+)\)")
 _OLD_BARE_RE = re.compile(r"(?<![(<\"'`])\bhttps?://[^\s`)>\"'\]]+")
 _OLD_HTML_A_RE = re.compile(r"<a[^>]+href=[\"'](?P<url>[^\"']+)[\"']", re.I)
 _OLD_RELATIVE_RE = re.compile(r"\[[^\]]*\]\((?P<url>/[^)\s]+)\)")
+#: 旧的相对路径正则没有「文本」组（调用方也不用文本）。加一个捕获组不改变它匹配什么：下面的副本只
+#: 用来核对 ``_bracket_links(relative=True)`` 吐出的文本；``_same_line`` 另外断言它与原正则的匹配
+#: 位置完全相同。
+_OLD_RELATIVE_WITH_TEXT_RE = re.compile(r"\[(?P<text>[^\]]*)\]\((?P<url>/[^)\s]+)\)")
 _OLD_LINKY_LINE_RE = re.compile(r"\s*[-*]?\s*\[.+?\]\(.+?\)")
 
 
@@ -148,8 +159,12 @@ def _same_line(line: str) -> None:
     markdown = [(m.group("text"), m.group("url")) for m in _OLD_MARKDOWN_RE.finditer(line)]
     assert list(ap._bracket_links(line, relative=False)) == markdown, ("markdown", line[:300])
     relative = [m.group("url") for m in _OLD_RELATIVE_RE.finditer(line)]
-    assert [u for _t, u in ap._bracket_links(line, relative=True)] == relative, (
-        "relative",
+    got_relative = list(ap._bracket_links(line, relative=True))
+    assert [u for _t, u in got_relative] == relative, ("relative", line[:300])
+    with_text = list(_OLD_RELATIVE_WITH_TEXT_RE.finditer(line))
+    assert [m.span() for m in with_text] == [m.span() for m in _OLD_RELATIVE_RE.finditer(line)]
+    assert [t for t, _u in got_relative] == [m.group("text") for m in with_text], (
+        "relative text",
         line[:300],
     )
     html_a = [m.group("url") for m in _OLD_HTML_A_RE.finditer(line)]
@@ -215,8 +230,19 @@ def _fuzz_document(rng: random.Random) -> str:
 
 def test_identical_results_on_twenty_thousand_fuzzed_documents() -> None:
     rng = random.Random(20261009)
+    outcomes = {n: [0, 0] for n in ("markdown", "relative", "html_a", "linky")}
+    raised = links = 0
     for _ in range(20000):
-        _same(_fuzz_document(rng))
+        text = _fuzz_document(rng)
+        _same(text)
+        for line in text.splitlines():
+            _count(outcomes, line)
+        kind, got = _outcome(lambda t=text: ap.extract_index_links(t, BASE))
+        raised += kind == "raised"
+        links += len(got) if kind == "ok" else 0
+    _assert_not_idle(outcomes, 1000)
+    # 整个函数的对照：抛异常的文档（比的是「新旧一起抛」）和正常返回链接的文档都要出现足够多次
+    assert 1000 <= raised <= 15000 and links >= 10000, (raised, links)
 
 
 # ── 3. 已知有链接的行，随机改 1-4 处（专打边界）与按结构拼的链接列表 ─────────────
@@ -325,6 +351,60 @@ def test_identical_results_on_twenty_thousand_structured_documents() -> None:
         for line in text.splitlines():
             _count(outcomes, line)
     _assert_not_idle(outcomes, 1000)
+
+
+# ── 3b. 编辑距离 1 的邻域：专打「没有任何字母表想到会出现的字符」 ────────────────────────
+def _neighbourhood_pool() -> list[str]:
+    pool = [chr(c) for c in range(256)]  # Latin-1 全部：NUL、控制符、反斜杠、反引号、´、·……
+    pool += _ALL_WS
+    pool += [
+        chr(c)
+        for c in (
+            0x0301, 0x0316, 0x200B, 0x200E, 0x200F, 0x202E, 0x2060, 0xFEFF,  # 组合符、零宽、BOM
+            0x2013, 0x2018, 0x2019, 0x201C, 0x201D, 0x2022, 0x3002,  # 破折号、弯引号、``•``、``。``
+            0x3010, 0x3011, 0x4E2D, 0xFF08, 0xFF09, 0xFF3B, 0xFF3D,  # 全角括号、汉字
+            0x017F, 0x0130, 0x0131, 0x212A, 0x1F600,  # ſ İ ı K、emoji
+        )
+    ]  # fmt: skip
+    # ``str.splitlines()`` 切出来的行里不会有换行符；有换行符的字符在这里没有意义
+    return [c for c in dict.fromkeys(pool) if len(("a" + c + "b").splitlines()) == 1]
+
+
+_NEIGHBOUR_SEEDS = [
+    "[a](b)", "[a](/b)", "[a](/)", "- [a](b)", "* [a](/b)", "  - [text](https://h.example/p)",
+    "[a](b)[c](d)", "[a](b) [c](/d)", "[a](x y) [c](/d)", "[](b)", "[a]()", "[a [b](c) d](e)",
+    "- [a](b) text", "text [a](b) more [c](/d) end", "-[a](b)", "\t[a](b)", "[a](b", "[a]",
+    "<a href='u'>", '<a href="u">', "<A HREF='u'>", "<a x=1 href='u' y>", '<a href="u" href="w">',
+    "<a href='u'><a href='v'>", '<a href="x>y">', "<abbr href='u'>", "<a href=",
+    "[a](b) <a href='u'>", "https://bare.example/p [a](b)",
+]  # fmt: skip
+
+
+def _one_edit(seed: str, pool: list[str]) -> Iterator[str]:
+    for i in range(len(seed)):
+        yield seed[:i] + seed[i + 1 :]  # 删
+        for c in pool:
+            if c != seed[i]:
+                yield seed[:i] + c + seed[i + 1 :]  # 换
+    for i in range(len(seed) + 1):
+        for c in pool:
+            yield seed[:i] + c + seed[i:]  # 插
+
+
+def test_identical_results_in_the_one_edit_neighbourhood_of_valid_links() -> None:
+    pool = _neighbourhood_pool()
+    assert len(pool) >= 280, len(pool)
+    for must in ("\x00", "\\", "`", "\u00b4", "\u00b7", "\u200b", "\u3002", "\u2022", "+", "0"):
+        assert must in pool, hex(ord(must))
+    outcomes = {n: [0, 0] for n in ("markdown", "relative", "html_a", "linky")}
+    n = 0
+    for seed in _NEIGHBOUR_SEEDS:
+        for line in _one_edit(seed, pool):
+            _same_line(line)
+            _count(outcomes, line)
+            n += 1
+    assert n >= 150_000, n
+    _assert_not_idle(outcomes, 5000)
 
 
 # ── 4. 逐条写出来的边角 ──────────────────────────────────────────────────────
@@ -624,11 +704,11 @@ _PATHOLOGICAL = {
     # 很多个 ``[`` 共用远处的同一个 ``]``：每个 ``[`` 各自去找 ``]`` 就是平方级（每次只是 str.find）
     "opens-then-one-close": (lambda n: "[" * n + "]x", False),
     "opens-then-one-dead-link": (lambda n: "[" * n + "](u v)", False),
-    "anchor-open-no-gt": (lambda n: "<a " * (n // 3), False),  # 旧：平方，64 KB 2.0 s
+    "anchor-open-no-gt": (lambda n: "<a " * (n // 3), False),  # 旧：平方（64 KB 要几秒）
     "anchor-href-no-gt": (lambda n: "<a href=" * (n // 8), False),
     "anchor-href-quote-no-gt": (lambda n: '<a href="' * (n // 9), False),
     "anchor-one-gt-at-the-end": (lambda n: "<a x " * (n // 5) + ">", False),
-    "spaces-then-x": (lambda n: " " * n + "x", False),  # 旧：平方，64 KB 2.6 s
+    "spaces-then-x": (lambda n: " " * n + "x", False),  # 旧：平方（64 KB 要几秒）
     "spaces-then-bracket": (lambda n: " " * n + "[", False),
     "url-never-closes": (lambda n: "[a](" + "u" * n, False),
     "url-of-open-parens": (lambda n: "[a](" + "(" * n, False),
