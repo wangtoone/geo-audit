@@ -756,6 +756,32 @@ def test_a_site_full_of_garbage_urls_still_gets_a_report(
     assert all(not f.target.url.endswith("/old") for f in report.findings)
 
 
+def test_markup_in_an_unparseable_url_reaches_the_html_report_escaped(
+    make_fetcher: Callable[..., Fetcher], tmp_path: Path
+) -> None:
+    """坏 URL 是站点给的字符串，原样进「被排除」清单、证据和 JSON：HTML 里只能是转义后的文字。"""
+    evil = "http://[<script>alert(1)</script>"
+    page = f'<html><body><a href="{html.escape(evil)}">x</a><a href="/old">old</a></body></html>'
+    llms = f"# Acme\n\n- [E]({evil.replace('1', '2')})\n"
+    routes: dict[str, tuple[int, dict[str, str], str]] = {}
+    for host in ("acmecloud.io", "www.acmecloud.io", "docs.acmecloud.io"):
+        for path in ("/", "/pricing", "/docs"):
+            routes[f"https://{host}{path}"] = (200, HTML, page)
+        routes[f"https://{host}/llms.txt"] = (200, TEXT, llms)
+        routes[f"https://{host}/old"] = (301, {"location": "http://[<b>x"}, "")
+    report = audit_domain(
+        AuditOptions(domain="acmecloud.io", contact=CONTACT, max_requests=0),
+        fetcher=make_fetcher(Site(routes)),
+        store=FixtureStore(tmp_path / "empty-fixtures"),
+        resolver=_resolver("acmecloud.io", "www.acmecloud.io", "docs.acmecloud.io"),
+    )
+    from geo_audit.report import render_html
+
+    out = render_html(report)
+    assert "&lt;script&gt;alert(" in out  # 看得见，而且是转义后的
+    assert "<script>alert(" not in out and "<b>x" not in out
+
+
 def test_the_human_path_cell_does_not_claim_the_unreachable_link_is_alive(
     make_fetcher: Callable[..., Fetcher], tmp_path: Path
 ) -> None:
