@@ -58,14 +58,23 @@ from geo_audit.checks import dead_links as dl
 from geo_audit.extract import extract_links, extract_page
 from geo_audit.fetch import discovery
 from geo_audit.fetch.cache import HttpCache
+from geo_audit.fetch.classify import classify_response
 from geo_audit.fetch.client import Fetcher, FetcherConfig
 from geo_audit.fetch.ratelimit import DomainLimiter
+from geo_audit.fetch.resolve import HostResolver, Resolution
 from geo_audit.fetch.urlsafe import (
     INVALID_REDIRECT_ERROR,
     INVALID_URL_ERROR,
     REJECTED_URL_ERROR,
+    UNPARSEABLE_REASON,
     UNPARSEABLE_RULE_ID,
+    dns_name,
+    invalid_redirect_error,
+    invalid_url_error,
+    is_url_error,
     join_or_none,
+    rejected_url_error,
+    requestable,
     split_or_none,
 )
 from geo_audit.fixtures import DNS_ABSENT_KEY, FixtureResolver, FixtureStore
@@ -97,8 +106,9 @@ BAD_URLS = [
     "http://h:-1/",
     "http://h:80:80/",  # 两个端口
 ]
-#: urlsplit 放行、**httpx 拒绝**的 URL（请求建不出来）：``split_or_none`` 一并拒绝。以前它们到了
-#: ``Fetcher`` 才抛 ``httpx.InvalidURL`` / ``idna.IDNAError``，同样是整次体检崩掉。
+#: urlsplit 放行、**httpx 拒绝**的 URL（请求建不出来）：``split_or_none``（urllib 层）放行它们，
+#: ``requestable``（请求层）拒绝。以前它们到了 ``Fetcher`` 才抛 ``httpx.InvalidURL`` /
+#: ``idna.IDNAError``，同样是整次体检崩掉。
 HTTPX_BAD_URLS = [
     "http://256.256.256.256/",  # IPv4 的某一段超过 255
     "http://[v1.fe]/",  # 方括号里不是合法的 IPv6 字面量
@@ -106,10 +116,20 @@ HTTPX_BAD_URLS = [
     "http://xn--a/",
     "http://\u200bhost/",  # 零宽空格
     "http://ＨＯＳＴ/",  # 全角的主机名
-    "http://a.test/\x00",  # 控制字符
-    "http://a.test/a\x01b",
+    "http://acmevendor.io/\x00",  # 控制字符
+    "http://acmevendor.io/a\x01b",
 ]
-ALL_BAD_URLS = [*BAD_URLS, *HTTPX_BAD_URLS]
+#: urlsplit 和 httpx 都放行，但 DNS 标签编不出来：``socket.getaddrinfo`` 抛 ``UnicodeError``（它不是
+#: ``httpx.HTTPError``）。``requestable`` 按 RFC 1035 的长度（标签 1–63、整名 ≤253）拦。
+DNS_BAD_URLS = [
+    "http://a..b/",  # 空标签
+    "https://docs..vendor.io/x",  # 模板里的变量没填
+    "http://" + "a" * 64 + ".acmevendor.io/",  # 标签 64 字符
+    "http://" + ".".join(["abcdefghi"] * 30) + "/",  # 整个名字 299 字符
+    "http://" + ".".join(["a" * 63, "b" * 63, "c" * 63, "d" * 62]) + "/",  # 恰好 254 字符
+    "http://./",
+]
+ALL_BAD_URLS = [*BAD_URLS, *HTTPX_BAD_URLS, *DNS_BAD_URLS]
 GOOD_URLS = [
     "http://[::1]/x",
     "https://a.test:8080/p?q=[1]#f",
@@ -118,6 +138,25 @@ GOOD_URLS = [
     "mailto:a@b.c",
     "//cdn.test/x.js",
     "https://a.test:0/",
+]
+#: 真实世界里合法、能请求的 URL：被拒绝就是误杀（这张表让「什么都拒绝」的实现过不了测试）
+REAL_URLS = [
+    "https://münchen.de/straße?q=ü",  # IDN 主机 + 非 ASCII 路径与查询
+    "https://例え.jp/",
+    "https://xn--mnchen-3ya.de/",
+    "http://[::1]:8080/x",
+    "http://[2001:db8::1]/x",
+    "http://[fe80::1%25eth0]/",
+    "https://user:pw@a.test:8443/p?q=1#f",
+    "https://a.test/" + "x" * 8000,  # 8 KB 的路径
+    "https://a.test/p?" + "&".join(f"k{i}=v{i}" for i in range(800)),  # 长查询串
+    "https://a.test/a b|c^d{e}f",  # 浏览器会自己转义的字符
+    "https://a.test./",  # 末尾的点
+    "HTTPS://A.TEST/Docs",
+    "http://localhost:8080/",
+    "https://a.test/%E6%97%A5%E6%9C%AC",
+    "https://" + "a" * 63 + ".test/",  # 恰好 63 字符的标签
+    "https://" + ".".join(["a" * 63, "b" * 63, "c" * 63, "d" * 61]) + "/",  # 恰好 253 字符的名字
 ]
 #: 响应头里只能有 ASCII（httpx 编码头值用 ascii）：``Location`` 的测试只用这些
 ASCII_BAD_URLS = [u for u in ALL_BAD_URLS if u.isascii() and u.isprintable()]
@@ -140,10 +179,12 @@ class Site:
     def __init__(self, routes: dict[str, tuple[int, dict[str, str], str]]) -> None:
         self.routes = routes
         self.requested: list[str] = []
+        self.request_headers: list[dict[str, str]] = []
 
     def handler(self, request: httpx.Request) -> httpx.Response:
         url = str(request.url)
         self.requested.append(url)
+        self.request_headers.append(dict(request.headers))
         row = self.routes.get(url)
         if row is None:
             return httpx.Response(
@@ -165,13 +206,16 @@ def _control(url: str) -> str:
 def make_fetcher(tmp_path: Path) -> Iterator[Callable[..., Fetcher]]:
     made: list[Fetcher] = []
 
-    def make(site: Site, *, respect_robots: bool = False) -> Fetcher:
+    def make(
+        site: Site, *, respect_robots: bool = False, resolver: HostResolver | None = None
+    ) -> Fetcher:
         f = Fetcher(
             FetcherConfig(contact=CONTACT, interval=2.0, respect_robots=respect_robots),
             cache=HttpCache(tmp_path / f"cache{len(made)}.sqlite3", ua_profile="test"),
             limiter=DomainLimiter(2.0),
             transport=StopTransport(httpx.MockTransport(site.handler), threading.Event()),
             probe_url_provider=_control,
+            resolver=resolver,
         )
         made.append(f)
         return f
@@ -183,24 +227,47 @@ def make_fetcher(tmp_path: Path) -> Iterator[Callable[..., Fetcher]]:
 
 # ── 1. urlsafe ───────────────────────────────────────────────────────────────
 @pytest.mark.parametrize("url", BAD_URLS)
-def test_split_or_none_rejects_what_urllib_rejects(url: str) -> None:
+def test_urllib_rejects_these_and_so_do_we(url: str) -> None:
     with pytest.raises(ValueError):
         urlsplit(url).port  # noqa: B018 - 前提：urllib 真的拒绝（lazy 的 .port 也算）
-    assert split_or_none(url) is None
+    assert split_or_none(url) is None and not requestable(url)
+
+
+@pytest.mark.parametrize("url", [*HTTPX_BAD_URLS, *DNS_BAD_URLS])
+def test_urllib_accepts_these_but_the_request_cannot_be_made(url: str) -> None:
+    """两层：``split_or_none``（urllib 能拆吗）放行，``requestable``（请求发得出去吗）拒绝。"""
+    urlsplit(url).port  # noqa: B018 - 前提：urllib 放行（这两张表存在的理由）
+    assert split_or_none(url) is not None
+    assert not requestable(url)
 
 
 @pytest.mark.parametrize("url", HTTPX_BAD_URLS)
-def test_split_or_none_also_rejects_what_only_httpx_rejects(url: str) -> None:
-    urlsplit(url).port  # noqa: B018 - 前提：urllib 放行（这张表存在的理由）
+def test_httpx_really_rejects_the_httpx_table(url: str) -> None:
     with pytest.raises((ValueError, httpx.InvalidURL)):
         httpx.URL(url).host  # noqa: B018
-    assert split_or_none(url) is None
 
 
-def test_split_or_none_rejects_a_url_longer_than_httpx_allows() -> None:
+@pytest.mark.parametrize("url", DNS_BAD_URLS)
+def test_httpx_lets_the_dns_table_through_which_is_why_the_labels_are_checked(url: str) -> None:
+    httpx.URL(url).host  # noqa: B018 - 前提：httpx 放行，DNS 才是拦它的那一层
+
+
+def test_requestable_has_nothing_to_say_about_a_url_without_a_host() -> None:
+    """相对路径、``mailto:``：没有主机，没有标签可查；该不该请求不是它的问题。"""
+    for url in ("/relative/path", "", "mailto:a@b.c", "?q=1", "#frag"):
+        assert requestable(url), url
+    assert not requestable("https://a..b/")  # 对照：有主机就查
+
+
+def test_requestable_rejects_a_url_longer_than_httpx_allows() -> None:
     url = "https://a.test/" + "a" * 70_000
     urlsplit(url).port  # noqa: B018
-    assert split_or_none(url) is None
+    assert split_or_none(url) is not None and not requestable(url)
+
+
+@pytest.mark.parametrize("url", REAL_URLS)
+def test_real_world_urls_are_accepted(url: str) -> None:
+    assert split_or_none(url) is not None and requestable(url)
 
 
 @pytest.mark.parametrize("url", GOOD_URLS)
@@ -213,8 +280,33 @@ def test_join_or_none() -> None:
     base = "https://a.test/b/c"
     assert join_or_none(base, "../d?x=1") == "https://a.test/d?x=1"
     assert join_or_none(base, "//cdn.test/x.js") == "https://cdn.test/x.js"
-    for bad in ALL_BAD_URLS:
+    for bad in BAD_URLS:
         assert join_or_none(base, bad) is None, bad
+    # urllib 能拆的归 requestable 管，不归 join 管：join 不替它们下结论
+    for odd in [*HTTPX_BAD_URLS, *DNS_BAD_URLS]:
+        assert join_or_none(base, odd) is not None, odd
+    # 浏览器会去掉 URL 里的 TAB / LF（urllib 也去）：不是丢掉这条链接的理由
+    assert join_or_none("https://a.test/", "/x\ty") == "https://a.test/xy"
+    assert join_or_none("https://a.test/", "/x\ny") == "https://a.test/xy"
+
+
+def test_is_url_error_matches_the_prefix_only() -> None:
+    """报错文字里引着站点的 URL：别处出现这几个字不算（否则站点能决定自己被怎么分类）。"""
+    for err in (
+        invalid_url_error("http://["),
+        invalid_redirect_error("http://["),
+        rejected_url_error("https://x.test/", UnicodeError("e")),
+    ):
+        assert is_url_error(err)
+        assert not is_url_error(f"timeout: {err}")
+    assert not is_url_error(None) and not is_url_error("")
+
+
+def test_dns_name_is_the_name_the_request_connects_to() -> None:
+    assert dns_name("https://münchen.de/x") == "xn--mnchen-3ya.de"
+    assert dns_name("HTTPS://Example.COM:8443/x") == "example.com"
+    assert dns_name("http://[2001:db8::1]/x") == "2001:db8::1"
+    assert dns_name("/relative") == "" and dns_name("http://256.256.256.256/") == ""
 
 
 # ── 2. Fetcher ───────────────────────────────────────────────────────────────
@@ -241,9 +333,11 @@ def test_a_redirect_to_an_unparseable_location_is_a_transport_error(
 
 
 def test_our_own_check_catches_what_httpx_does_not() -> None:
-    """``http://[`` 这类 Location httpx 放行，所以 ``INVALID_REDIRECT_ERROR`` 这条路必须真有人走：
-    没有它，这一类就是原来的 ValueError。"""
+    """``http://[`` / ``http://a..b/`` 这类 Location httpx 放行，所以 ``INVALID_REDIRECT_ERROR``
+    这条路必须真有人走：没有它，这一类就是原来的 ValueError / UnicodeError。"""
     assert split_or_none("http://[") is None and join_or_none("https://x.test/", "http://[") is None
+    assert join_or_none("https://x.test/", "http://a..b/") is not None
+    assert not requestable("http://a..b/")
 
 
 def test_a_bad_location_in_the_middle_of_a_chain_keeps_the_hops_before_it(
@@ -316,9 +410,9 @@ _UNBUILDABLE = [UnicodeError("label empty or too long"), httpx.InvalidURL("Inval
 @pytest.mark.parametrize(
     "url",
     [
-        "https://a..test/x",
+        "https://x.test/x",
         # 报错文字里带着 URL：URL 里出现 DNS 错误的关键词，也不能让它被当成 DNS 抖动去问第二意见
-        "https://a..test/getaddrinfo-resolve",
+        "https://x.test/getaddrinfo-resolve",
     ],
 )
 def test_a_request_that_cannot_be_built_is_a_transport_error_not_a_crash(
@@ -332,7 +426,7 @@ def test_a_request_that_cannot_be_built_is_a_transport_error_not_a_crash(
     assert error.startswith(REJECTED_URL_ERROR) and type(exc).__name__ in error, error
     # 确定性的本地失败：不重试（RETRY_ATTEMPTS 次）、不去问 DNS 第二意见
     assert len(site.requested) == 1
-    probe = f.probe("https://a..test/y", expect=Expect.ANY, use_control=False)
+    probe = f.probe("https://x.test/y", expect=Expect.ANY, use_control=False)
     assert (probe.verdict, probe.classification.reason) == (Verdict.UNKNOWN, "network_error")
 
 
@@ -391,6 +485,12 @@ def test_classify_link_excludes_an_unparseable_url_and_sends_nothing(url: str) -
     assert verdict.rule_id == UNPARSEABLE_RULE_ID == "unparseable_url"
     assert [ex.rule_id for ex in verdict.exclusions] == [UNPARSEABLE_RULE_ID]
     assert verdict.disposition == "excluded" and verdict.requests_spent == 0
+    # 证据说清是哪一层拦的：urllib 拆不了，还是能拆但发不出请求
+    assert verdict.evidence == (
+        ("URL 无法解析，一次请求都没发",)
+        if url in BAD_URLS
+        else ("URL 能解析但发不出请求（httpx / DNS 拒绝它），一次请求都没发",)
+    )
 
 
 @pytest.mark.parametrize(
@@ -532,6 +632,40 @@ def test_probe_index_links_excludes_the_unparseable_ones_with_the_reason(
     assert [row[0] for row in f.exclusion_log()] == [url for url, _ in report.excluded]
 
 
+def test_probe_index_links_excludes_links_that_parse_but_cannot_be_requested(
+    make_fetcher: Callable[..., Fetcher],
+) -> None:
+    """urllib 拆得开、httpx / DNS 发不出请求的链接（``256.256.256.256``、控制字符、``a..b``）：
+    和解析不了的同样被排除并写明原因；去噪规则排在前面
+    （示例域名仍归 ``reserved_example_domain``）。"""
+    text = (
+        "# Acme\n- [Ok](https://acmevendor.io/ok.md)\n"
+        "- [Ip](http://256.256.256.256/x)\n"
+        "- [Ctl](https://acmevendor.io/a\x01b)\n"
+        "- [Dns](https://docs..acmevendor.io/y)\n"
+        "- [Ex](https://a.test/p\x01q)\n"
+    )
+    site = Site(
+        {
+            "https://acmevendor.io/llms.txt": (200, TEXT, text),
+            "https://acmevendor.io/ok.md": (200, {"content-type": "text/markdown"}, "# ok\n"),
+        }
+    )
+    f = make_fetcher(site)
+    index = f.probe("https://acmevendor.io/llms.txt", expect=Expect.TEXT_FILE)
+    report = ap.probe_index_links("acmevendor.io", index, fetcher=f)
+    assert report.n_links == 5
+    by_url = {url: ex.rule_id for url, ex in report.excluded}
+    assert by_url == {
+        "http://256.256.256.256/x": "unparseable_url",
+        "https://acmevendor.io/a\x01b": "unparseable_url",
+        "https://docs..acmevendor.io/y": "unparseable_url",
+        "https://a.test/p\x01q": "reserved_example_domain",
+    }
+    assert [link.abs_url for link in report.probed] == ["https://acmevendor.io/ok.md"]
+    assert not [u for u in site.requested if "256" in u or "\x01" in u or ".." in u]
+
+
 def test_the_coverage_gap_of_an_unjudged_index_counts_its_unparseable_links_too() -> None:
     """判不了的索引整批不查；缺口里写的条数是「文件里有几条链接」，坏链接也是链接。"""
     from geo_audit.models import SiteMap
@@ -634,9 +768,16 @@ def test_an_unparseable_link_header_url_is_treated_as_no_link_header() -> None:
     assert good is not None and good.negotiation_advertised is True
 
 
-@pytest.mark.parametrize("url", ALL_BAD_URLS)
+@pytest.mark.parametrize("url", BAD_URLS)
 def test_normalize_url_leaves_an_unparseable_url_as_it_is(url: str) -> None:
     assert normalize_url(f"  {url}  ") == url
+
+
+def test_normalize_url_folds_what_urllib_can_parse_exactly_as_before() -> None:
+    """httpx 拒绝、urllib 放行的 URL 不改身份：折叠和 main 一样，只有 urllib 拆不了的才原样返回。"""
+    assert normalize_url("http://ＨＯＳＴ/a#f") == "http://ｈｏｓｔ/a"
+    assert normalize_url("HTTP://A..B/X?utm_source=1&q=2") == "http://a..b/X?q=2"
+    assert normalize_url("http://256.256.256.256/p/") == "http://256.256.256.256/p"
 
 
 def test_normalize_url_does_not_fold_the_case_of_an_unparseable_url() -> None:
@@ -665,7 +806,8 @@ def _assert_report_survives_output(report: Any) -> None:
     from geo_audit.report.json_out import report_from_json, report_to_json
 
     html = render_html(report)
-    assert "[your-domain]" in html  # 被排除的坏链接在报告里看得见（HTML 转义后）
+    if any(e.rule_id == UNPARSEABLE_RULE_ID for e in report.excluded):
+        assert UNPARSEABLE_REASON[:8] in html  # 被排除的坏链接和原因在报告里看得见
     again = report_from_json(report_to_json(report))
     assert {e.url for e in again.excluded} == {e.url for e in report.excluded}
 
@@ -980,62 +1122,72 @@ def test_a_garbage_url_in_every_place_the_audit_reads_still_gets_a_report(
 # ── 7. 属性测试：随便什么字符串，都不许让体检崩 ──────────────────────────────
 #
 # 上面各节是「已知的坏 URL」。这一节是「任意字符串」：用固定种子随机拼 URL（括号不配对、控制
-# 字符、非 ASCII 主机、IDNA 错误、超长、``//[x`` 开头的路径……），喂给 ``Fetcher`` 和整条管线。
-# 它抓出过前几节想不到的三类：httpx 拒绝而 urllib 放行的 URL（``http://256.256.256.256/``、
-# 控制字符、``http://xn--/``）、DNS 标签编不出来（``a..b``）、根因分析把以 ``//[`` 开头的
-# **路径**当 URL 解析。
-_SCHEMES = ["http", "https", "HTTP", "https", "ftp", "", "http:", "https:/", "htt p", "javascript"]
+# 字符、非 ASCII 主机、IDNA 错误、超长、``//[x`` 开头的路径、百分号编码后才露出来的方括号……），
+# 喂给 ``Fetcher`` 和整条管线，**robots 闸开着**（它把站点的字符串交给标准库再解析一遍：
+# Python 3.11 / 3.12 上 ``urlparse`` 会对 ``Disallow: //[`` 和 ``https://%5B@x.test/p`` 抛
+# ValueError，3.13 不抛，所以这些测试在 CI 的 3.11 / 3.12 上才咬得到）。
+# 它抓出过前几节想不到的几类：httpx 拒绝而 urllib 放行的 URL、DNS 标签编不出来（``a..b``）、
+# 根因分析把以 ``//[`` 开头的**路径**当 URL 解析、robots 解析器对站点规则行的二次解析。
+_SCHEMES = ["http", "https", "HTTP", "https", "https", "ftp", "", "http:", "https:/", "javascript"]
 _HOSTS = [
-    "a.test",
-    "A.TEST",
-    "a..test",
-    ".test",
-    "a.test.",
-    "-a.test",
-    "a_b.test",
+    # 一半是正常主机：被接受、真的发出请求，「什么都拒绝」的实现过不了
+    *["acmevendor.io", "docs.acmevendor.io", "A.AcmeVendor.IO", "acmevendor.io:8443"] * 3,
+    "münchen.acmevendor.io",
+    "[::1]",
+    "[2001:db8::1]:8080",
+    "user:pw@acmevendor.io",
+    # 解析不了 / 发不出请求
+    "a..acmevendor.io",
+    ".acmevendor.io",
+    "-a.acmevendor.io",
     "xn--",
     "xn--a",
     "256.256.256.256",
     "1.2.3",
     "0x7f.1",
-    "[::1]",
     "[::1",
     "::1]",
     "[v1.fe]",
     "[1:2:3:4:5:6:7:8:9]",
     "a b",
-    "a\u200bb.test",
-    "\uff48ost.test",
-    "ex\u00e4mple.test",
-    "\u2100",
-    "a\u3002test",
+    "a​b.acmevendor.io",
+    "ｈost.acmevendor.io",
+    "℀",
+    "a。b",
     "a@b",
     "a:b",
-    "user:pw@host.test",
     "@",
     ":",
     "",
-    "h" * 70 + ".test",
-    "%41.test",
-    "a.test:80",
-    "a.test:0",
-    "a.test:65536",
-    "a.test:abc",
-    "a.test:-1",
-    "a.test: 80",
-    "a.test:80:80",
+    "h" * 70 + ".acmevendor.io",
+    "%41.acmevendor.io",
+    "acmevendor.io:0",
+    "acmevendor.io:65536",
+    "acmevendor.io:abc",
+    "acmevendor.io:-1",
+    "acmevendor.io: 80",
+    "acmevendor.io:80:80",
     "[::1]:abc",
+    # 百分号编码后才露出方括号 / NFKC 展开：urlsplit 放行，标准库 robots 解析器会二次解析
+    "%5B@acmevendor.io",
+    "%E2%84%80@acmevendor.io",
+    "u%40x@acmevendor.io",
 ]
-_CHARS = [
-    *"abcXYZ019/\\?#[]@:;%&=+ \t\n\r\x00\x01\x7f.-_~!$'()*,<>\"{}|^`",
-    "\u00e9",
-    "\u4e2d",
-    "\u200b",
-    "\ufeff",
+_PRINTABLE = [
+    *"abcXYZ019/\\?#[]@:;%&=+ .-_~!$'()*,<>\"{}|^`",
+    "%5B",
+    "%5D",
+    "%2F",
+    "%40",
+    "%E2%84%80",
+    "é",
+    "中",
+    "​",
     "\U0001f600",
-    "\u2100",
-    "\u0301",
+    "℀",
+    "́",
 ]
+_CONTROL = ["\t", "\n", "\r", "\x00", "\x01", "\x7f", "﻿"]
 _SEGMENTS = [
     "docs",
     "guide",
@@ -1043,6 +1195,9 @@ _SEGMENTS = [
     "[slug]",
     "[locale]",
     "%zz",
+    "%5B",
+    "%5Bx%5D",
+    "%2F",
     "..;",
     "..",
     ".",
@@ -1051,7 +1206,7 @@ _SEGMENTS = [
     "<id>",
     "@user",
     "a;b",
-    "\u00e9",
+    "é",
     "a b",
     "x" * 40,
     "[",
@@ -1063,7 +1218,12 @@ _SEGMENTS = [
     "p1.md",
     "g1",
 ]
-_QUERIES = ["", "", "?a", "?=", "?&", "?%zz", "?a=b=c", "?utm_source=x", "?a[]=1", "?[", "?x=%"]
+_QUERIES = ["", "", "?a", "?=", "?&", "?%zz", "?%5B", "?a=b=c", "?utm_source=x", "?a[]=1", "?x=%"]
+
+
+def _soup(rnd: random.Random, n: int) -> str:
+    """可打印字符为主，偶尔掺一个控制字符（httpx 拒绝它们：占比太高就没有几条能被接受）。"""
+    return "".join(rnd.choice(_CONTROL if rnd.random() < 0.04 else _PRINTABLE) for _ in range(n))
 
 
 def _random_url(rnd: random.Random, mode: str) -> str:
@@ -1073,40 +1233,53 @@ def _random_url(rnd: random.Random, mode: str) -> str:
         if rnd.random() < 0.15:
             path = "/" + path  # ``//[slug]/…``：以 // 开头的路径
         return f"https://{host}{path}{'/' if rnd.random() < 0.2 else ''}{rnd.choice(_QUERIES)}"
-    if rnd.random() < 0.15:
-        return "".join(rnd.choice(_CHARS) for _ in range(rnd.randint(0, 24)))
-    host = (
-        rnd.choice(_HOSTS) if rnd.random() < 0.85 else "".join(rnd.choice(_CHARS) for _ in range(5))
-    )
+    if rnd.random() < 0.1:
+        return _soup(rnd, rnd.randint(0, 24))
+    host = rnd.choice(_HOSTS) if rnd.random() < 0.9 else _soup(rnd, 5)
     path = rnd.choice(
-        ["", "/", "/x", "/x/y.md", "/%zz", "/\u00e9", "/ a", "/\x00", "/\n", "/a" * 1500]
+        ["", "/", "/x", "/x/y.md", "/%zz", "//%5B/p", "/é", "/ a", "/\x00", "/a" * 1500]
+        + ["/x", "/p/q", "/docs/a"] * 3
     )
-    tail = (
-        "".join(rnd.choice(_CHARS) for _ in range(rnd.randint(0, 8))) if rnd.random() < 0.5 else ""
-    )
-    sep = rnd.choice(["://", "://", "://", ":/", ":", ""])
+    tail = _soup(rnd, rnd.randint(1, 6)) if rnd.random() < 0.3 else ""
+    sep = rnd.choice(["://", "://", "://", "://", ":/", ":", ""])
     return f"{rnd.choice(_SCHEMES)}{sep}{host}{path}{tail}"
 
 
+def _hostile_robots(rnd: random.Random) -> str:
+    """一份 robots.txt：有效规则之外混着解析不了的规则行（URL 写在了该写路径的地方）。"""
+    bad = [
+        f"{rnd.choice(['Allow', 'Disallow'])}: {_random_url(rnd, 'anything')}" for _ in range(12)
+    ]
+    bad = [line.replace("\n", "").replace("\r", "") for line in bad]
+    fixed = ["Disallow: https://[your-domain]/search", "Disallow: //[", "Allow: http://["]
+    return "\n".join(["User-agent: *", *fixed, *bad, "Disallow: /private", ""])
+
+
+@pytest.mark.parametrize("respect_robots", [False, True], ids=["robots_off", "robots_on"])
 @pytest.mark.parametrize("seed", range(3))
 def test_fetcher_never_raises_whatever_string_it_is_given(
-    make_fetcher: Callable[..., Fetcher], seed: int
+    make_fetcher: Callable[..., Fetcher], seed: int, respect_robots: bool
 ) -> None:
-    site = Site({})
-    f = make_fetcher(site)
     rnd = random.Random(seed)
-    rejected = 0
-    for _ in range(1500):
+    site = _RobotsSite(_hostile_robots(rnd), {})
+    f = make_fetcher(site, respect_robots=respect_robots)
+    rejected = accepted = 0
+    for _ in range(1000):
         url = _random_url(rnd, "anything")
         before = len(site.requested)
-        ok = split_or_none(url) is not None
+        ok = requestable(url)
         f.fetch(url)
         f.probe(url, expect=Expect.ANY)
         f.probe_many([url], expect=Expect.ANY, liveness_only=True)
-        if not ok:
+        if ok:
+            accepted += 1
+        else:
             rejected += 1
-            assert len(site.requested) == before, f"请求了一个解析不了的 URL：{url!r}"
-    assert rejected > 100  # 前提：随机串里确实有大量解析不了的，否则上面等于没测
+            assert len(site.requested) == before, f"请求了一个发不出请求的 URL：{url!r}"
+    # 前提：随机串里两种都有一大批，否则上面等于没测；被接受的还要真的发出了请求
+    # （「什么都拒绝」的实现过不了）
+    assert rejected > 100 and accepted > 200
+    assert len([u for u in site.requested if not u.endswith("/robots.txt")]) > 150
 
 
 @pytest.mark.parametrize("mode", ["anything", "paths"])
@@ -1127,7 +1300,11 @@ def test_the_whole_audit_survives_random_urls_everywhere(
         + "".join(f"- [L{i}]({u})\n" for i, u in enumerate(one_line))
     )
     locs = "".join(f"<url><loc>{html.escape(u)}</loc></url>" for u in urls)
-    robots = "User-agent: *\nAllow: /\n" + "".join(f"Sitemap: {u}\n" for u in one_line[:20])
+    robots = (
+        _hostile_robots(rnd).replace("Disallow: /private\n", "")
+        + "Allow: /\n"
+        + "".join(f"Sitemap: {u}\n" for u in one_line[:20])
+    )
     routes: dict[str, tuple[int, dict[str, str], str]] = {}
     for host in ("acmecloud.io", "www.acmecloud.io", "docs.acmecloud.io"):
         for path in ("/", "/pricing", "/changelog", "/docs", "/help"):
@@ -1138,13 +1315,454 @@ def test_the_whole_audit_survives_random_urls_everywhere(
     site = Site(routes)
     report = audit_domain(
         AuditOptions(domain="acmecloud.io", contact=CONTACT, max_requests=0),
-        fetcher=make_fetcher(site),
+        fetcher=make_fetcher(site, respect_robots=True),
         store=FixtureStore(tmp_path / "empty-fixtures"),
         resolver=_resolver("acmecloud.io", "www.acmecloud.io", "docs.acmecloud.io"),
     )
-    from geo_audit.report import render_html
-    from geo_audit.report.json_out import report_from_json, report_to_json
-
-    render_html(report)
-    report_from_json(report_to_json(report))
+    _assert_report_survives_output(report)
     assert report.coverage.links_extracted >= 1
+
+
+# ── 8. 独立 review 之后补的 ──────────────────────────────────────────────────
+#
+# 复现过、修掉的缺陷，各一组测试（修之前这些都是红的：见提交信息里的清单）。
+class _RobotsSite(Site):
+    """``Site`` 再加上每个 host 都有一份 robots.txt（``Site`` 单用的话 robots.txt 是 404）。"""
+
+    def __init__(
+        self, robots: str, routes: dict[str, tuple[int, dict[str, str], str]] | None = None
+    ) -> None:
+        super().__init__(routes or {})
+        self.robots = robots
+
+    def handler(self, request: httpx.Request) -> httpx.Response:
+        if request.url.path == "/robots.txt":
+            self.requested.append(str(request.url))
+            return httpx.Response(200, headers=TEXT, text=self.robots)
+        return super().handler(request)
+
+
+_HOSTILE_ROBOTS_RULES = [
+    "Disallow: https://[your-domain]/search",
+    "Disallow: //[",
+    "Allow: http://[",
+]
+
+
+def _install_old_stdlib_robots(monkeypatch: pytest.MonkeyPatch) -> None:
+    """让任何 Python 的 ``urllib.robotparser`` 表现得像 3.11 / 3.12（3.13 不抛，那两个版本才会）：
+
+    * ``parse``：已经进了某个 ``User-agent`` 组的 ``Allow`` / ``Disallow`` 行有 ``[`` 就抛
+      ValueError（3.11 / 3.12 对规则的路径做 ``urlparse``）；
+    * ``can_fetch``：URL 的 authority 百分号解码后有方括号就抛 ValueError
+      （3.11 / 3.12 先 ``urlparse(unquote(url))``，userinfo 解码成 ``[`` 就炸）。
+    """
+    import urllib.parse
+    from urllib.robotparser import RobotFileParser
+
+    real_parse, real_can_fetch = RobotFileParser.parse, RobotFileParser.can_fetch
+
+    def parse(self: RobotFileParser, lines: Any) -> None:
+        lines = list(lines)
+        in_group = False
+        for line in lines:
+            key = line.split(":", 1)[0].strip().lower()
+            if key == "user-agent":
+                in_group = True
+            elif key in ("allow", "disallow") and in_group and "[" in line:
+                raise ValueError("Invalid IPv6 URL")
+        real_parse(self, lines)
+
+    def can_fetch(self: RobotFileParser, useragent: str, url: str) -> bool:
+        authority = urllib.parse.unquote(url).split("://", 1)[1].split("/", 1)[0]
+        if "[" in authority or "]" in authority:
+            raise ValueError("Invalid IPv6 URL")
+        return real_can_fetch(self, useragent, url)
+
+    monkeypatch.setattr(RobotFileParser, "parse", parse)
+    monkeypatch.setattr(RobotFileParser, "can_fetch", can_fetch)
+
+
+_STDLIB = pytest.mark.parametrize("old_stdlib", [False, True], ids=["real_stdlib", "as_in_3_12"])
+
+
+@_STDLIB
+@pytest.mark.parametrize("rule", _HOSTILE_ROBOTS_RULES)
+def test_a_hostile_rule_line_in_robots_txt_costs_that_line_only(
+    make_fetcher: Callable[..., Fetcher],
+    monkeypatch: pytest.MonkeyPatch,
+    rule: str,
+    old_stdlib: bool,
+) -> None:
+    """3.11 / 3.12 的 ``RobotFileParser.parse`` 对这些规则行抛 ValueError（整份文件连同整次体检
+    一起丢）；现在只丢这一行，站点的其它规则照常生效。"""
+    if old_stdlib:
+        _install_old_stdlib_robots(monkeypatch)
+    site = _RobotsSite(
+        f"User-agent: *\n{rule}\nDisallow: /private\n",
+        {
+            "https://x.test/ok": (200, HTML, "<html>ok</html>"),
+            "https://x.test/private/a": (200, HTML, "<html>secret</html>"),
+        },
+    )
+    f = make_fetcher(site, respect_robots=True)
+    assert f.probe("https://x.test/ok", expect=Expect.HTML_PAGE).verdict is Verdict.OK
+    blocked = f.probe("https://x.test/private/a", expect=Expect.HTML_PAGE)
+    assert (blocked.verdict, blocked.classification.reason) == (
+        Verdict.UNKNOWN,
+        "robots_disallowed",
+    )
+    assert "https://x.test/private/a" not in site.requested
+
+
+def test_the_robots_parser_drops_only_the_lines_the_stdlib_cannot_parse(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    from geo_audit.fetch.client import _robots_parser
+
+    _install_old_stdlib_robots(monkeypatch)
+    parser = _robots_parser(
+        ["User-agent: *", "Disallow: https://[your-domain]/x", "Disallow: /private", "Allow: //["]
+    )
+    assert not parser.can_fetch("bot", "https://x.test/private/a")
+    assert parser.can_fetch("bot", "https://x.test/ok")
+
+
+def test_can_fetch_is_not_handed_the_authority(monkeypatch: pytest.MonkeyPatch) -> None:
+    from urllib.robotparser import RobotFileParser
+
+    from geo_audit.fetch.client import _can_fetch
+
+    _install_old_stdlib_robots(monkeypatch)
+    parser = RobotFileParser()
+    parser.parse(["User-agent: *", "Disallow: /private", "Disallow: /search?q="])
+    assert _can_fetch(parser, "bot", "https://%5B@x.test/p") is True
+    assert _can_fetch(parser, "bot", "https://%5B@x.test/private/a") is False
+    assert _can_fetch(parser, "bot", "https://x.test//%5B/p?q=1#f") is True
+    assert _can_fetch(parser, "bot", "https://x.test/search?q=1") is False  # 查询串也参与匹配
+
+
+def test_can_fetch_gives_an_authority_less_string_a_path_not_a_host() -> None:
+    """``ftp:x`` 没有 authority：路径接在假 authority 后面会变成主机名（NFKC 会让真标准库抛）。"""
+    from urllib.robotparser import RobotFileParser
+
+    from geo_audit.fetch.client import _can_fetch
+
+    parser = RobotFileParser()
+    parser.parse(["User-agent: *", "Disallow: /private"])
+    assert _can_fetch(parser, "bot", "ftp:acme\u2100x") is True
+    assert _can_fetch(parser, "bot", "mailto:a@b.c") is True
+
+
+@_STDLIB
+@pytest.mark.parametrize(
+    "url",
+    [
+        "https://%5B@x.test/p",
+        "https://%E2%84%80@x.test/p",
+        "https://x.test//%5B/p",
+        "https://x.test/%2F%2F",
+    ],
+)
+def test_the_robots_gate_survives_urls_that_unquote_into_garbage(
+    make_fetcher: Callable[..., Fetcher],
+    monkeypatch: pytest.MonkeyPatch,
+    url: str,
+    old_stdlib: bool,
+) -> None:
+    if old_stdlib:
+        _install_old_stdlib_robots(monkeypatch)
+    site = _RobotsSite("User-agent: *\nDisallow: /private\n", {})
+    f = make_fetcher(site, respect_robots=True)
+    f.fetch(url)
+    f.probe(url, expect=Expect.ANY)
+    f.probe_many([url], expect=Expect.ANY)
+    blocked = f.probe("https://%5B@x.test/private/a", expect=Expect.ANY)
+    assert (blocked.verdict, blocked.classification.reason) == (
+        Verdict.UNKNOWN,
+        "robots_disallowed",
+    )
+
+
+def test_a_declared_host_that_cannot_be_requested_is_not_probed() -> None:
+    """模板里的变量没填：``https://docs..vendor.io``（空标签）。以前发现阶段会抛 UnicodeError。"""
+    body = "see https://docs..vendor.io/llms.txt and https://docs..vendor.io/x and https://docs.ok.io/a"
+    assert discovery.mine_declared_hosts([body, body], apex="acme.io") == ["docs.ok.io"]
+
+
+@pytest.mark.parametrize("host", ["a..b", "docs..vendor.io", "a" * 64 + ".io", "مثال1.com"])
+def test_the_system_resolver_survives_a_host_the_idna_codec_refuses(
+    host: str, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    import socket
+
+    from geo_audit.fetch.resolve import _system_resolve
+
+    def getaddrinfo(name: str, *args: Any, **kwargs: Any) -> Any:
+        name.encode("idna")  # 真的 getaddrinfo 先做这一步：编不出来就抛 UnicodeError，不碰网络
+        raise socket.gaierror(8, "nodename nor servname provided, or not known")
+
+    monkeypatch.setattr("geo_audit.fetch.resolve.socket.getaddrinfo", getaddrinfo)
+    with pytest.raises(UnicodeError):
+        host.encode("idna")  # 前提：标准库的 IDNA 编码器真的拒绝它
+    addresses, error = _system_resolve(host)
+    assert addresses == () and error is not None and error.startswith("getaddrinfo")
+    assert "UnicodeError" in error or "UnicodeEncodeError" in error
+
+
+def test_a_dns_failure_for_an_idn_host_asks_the_resolver_about_the_a_label(
+    make_fetcher: Callable[..., Fetcher],
+) -> None:
+    """``https://مثال1.com/`` 在 IDNA-2008 下合法，标准库的 IDNA-2003 编码器却拒绝它：问 DNS
+    要用 httpx 连接用的名字（punycode），不是 Unicode 主机名。"""
+
+    class DnsDown(Site):
+        def handler(self, request: httpx.Request) -> httpx.Response:
+            self.requested.append(str(request.url))
+            raise httpx.ConnectError("[Errno 8] nodename nor servname provided, or not known")
+
+    asked: list[str] = []
+
+    def resolver(host: str) -> Resolution:
+        asked.append(host)
+        return Resolution(host, (), "system", poisoned=False, error="NXDOMAIN")
+
+    url = "https://مثال1.com/x"
+    f = make_fetcher(DnsDown({}), resolver=resolver)
+    resp = f.fetch(url)
+    assert resp.status == 0
+    assert asked and all(h.isascii() for h in asked) and asked[0] == dns_name(url)
+
+
+def test_a_url_with_an_ipv6_literal_gets_its_robots_txt_from_the_bracketed_origin(
+    make_fetcher: Callable[..., Fetcher],
+) -> None:
+    site = _RobotsSite(
+        "User-agent: *\nDisallow: /private\n", {"http://[2001:db8::1]/x": (200, HTML, "ok")}
+    )
+    f = make_fetcher(site, respect_robots=True)
+    assert f.fetch("http://[2001:db8::1]/x").status == 200
+    assert "http://[2001:db8::1]/robots.txt" in site.requested  # 以前：去掉了方括号，请求建不出来
+    blocked = f.probe("http://[2001:db8::1]/private/a", expect=Expect.ANY)
+    assert blocked.classification.reason == "robots_disallowed"
+
+
+class _PinSite(Site):
+    """系统解析失败、第二解析器给了 IP：只有连到那个 IP 的请求会成功。"""
+
+    def __init__(self, ip: str) -> None:
+        super().__init__({})
+        self.ip = ip
+        self.sni: list[Any] = []
+
+    def handler(self, request: httpx.Request) -> httpx.Response:
+        self.requested.append(str(request.url))
+        self.request_headers.append(dict(request.headers))
+        self.sni.append(request.extensions.get("sni_hostname"))
+        if request.url.host != self.ip:
+            raise httpx.ConnectError("[Errno 8] nodename nor servname provided, or not known")
+        return httpx.Response(200, headers=HTML, text="<html>pinned</html>")
+
+
+@pytest.mark.parametrize(
+    "ip, url, host_header",
+    [
+        ("2001:db8::1", "https://ipv6only.test/x", "ipv6only.test"),  # IPv6 的 IP 进 URL 要加方括号
+        ("93.184.216.34", "https://münchen.test/x", "xn--mnchen-3ya.test"),  # Host 头只能是 ASCII
+    ],
+)
+def test_the_pinned_ip_retry_builds_a_valid_request(
+    make_fetcher: Callable[..., Fetcher], ip: str, url: str, host_header: str
+) -> None:
+    site = _PinSite(ip)
+    f = make_fetcher(site, resolver=lambda h: Resolution(h, (ip,), "8.8.8.8", poisoned=False))
+    resp = f.fetch(url)
+    assert resp.status == 200, resp.transport_error
+    assert site.request_headers[-1]["host"] == host_header
+    assert site.sni[-1] == host_header  # TLS 的 SNI 也是 ASCII 名字
+
+
+@pytest.mark.parametrize(
+    "href",
+    [
+        "data:text/plain;base64," + "A" * 70_000,  # 长过 httpx 的 65536 字符上限
+        "mailto:a@b.c\x7f",
+        "javascript:void(0)\x01",
+        "tel:+1\x00",
+    ],
+)
+def test_a_non_http_link_stays_non_http_scheme_even_when_httpx_would_refuse_it(href: str) -> None:
+    """``unparseable_url`` 排在去噪规则之后：它们原来就是 ``non_http_scheme``，不是「解析不了」"""
+    verdict = dl.classify_link(
+        href,
+        source_page="https://acme.io/",
+        ctx=LinkContext(source_page="https://acme.io/"),
+        client=None,  # type: ignore[arg-type]  # 在发请求之前就返回
+        store=None,  # type: ignore[arg-type]
+        fetcher=None,
+        source_role="home",
+    )
+    assert (verdict.state, verdict.rule_id) == (LinkState.EXCLUDED, "non_http_scheme")
+
+
+def test_the_reason_says_what_the_tool_did_not_do_and_not_that_the_site_is_broken() -> None:
+    assert "缺陷" not in UNPARSEABLE_REASON  # 占位符漏进示例代码和漏进链接长得一模一样
+    assert "``" not in UNPARSEABLE_REASON  # 进 HTML / JSON 的 rule_desc：不带 reST 记号
+    assert "没有检查" in UNPARSEABLE_REASON and "httpx" in UNPARSEABLE_REASON
+
+
+@pytest.mark.parametrize(
+    "word", ["timeout", "resolve", "poison", "tls", "ssl", "reset", "nodename"]
+)
+def test_a_url_error_is_never_classified_by_substrings_of_the_site_url(word: str) -> None:
+    """报错文字里引着站点自己的 URL：含 "timeout" / "resolve" 的 URL 不是超时、也不是 DNS 失败。"""
+    for err in (
+        invalid_url_error(f"http://[/{word}"),
+        invalid_redirect_error(f"http://[/{word}"),
+        rejected_url_error(f"https://x.test/{word}", UnicodeError(word)),
+    ):
+        cls = classify_response(
+            0, {}, "", url="https://x.test/p", expect=Expect.ANY, transport_error=err
+        )
+        assert (cls.verdict, cls.reason) == (Verdict.UNKNOWN, "network_error"), err
+        assert dl._transport_error_kind(err) is None, err
+
+
+def test_the_parsing_level_functions_never_ask_httpx(monkeypatch: pytest.MonkeyPatch) -> None:
+    """``join_or_none`` / ``normalize_url`` / ``path_segments`` 对每条链接都跑；它们只拆 URL，
+    不该为此建一个 httpx.URL（长 base 上慢 50 倍以上，每条相对链接都要再付一次）。"""
+    from geo_audit.rootcause import path_segments
+
+    calls: list[str] = []
+
+    def spy(url: str) -> Any:
+        calls.append(url)
+        raise AssertionError("httpx.URL asked")
+
+    long_base = "https://acme.io/" + "é" * 5000 + "/llms.txt"
+    monkeypatch.setattr("geo_audit.fetch.urlsafe.httpx.URL", spy)
+    assert join_or_none(long_base, "p.md") is not None
+    assert normalize_url(long_base) and path_segments(long_base) and split_or_none(long_base)
+    assert calls == []
+    with pytest.raises(AssertionError):  # 对照：请求层确实问了，探针没坏
+        requestable("https://acme.io/x")
+
+
+def test_rejected_urls_cost_no_request_and_no_pacing(
+    make_fetcher: Callable[..., Fetcher], monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """``https://a..test/N``（空标签）发不出请求：不计入请求数（``--max-requests`` 不被它们耗光）、
+    不等限速器（同一个域的第二个请求本来要等 2 秒）。"""
+    sleeps: list[float] = []
+    fake = types.SimpleNamespace(monotonic=time.monotonic, time=time.time, sleep=sleeps.append)
+    monkeypatch.setattr("geo_audit.fetch.ratelimit.time", fake)
+    monkeypatch.setattr("geo_audit.fetch.client.time", fake)
+    site = Site({})
+    f = make_fetcher(site)
+    for i in range(5):
+        assert f.fetch(f"https://a..test/{i}").status == 0
+    assert f.http_requests == 0 and site.requested == [] and sleeps == []
+
+
+def test_a_dead_link_whose_path_starts_with_two_slashes_is_segmented_as_a_path() -> None:
+    """``https://acme.io//docs/x`` 的路径是 ``//docs/x``：``docs`` 是第一段，不是主机。"""
+    from geo_audit.rootcause import DeadTarget, ProbeLedger, _detect_relative_path_prefixed
+
+    target = DeadTarget(
+        norm_url="https://acme.io//docs/x",
+        abs_url="https://acme.io//docs/x",
+        source_page="https://acme.io/docs",
+    )
+    verdict = _detect_relative_path_prefixed(
+        target, ProbeLedger(statuses={"https://acme.io/x": 200})
+    )
+    assert verdict is not None and verdict.defect == "relative_path_prefixed"
+
+
+def test_path_segments_reads_urls_including_protocol_relative_ones() -> None:
+    from geo_audit.rootcause import path_segments
+
+    assert path_segments("//cdn.test/a/b") == ("a", "b")
+    assert path_segments("ftp://h/a/b") == ("a", "b")
+    assert path_segments("https://acme.io/a/b/") == ("a", "b")
+
+
+# ── 8b. 以前没钉住的行为 ────────────────────────────────────────────────────
+def test_the_invalid_url_evidence_quotes_the_url(make_fetcher: Callable[..., Fetcher]) -> None:
+    resp = make_fetcher(Site({})).fetch("http://[")
+    assert repr("http://[") in (resp.transport_error or "")
+
+
+def test_an_unrelated_error_inside_the_exchange_is_not_relabelled(
+    make_fetcher: Callable[..., Fetcher],
+) -> None:
+    """``(httpx.InvalidURL, UnicodeError)`` 之外的异常照旧抛：我们自己的 bug 不能被记成站点的问题"""
+    with pytest.raises(ValueError, match="boom"):
+        make_fetcher(_Exploding(ValueError("boom"))).fetch("https://x.test/x")
+
+
+def test_a_relative_location_after_a_cross_host_hop_is_resolved_against_that_hop(
+    make_fetcher: Callable[..., Fetcher],
+) -> None:
+    site = Site(
+        {
+            "https://x.test/a": (301, {"location": "https://y.test/b"}, ""),
+            "https://y.test/b": (301, {"location": "/c"}, ""),
+            "https://y.test/c": (200, HTML, "<html>c</html>"),
+        }
+    )
+    resp = make_fetcher(site).fetch("https://x.test/a")
+    assert (resp.status, resp.final_url) == (200, "https://y.test/c")
+
+
+def test_the_no_response_verdict_names_what_happened(make_fetcher: Callable[..., Fetcher]) -> None:
+    site = Site(
+        {"https://acme.io/old": (301, {"location": "http://[/timeout"}, "")},
+    )
+    verdict = dl.classify_link(
+        "https://acme.io/old",
+        source_page="https://acme.io/",
+        ctx=LinkContext(source_page="https://acme.io/"),
+        client=httpx.Client(transport=httpx.MockTransport(site.handler)),
+        store=FixtureStore(Path("nonexistent-fixtures")),
+        fetcher=make_fetcher(site),
+        source_role="home",
+    )
+    assert verdict.state is LinkState.UNKNOWN and verdict.rule_id == "no_http_response"
+    assert any(
+        "没有拿到 HTTP 响应" in e and "invalid redirect Location" in e for e in verdict.evidence
+    ), verdict.evidence
+
+
+def test_an_unparseable_verdict_says_no_request_was_sent() -> None:
+    verdict = dl.classify_link(
+        "http://[",
+        source_page="https://acme.io/",
+        ctx=LinkContext(source_page="https://acme.io/"),
+        client=None,  # type: ignore[arg-type]
+        store=None,  # type: ignore[arg-type]
+        fetcher=None,
+        source_role="home",
+    )
+    assert verdict.evidence == ("URL 无法解析，一次请求都没发",)
+
+
+def test_the_sitemap_cap_applies_after_the_unparseable_urls_are_dropped(
+    make_fetcher: Callable[..., Fetcher], monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr(discovery, "MAX_SITEMAP_URLS", 3)
+    locs = "".join(
+        f"<url><loc>{u}</loc></url>"
+        for u in ["http://[", "http://h:abc/"] + [f"https://x.test/p{i}" for i in range(5)]
+    )
+    site = Site(
+        {
+            "https://x.test/sitemap.xml": (
+                200,
+                {"content-type": "application/xml"},
+                f"<urlset>{locs}</urlset>",
+            )
+        }
+    )
+    got = discovery.fetch_sitemap_urls(make_fetcher(site), "x.test", ())
+    assert got == ("https://x.test/p0", "https://x.test/p1", "https://x.test/p2")

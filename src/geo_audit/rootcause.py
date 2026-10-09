@@ -93,11 +93,13 @@ def url_host(url: str) -> str:
 
 
 def path_segments(url_or_path: str) -> tuple[str, ...]:
-    """路径按段切开，空段丢掉。``/a/b/`` 与 ``/a/b`` 同为 ``("a", "b")``。"""
+    """URL 的路径按段切开，空段丢掉。``/a/b/`` 与 ``/a/b`` 同为 ``("a", "b")``。
+
+    吃的是 URL（含协议相对的 ``//host/a``），不是路径：路径要自己 ``split("/")``。解析不了的串
+    当路径用，不抛。"""
     path = url_or_path
     if "//" in url_or_path:
         parts = split_or_none(url_or_path)
-        # 解析不了的当路径：``//[locale]/docs`` 是模板漏了一段的路径，不是主机 ``[locale]``
         path = parts.path if parts is not None else url_or_path
     return tuple(seg for seg in path.split("/") if seg)
 
@@ -494,7 +496,9 @@ def _is_help_host(host: str) -> bool:
 def _detect_relative_path_prefixed(target: DeadTarget, ledger: ProbeLedger) -> DefectVerdict | None:
     src_segs = path_segments(target.source_page)
     tgt_path = urlsplit(target.norm_url).path
-    tgt_segs = path_segments(tgt_path)
+    # 这是路径，不是 URL：以 ``//`` 开头的路径（``https://host//locale/docs`` 的路径是
+    # ``//locale/docs``）交给 ``path_segments`` 会被当成 ``//host/path``，``locale`` 变成主机
+    tgt_segs = tuple(seg for seg in tgt_path.split("/") if seg)
     if not src_segs or len(tgt_segs) <= len(src_segs):
         return None
     if url_host(target.source_page) != target.host:

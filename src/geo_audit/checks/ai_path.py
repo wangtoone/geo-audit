@@ -44,7 +44,7 @@ from ..fetch.normalize import (
     structural_fingerprint,
     visible_text,
 )
-from ..fetch.urlsafe import UNPARSEABLE_REASON, UNPARSEABLE_RULE_ID, join_or_none
+from ..fetch.urlsafe import UNPARSEABLE_REASON, UNPARSEABLE_RULE_ID, join_or_none, requestable
 from ..models import (
     FINDING_KINDS,
     TOOL_VERSION,
@@ -1344,19 +1344,20 @@ def probe_index_links(
 
     eligible: list[IndexLink] = []
     excluded: list[tuple[str, EligibilityExclusion]] = []
+    unparseable = EligibilityExclusion(UNPARSEABLE_RULE_ID, UNPARSEABLE_REASON)
     for link in links:
-        if link.artifact == UNPARSEABLE_RULE_ID:
-            # 站点写的、解析不了的 URL：一个请求都不发，进「被排除」清单并写明原因
-            unparseable = EligibilityExclusion(UNPARSEABLE_RULE_ID, UNPARSEABLE_REASON)
-            excluded.append((link.abs_url, unparseable))
-            fetcher.note_exclusion(link.abs_url, unparseable.rule_id, unparseable.reason)
-            continue
-        ctx = LinkContext(
-            source_page=base_url,
-            anchor_text=link.anchor_text or "",
-            from_text_file=True,
-        )
-        ex = classify_link_eligibility(link.abs_url, ctx)
+        # 站点写的、解析不了的 URL：一个请求都不发，进「被排除」清单并写明原因。去噪规则要
+        # urlsplit，所以解析不了的先拦；能解析但发不出请求（httpx / DNS 拒绝）的排在去噪规则之后。
+        ex = unparseable if link.artifact == UNPARSEABLE_RULE_ID else None
+        if ex is None:
+            ctx = LinkContext(
+                source_page=base_url,
+                anchor_text=link.anchor_text or "",
+                from_text_file=True,
+            )
+            ex = classify_link_eligibility(link.abs_url, ctx)
+        if ex is None and not requestable(link.abs_url):
+            ex = unparseable
         if ex is not None:
             excluded.append((link.abs_url, ex))
             fetcher.note_exclusion(link.abs_url, ex.rule_id, ex.reason)

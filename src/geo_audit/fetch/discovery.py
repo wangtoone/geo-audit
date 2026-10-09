@@ -44,7 +44,7 @@ from ..models import (
 from .client import Fetcher
 from .ratelimit import registrable_domain
 from .resolve import HostResolver, resolve_host
-from .urlsafe import split_or_none
+from .urlsafe import requestable, split_or_none
 
 #: Every prefix here was earned by a real host in the 72-domain run:
 #:   docs.        mistral, canvasmedical, turso, ecwid, pinecone, baseten, ...
@@ -308,6 +308,9 @@ def mine_declared_hosts(bodies: list[str], *, apex: str) -> list[str]:
             ):
                 continue
             if not re.match(r"^(docs?|developers?|api|apidocs?|platform|help|support)\.", host):
+                continue
+            if not requestable(f"https://{host}/"):
+                # 站点声明的主机名发不出请求（``docs..vendor.io``：模板里的变量没填）：不去探它
                 continue
             counts[host] = counts.get(host, 0) + 1
     ranked = sorted((h for h, c in counts.items() if c >= 2), key=lambda h: -counts[h])
