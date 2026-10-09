@@ -47,7 +47,7 @@ from collections.abc import Callable, Iterable, Sequence
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, replace
 from typing import Final, Literal
-from urllib.parse import urljoin, urlsplit, urlunsplit
+from urllib.parse import urlsplit, urlunsplit
 
 import httpx
 
@@ -80,6 +80,15 @@ from .normalize import (
 )
 from .ratelimit import DomainLimiter, registrable_domain
 from .resolve import HostResolver, resolve_host
+from .urlsafe import (
+    INVALID_URL_ERROR,
+    REJECTED_URL_ERROR,
+    invalid_redirect_error,
+    invalid_url_error,
+    join_or_none,
+    rejected_url_error,
+    split_or_none,
+)
 
 __version__ = "0.1.0"
 
@@ -381,6 +390,11 @@ class Fetcher:
             return self._error_response(url, f"too many redirects: {exc!r}", started)
         except httpx.HTTPError as exc:
             return self._error_response(url, f"{type(exc).__name__}: {exc}", started)
+        except (httpx.InvalidURL, UnicodeError) as exc:
+            # 请求建不出来 / 主机名编不成 DNS 标签（``a..b``：空标签，socket 的 idna 编码抛
+            # UnicodeError，它不是 httpx.HTTPError）：站点写的 URL 有问题，不是网络故障，
+            # 也没有响应。上游的 ``split_or_none`` 拦得住 httpx 认得的那些，这里兜其余的。
+            return self._error_response(url, rejected_url_error(url, exc), started)
 
     @staticmethod
     def _error_response(url: str, err: str, started: float) -> HttpResponse:
@@ -517,6 +531,20 @@ class Fetcher:
         accept = accept_override or (ACCEPT_TEXT if expect is Expect.TEXT_FILE else ACCEPT_HTML)
         byte_cap = LIVENESS_BYTE_CAP if liveness_only else CONTENT_BYTE_CAP
 
+        # ---- 先看 URL 能不能解析：站点给的链接 / 跳转 / sitemap 里什么都可能有 ---------
+        # ``http://[``、``https://[your-domain]/``、``http://h:abc/`` 这类字符串 urllib 会抛
+        # ValueError，而下面每一步（robots 闸、限速器、缓存、请求）都要解析 URL。一个请求都没发、
+        # 也没有任何东西可以重试：按「没发出去」报（UNKNOWN / network_error，证据里带着原串）。
+        if split_or_none(url) is None:
+            return HttpResponse(
+                url=url,
+                final_url=url,
+                status=0,
+                headers={},
+                body=b"",
+                transport_error=invalid_url_error(url),
+            )
+
         # ---- robots 闸。**排在缓存之前** ------------------------------------
         #
         # `robots_allows()` 原来只有一个调用方 —— `probe()`。于是走 `fetch()`
@@ -596,7 +624,21 @@ class Fetcher:
             resp = self._attempt(current, accept=accept, byte_cap=byte_cap, robots=robots)
 
             if 300 <= resp.status < 400 and "location" in resp.headers:
-                target = urljoin(current, resp.headers["location"])
+                location = resp.headers["location"]
+                target = join_or_none(current, location)
+                if target is None:
+                    # 站点的 3xx 指向一个解析不了的地址（``Location: http://[``）：跟不过去。
+                    # 和「redirect loop」「too many redirects」一样走 status 0 + transport_error，
+                    # 分类器记成 UNKNOWN / network_error，证据里带着那个 Location 的原串。
+                    return HttpResponse(
+                        url=url,
+                        final_url=current,
+                        status=0,
+                        headers={},
+                        body=b"",
+                        redirects=tuple(hops),
+                        transport_error=invalid_redirect_error(location),
+                    )
                 hops.append(RedirectHop(status=resp.status, from_url=current, to_url=target))
                 current = target
                 continue
@@ -641,6 +683,12 @@ class Fetcher:
             with self.limiter.hold(host):
                 resp = self._raw_request(url, accept=accept, byte_cap=byte_cap)
             last = resp
+
+            if resp.status == 0 and (resp.transport_error or "").startswith(
+                (INVALID_URL_ERROR, REJECTED_URL_ERROR)
+            ):
+                # URL / 主机名有问题，请求发不出去：重试不会变，也不是 DNS 抖动，别去问第二意见
+                return resp
 
             if resp.status == 0 and _is_dns_error(resp.transport_error):
                 # resolve.R1/R2/R3 -- never let a resolver hiccup become a
@@ -807,7 +855,24 @@ class Fetcher:
         each other (FEATURE-PRIORITY.md P0 requires target and control to be
         adjacent).  The extra request is spent only on positives -- ~20% of
         positions -- so the budget cost is small and the evidence is tight.
+
+        A URL that cannot be parsed (a link the audited site wrote as ``http://[``) is not
+        requested: UNKNOWN / network_error, with the string in the evidence.
         """
+        if split_or_none(url) is None:
+            return Probe(
+                url,
+                expect,
+                None,
+                classify_response(
+                    0,
+                    {},
+                    "",
+                    url=url,
+                    expect=expect,
+                    transport_error=invalid_url_error(url),
+                ),
+            )
         gate = self.robots_verdict(url)
         if gate == "disallowed":
             return Probe(
@@ -1076,7 +1141,9 @@ class Fetcher:
         """
         groups: dict[str, list[str]] = {}
         for u in urls:
-            groups.setdefault(registrable_domain(urlsplit(u).hostname or ""), []).append(u)
+            parts = split_or_none(u)  # 解析不了的 URL 归到空 host 那一组，``probe`` 会如实报告
+            host = (parts.hostname or "") if parts is not None else ""
+            groups.setdefault(registrable_domain(host), []).append(u)
 
         results: list[Probe] = []
         lock = threading.Lock()

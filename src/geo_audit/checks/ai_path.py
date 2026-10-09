@@ -26,7 +26,7 @@ import re
 from collections.abc import Iterator, Mapping, Sequence
 from dataclasses import dataclass, field, replace
 from typing import Literal, Protocol, cast
-from urllib.parse import urljoin, urlsplit, urlunsplit
+from urllib.parse import urlsplit, urlunsplit
 
 from ..fetch.classify import (
     find_notfound_copy,
@@ -44,6 +44,7 @@ from ..fetch.normalize import (
     structural_fingerprint,
     visible_text,
 )
+from ..fetch.urlsafe import UNPARSEABLE_REASON, UNPARSEABLE_RULE_ID, join_or_none
 from ..models import (
     FINDING_KINDS,
     TOOL_VERSION,
@@ -1076,7 +1077,9 @@ class IndexLink:
     norm_url: str  # 去重与 finding 身份用这个
     anchor_text: str | None
     extractor: Literal["markdown", "bare", "html_a", "relative"]
-    artifact: str | None = None  # "double_scheme" 等抽取阶段就能认出的形态
+    #: "double_scheme" 等抽取阶段就能认出的形态；``"unparseable_url"`` = 站点写的这个 URL 解析不了
+    #: （``http://[``），``abs_url`` / ``norm_url`` 都是原串，只许当字符串用，不许再解析它。
+    artifact: str | None = None
 
 
 def _mk_link(
@@ -1086,13 +1089,28 @@ def _mk_link(
     base_url: str,
     anchor_text: str | None,
     extractor: Literal["markdown", "bare", "html_a", "relative"],
+    keep_unparseable: bool = False,
 ) -> IndexLink | None:
     url = _right_strip(raw.strip())
     if not url or url.startswith(("#", "mailto:", "tel:", "javascript:")):
         return None
     # 相对路径**以该 llms.txt 的 final_url 为 base** 绝对化，不以 apex 为 base
     # （§4.3:2082，mailerlite / bytebase 504 条 /xxx.md 就靠这条）。
-    abs_url = urljoin(base_url, url)
+    abs_url = join_or_none(base_url, url)
+    if abs_url is None:
+        # 站点写的链接解析不了（``http://[``、``https://[your-domain]/``）：urllib 会抛 ValueError。
+        # ``keep_unparseable`` 才留下它（打 ``artifact="unparseable_url"``，由 ``probe_index_links``
+        # 排除并写明原因）；其余调用方拿到的链接**全都可以解析**，后面的 urlsplit 才不会炸。
+        if keep_unparseable and url.lower().startswith(("http://", "https://", "//")):
+            return IndexLink(
+                line_no=line_no,
+                abs_url=url,
+                norm_url=url,
+                anchor_text=anchor_text or None,
+                extractor=extractor,
+                artifact=UNPARSEABLE_RULE_ID,
+            )
+        return None
     if not abs_url.lower().startswith(("http://", "https://")):
         return None
     artifact = "double_scheme" if _DOUBLE_SCHEME_RE.search(abs_url) else None
@@ -1106,7 +1124,9 @@ def _mk_link(
     )
 
 
-def extract_index_links(text: str, base_url: str) -> list[IndexLink]:
+def extract_index_links(
+    text: str, base_url: str, *, keep_unparseable: bool = False
+) -> list[IndexLink]:
     """四条抽取器并用，**不去重**（去重会丢掉 occurrences，A16 要那个数）。
 
     §4.3:2078-2093 五种必须处理的实测形态：
@@ -1115,6 +1135,10 @@ def extract_index_links(text: str, base_url: str) -> list[IndexLink]:
       内嵌裸 HTML <a>  attio ``/customers/llms.txt``、close ``help/llms.txt``
       反引号包裹       zilliz（右剥后真实 8/8 全活）
       一个 URL 两个 scheme  inngest 第 157/290/296 行 —— **抽取阶段不拆**
+
+    站点写的、解析不了的 URL（``http://[``）默认**不返回**：返回的每一条都能安全地
+    ``urlsplit``。``keep_unparseable=True`` 把它们也返回（``artifact="unparseable_url"``），
+    给要把它们排除并写进报告的那个调用方（``probe_index_links``）用。
     """
     out: list[IndexLink] = []
     for line_no, line in enumerate(text.splitlines(), start=1):
@@ -1138,6 +1162,7 @@ def extract_index_links(text: str, base_url: str) -> list[IndexLink]:
                 base_url=base_url,
                 anchor_text=anchor,
                 extractor=extractor,
+                keep_unparseable=keep_unparseable,
             )
             if link is None or link.abs_url in seen_on_line:
                 continue
@@ -1146,16 +1171,22 @@ def extract_index_links(text: str, base_url: str) -> list[IndexLink]:
     return out
 
 
-def parse_index_links(text: str, base_url: str) -> list[IndexLink]:
+def parse_index_links(
+    text: str, base_url: str, *, keep_unparseable: bool = False
+) -> list[IndexLink]:
     """返回按行号排序的 IndexLink 列表。四条抽取器并用后按 ``norm_url`` 去重。
 
     双 scheme（inngest ``https://www.inngest.com/docs-markdownhttps://...``）
     **整条一个 URL**、打 ``artifact="double_scheme"``（卡点 A16:2104）：拆开会造出
     站上并不存在的两个 URL，而我们要报的缺陷恰恰是「模板把两个 URL 拼在一起了」。
+
+    ``keep_unparseable``：见 :func:`extract_index_links`。数「这份文件里有几条链接」的调用方
+    （``index_links_seeds`` 等）要带上它，这样一份只有坏链接的索引也占一格、也会被披露；
+    要拿 URL 去解析、探测、抽样的调用方不带。
     """
     seen: set[str] = set()
     out: list[IndexLink] = []
-    for link in extract_index_links(text, base_url):
+    for link in extract_index_links(text, base_url, keep_unparseable=keep_unparseable):
         if link.norm_url in seen:
             continue
         seen.add(link.norm_url)
@@ -1309,11 +1340,17 @@ def probe_index_links(
     resp = index_probe.response
     assert resp is not None, "索引内链检查只对判为真文件的索引跑"
     base_url = resp.final_url
-    links = parse_index_links(resp.text, base_url)
+    links = parse_index_links(resp.text, base_url, keep_unparseable=True)
 
     eligible: list[IndexLink] = []
     excluded: list[tuple[str, EligibilityExclusion]] = []
     for link in links:
+        if link.artifact == UNPARSEABLE_RULE_ID:
+            # 站点写的、解析不了的 URL：一个请求都不发，进「被排除」清单并写明原因
+            unparseable = EligibilityExclusion(UNPARSEABLE_RULE_ID, UNPARSEABLE_REASON)
+            excluded.append((link.abs_url, unparseable))
+            fetcher.note_exclusion(link.abs_url, unparseable.rule_id, unparseable.reason)
+            continue
         ctx = LinkContext(
             source_page=base_url,
             anchor_text=link.anchor_text or "",
@@ -1780,8 +1817,9 @@ def detect_md_signal_from_page(resp: HttpResponse) -> MdDeclaration | None:
     hit = _scope_from_text(seen) or _scope_from_text(text)
 
     link_url = _alternate_markdown_url(resp.headers.get("link", ""))
-    if link_url is not None:
-        alt = urljoin(resp.final_url, link_url)
+    # 站点给的 Link url 解析不了（``<http://[>``）：当作没有这个 Link，接着看页内横幅
+    alt = join_or_none(resp.final_url, link_url) if link_url is not None else None
+    if alt is not None:
         same_path = _md_url(resp.final_url, "ANY_PAGE")
         if _same_url(alt, same_path):
             scope: MdScope = "ANY_PAGE"

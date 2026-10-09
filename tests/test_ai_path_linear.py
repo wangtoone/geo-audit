@@ -17,8 +17,9 @@ llms.txt 是被体检的站点自己提供的，一行可以有几 MB。``extrac
 
 旧的四条正则、``LINK_RE_BARE``、旧的 ``extract_index_links`` 与 ``index_shape`` 原样留在本文件里当
 **对照（oracle）**，与新实现比 —— 三个生成器各自吐出的匹配（文本、url、顺序）、是 / 否函数的答案、
-整个 ``extract_index_links`` 的返回值（连同「抛了什么异常」：``urljoin`` 遇到 ``http://[`` 会抛
-``ValueError``，新旧必须一起抛）、``index_shape`` 的返回值：
+整个 ``extract_index_links`` 的返回值（站点写的、解析不了的 URL 如 ``http://[`` 原来会让 ``urljoin``
+抛 ``ValueError``，现在被跳过：任何输入都不许抛，见 ``tests/test_malformed_urls.py``）、
+``index_shape`` 的返回值：
 
 1. 全部冻结响应（真实站点的正文）；
 2. 两万篇由「标记词汇表」随机拼出来的文档（含 ``splitlines`` 会切开的每一种分隔符、``\\s`` 接受的
@@ -129,7 +130,7 @@ def _old_index_shape(text: str) -> tuple[float, int]:
 
 
 def _outcome(fn: Callable[[], Any]) -> tuple[str, Any]:
-    """返回值，或者抛出的异常类型 —— 新旧必须一起抛（``urljoin`` 遇到 ``http://[`` 会抛）。"""
+    """返回值，或者抛出的异常类型（现在任何输入都不该抛：坏 URL 被跳过，不再让 ``urljoin`` 抛）。"""
     try:
         return ("ok", fn())
     except Exception as exc:
@@ -204,13 +205,16 @@ def test_identical_results_on_every_frozen_response() -> None:
     store = FixtureStore.default()
     keys = list(store.snapshots())
     assert len(keys) >= 1000, f"语料里只剩 {len(keys)} 条快照，这条对照失去意义"
-    raised = 0
+    with_unparseable = 0
     for key in keys:
         body = store.stored_body(key).decode("utf-8", "replace")
         _same(body)
-        raised += _outcome(lambda b=body: ap.extract_index_links(b, BASE))[0] == "raised"
-    # 语料里有几篇正文（modal.com 的 llms-full.txt 等）会让 urljoin 抛 ValueError：新旧一起抛
-    assert raised >= 1, "语料里不再有会抛异常的正文：``_outcome`` 这条路径失去了覆盖"
+        # 站点写的、解析不了的 URL（``https://[``）不许再让抽取抛异常
+        assert _outcome(lambda b=body: ap.extract_index_links(b, BASE))[0] == "ok", key
+        kept = ap.extract_index_links(body, BASE, keep_unparseable=True)
+        with_unparseable += any(link.artifact == "unparseable_url" for link in kept)
+    # 语料里有几篇正文（modal.com 的 llms-full.txt 等）带着这样的 URL：它们是这条路径的覆盖
+    assert with_unparseable >= 1, "语料里不再有带坏 URL 的正文：keep_unparseable 这条路径失去了覆盖"
 
 
 # ── 2. 随机文档（标记词汇表）─────────────────────────────────────────────────
@@ -233,18 +237,20 @@ def _fuzz_document(rng: random.Random) -> str:
 def test_identical_results_on_twenty_thousand_fuzzed_documents() -> None:
     rng = random.Random(20261009)
     outcomes = {n: [0, 0] for n in ("markdown", "relative", "html_a", "linky")}
-    raised = links = 0
+    with_unparseable = links = 0
     for _ in range(20000):
         text = _fuzz_document(rng)
         _same(text)
         for line in text.splitlines():
             _count(outcomes, line)
         kind, got = _outcome(lambda t=text: ap.extract_index_links(t, BASE))
-        raised += kind == "raised"
-        links += len(got) if kind == "ok" else 0
+        assert kind == "ok", text[:200]  # 坏 URL 不许让抽取抛异常
+        links += len(got)
+        kept = ap.extract_index_links(text, BASE, keep_unparseable=True)
+        with_unparseable += any(link.artifact == "unparseable_url" for link in kept)
     _assert_not_idle(outcomes, 1000)
-    # 整个函数的对照：抛异常的文档（比的是「新旧一起抛」）和正常返回链接的文档都要出现足够多次
-    assert 1000 <= raised <= 15000 and links >= 10000, (raised, links)
+    # 整个函数的对照：带坏 URL 的文档和正常返回链接的文档都要出现足够多次
+    assert 1000 <= with_unparseable <= 15000 and links >= 10000, (with_unparseable, links)
 
 
 # ── 3. 已知有链接的行，随机改 1-4 处（专打边界）与按结构拼的链接列表 ─────────────

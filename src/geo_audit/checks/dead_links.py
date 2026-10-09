@@ -36,6 +36,7 @@ from ..fetch.client import Fetcher
 from ..fetch.denoise import EligibilityExclusion, classify_link_pre, position_class_of
 from ..fetch.ratelimit import registrable_domain
 from ..fetch.resolve import HostResolver, Resolution
+from ..fetch.urlsafe import UNPARSEABLE_REASON, UNPARSEABLE_RULE_ID, split_or_none
 from ..fixtures import DnsFixtureMissing, FixtureMissing, FixtureStore
 from ..models import (
     Expect,
@@ -696,6 +697,24 @@ def classify_link(
     除 ``url`` / ``source_page`` / ``ctx`` / ``client`` / ``store`` 五个规格形参外
     全部是 keyword-only 且带默认值的补充（见交付说明 deviations）。
     """
+    # ---- URL 本身解析不了：不是死链也不是活链，是「没法检查」 ---------------------- #
+    # ``http://[``、``https://[your-domain]/docs``、``http://h:abc/`` 这类 href 在站点上真实存在
+    # （占位符漏进了模板）。urllib 会抛 ValueError，而下面从分类位置到发请求每一步都要解析
+    # URL。它仍占「已抽取」的一格，进「被排除」清单并写明原因（见 ``fetch.urlsafe``），
+    # 一个请求都不发，也不当成死链。注册表里的规则（``DEAD_LINK_RULE_IDS``）可以被用户关掉，
+    # 这一条不行：关掉它的结果只能是崩溃。
+    if split_or_none(url) is None:
+        unparseable = EligibilityExclusion(UNPARSEABLE_RULE_ID, UNPARSEABLE_REASON)
+        return LinkVerdict(
+            url=url,
+            state=LinkState.EXCLUDED,
+            reason=unparseable.reason,
+            rule_id=unparseable.rule_id,
+            disposition="excluded",
+            exclusions=(unparseable,),
+            evidence=("URL 无法解析，一次请求都没发",),
+        )
+
     exclusions: list[EligibilityExclusion] = []
     disposition: Literal["counted", "excluded", "needs_review"] = "counted"
     confidence: Literal["confirmed", "needs_review"] = "confirmed"
@@ -904,6 +923,12 @@ def classify_link(
         return _unknown("host_unprobeable", "根路径与随机路径都不可信，该 host 整体判不了")
 
     confirmations = confirmations or facts.alive_urls
+    # 没有拿到任何 HTTP 响应（跳转成环、跳转指向一个解析不了的地址、对端中途断开……）而前面的
+    # 规则又都没认出它：什么都没观测到，不判死也不判活。原来不认识的 transport_error 一路落到下面的
+    # ``DEAD if dead else ALIVE``，一条浏览器也打不开的链接被记成「活着」。
+    if status == 0:
+        why = (resp.transport_error if resp is not None else "") or probe.classification.reason
+        return _unknown("no_http_response", f"没有拿到 HTTP 响应（{why}），不判死也不判活")
     dead = is_dead(probe, facts.control, confirmations, exclusions, dns=dns)
     state = LinkState.DEAD if dead else LinkState.ALIVE
     return LinkVerdict(

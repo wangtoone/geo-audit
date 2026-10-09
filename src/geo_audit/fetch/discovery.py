@@ -44,6 +44,7 @@ from ..models import (
 from .client import Fetcher
 from .ratelimit import registrable_domain
 from .resolve import HostResolver, resolve_host
+from .urlsafe import split_or_none
 
 #: Every prefix here was earned by a real host in the 72-domain run:
 #:   docs.        mistral, canvasmedical, turso, ecwid, pinecone, baseten, ...
@@ -350,7 +351,11 @@ def fetch_sitemap_urls(
         if len(urls) >= MAX_SITEMAP_URLS:
             break
 
-    return tuple(dict.fromkeys(urls))[:MAX_SITEMAP_URLS]
+    # sitemap 里解析不了的 ``<loc>``（``http://[``）当没写：这里的 URL 只用来给修复提示找
+    # 「最近的现存路径」，不是被检查的对象；留着它们，后面每个 ``urlsplit`` 都会炸
+    # （见 ``fetch.urlsafe``）。
+    parseable = (u for u in dict.fromkeys(urls) if split_or_none(u) is not None)
+    return tuple(parseable)[:MAX_SITEMAP_URLS]
 
 
 def pricing_candidate_urls(host: str) -> tuple[str, ...]:

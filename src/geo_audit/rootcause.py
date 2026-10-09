@@ -30,6 +30,7 @@ from dataclasses import dataclass, field
 from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
 from .fetch.ratelimit import registrable_domain
+from .fetch.urlsafe import split_or_none
 
 # RootCause 已按本文件原占位注释里的三步搬进 models.py（A6：唯一定义处）。
 from .models import RootCause, Severity, make_finding_id
@@ -71,8 +72,12 @@ def normalize_url(url: str) -> str:
       * 空 path 与 ``/`` 都折成 ``/`` —— 两者是同一个资源，不折会让身份分叉。
         （``extract.normalize_url`` 现在把空 path 留空，是本函数与它唯一的差异；
         见交付说明 key_decisions。）
+
+    解析不了的 URL（站点写的 ``http://[``）原样（去首尾空白）返回：身份仍然稳定，也不会炸。
     """
-    parts = urlsplit(url.strip())
+    parts = split_or_none(url.strip())
+    if parts is None:
+        return url.strip()
     kept = [
         (k, v)
         for k, v in parse_qsl(parts.query, keep_blank_values=True)
@@ -89,7 +94,11 @@ def url_host(url: str) -> str:
 
 def path_segments(url_or_path: str) -> tuple[str, ...]:
     """路径按段切开，空段丢掉。``/a/b/`` 与 ``/a/b`` 同为 ``("a", "b")``。"""
-    path = urlsplit(url_or_path).path if "//" in url_or_path else url_or_path
+    path = url_or_path
+    if "//" in url_or_path:
+        parts = split_or_none(url_or_path)
+        # 解析不了的当路径：``//[locale]/docs`` 是模板漏了一段的路径，不是主机 ``[locale]``
+        path = parts.path if parts is not None else url_or_path
     return tuple(seg for seg in path.split("/") if seg)
 
 
