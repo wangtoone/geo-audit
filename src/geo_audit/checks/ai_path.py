@@ -1492,9 +1492,92 @@ MD_NEGOTIATION_GAP = (
     "本工具只检查 .md 后缀通道，协商通道未评估。"
 )
 
-_LINK_HEADER_RE = re.compile(
-    r"<(?P<url>[^>]+)>\s*;[^,]*rel\s*=\s*\"?alternate\"?[^,]*type\s*=\s*\"?text/markdown\"?", re.I
-)
+# ── ``Link`` 响应头里的 markdown 替代版本：线性时间，故意的 ──────────────────────────────
+# 它原来是一条正则（``re.I``）：
+#   <(?P<url>[^>]+)>\s*;[^,]*rel\s*=\s*"?alternate"?[^,]*type\s*=\s*"?text/markdown"?
+# 响应头是被体检的站点自己发的，httpcore 允许整个响应头块到 100 KiB。这条正则对
+# ``<a>; rel=alternate `` 重复 N 次是 O(N^3)（25,000 字符 22 s，50,000 字符超过 60 s），
+# 对 ``<`` 重复 N 次是 O(N^2)（100,000 字符 16 s）：每个 ``<`` 都把整个头再扫一遍，
+# 每个 ``rel=alternate`` 又把它后面的头再扫一遍找 ``type=``。下面的函数返回与 ``search``
+# 完全相同的 ``url`` 组；原正则留在 tests/test_link_header_linear.py 里当对照。
+_REL_ALTERNATE_RE = re.compile(r'rel\s*=\s*"?alternate', re.I)
+_TYPE_MARKDOWN_RE = re.compile(r'type\s*=\s*"?text/markdown', re.I)
+_SEMICOLON_AFTER_WS_RE = re.compile(r"\s*;")
+
+
+class _SearchFrom:
+    """``pattern.search(text, pos)``，``pos`` 只增不减时整段文本每个字符只被扫一遍。
+
+    记住上一次的命中：它的起点还在新的 ``pos`` 之后，它就是 ``pos`` 之后的第一个命中
+    （上一次是从更靠前的位置找的，中间没有别的命中）；上一次一个都没找到，更靠后的
+    ``pos`` 也找不到。"""
+
+    __slots__ = ("_hit", "_pattern", "_searched", "_text")
+
+    def __init__(self, pattern: re.Pattern[str], text: str) -> None:
+        self._pattern = pattern
+        self._text = text
+        self._searched = False
+        self._hit: re.Match[str] | None = None
+
+    def at_or_after(self, pos: int) -> re.Match[str] | None:
+        if self._searched and (self._hit is None or self._hit.start() >= pos):
+            return self._hit
+        self._hit = self._pattern.search(self._text, pos)
+        self._searched = True
+        return self._hit
+
+
+def _alternate_markdown_url(header: str) -> str | None:
+    r"""原来的 ``_LINK_HEADER_RE.search(header)`` 的 ``url`` 组；没有匹配就是 ``None``。
+
+    正则的每一段怎么落到下面的代码上：
+
+    * ``<(?P<url>[^>]+)>``：url 是 ``<`` 之后、第一个 ``>`` 之前的至少一个字符（``<>``
+      不行），所以 ``<`` 在 ``lt``、它之后第一个 ``>`` 在 ``gt`` 时，url 就是
+      ``header[lt + 1 : gt]``。同一个 ``>`` 之前的所有 ``<`` 共用同一个 ``gt``，后半截的
+      判断完全一样：最靠左的先试，它不行别的也不行，它行它就是 ``search`` 要的那个 ——
+      所以每个 ``>`` 只判断一次，下一个候选从 ``gt`` 之后找。
+    * ``\s*;``：``\s*`` 吃掉整段空白，``;`` 必须紧跟在后面。
+    * ``[^,]*rel…alternate[^,]*type…text/markdown``：这一整段不含逗号，所以全落在
+      「``;`` 之后、下一个逗号之前」。``rel…alternate`` 不会嵌进自己（``alternate`` 里
+      没有 ``rel``），最靠左的那个结束得最早，只看它；``type…text/markdown`` 只要起点在
+      它之后、逗号之前就行（这也保证了 ``rel…alternate`` 在逗号之前）。
+
+    「某个位置之后的第一个」逗号、``rel…alternate``、``type…text/markdown`` 的位置只会往后
+    走，各记住上一次的结果，所以整个头每个字符被每种搜索看一遍；找不到更靠后的
+    ``rel…alternate``（或 ``type…``）就不会再有匹配，直接返回。"""
+    n = len(header)
+    rel_search = _SearchFrom(_REL_ALTERNATE_RE, header)
+    type_search = _SearchFrom(_TYPE_MARKDOWN_RE, header)
+    comma = -1  # ``start`` 之后第一个逗号的下标，没有就是 n；-1 = 还没找过
+    pos = 0
+    while True:
+        lt = header.find("<", pos)
+        if lt < 0:
+            return None
+        gt = header.find(">", lt + 1)
+        if gt < 0:
+            return None  # 这个 ``<`` 之后没有 ``>``，更靠后的也没有
+        pos = gt + 1
+        if gt == lt + 1:  # ``<>``：url 至少一个字符
+            continue
+        semi = _SEMICOLON_AFTER_WS_RE.match(header, pos)
+        if semi is None:
+            continue
+        start = semi.end()
+        if comma < start:
+            comma = header.find(",", start)
+            if comma < 0:
+                comma = n
+        rel = rel_search.at_or_after(start)
+        if rel is None:
+            return None
+        typ = type_search.at_or_after(rel.end())
+        if typ is None:
+            return None
+        if typ.start() < comma:
+            return header[lt + 1 : gt]
 
 
 @dataclass(frozen=True, slots=True)
@@ -1584,9 +1667,9 @@ def detect_md_signal_from_page(resp: HttpResponse) -> MdDeclaration | None:
     seen = visible_text(text)
     hit = _scope_from_text(seen) or _scope_from_text(text)
 
-    link_hdr = _LINK_HEADER_RE.search(resp.headers.get("link", ""))
-    if link_hdr is not None:
-        alt = urljoin(resp.final_url, link_hdr.group("url"))
+    link_url = _alternate_markdown_url(resp.headers.get("link", ""))
+    if link_url is not None:
+        alt = urljoin(resp.final_url, link_url)
         same_path = _md_url(resp.final_url, "ANY_PAGE")
         if _same_url(alt, same_path):
             scope: MdScope = "ANY_PAGE"
