@@ -63,6 +63,7 @@ from .normalize import (
     structural_fingerprint,
     visible_text,
 )
+from .urlsafe import is_url_error
 
 _HTML_START_RE = re.compile(r"^\s*(?:<!doctype\s+html|<html\b|<\?xml[^>]*\?>\s*<html\b)", re.I)
 _SERVER_ERROR = frozenset(
@@ -438,6 +439,14 @@ def classify_response(
                 Verdict.UNKNOWN,
                 "robots_disallowed",
                 (f"robots.txt 禁止抓取 {_path_of(url)}，本位置未评估",),
+            )
+        if is_url_error(transport_error):
+            # 请求没发出去：URL（或它跳去的 Location）发不出请求。报文里引着站点自己的 URL，
+            # 不能拿子串去猜 —— 含 "timeout" / "resolve" 的 URL 不是超时、也不是 DNS 失败。
+            return Classification(
+                Verdict.UNKNOWN,
+                "network_error",
+                (f"请求没有发出去：{transport_error}",),
             )
         if "resolve" in err or "nodename" in err or "name or service" in err or "servfail" in err:
             reason = "dns_unresolved"

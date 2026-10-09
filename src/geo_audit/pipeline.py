@@ -59,6 +59,7 @@ from geo_audit.fetch.denoise import EligibilityExclusion, position_class_of
 from geo_audit.fetch.discovery import DEFAULT_TIERS, discover
 from geo_audit.fetch.ratelimit import MIN_INTERVAL_SECONDS, DomainLimiter, registrable_domain
 from geo_audit.fetch.resolve import HostResolver
+from geo_audit.fetch.urlsafe import UNPARSEABLE_RULE_ID
 from geo_audit.fixhint import suggest_fix
 from geo_audit.fixtures import FixtureError, FixtureStore, sample_deterministic
 from geo_audit.models import (
@@ -619,7 +620,8 @@ def index_links_seeds(probes: Sequence[Probe]) -> tuple[PositionSeed, ...]:
         resp = probe.response
         if resp is None:
             continue
-        links = parse_index_links(resp.text, resp.final_url)
+        # 数「这份文件里有几条链接」：站点写的坏 URL 也算一条（它会被排除并披露，不是不存在）
+        links = parse_index_links(resp.text, resp.final_url, keep_unparseable=True)
         if not links:
             continue
         seeds.append(
@@ -878,20 +880,23 @@ def build_fragilities(
     watch = f"geo-audit {domain} --contact you@yourco.com --format json"
 
     for report in index_reports:
-        if len(report.links) < 20:
+        # 解析不了的链接（``report.links`` 里算一条，``report.excluded`` 里披露）没有路径可看，
+        # 也没法 urlsplit：前缀的分母只数其余的
+        links = [link for link in report.links if link.artifact != UNPARSEABLE_RULE_ID]
+        if len(links) < 20:
             continue
         prefixes: dict[str, int] = {}
-        for link in report.links:
+        for link in links:
             head = "/".join(urlsplit(link.abs_url).path.split("/")[:3])
             prefixes[head] = prefixes.get(head, 0) + 1
         top, hits = max(prefixes.items(), key=lambda kv: kv[1])
-        share = hits / len(report.links)
+        share = hits / len(links)
         if share >= 0.90:
             out.append(
                 Fragility(
                     fragility_id="F1",
                     title="索引单点依赖",
-                    metric=f"{report.index_url}：{len(report.links)} 条链接里 "
+                    metric=f"{report.index_url}：{len(links)} 条链接里 "
                     f"{hits} 条（{share:.0%}）挤在 {top} 下",
                     why="这个前缀一改路径，索引里几乎每一条都同时失效。",
                     precedent=(
@@ -1233,7 +1238,7 @@ def _stage_index_links(
             continue
         if "llms-full" in urlsplit(probe.url).path.lower():
             continue
-        n_links = len(parse_index_links(resp.text, resp.final_url))
+        n_links = len(parse_index_links(resp.text, resp.final_url, keep_unparseable=True))
         if n_links == 0:
             continue
         st.coverage_gaps.append(

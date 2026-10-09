@@ -47,7 +47,7 @@ from collections.abc import Callable, Iterable, Sequence
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, replace
 from typing import Final, Literal
-from urllib.parse import urljoin, urlsplit, urlunsplit
+from urllib.parse import urlsplit, urlunsplit
 
 import httpx
 
@@ -80,6 +80,16 @@ from .normalize import (
 )
 from .ratelimit import DomainLimiter, registrable_domain
 from .resolve import HostResolver, resolve_host
+from .urlsafe import (
+    REJECTED_URL_ERROR,
+    dns_name,
+    invalid_redirect_error,
+    invalid_url_error,
+    join_or_none,
+    rejected_url_error,
+    requestable,
+    split_or_none,
+)
 
 __version__ = "0.1.0"
 
@@ -165,6 +175,7 @@ def interpret_robots_response(
     2xx 的 HTML，正文是挑战页   allow_all     False      没带挑战头的挑战页（旧式 Cloudflare 页等）
     5xx / 网络错误            disallow_all  False      RFC 9309 §2.3.1.4（MUST）：视同完全不许抓
     跳转成环 / 超过 10 跳      disallow_all  False      RFC 只是允许当作「不可用」；我们取保守一侧
+    跳到解析不了的地址         disallow_all  False      ``Location: http://[``，跟不过去；同取保守
     replay 缺快照（合成 599）   allow_all     False      不是站点的事实，why 里写明
     ======================  ============  =========  ==========================================
 
@@ -223,6 +234,47 @@ def interpret_robots_response(
         "不能当成「站点没有这个文件」"
     )
     return "allow_all", "", why, False
+
+
+def _line_parses(line: str) -> bool:
+    """Does the stdlib robots parser accept this one line, in a group where rule lines are read?"""
+    try:
+        urllib.robotparser.RobotFileParser().parse(["User-agent: *", line])
+    except ValueError:
+        return False
+    return True
+
+
+def _robots_parser(lines: list[str]) -> urllib.robotparser.RobotFileParser:
+    """A parser for a site's robots.txt that one hostile rule line cannot abort.
+
+    On Python 3.11 and 3.12 ``RobotFileParser.parse`` builds every ``Allow`` / ``Disallow`` rule
+    with ``urlparse(path)``, which raises ``ValueError`` for ``Disallow: https://[your-domain]/x``
+    or ``Allow: //[`` - the file is lost, and the audit with it. A line the parser cannot make
+    sense of is ignored, not the file: parse; if that raises, drop the lines that raise on their
+    own and parse the rest, so the site's other rules keep their force.
+    """
+    parser = urllib.robotparser.RobotFileParser()
+    try:
+        parser.parse(lines)
+    except ValueError:
+        parser = urllib.robotparser.RobotFileParser()
+        parser.parse([line for line in lines if _line_parses(line)])
+    return parser
+
+
+def _can_fetch(parser: urllib.robotparser.RobotFileParser, user_agent: str, url: str) -> bool:
+    """``parser.can_fetch`` for ``url`` without handing the stdlib the authority.
+
+    On Python 3.11 and 3.12 ``can_fetch`` runs ``urlparse(unquote(url))`` and keeps only the
+    path, query and fragment, so a userinfo that percent-decodes to ``[`` (``https://%5B@x.test/p``)
+    makes it raise for nothing. It gets a fixed authority; the part it matches on is unchanged.
+    """
+    parts = split_or_none(url)
+    rest = urlunsplit(("", "", parts.path, parts.query, parts.fragment)) if parts else ""
+    if rest and not rest.startswith(("/", "?", "#")):
+        rest = "/" + rest  # 没有 authority 的串（``ftp:x``）：别让路径接在 ``x`` 后面变成主机名
+    return parser.can_fetch(user_agent, "https://x" + rest)
 
 
 class _NoCookies(httpx.Cookies):
@@ -343,18 +395,22 @@ class Fetcher:
             self._http_requests += 1
         headers = {"Accept": accept}
         request_url = url
+        sni_host: str | None = None
         if pinned_ip:
             parts = urlsplit(url)
-            host = parts.hostname or ""
-            netloc = pinned_ip if not parts.port else f"{pinned_ip}:{parts.port}"
+            # Host 头与 SNI 用 httpx 连接时用的那个名字：头值只能是 ASCII，IDN 主机要用 punycode；
+            # IPv6 地址放进 URL 要加方括号。
+            sni_host = dns_name(url) or (parts.hostname or "")
+            ip = f"[{pinned_ip}]" if ":" in pinned_ip else pinned_ip
+            netloc = ip if not parts.port else f"{ip}:{parts.port}"
             request_url = urlunsplit((parts.scheme, netloc, parts.path, parts.query, ""))
-            headers["Host"] = host
+            headers["Host"] = sni_host
         try:
             with self._client.stream(
                 "GET",
                 request_url,
                 headers=headers,
-                extensions={"sni_hostname": urlsplit(url).hostname} if pinned_ip else None,
+                extensions={"sni_hostname": sni_host} if pinned_ip else None,
             ) as resp:
                 chunks: list[bytes] = []
                 total = 0
@@ -381,6 +437,10 @@ class Fetcher:
             return self._error_response(url, f"too many redirects: {exc!r}", started)
         except httpx.HTTPError as exc:
             return self._error_response(url, f"{type(exc).__name__}: {exc}", started)
+        except (httpx.InvalidURL, UnicodeError) as exc:
+            # 请求建不出来（httpx 拒绝 URL / 主机名，或响应里的 Location 它解不开）：站点写的 URL 有
+            # 问题，不是网络故障，也没有响应。上游的 ``requestable`` 拦已知的那些，这里兜其余的。
+            return self._error_response(url, rejected_url_error(url, exc), started)
 
     @staticmethod
     def _error_response(url: str, err: str, started: float) -> HttpResponse:
@@ -401,11 +461,12 @@ class Fetcher:
     def robots_for(self, url: str) -> RobotsInfo:
         host = (urlsplit(url).hostname or "").lower()
         scheme = urlsplit(url).scheme or "https"
+        authority = f"[{host}]" if ":" in host else host  # urlsplit 去掉了 IPv6 字面量的方括号
         with self._robots_lock:
             cached = self._robots.get(host)
         if cached is not None:
             return cached
-        robots_url = f"{scheme}://{host}/robots.txt"
+        robots_url = f"{scheme}://{authority}/robots.txt"
         # 走 _fetch_chain，不再是单发的 _raw_request：
         #   * 跟跳转（RFC 9309 §2.3.1.2：至少跟 5 跳，「可达就必须按文件里的规则办」）。
         #     原来 301 / 308 的 robots.txt 被当成「没有 robots.txt」放行全部；
@@ -420,7 +481,7 @@ class Fetcher:
         if policy == "disallow_all":
             parser.parse(["User-agent: *", "Disallow: /"])
         else:
-            parser.parse(raw.splitlines())
+            parser = _robots_parser(raw.splitlines())
         sitemaps = tuple(
             line.split(":", 1)[1].strip()
             for line in raw.splitlines()
@@ -473,7 +534,7 @@ class Fetcher:
         parser = self._robots_parsers.get(host)
         if parser is None:
             return "allowed"
-        return "allowed" if parser.can_fetch(self.user_agent, url) else "disallowed"
+        return "allowed" if _can_fetch(parser, self.user_agent, url) else "disallowed"
 
     def robots_allows(self, url: str) -> bool:
         """Honour robots.txt for everything except /robots.txt itself.
@@ -516,6 +577,21 @@ class Fetcher:
         """
         accept = accept_override or (ACCEPT_TEXT if expect is Expect.TEXT_FILE else ACCEPT_HTML)
         byte_cap = LIVENESS_BYTE_CAP if liveness_only else CONTENT_BYTE_CAP
+
+        # ---- 先看请求发不发得出去：站点给的链接 / 跳转 / sitemap 里什么都可能有 ---------
+        # ``http://[``、``https://[your-domain]/``、``http://h:abc/`` 这类字符串 urllib 会抛
+        # ValueError，``http://256.256.256.256/``、``http://a..b/`` 这类 httpx / DNS 拒绝，而下面
+        # 每一步（robots 闸、限速器、缓存、请求）都要解析 URL。一个请求都没发、也没有什么可重试：
+        # 按「没发出去」报（UNKNOWN / network_error，证据里带着原串），不计入请求数、不等限速。
+        if not requestable(url):
+            return HttpResponse(
+                url=url,
+                final_url=url,
+                status=0,
+                headers={},
+                body=b"",
+                transport_error=invalid_url_error(url),
+            )
 
         # ---- robots 闸。**排在缓存之前** ------------------------------------
         #
@@ -596,7 +672,21 @@ class Fetcher:
             resp = self._attempt(current, accept=accept, byte_cap=byte_cap, robots=robots)
 
             if 300 <= resp.status < 400 and "location" in resp.headers:
-                target = urljoin(current, resp.headers["location"])
+                location = resp.headers["location"]
+                target = join_or_none(current, location)
+                if target is None or not requestable(target):
+                    # 站点的 3xx 指向一个解析不了 / 发不出请求的地址（``Location: http://[``）：跟不过去。
+                    # 和「redirect loop」「too many redirects」一样走 status 0 + transport_error，
+                    # 分类器记成 UNKNOWN / network_error，证据里带着那个 Location 的原串。
+                    return HttpResponse(
+                        url=url,
+                        final_url=current,
+                        status=0,
+                        headers={},
+                        body=b"",
+                        redirects=tuple(hops),
+                        transport_error=invalid_redirect_error(location),
+                    )
                 hops.append(RedirectHop(status=resp.status, from_url=current, to_url=target))
                 current = target
                 continue
@@ -642,11 +732,15 @@ class Fetcher:
                 resp = self._raw_request(url, accept=accept, byte_cap=byte_cap)
             last = resp
 
+            if resp.status == 0 and (resp.transport_error or "").startswith(REJECTED_URL_ERROR):
+                # URL / 主机名有问题，请求发不出去：重试不会变，也不是 DNS 抖动，别去问第二意见
+                return resp
+
             if resp.status == 0 and _is_dns_error(resp.transport_error):
                 # resolve.R1/R2/R3 -- never let a resolver hiccup become a
                 # dead link.  This is the platform.minimax.io case: 12 false
                 # positives in one run.
-                resolution = resolve_host(host, resolver=self._resolver)
+                resolution = resolve_host(dns_name(url) or host, resolver=self._resolver)
                 if resolution.poisoned:
                     return self._error_response(
                         url, f"dns-poisoned: {resolution.error}", time.monotonic()
@@ -807,7 +901,25 @@ class Fetcher:
         each other (FEATURE-PRIORITY.md P0 requires target and control to be
         adjacent).  The extra request is spent only on positives -- ~20% of
         positions -- so the budget cost is small and the evidence is tight.
+
+        A URL that cannot be requested (a link the audited site wrote as ``http://[`` or
+        ``http://256.256.256.256/``) is not: UNKNOWN / network_error, with the string in the
+        evidence.
         """
+        if not requestable(url):
+            return Probe(
+                url,
+                expect,
+                None,
+                classify_response(
+                    0,
+                    {},
+                    "",
+                    url=url,
+                    expect=expect,
+                    transport_error=invalid_url_error(url),
+                ),
+            )
         gate = self.robots_verdict(url)
         if gate == "disallowed":
             return Probe(
@@ -1076,7 +1188,9 @@ class Fetcher:
         """
         groups: dict[str, list[str]] = {}
         for u in urls:
-            groups.setdefault(registrable_domain(urlsplit(u).hostname or ""), []).append(u)
+            parts = split_or_none(u)  # 解析不了的 URL 归到空 host 那一组，``probe`` 会如实报告
+            host = (parts.hostname or "") if parts is not None else ""
+            groups.setdefault(registrable_domain(host), []).append(u)
 
         results: list[Probe] = []
         lock = threading.Lock()

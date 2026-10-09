@@ -44,6 +44,7 @@ from ..models import (
 from .client import Fetcher
 from .ratelimit import registrable_domain
 from .resolve import HostResolver, resolve_host
+from .urlsafe import requestable, split_or_none
 
 #: Every prefix here was earned by a real host in the 72-domain run:
 #:   docs.        mistral, canvasmedical, turso, ecwid, pinecone, baseten, ...
@@ -308,6 +309,9 @@ def mine_declared_hosts(bodies: list[str], *, apex: str) -> list[str]:
                 continue
             if not re.match(r"^(docs?|developers?|api|apidocs?|platform|help|support)\.", host):
                 continue
+            if not requestable(f"https://{host}/"):
+                # 站点声明的主机名发不出请求（``docs..vendor.io``：模板里的变量没填）：不去探它
+                continue
             counts[host] = counts.get(host, 0) + 1
     ranked = sorted((h for h, c in counts.items() if c >= 2), key=lambda h: -counts[h])
     return ranked[:MAX_DECLARED_HOSTS]
@@ -350,7 +354,11 @@ def fetch_sitemap_urls(
         if len(urls) >= MAX_SITEMAP_URLS:
             break
 
-    return tuple(dict.fromkeys(urls))[:MAX_SITEMAP_URLS]
+    # sitemap 里解析不了的 ``<loc>``（``http://[``）当没写：这里的 URL 只用来给修复提示找
+    # 「最近的现存路径」，不是被检查的对象；留着它们，后面每个 ``urlsplit`` 都会炸
+    # （见 ``fetch.urlsafe``）。
+    parseable = (u for u in dict.fromkeys(urls) if split_or_none(u) is not None)
+    return tuple(parseable)[:MAX_SITEMAP_URLS]
 
 
 def pricing_candidate_urls(host: str) -> tuple[str, ...]:
