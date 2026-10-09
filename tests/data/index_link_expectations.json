@@ -138,7 +138,7 @@
     {"id": "X-idx-attio-html-a", "kind": "extractor", "domain": "attio.com",
      "index_url": "https://attio.com/customers/llms.txt", "extractor": "html_a",
      "n_links": 6, "expect_status": "pass",
-     "note": "正文里直接嵌裸 HTML <a href=...>，不是 markdown 链接。LINK_RE_HTML_A 的回归样本"},
+     "note": "正文里直接嵌裸 HTML <a href=...>，不是 markdown 链接。html_a 抽取器（原 LINK_RE_HTML_A，现为 ai_path._html_a_links）的回归样本"},
     {"id": "X-idx-close-html-a", "kind": "extractor", "domain": "close.com",
      "index_url": "https://help.close.com/llms.txt", "extractor": "html_a",
      "n_links": 6, "expect_status": "pass",

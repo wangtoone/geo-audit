@@ -23,7 +23,7 @@ FixHint / Finding / make_finding_id / UNKNOWN_REMEDY）。它们的正式定义�
 from __future__ import annotations
 
 import re
-from collections.abc import Mapping, Sequence
+from collections.abc import Iterator, Mapping, Sequence
 from dataclasses import dataclass, field, replace
 from typing import Literal, Protocol, cast
 from urllib.parse import urljoin, urlsplit, urlunsplit
@@ -648,13 +648,38 @@ LLMS_FULL_DETAIL_KEYS = (
     "docs_llms_full_bytes",
 )
 
-_LINKY_LINE_RE = re.compile(r"\s*[-*]?\s*\[.+?\]\(.+?\)")
+_WS_RUN_RE = re.compile(r"\s*")
+
+
+def _skip_ws(text: str, pos: int) -> int:
+    m = _WS_RUN_RE.match(text, pos)  # ``\s*`` 总能匹配（可以是空串），``else`` 只为类型检查
+    return m.end() if m else pos
+
+
+def _is_linky_line(line: str) -> bool:
+    r"""``re.match(r"\s*[-*]?\s*\[.+?\]\(.+?\)", line)`` 的是 / 否。
+
+    ``line`` 里不能有换行符（``str.splitlines()`` 切出来的行都满足）：旧正则的 ``.`` 不匹配
+    ``\n``，这里不区分。
+
+    旧正则在每一段空白、每一处「``](`` 之后找不到 ``)``」上都把整行余下的部分再回溯一遍：
+    64 KB 的空白加一个字符要几秒（平方级：长度每翻一倍慢 4 倍）。这里一次扫描：跳过空白、可选的
+    ``-`` / ``*``、空白，接着必须是 ``[``；``.+?`` 至少吃一个字符，所以 ``](`` 要在 ``[`` 之后
+    至少两格；最靠前的那个 ``](`` 对「后面还得有 ``)``」的要求最松（``)`` 要在 ``](`` 之后
+    至少三格），所以只看它。"""
+    i = _skip_ws(line, 0)
+    if line.startswith(("-", "*"), i):
+        i = _skip_ws(line, i + 1)
+    if not line.startswith("[", i):
+        return False
+    j = line.find("](", i + 2)
+    return j >= 0 and line.find(")", j + 3) >= 0
 
 
 def index_shape(text: str) -> tuple[float, int]:
     """返回 (链接行占非空行比例, 非链接非标题行的字符数)。§4.2:2044 逐字照抄。"""
     lines = [ln for ln in text.splitlines() if ln.strip()]
-    linky = sum(1 for ln in lines if _LINKY_LINE_RE.match(ln))
+    linky = sum(1 for ln in lines if _is_linky_line(ln))
     prose = sum(
         len(ln) for ln in lines if not ln.lstrip().startswith(("#", "-", "*")) and "](" not in ln
     )
@@ -934,10 +959,90 @@ def check_llms_full(
 # 子检查三 · 索引内链存活 —— §4.3:2069-2156
 # ═════════════════════════════════════════════════════════════════════════════
 
-LINK_RE_MARKDOWN = re.compile(r"\[(?P<text>[^\]]*)\]\((?P<url>[^)\s]+)\)")
 LINK_RE_BARE = re.compile(r"(?<![(<\"'`])\bhttps?://[^\s`)>\"'\]]+")
-LINK_RE_HTML_A = re.compile(r"<a[^>]+href=[\"'](?P<url>[^\"']+)[\"']", re.I)
-LINK_RE_RELATIVE = re.compile(r"\[[^\]]*\]\((?P<url>/[^)\s]+)\)")
+
+# ── 另外三种链接的抽取：线性时间，故意的 ───────────────────────────────────────
+# 它们原来是三条逐行 ``finditer`` 的正则：
+#   markdown  ``\[(?P<text>[^\]]*)\]\((?P<url>[^)\s]+)\)``
+#   relative  ``\[[^\]]*\]\((?P<url>/[^)\s]+)\)``
+#   html_a    ``<a[^>]+href=["'](?P<url>[^"']+)["']``（re.I）
+# 每一条对「开了没法闭合」的开头都把整行余下的部分再扫一遍：一行里 N 个 ``[x](``（后面没有 ``)``）
+# 或 N 个 ``<a ``（后面没有 ``href=``）就是 O(N^2)，而 llms.txt 是被体检的站点自己给的，一行可以有
+# 几 MB。下面三个生成器吐出与原来 ``finditer`` 完全相同的匹配、相同的顺序；原正则留在
+# tests/test_ai_path_linear.py 里当对照。
+_URL_STOP_RE = re.compile(r"[)\s]")  # ``[^)\s]+`` 在这里停
+_QUOTE_RE = re.compile(r"[\"']")
+_A_OPEN_RE = re.compile(r"<a", re.I)
+_HREF_OPEN_RE = re.compile(r"href=[\"']", re.I)
+
+
+def _bracket_links(line: str, *, relative: bool) -> Iterator[tuple[str, str]]:
+    r"""``line`` 里每个 ``\[(?P<text>[^\]]*)\]\((?P<url>[^)\s]+)\)`` 的 ``(text, url)``
+    （``relative=True``：``(?P<url>/[^)\s]+)``），顺序与 ``finditer`` 相同。
+
+    ``[^\]]*`` 只能停在 ``[`` 之后的第一个 ``]``，所以一个 ``[`` 能不能成链接只取决于它后面那个
+    ``]``：同一个 ``]`` 前面的所有 ``[`` 要么都行（最靠左的赢）要么都不行，判断一次就跳过去。
+    ``[^)\s]+`` 的结尾（第一个 ``)`` 或空白）只会往前走，记住它。"""
+    n = len(line)
+    min_url = 2 if relative else 1  # 相对路径的 url 是 ``/`` 加至少一个字符
+    pos = 0
+    stop = -1  # 最近一个 url 起点之后的第一个 ``)`` / 空白；没有就是 n
+    while True:
+        s = line.find("[", pos)
+        if s < 0:
+            return
+        r = line.find("]", s + 1)
+        if r < 0:
+            return  # 这个 ``[`` 之后没有 ``]``，更靠后的也没有
+        pos = r + 1  # 同一个 ``]`` 之前的 ``[`` 共用下面的判断
+        if not line.startswith("(", r + 1):
+            continue
+        u = r + 2
+        if relative and not line.startswith("/", u):
+            continue
+        if stop < u:
+            m = _URL_STOP_RE.search(line, u)
+            stop = m.start() if m else n
+        if stop - u < min_url or stop >= n or line[stop] != ")":
+            continue
+        yield line[s + 1 : r], line[u:stop]
+        pos = stop + 1
+
+
+def _html_a_links(line: str) -> Iterator[str]:
+    r"""``line`` 里每个 ``<a[^>]+href=["'](?P<url>[^"']+)["']``（re.I）的 ``url``，顺序与
+    ``finditer`` 相同。
+
+    ``[^>]+`` 越不过标签的第一个 ``>``，所以 ``href=`` 只能出现在 ``<a`` 与那个 ``>`` 之间；
+    贪婪回溯会取其中**最靠右**、后面真有「至少一个非引号字符再加一个引号」的那一个。url 自己可以含
+    ``>``，所以匹配可以越过它继续。同一个 ``>`` 之前的几个 ``<a`` 共用这一段：最靠左的先试，它
+    试不出来，后面的 ``href=`` 范围只会更小，更不行；它试出来了，这一段里就再没有更靠右的有效
+    ``href=``，剩下的 ``<a`` 也不可能再匹配 —— 所以一段只看一遍。找收尾引号也不会重复扫描：
+    每个候选的开头引号就在它自己的 ``href=`` 里，上一个候选的搜索最迟止于这里。"""
+    n = len(line)
+    pos = 0
+    while True:
+        m = _A_OPEN_RE.search(line, pos)
+        if m is None:
+            return
+        gt = line.find(">", m.end())
+        end = n if gt < 0 else gt
+        pos = n if gt < 0 else gt + 1
+        best: tuple[int, int] | None = None  # 最靠右的有效 href 的（url 起点, 收尾引号的位置）
+        h = m.end() + 1  # ``[^>]+`` 至少吃一个字符
+        while True:
+            hm = _HREF_OPEN_RE.search(line, h, end)
+            if hm is None:
+                break
+            u = hm.end()
+            q = _QUOTE_RE.search(line, u)
+            if q is not None and q.start() > u:  # url 至少一个字符，而且被一个引号收尾
+                best = (u, q.start())
+            h = hm.end()
+        if best is not None:
+            yield line[best[0] : best[1]]
+            pos = max(pos, best[1] + 1)
+
 
 RIGHT_STRIP_CHARS = "`\"'“”)>]"  # zilliz 的反引号伪影
 RIGHT_STRIP_PUNCT = ".,;:"
@@ -1016,12 +1121,12 @@ def extract_index_links(text: str, base_url: str) -> list[IndexLink]:
         raws: list[tuple[Literal["markdown", "bare", "html_a", "relative"], str, str | None]] = []
         # ① relative 先跑：`[x](/path)` 这一形态既命中 MARKDOWN 也命中 RELATIVE，
         #    先跑 relative 才能把 extractor 标对（mailerlite / bytebase 的回归点）。
-        for m in LINK_RE_RELATIVE.finditer(line):
-            raws.append(("relative", m.group("url"), None))
-        for m in LINK_RE_MARKDOWN.finditer(line):
-            raws.append(("markdown", m.group("url"), m.group("text")))
-        for m in LINK_RE_HTML_A.finditer(line):
-            raws.append(("html_a", m.group("url"), None))
+        for _text, url in _bracket_links(line, relative=True):
+            raws.append(("relative", url, None))
+        for text_, url in _bracket_links(line, relative=False):
+            raws.append(("markdown", url, text_))
+        for url in _html_a_links(line):
+            raws.append(("html_a", url, None))
         for m in LINK_RE_BARE.finditer(line):
             raws.append(("bare", m.group(0), None))
 
@@ -2050,9 +2155,6 @@ __all__ = [
     "INDEX_LINKS_FULL_THRESHOLD",
     "INDEX_LINKS_SAMPLE_SIZE",
     "LINK_RE_BARE",
-    "LINK_RE_HTML_A",
-    "LINK_RE_MARKDOWN",
-    "LINK_RE_RELATIVE",
     "LLMS_FULL_DETAIL_KEYS",
     "MD_NEGOTIATION_GAP",
     "MD_PATTERNS",
