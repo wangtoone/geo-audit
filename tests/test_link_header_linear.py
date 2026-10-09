@@ -7,8 +7,9 @@
     <(?P<url>[^>]+)>\\s*;[^,]*rel\\s*=\\s*"?alternate"?[^,]*type\\s*=\\s*"?text/markdown"?
 
 响应头是被体检的站点自己发的，httpcore 允许整个响应头块到 100 KiB（``MAX_INCOMPLETE_EVENT_SIZE``）。
-这条正则对 ``<a>; rel=alternate `` 重复 N 次是 O(N^3)：25,000 字符 22 s，50,000 字符超过 60 s；
-对 ``<`` 重复 N 次是 O(N^2)：100,000 字符 16 s。每个 ``<`` 都把整个头再扫一遍，每个
+这条正则对 ``<a>; rel=alternate `` 重复 N 次是 O(N^3)：25,000 字符二十秒以上（空闲的笔记本 22 s，
+忙的机器上量到 59 s），50,000 字符超过 60 s；对 ``<`` 重复 N 次是 O(N^2)：100,000 字符十几秒。
+每个 ``<`` 都把整个头再扫一遍，每个
 ``rel=alternate`` 又把它后面的头再扫一遍找 ``type=``。
 
 ## 这组测试怎么证明「没改行为」
@@ -19,9 +20,11 @@
 1. 全部冻结响应里的每一个响应头值（含 192 个真实的 ``Link`` 头，其中 43 个命中），每个 ``Link``
    头再做大小写、去掉首个 ``<``、前面垫一段、逗号换分号等变体；
 2. 十万个由「标记词汇表」随机拼出来的头（含 ``\\s`` 接受的每一个空白字符、``K`` 开尔文符号、
-   ``ſ`` / ``ı``），四万个按结构拼出来的 ``Link`` 头（一到四个条目、参数顺序随机、随机改 1-3 处），
+   ``ſ`` / ``ı``），四万个按结构拼出来的 ``Link`` 头（一到四个条目、参数顺序随机、随机改 0-3 处，
+   约四成一处不改；参数里有差一点的写法：单引号、``:`` 代替 ``=``、``rev=``、``text/x-markdown``），
    两组都断言各种结果出现了足够多次 —— fuzz 不是空转；
-3. 穷举：两个字母表上所有不超过 6 / 5 个词的序列；
+3. 穷举：一个 8 词字母表上所有不超过 6 个词的序列；8 条命中或差一点命中的种子头的每一种「改一个
+   词」，其中两条的每一种「改两个词」；
 4. 一组逐条写出来的边角：``<>``、条目之间的逗号、``type`` 在 ``rel`` 之前、``rel`` 与
    ``type`` 被逗号隔开、每个 ``\\s`` 位置上的每一种空白、大小写、嵌套的 ``<``；
 5. 大输入：几十万个「走不通」的条目（逗号隔开，旧正则对它们也是线性的）再接一个匹配的条目。
@@ -29,9 +32,11 @@
 ## 它证明不了什么
 
 * 大输入只覆盖上面列出的形状，证明不了「实现里不存在任何上限」；
-* 计时守卫靠**增长倍数**抓平方级（同一个家族，最大一档 / 四分之一大小的耗时：线性约 4，平方约
-  16），与机器快慢、``--cov`` 插桩无关；绝对时间上限只兜立方 / 指数级的爆炸。靠墙钟抓不到常数级的
-  退化。
+* 计时守卫有两道。**增长倍数**：同一个家族，最大一档 / 四分之一大小的耗时（线性约 4，平方约
+  16；用 CPU 时间量，不受 CPU 被别的进程抢走的影响），但四分之一大小那一档快于 30 ms 的家族
+  （大部分）不看倍数。**绝对上限**：每 MB 10 s 再加 0.5 s，放得很宽；「输出不变但平方」的
+  写法大多是被它（或大输入对照测试的 ``SIGALRM`` 期限）杀掉的。靠计时抓不到常数级的退化；
+  Windows 上没有 ``SIGALRM``，大输入的对照测试遇到平方级退化会挂住而不是失败（POSIX 的几格会先红）。
 """
 
 from __future__ import annotations
@@ -40,6 +45,7 @@ import contextlib
 import random
 import re
 import signal
+import sys
 import time
 from collections.abc import Callable, Iterator
 
@@ -240,6 +246,10 @@ _REL_FORMS = [
     "rel=canonical",
     'rel="stylesheet alternate"',
     "rel",
+    "rel='alternate'",  # 单引号不算
+    "rel:alternate",
+    "rel==alternate",
+    "rev=alternate",
 ]
 _TYPE_FORMS = [
     'type="text/markdown"',
@@ -250,6 +260,9 @@ _TYPE_FORMS = [
     'type="text/markdown',
     "type=text/markdown; charset=utf-8",
     "type=text/markdownx",
+    "type='text/markdown'",  # 单引号不算
+    "type:text/markdown",
+    "type=text/x-markdown",
 ]
 _OTHER_FORMS = ['title="x"', "hreflang=en", "anchor=a,b", "media=print", "x"]
 _WS = ["", " ", "  ", "\t", chr(0xA0), chr(0x3000)]
@@ -475,6 +488,13 @@ _EDGE_CASES = [
     "<a>; REL=ALTERNATE; TYPE=TEXT/MARKDOWN",
     "<a>; rel=alternate; type=text/mar" + _KELVIN + "down",
     "<a>; rel=alterna" + _LONG_S + "te; type=text/markdown",
+    "<a>; rel='alternate'; type=text/markdown",  # 每个差一点的写法都配上另一半有效的
+    "<a>; rel=alternate; type='text/markdown'",
+    "<a>; rel:alternate; type=text/markdown",
+    "<a>; rel=alternate; type:text/markdown",
+    "<a>; rel=alternate; type=text/x-markdown",
+    "<a>; rev=alternate; type=text/markdown",
+    "<a>; rel==alternate; type=text/markdown",
     "<a>; rel=alternate; type=text/markdown, <b>; rel=alternate",
     "<a>; rel=alternate, <b>; type=text/markdown",
     "<a>; rel=alternate, <b>; rel=alternate; type=text/markdown",
@@ -597,6 +617,17 @@ _PATHOLOGICAL: dict[str, tuple[Callable[[int], str], bool]] = {
     # 很多个 ``<`` 共用远处的同一个 ``>``：每个 ``<`` 各自去找 ``>`` 就是平方级
     "many-lt-one-gt": (lambda n: "<" * n + ">", False),
     "many-lt-one-gt-then-semicolon": (lambda n: "<" * n + ">;", False),
+    # 同一个 ``>`` 之后各种「走不通」的收尾：每条路径都得是「从 gt 之后继续」，
+    # 从 ``<`` 之后重来就是平方级（这三条路径上 ``<`` 的重扫各自只在这里露出来）
+    "many-lt-one-gt-then-rel-comma-type": (
+        lambda n: "<" * n + ">; rel=alternate, type=text/markdown",
+        False,
+    ),
+    "many-lt-one-gt-then-rel-only": (lambda n: "<" * n + ">; rel=alternate", False),
+    "many-lt-one-gt-then-type-before-rel": (
+        lambda n: "<" * n + ">; type=text/markdown; rel=alternate",
+        False,
+    ),
     "gt-only": (lambda n: ">" * n, False),
     "no-lt": (lambda n: "x" * n, False),
     "lt-a-no-gt": (lambda n: "<a" * (n // 2), False),
@@ -627,6 +658,13 @@ _PATHOLOGICAL: dict[str, tuple[Callable[[int], str], bool]] = {
     # 很多个条目共用同一个远处的逗号：每个条目各自去找逗号就是平方级
     "entries-then-one-comma-then-rel": (
         lambda n: "<a>;x " * (n // 6) + ", rel=alternate; type=text/markdown",
+        True,
+    ),
+    # 许多条目共用同一处远方的 rel…alternate，紧接着它就是一个又长又贵的 type…text/markdown：
+    # 每个条目都问「rel 结尾处的下一个 type」，答案的起点恰好等于被问的位置；缓存判断里把
+    # ``>=`` 写成 ``>``，就会每个条目都重搜那一长串空白
+    "entries-then-glued-rel-type-with-long-whitespace": (
+        lambda n: "<a>;x," * (n // 12) + "rel=alternatetype" + " " * (n // 2) + "=text/markdown",
         True,
     ),
     "entries-empty-segments": (
@@ -673,11 +711,17 @@ def _limit(size: int) -> float:
     return 0.5 + size / 100_000
 
 
+#: 用 CPU 时间量：CPU 被别的进程抢走时（CI 上的邻居、同时跑的测试）墙钟会成倍变慢，而且短的
+#: 那一档比长的那一档更容易被撞上，增长倍数就假红。Windows 的 ``process_time`` 只有 15.6 ms 的
+#: 分辨率（比 30 ms 的下限还粗），那里只能用墙钟。
+_CLOCK = time.perf_counter if sys.platform == "win32" else time.process_time
+
+
 def _timed(header: str, limit: float) -> float:
-    t = time.perf_counter()
+    t = _CLOCK()
     with _deadline(limit * 3):
         ap._alternate_markdown_url(header)
-    return time.perf_counter() - t
+    return _CLOCK() - t
 
 
 @pytest.mark.parametrize("name", list(_PATHOLOGICAL))
@@ -697,6 +741,8 @@ def test_link_header_search_on_hostile_input_is_linear(name: str) -> None:
         # 重测一次：大的那次调用里碰上的一次停顿，看起来就像超线性增长
         times[small] = min(times[small], _timed(make(small), _limit(small)))
         times[big] = min(times[big], _timed(make(big), _limit(big)))
+        if times[small] < _MIN_MEASURABLE:
+            return  # 重测显示小的那一档其实低于下限：这个比值没有意义，只看上面的绝对上限
     growth = times[big] / times[small]
     assert growth <= _MAX_GROWTH, (
         f"{name}: {small} B {times[small]:.3f}s -> {big} B {times[big]:.3f}s, "
@@ -717,8 +763,8 @@ def test_identical_results_on_the_hostile_families_when_small(name: str) -> None
 
 
 def test_a_hostile_link_header_does_not_stall_the_page_signal() -> None:
-    """评审里的原始复现：旧代码对 100 KB 的 ``<a>; rel=alternate `` 重复头，
-    ``detect_md_signal_from_page`` 要几分钟。走真实的函数（含可见文字、横幅、``Link`` 头）。"""
+    """评审里的原始复现：旧代码对 25,000 字符的 ``<a>; rel=alternate `` 重复头就要二十秒以上，
+    100 KB 按立方外推要半小时以上。走真实的函数（含可见文字、横幅、``Link`` 头）。"""
     header = ("<a>; rel=alternate " * 6_000)[:100_000]
     resp = HttpResponse(
         url="https://docs.acme.invalid/",
@@ -764,6 +810,41 @@ def test_a_matching_link_header_sets_the_declaration_from_its_url() -> None:
     assert decl.negotiation_advertised is True
     assert decl.scope == "PREFIX"
     assert decl.scope_prefix == "https://docs.acme.invalid/md/"
+
+
+def test_a_relative_link_url_is_resolved_against_the_final_url_of_the_page() -> None:
+    """页面经过跳转：相对的 Link url 要以**最终**地址为基准，而不是最初请求的那个。"""
+    link = '</md/page.md>; rel="alternate"; type="text/markdown"'
+    redirected = HttpResponse(
+        url="https://old.example.test/start",
+        final_url="https://docs.example.test/guide/page",
+        status=200,
+        headers={"content-type": "text/html", "link": link},
+        body=b"<html><body><p>docs</p></body></html>",
+    )
+    decl = ap.detect_md_signal_from_page(redirected)
+    assert decl is not None
+    assert decl.scope == "PREFIX"
+    assert decl.scope_prefix == "https://docs.example.test/md/"
+    assert decl.source_url == "https://docs.example.test/guide/page"
+    assert "https://docs.example.test/md/page.md" in decl.declaration_text
+
+    # 同路径加 .md：与最终地址比，不与最初地址比
+    same_path = HttpResponse(
+        url="https://old.example.test/start",
+        final_url="https://docs.example.test/guide/page",
+        status=200,
+        headers={
+            "content-type": "text/html",
+            "link": (
+                '<https://docs.example.test/guide/page.md>; rel="alternate"; type="text/markdown"'
+            ),
+        },
+        body=b"<html><body><p>docs</p></body></html>",
+    )
+    decl = ap.detect_md_signal_from_page(same_path)
+    assert decl is not None
+    assert decl.scope == "ANY_PAGE"
 
 
 def test_a_link_header_without_the_markdown_alternate_is_not_a_signal() -> None:
@@ -833,3 +914,39 @@ def test_search_from_remembers_the_last_hit_without_changing_the_answer(
             reused += got is not None and got is previous
             previous = got
     assert found >= 1_000 and missing >= 1_000 and reused >= 500, (found, missing, reused)
+
+
+@pytest.mark.parametrize(
+    "pattern", [ap._REL_ALTERNATE_RE, ap._TYPE_MARKDOWN_RE, re.compile(r"ab+")]
+)
+def test_search_from_is_right_for_any_order_of_positions(pattern: re.Pattern[str]) -> None:
+    """只有「只增不减」才保证线性，但答案对任何顺序都得是对的（位置往回走时重搜一遍）。"""
+    rng = random.Random(8)
+    backwards = 0
+    for _ in range(3_000):
+        text = "".join(rng.choice(_SEARCH_PIECES) for _ in range(rng.randint(0, 25)))
+        searcher = ap._SearchFrom(pattern, text)
+        last = -1
+        for _ in range(rng.randint(2, 8)):
+            pos = rng.randint(0, len(text) + 1)
+            backwards += pos < last
+            want = pattern.search(text, pos)
+            got = searcher.at_or_after(pos)
+            assert (got.span() if got else None) == (want.span() if want else None), (text, pos)
+            last = pos
+    assert backwards >= 3_000, backwards
+
+
+@pytest.mark.parametrize("pattern", [ap._REL_ALTERNATE_RE, ap._TYPE_MARKDOWN_RE])
+def test_search_from_reuses_a_hit_that_starts_exactly_at_the_asked_position(
+    pattern: re.Pattern[str],
+) -> None:
+    """起点恰好等于被问位置的命中也是缓存命中：不再搜第二遍（计时测试里的
+    ``entries-then-glued-rel-type-with-long-whitespace`` 从另一头看的是同一件事）。"""
+    word = "rel=alternate" if pattern is ap._REL_ALTERNATE_RE else "type=text/markdown"
+    searcher = ap._SearchFrom(pattern, "xx" + word + "yy")
+    first = searcher.at_or_after(0)
+    assert first is not None
+    assert searcher.at_or_after(first.start()) is first
+    assert searcher.at_or_after(first.start()) is first
+    assert searcher.at_or_after(first.start() + 1) is None  # 之后没有了：记住的「没有」也是缓存

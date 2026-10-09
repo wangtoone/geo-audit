@@ -1496,34 +1496,41 @@ MD_NEGOTIATION_GAP = (
 # 它原来是一条正则（``re.I``）：
 #   <(?P<url>[^>]+)>\s*;[^,]*rel\s*=\s*"?alternate"?[^,]*type\s*=\s*"?text/markdown"?
 # 响应头是被体检的站点自己发的，httpcore 允许整个响应头块到 100 KiB。这条正则对
-# ``<a>; rel=alternate `` 重复 N 次是 O(N^3)（25,000 字符 22 s，50,000 字符超过 60 s），
-# 对 ``<`` 重复 N 次是 O(N^2)（100,000 字符 16 s）：每个 ``<`` 都把整个头再扫一遍，
+# ``<a>; rel=alternate `` 重复 N 次是 O(N^3)（25,000 字符要二十秒以上，50,000 字符要一分钟
+# 以上），对 ``<`` 重复 N 次是 O(N^2)（100,000 字符十几秒）：每个 ``<`` 都把整个头再扫一遍，
 # 每个 ``rel=alternate`` 又把它后面的头再扫一遍找 ``type=``。下面的函数返回与 ``search``
 # 完全相同的 ``url`` 组；原正则留在 tests/test_link_header_linear.py 里当对照。
+#
+# 现状：``pipeline._stage_md_channel`` 调 ``check_md_convention`` 时把 ``doc_home`` 恒传
+# ``None``，所以 CLI 目前不会走到 ``detect_md_signal_from_page``；它是公开函数（``__all__``），
+# 先把它写成线性，以后接上 ``doc_home`` 时不会踩雷。
 _REL_ALTERNATE_RE = re.compile(r'rel\s*=\s*"?alternate', re.I)
 _TYPE_MARKDOWN_RE = re.compile(r'type\s*=\s*"?text/markdown', re.I)
+#: 只能用 ``.match``：``.search`` 对一长串空白是平方级（每个起点都把整段空白再扫一遍）。
 _SEMICOLON_AFTER_WS_RE = re.compile(r"\s*;")
 
 
 class _SearchFrom:
     """``pattern.search(text, pos)``，``pos`` 只增不减时整段文本每个字符只被扫一遍。
 
-    记住上一次的命中：它的起点还在新的 ``pos`` 之后，它就是 ``pos`` 之后的第一个命中
-    （上一次是从更靠前的位置找的，中间没有别的命中）；上一次一个都没找到，更靠后的
-    ``pos`` 也找不到。"""
+    记住上一次的命中：上一次是从不晚于新 ``pos`` 的位置找的，它的起点还在新的 ``pos`` 之后，
+    它就是 ``pos`` 之后的第一个命中（中间没有别的命中）；上一次一个都没找到，更靠后的 ``pos``
+    也找不到。``pos`` 往回走时重新搜一遍 —— 结果永远是对的，只有「只增不减」才保证线性。"""
 
-    __slots__ = ("_hit", "_pattern", "_searched", "_text")
+    __slots__ = ("_from", "_hit", "_pattern", "_searched", "_text")
 
     def __init__(self, pattern: re.Pattern[str], text: str) -> None:
         self._pattern = pattern
         self._text = text
         self._searched = False
+        self._from = 0  # 上一次搜索的起点
         self._hit: re.Match[str] | None = None
 
     def at_or_after(self, pos: int) -> re.Match[str] | None:
-        if self._searched and (self._hit is None or self._hit.start() >= pos):
+        if self._searched and pos >= self._from and (self._hit is None or self._hit.start() >= pos):
             return self._hit
         self._hit = self._pattern.search(self._text, pos)
+        self._from = pos
         self._searched = True
         return self._hit
 
@@ -1565,7 +1572,7 @@ def _alternate_markdown_url(header: str) -> str | None:
         semi = _SEMICOLON_AFTER_WS_RE.match(header, pos)
         if semi is None:
             continue
-        start = semi.end()
+        start = semi.end()  # 逐个候选严格增大：下一个 ``<`` 在上一个 ``;`` 之后（空白里没有 ``<``）
         if comma < start:
             comma = header.find(",", start)
             if comma < 0:
