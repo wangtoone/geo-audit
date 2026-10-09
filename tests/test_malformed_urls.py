@@ -158,6 +158,16 @@ REAL_URLS = [
     "https://" + "a" * 63 + ".test/",  # 恰好 63 字符的标签
     "https://" + ".".join(["a" * 63, "b" * 63, "c" * 63, "d" * 61]) + "/",  # 恰好 253 字符的名字
 ]
+
+
+def _short_id(value: object) -> str | None:
+    """参数化用例的 id 要短：pytest 把它写进环境变量 ``PYTEST_CURRENT_TEST``，Windows 的环境变量
+    上限是 32,767 个字符（70 KB 的 ``data:`` URI 当 id 直接让 setup / teardown 报错）。"""
+    if isinstance(value, str) and len(value) > 80:
+        return f"{value[:30]}...<{len(value)} chars>"
+    return None
+
+
 #: 响应头里只能有 ASCII（httpx 编码头值用 ascii）：``Location`` 的测试只用这些
 ASCII_BAD_URLS = [u for u in ALL_BAD_URLS if u.isascii() and u.isprintable()]
 #: httpx 自己会在读响应时拒绝一部分坏 ``Location``（``RemoteProtocolError``）；其余的由我们的
@@ -233,7 +243,7 @@ def test_urllib_rejects_these_and_so_do_we(url: str) -> None:
     assert split_or_none(url) is None and not requestable(url)
 
 
-@pytest.mark.parametrize("url", [*HTTPX_BAD_URLS, *DNS_BAD_URLS])
+@pytest.mark.parametrize("url", [*HTTPX_BAD_URLS, *DNS_BAD_URLS], ids=_short_id)
 def test_urllib_accepts_these_but_the_request_cannot_be_made(url: str) -> None:
     """两层：``split_or_none``（urllib 能拆吗）放行，``requestable``（请求发得出去吗）拒绝。"""
     urlsplit(url).port  # noqa: B018 - 前提：urllib 放行（这两张表存在的理由）
@@ -241,13 +251,13 @@ def test_urllib_accepts_these_but_the_request_cannot_be_made(url: str) -> None:
     assert not requestable(url)
 
 
-@pytest.mark.parametrize("url", HTTPX_BAD_URLS)
+@pytest.mark.parametrize("url", HTTPX_BAD_URLS, ids=_short_id)
 def test_httpx_really_rejects_the_httpx_table(url: str) -> None:
     with pytest.raises((ValueError, httpx.InvalidURL)):
         httpx.URL(url).host  # noqa: B018
 
 
-@pytest.mark.parametrize("url", DNS_BAD_URLS)
+@pytest.mark.parametrize("url", DNS_BAD_URLS, ids=_short_id)
 def test_httpx_lets_the_dns_table_through_which_is_why_the_labels_are_checked(url: str) -> None:
     httpx.URL(url).host  # noqa: B018 - 前提：httpx 放行，DNS 才是拦它的那一层
 
@@ -265,7 +275,7 @@ def test_requestable_rejects_a_url_longer_than_httpx_allows() -> None:
     assert split_or_none(url) is not None and not requestable(url)
 
 
-@pytest.mark.parametrize("url", REAL_URLS)
+@pytest.mark.parametrize("url", REAL_URLS, ids=_short_id)
 def test_real_world_urls_are_accepted(url: str) -> None:
     assert split_or_none(url) is not None and requestable(url)
 
@@ -310,7 +320,7 @@ def test_dns_name_is_the_name_the_request_connects_to() -> None:
 
 
 # ── 2. Fetcher ───────────────────────────────────────────────────────────────
-@pytest.mark.parametrize("location", ASCII_BAD_URLS)
+@pytest.mark.parametrize("location", ASCII_BAD_URLS, ids=_short_id)
 def test_a_redirect_to_an_unparseable_location_is_a_transport_error(
     make_fetcher: Callable[..., Fetcher], location: str
 ) -> None:
@@ -376,7 +386,7 @@ def test_a_robots_txt_that_redirects_to_garbage_is_unreadable_not_a_crash(
     assert "https://x.test/p" not in site.requested
 
 
-@pytest.mark.parametrize("url", ALL_BAD_URLS)
+@pytest.mark.parametrize("url", ALL_BAD_URLS, ids=_short_id)
 def test_a_url_that_cannot_be_parsed_is_never_requested(
     make_fetcher: Callable[..., Fetcher], url: str
 ) -> None:
@@ -470,7 +480,7 @@ def test_unparseable_hrefs_are_extracted_as_links_not_dropped_and_not_fatal() ->
     ]  # 原串去掉首尾空白：身份稳定
 
 
-@pytest.mark.parametrize("url", ALL_BAD_URLS)
+@pytest.mark.parametrize("url", ALL_BAD_URLS, ids=_short_id)
 def test_classify_link_excludes_an_unparseable_url_and_sends_nothing(url: str) -> None:
     verdict = dl.classify_link(
         url,
@@ -1103,7 +1113,7 @@ def _everywhere_site(
 
 
 @pytest.mark.parametrize("n_good,n_index", [(3, 3), (30, 30), (200, 150)])
-@pytest.mark.parametrize("bad", ASCII_BAD_URLS)
+@pytest.mark.parametrize("bad", ASCII_BAD_URLS, ids=_short_id)
 def test_a_garbage_url_in_every_place_the_audit_reads_still_gets_a_report(
     make_fetcher: Callable[..., Fetcher], tmp_path: Path, bad: str, n_good: int, n_index: int
 ) -> None:
@@ -1590,6 +1600,7 @@ def test_the_pinned_ip_retry_builds_a_valid_request(
         "javascript:void(0)\x01",
         "tel:+1\x00",
     ],
+    ids=_short_id,
 )
 def test_a_non_http_link_stays_non_http_scheme_even_when_httpx_would_refuse_it(href: str) -> None:
     """``unparseable_url`` 排在去噪规则之后：它们原来就是 ``non_http_scheme``，不是「解析不了」"""
