@@ -37,7 +37,8 @@ llms.txt 是被体检的站点自己提供的，一行可以有几 MB。``extrac
 
 * 超大输入只覆盖上面列出的尺寸和形状，证明不了「实现里不存在任何上限」；
 * 计时守卫有两道。**增长倍数**：同一个家族，最大一档 / 四分之一大小的耗时（线性约 4，平方约
-  16），与机器快慢、``--cov`` 插桩无关，但四分之一大小那一档快于 30 ms 的家族（约一半）不看倍数。
+  16；用 CPU 时间量，不受 CPU 被别的进程抢走的影响），但四分之一大小那一档快于 30 ms 的家族
+  （约一半）不看倍数。
   **绝对上限**：每 MB 10 s 再加 0.5 s，放得很宽；「输出不变但平方」的写法实际上是被它（或超大输入
   对照测试的 ``SIGALRM`` 期限）杀掉的，增长倍数只是能量得出来的家族上多一层保险。靠墙钟抓不到
   常数级的退化；Windows 上没有 ``SIGALRM``，超大输入的对照测试遇到平方级退化会挂住而不是失败
@@ -50,6 +51,7 @@ import contextlib
 import random
 import re
 import signal
+import sys
 import time
 from collections.abc import Callable, Iterator
 from typing import Any
@@ -751,11 +753,17 @@ def _limit(size: int) -> float:
     return 0.5 + size / 100_000
 
 
+#: 用 CPU 时间量：CPU 被别的进程抢走时（CI 上的邻居、同时跑的测试）墙钟会成倍变慢，而且短的
+#: 那一档比长的那一档更容易被撞上，增长倍数就假红。Windows 的 ``process_time`` 只有 15.6 ms 的
+#: 分辨率（比 30 ms 的下限还粗），那里只能用墙钟。
+_CLOCK = time.perf_counter if sys.platform == "win32" else time.process_time
+
+
 def _timed(line: str, limit: float) -> float:
-    t = time.perf_counter()
+    t = _CLOCK()
     with _deadline(limit * 3):
         _scan(line)
-    return time.perf_counter() - t
+    return _CLOCK() - t
 
 
 @pytest.mark.parametrize("name", list(_PATHOLOGICAL))
@@ -775,6 +783,8 @@ def test_link_extraction_on_hostile_input_is_linear(name: str) -> None:
         # 重测一次：大的那次调用里碰上的一次停顿，看起来就像超线性增长
         times[small] = min(times[small], _timed(make(small), _limit(small)))
         times[big] = min(times[big], _timed(make(big), _limit(big)))
+        if times[small] < _MIN_MEASURABLE:
+            return  # 重测显示小的那一档其实低于下限：这个比值没有意义，只看上面的绝对上限
     growth = times[big] / times[small]
     assert growth <= _MAX_GROWTH, (
         f"{name}: {small} B {times[small]:.3f}s -> {big} B {times[big]:.3f}s, "
