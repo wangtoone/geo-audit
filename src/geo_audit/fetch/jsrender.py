@@ -59,15 +59,18 @@ THIN_TEXT_LEN = 500
 # (or the end of the page) and then gives characters back one at a time looking for ``id=``, and
 # every ``<div`` start did that again over the same text: N copies of ``<div id='app'`` with no
 # ``>`` cost O(N^3), ``<div `` / ``<script `` / ``<noscript `` x N cost O(N^2).
-# ``classify_response`` runs this on every HTML response, so a hostile -- or merely broken -- page
-# could stall an audit.
+# ``classify_response`` runs this on every HTML response that is not blocked, 404/410 or 5xx (and
+# ``geo-audit page`` runs it too), so a hostile -- or merely broken -- page could stall an audit.
 #
 # Each signal is only ever used as a yes/no, so each is computed per TAG instead: the first
 # ``<div`` after a ``>`` fixes where its tag ends (the next ``>``), and any later ``<div`` before
 # that ``>`` has the same end and a shorter attribute span, so it cannot match when the first one
 # does not.  Every tag is therefore looked at once.  The pieces are the original patterns
-# (``re.I``, ``\s`` and all) applied to a bounded range; the tests keep the old single regexes as
-# the oracle and compare yes/no on the frozen corpus and on fuzzed pages.
+# (``re.I``, ``\s`` and all).  Only the searches inside a tag are bounded by its ``>``; the ones
+# after it (``\s*</div>``, the next ``-->``, the demand phrase) run as far as they need to and
+# stay linear because each is cached or resumed where the previous one stopped.  The tests keep
+# the old single regexes as the oracle and compare yes/no on the frozen corpus and on fuzzed
+# pages.
 
 #: ``re.I`` also accepts look-alike spellings (``ı`` / ``İ`` for ``i``, ``ſ`` for
 #: ``s``) -- keep it on every piece, exactly like the original patterns.
