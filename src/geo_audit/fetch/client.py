@@ -598,6 +598,29 @@ class Fetcher:
             if 300 <= resp.status < 400 and "location" in resp.headers:
                 target = urljoin(current, resp.headers["location"])
                 hops.append(RedirectHop(status=resp.status, from_url=current, to_url=target))
+                # **每一跳都按目标的 robots 复查。** 原来只有 fetch() 入口查一次：
+                # 实测探 `www.meshy.cn/` → 301 → `meshy.cn/`，apex 对我们的 UA 是
+                # `Disallow: /`，照样抓了并判 discovery:www.meshy.cn = pass —— 同一份
+                # 内容，从 apex 进是「robots 禁止」，从 www 进是「通过」。
+                # 换 host 与只换路径都要查（同 host 的 `/a` → `/private/b` 也可能被禁）；
+                # parser 按 host 缓存，同 host 的复查不再发请求。
+                # 不许抓时停在这里，返回与入口同一种标记响应（robots_disallowed /
+                # robots_unreadable → UNKNOWN），已走过的跳转留在 redirects 里作证据。
+                # `robots_verdict` 自己认 respect_robots，--ignore-robots 时不查。
+                # 取 robots.txt 本身（robots=True）不查：那条链按 RFC 9309 §2.3.1.2
+                # 跟到哪算哪，而且在这里查会对正在取 robots 的 host 递归调 robots_for。
+                if not robots:
+                    verdict = self.robots_verdict(target)
+                    if verdict != "allowed":
+                        return HttpResponse(
+                            url=url,
+                            final_url=target,
+                            status=0,
+                            headers={},
+                            body=b"",
+                            redirects=tuple(hops),
+                            transport_error=self._robots_block_marker(target, verdict),
+                        )
                 current = target
                 continue
 
