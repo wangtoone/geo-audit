@@ -25,10 +25,11 @@ import re
 from collections.abc import Iterator, Sequence
 from dataclasses import dataclass
 from typing import Literal
-from urllib.parse import urljoin, urlsplit
+from urllib.parse import urlsplit
 
 from selectolax.lexbor import LexborHTMLParser, LexborNode
 
+from .fetch.urlsafe import join_or_none
 from .models import LinkContext
 
 # finding 身份的唯一口径在 rootcause（§5.4:2838）。本文件原先自带一份实现，
@@ -427,7 +428,12 @@ def _target_of(
     if raw is None:
         return None
     anchor_html = str(node.html or "")
-    abs_url = urljoin(source_page, raw)
+    joined = join_or_none(source_page, raw)
+    # 站点上的 href 解析不了（占位符漏进了模板：``https://[your-domain]/docs``、``http://[``）：
+    # 仍抽成一条链接，抽取层不替它下结论 —— ``classify_link`` 会把它排除、写明原因，一个请求都不发
+    # （见 ``fetch.urlsafe``）。它的 abs_url 就是 href 原串（去掉首尾空白），``normalize_url``
+    # 对解析不了的 URL 原样返回，所以 norm_url 也是；后面只拿它们当字符串用。
+    abs_url = joined if joined is not None else raw.strip()
     ctx = LinkContext(
         source_page=source_page,
         anchor_text=" ".join((node.text() or "").split()),
@@ -444,7 +450,7 @@ def _target_of(
         ctx=ctx,
         container_sig=container_sig(node),
         region=region_of(node),
-        path_shape=path_shape(urlsplit(abs_url).path),
+        path_shape=path_shape(urlsplit(abs_url).path if joined is not None else ""),
         anchor_label=_anchor_label(node),
         class_tokens=_class_tokens(node),
         inline_style=_attr(node, "style"),

@@ -36,6 +36,13 @@ from ..fetch.client import Fetcher
 from ..fetch.denoise import EligibilityExclusion, classify_link_pre, position_class_of
 from ..fetch.ratelimit import registrable_domain
 from ..fetch.resolve import HostResolver, Resolution
+from ..fetch.urlsafe import (
+    UNPARSEABLE_REASON,
+    UNPARSEABLE_RULE_ID,
+    is_url_error,
+    requestable,
+    split_or_none,
+)
 from ..fixtures import DnsFixtureMissing, FixtureMissing, FixtureStore
 from ..models import (
     Expect,
@@ -414,7 +421,8 @@ def _nxdomain_confirmed(dns: Resolution) -> bool:
 
 
 def _transport_error_kind(err: str | None) -> str | None:
-    if not err:
+    if not err or is_url_error(err):
+        # 空，或「URL 发不出请求」那三条：后者引着站点自己的 URL，不能拿子串猜它是超时 / TLS / 重置
         return None
     e = err.lower()
     if any(t in e for t in _MAX_REDIRECT_TOKENS):
@@ -662,6 +670,20 @@ def _collect_confirmations(
 # --------------------------------------------------------------------------- #
 
 
+def _unparseable_verdict(url: str, evidence: str) -> LinkVerdict:
+    """EXCLUDED / ``unparseable_url``：这条链接发不出请求，本工具没有检查它。"""
+    unparseable = EligibilityExclusion(UNPARSEABLE_RULE_ID, UNPARSEABLE_REASON)
+    return LinkVerdict(
+        url=url,
+        state=LinkState.EXCLUDED,
+        reason=unparseable.reason,
+        rule_id=unparseable.rule_id,
+        disposition="excluded",
+        exclusions=(unparseable,),
+        evidence=(evidence,),
+    )
+
+
 def classify_link(
     url: str,
     *,
@@ -696,6 +718,15 @@ def classify_link(
     除 ``url`` / ``source_page`` / ``ctx`` / ``client`` / ``store`` 五个规格形参外
     全部是 keyword-only 且带默认值的补充（见交付说明 deviations）。
     """
+    # ---- URL 本身解析不了：不是死链也不是活链，是「没法检查」 ---------------------- #
+    # ``http://[``、``https://[your-domain]/docs``、``http://h:abc/`` 这类 href 在站点上真实存在
+    # （占位符漏进了模板）。urllib 会抛 ValueError，而下面从分类位置到去噪规则每一步都要解析
+    # URL，所以最先拦。它仍占「已抽取」的一格，进「被排除」清单并写明原因（见
+    # ``fetch.urlsafe``），一个请求都不发，也不当成死链。它不在 ``DEAD_LINK_RULE_IDS`` 里：不是
+    # 去噪规则，是「请求发得出去」的前提，没有开关。
+    if split_or_none(url) is None:
+        return _unparseable_verdict(url, "URL 无法解析，一次请求都没发")
+
     exclusions: list[EligibilityExclusion] = []
     disposition: Literal["counted", "excluded", "needs_review"] = "counted"
     confidence: Literal["confirmed", "needs_review"] = "confirmed"
@@ -732,6 +763,14 @@ def classify_link(
                 )
             disposition = "needs_review"
             confidence = "needs_review"
+
+    # ---- 能解析、但发不出请求（httpx / DNS 拒绝它）：同样是「没法检查」。排在去噪规则之后：
+    # 一条 ``data:`` / ``mailto:`` 链接带控制字符、或长过 httpx 的 65536 字符上限，仍然是
+    # ``non_http_scheme``（原来的结论），不是「解析不了」。
+    if not requestable(url):
+        return _unparseable_verdict(
+            url, "URL 能解析但发不出请求（httpx / DNS 拒绝它），一次请求都没发"
+        )
 
     # ---- DNS：解析失败永远不是死链（resolve.R1–R4）--------------------- #
     host = (urlsplit(url).hostname or "").lower()
@@ -904,6 +943,12 @@ def classify_link(
         return _unknown("host_unprobeable", "根路径与随机路径都不可信，该 host 整体判不了")
 
     confirmations = confirmations or facts.alive_urls
+    # 没有拿到任何 HTTP 响应（跳转成环、跳转指向一个解析不了的地址、对端中途断开……）而前面的
+    # 规则又都没认出它：什么都没观测到，不判死也不判活。原来不认识的 transport_error 一路落到下面的
+    # ``DEAD if dead else ALIVE``，一条浏览器也打不开的链接被记成「活着」。
+    if status == 0:
+        why = (resp.transport_error if resp is not None else "") or probe.classification.reason
+        return _unknown("no_http_response", f"没有拿到 HTTP 响应（{why}），不判死也不判活")
     dead = is_dead(probe, facts.control, confirmations, exclusions, dns=dns)
     state = LinkState.DEAD if dead else LinkState.ALIVE
     return LinkVerdict(
