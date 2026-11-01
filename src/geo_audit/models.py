@@ -466,6 +466,7 @@ class HostRole(str, Enum):
     SUPPORT = "support"
     PLATFORM = "platform"
     DECLARED = "declared"  # mined out of robots.txt / llms.txt / page banner
+    ENTERED = "entered"  # the subdomain the user typed; the audit root is its registrable domain
 
 
 @dataclass(frozen=True, slots=True)
