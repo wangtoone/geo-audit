@@ -1011,9 +1011,7 @@ def domain_unreachable(sitemap: SiteMap) -> bool:
     ⚠️ **BLOCKED 不算不可达**：gusto.com 全站对 curl 403，报告照常生成、退出码 2
     （§2.9 的 gusto 锚点）。把被拦截算成不可达就把它错杀成 3。
     """
-    core = [
-        h for h in sitemap.hosts if h.role in (HostRole.APEX, HostRole.WWW, HostRole.ENTERED)
-    ]
+    core = [h for h in sitemap.hosts if h.role in (HostRole.APEX, HostRole.WWW, HostRole.ENTERED)]
     if not core:
         return True
     return all(h.verdict is Verdict.UNKNOWN and h.reason in _UNREACHABLE_REASONS for h in core)
