@@ -475,6 +475,36 @@ def test_declared_host_on_another_registrable_domain_is_discovered(
     assert registrable_domain("platform.kimi.ai") != registrable_domain("www.moonshot.ai")
 
 
+def test_subdomain_input_is_rerooted_to_the_registrable_domain(
+    fetcher_factory: Callable[[FakeSite], Fetcher],
+) -> None:
+    """敲 ``framia.example.ai`` 要体检的是 ``example.ai`` 这个站，而不是把子域当站点根。
+
+    apex / www 探测落在注册域上，用户敲的那个子域另记一格 ENTERED，且照样被探。
+    """
+    hosts = ("example.ai", "www.example.ai", "framia.example.ai")
+    site = FakeSite({f"https://{h}/": (200, "text/html", "<title>home</title>") for h in hosts})
+    resolver = _resolver(*hosts)
+    sm = discovery.discover(fetcher_factory(site), "framia.example.ai", resolver=resolver)
+    roles = {h.host: h.role for h in sm.hosts}
+    assert roles["example.ai"] is HostRole.APEX
+    assert roles["www.example.ai"] is HostRole.WWW
+    assert roles["framia.example.ai"] is HostRole.ENTERED
+    assert sm.registrable_domain == "example.ai"
+    assert "https://framia.example.ai/llms.txt" in _probe_urls(sm)
+    assert "https://example.ai/llms.txt" in _probe_urls(sm)
+
+
+def test_apex_input_has_no_entered_host(
+    fetcher_factory: Callable[[FakeSite], Fetcher],
+) -> None:
+    site = FakeSite({})
+    sm = discovery.discover(
+        fetcher_factory(site), "example.ai", resolver=_resolver("example.ai", "www.example.ai")
+    )
+    assert HostRole.ENTERED not in {h.role for h in sm.hosts}
+
+
 # --------------------------------------------------------------------------- #
 # WAF 第三状态：BLOCKED 不判死、不丢弃
 # --------------------------------------------------------------------------- #

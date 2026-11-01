@@ -513,6 +513,13 @@ def discover(
     """
     apex, www = normalize_input_domain(raw_domain)
     reg = registrable_domain(apex)
+    # 输入的是子域（framia.converge.ai）时，站点根是注册域（converge.ai），不是用户
+    # 敲的那个 host：否则 apex/www 双向探测、16 个前缀枚举、定价页都在子域上打转，
+    # 永远找不到母站。用户敲的那个子域另记一格，tier0 照样探它。
+    entered_host: str | None = None
+    if apex != reg:
+        entered_host = apex
+        apex, www = reg, f"www.{reg}"
     acct = DiscoveryBudget(budget)
     active = tuple(t for t in TIER_ORDER if t in tiers and (t != TIER3 or wellknown))
 
@@ -558,6 +565,8 @@ def discover(
         candidates: list[tuple[str, HostRole]] = []
         if tier == TIER0:
             candidates = [(apex, HostRole.APEX), (www, HostRole.WWW)]
+            if entered_host is not None:
+                candidates.append((entered_host, HostRole.ENTERED))
         elif tier == TIER1:
             # 站点自身声明：moonshot.ai 的文档站在 platform.kimi.ai —— 完全不同的
             # 注册域，任何前缀枚举都到不了，只能靠它自己写出来的那条横幅。

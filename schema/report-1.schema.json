@@ -674,7 +674,8 @@
         "docs",
         "support",
         "platform",
-        "declared"
+        "declared",
+        "entered"
       ]
     },
     "HttpResponse": {
