@@ -30,6 +30,7 @@ from dataclasses import dataclass, field
 from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
 from .fetch.ratelimit import registrable_domain
+from .fetch.urlsafe import split_or_none
 
 # RootCause 已按本文件原占位注释里的三步搬进 models.py（A6：唯一定义处）。
 from .models import RootCause, Severity, make_finding_id
@@ -71,8 +72,12 @@ def normalize_url(url: str) -> str:
       * 空 path 与 ``/`` 都折成 ``/`` —— 两者是同一个资源，不折会让身份分叉。
         （``extract.normalize_url`` 现在把空 path 留空，是本函数与它唯一的差异；
         见交付说明 key_decisions。）
+
+    解析不了的 URL（站点写的 ``http://[``）原样（去首尾空白）返回：身份仍然稳定，也不会炸。
     """
-    parts = urlsplit(url.strip())
+    parts = split_or_none(url.strip())
+    if parts is None:
+        return url.strip()
     kept = [
         (k, v)
         for k, v in parse_qsl(parts.query, keep_blank_values=True)
@@ -88,8 +93,14 @@ def url_host(url: str) -> str:
 
 
 def path_segments(url_or_path: str) -> tuple[str, ...]:
-    """路径按段切开，空段丢掉。``/a/b/`` 与 ``/a/b`` 同为 ``("a", "b")``。"""
-    path = urlsplit(url_or_path).path if "//" in url_or_path else url_or_path
+    """URL 的路径按段切开，空段丢掉。``/a/b/`` 与 ``/a/b`` 同为 ``("a", "b")``。
+
+    吃的是 URL（含协议相对的 ``//host/a``），不是路径：路径要自己 ``split("/")``。解析不了的串
+    当路径用，不抛。"""
+    path = url_or_path
+    if "//" in url_or_path:
+        parts = split_or_none(url_or_path)
+        path = parts.path if parts is not None else url_or_path
     return tuple(seg for seg in path.split("/") if seg)
 
 
@@ -485,7 +496,9 @@ def _is_help_host(host: str) -> bool:
 def _detect_relative_path_prefixed(target: DeadTarget, ledger: ProbeLedger) -> DefectVerdict | None:
     src_segs = path_segments(target.source_page)
     tgt_path = urlsplit(target.norm_url).path
-    tgt_segs = path_segments(tgt_path)
+    # 这是路径，不是 URL：以 ``//`` 开头的路径（``https://host//locale/docs`` 的路径是
+    # ``//locale/docs``）交给 ``path_segments`` 会被当成 ``//host/path``，``locale`` 变成主机
+    tgt_segs = tuple(seg for seg in tgt_path.split("/") if seg)
     if not src_segs or len(tgt_segs) <= len(src_segs):
         return None
     if url_host(target.source_page) != target.host:

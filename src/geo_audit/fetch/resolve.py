@@ -82,6 +82,11 @@ def _system_resolve(host: str) -> tuple[tuple[str, ...], str | None]:
         infos = socket.getaddrinfo(host, 443, proto=socket.IPPROTO_TCP)
     except socket.gaierror as exc:
         return (), f"getaddrinfo: {exc}"
+    except UnicodeError as exc:
+        # 主机名编不成 DNS 标签：空标签（``docs..vendor.io``，模板里的变量没填）、超过 63 字符
+        # 的标签、只在 IDNA-2008 下合法的名字（标准库的 IDNA-2003 编码器拒绝）。解析不出来，
+        # 不是崩溃的理由。
+        return (), f"getaddrinfo: {type(exc).__name__}: {exc}"
     except OSError as exc:  # pragma: no cover
         return (), f"socket: {exc}"
     # typeshed 里 sockaddr[0] 是 str | int（AF_PACKET 之类的家族），
