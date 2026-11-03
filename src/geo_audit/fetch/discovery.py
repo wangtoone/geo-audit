@@ -31,11 +31,13 @@ from collections.abc import Iterable, Sequence
 from typing import Final
 from urllib.parse import urlsplit, urlunsplit
 
+from ..checks.seo_facts import build_seo_facts, unreadable_facts
 from ..models import (
     ApexWwwResult,
     DiscoveredHost,
     Expect,
     HostRole,
+    PageSeoFacts,
     Probe,
     RobotsInfo,
     SiteMap,
@@ -539,6 +541,7 @@ def discover(
     #: 拿到过正文的响应，喂 ``mine_declared_hosts``
     bodies: list[str] = []
     tiers_run: list[str] = []
+    root_pages: dict[str, PageSeoFacts] = {}
 
     def record(probes: Iterable[Probe]) -> None:
         for probe in probes:
@@ -557,7 +560,9 @@ def discover(
             discovered, root = probe_host_root(fetcher, host, role, resolver=resolver, budget=acct)
             hosts.append(discovered)
             if root is None:
+                root_pages[host] = unreadable_facts(host, f"https://{host}/", discovered.reason)
                 continue
+            root_pages[host] = build_seo_facts(host, root)
             if root.response is not None and root.response.body:
                 bodies.append(root.response.text)
             if host_is_live(root):
@@ -640,4 +645,5 @@ def discover(
         requests_spent=acct.spent,
         budget_exhausted=acct.exhausted,
         skipped_by_budget=tuple(acct.skipped),
+        root_pages=root_pages,
     )

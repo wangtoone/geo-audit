@@ -407,6 +407,30 @@
   </ol>
 </section>
 
+{# ══════ #seo —— 首页 SEO 事实（只陈述，推断标明）════════ #}
+<section id="seo">
+  <h2>{{ copy["seo_title"] }}</h2>
+  <p class="small">{{ copy["seo_intro"] }}</p>
+  {% for f in r.seo_facts %}
+  <dl class="kv">
+    <dt>{{ f.host }}</dt>
+    {% if f.unreadable_reason %}
+    <dd>{{ copy["seo_unreadable"].format(reason=f.unreadable_reason) }}</dd>
+    {% else %}
+    <dd>HTTP {{ f.status }} · noindex：{{ "是" if f.noindex else "否" }} · canonical：{{ f.canonical_relation }}{% if f.canonical %}（{{ f.canonical }}）{% endif %}
+      · title：{{ f.title or "无" }} · H1：{{ f.h1|length }} 个{% if f.h1 %}（{{ f.h1[0] }}）{% endif %}
+      · hreflang：{{ f.hreflang|length }} 条
+      · 原始 HTML（推断）：{{ f.raw_html_tier }}，可见文字 {{ f.visible_text_len }} 字符
+      {% if f.framework_signals %}· 框架（推断）：{{ f.framework_signals|join("、") }}{% endif %}
+      {% if f.delivery_hint %}· 交付方式（推断）：{{ f.delivery_hint }}{% endif %}
+      {% if f.flags %}<span class="tag">{{ f.flags|join(" ") }}</span>{% endif %}</dd>
+    {% endif %}
+  </dl>
+  {% else %}
+  <p>{{ copy["seo_none"] }}</p>
+  {% endfor %}
+</section>
+
 {# ══════ #apex —— 裸域/www 双向探测（标 single_case，不进首页计数）════════ #}
 <section id="apex">
   <h2>{{ copy["apex_title"] }}</h2>

@@ -181,6 +181,8 @@ NOT_CHECKED: tuple[str, ...] = (
     "定期扫描 / 监控",
     "托管 web 版（会让 --contact 这条合规约束当场失效）",
     "Playwright 渲染（合规不绕 WAF，且实测只有 2/72 = 2.8% 盲区）",
+    "渲染对比（爬虫看到的 vs 用户看到的）：默认版没做，看不到两者的冲突，归入「没挖到」",
+    "SEO 事实只覆盖首页：关键页面、sitemap 有效性、robots 对搜索爬虫的规则、实际收录与排名都没查",
     "--serve 本地服务",
 )
 
@@ -1981,6 +1983,7 @@ def _assemble(
         coverage_gaps=tuple(st.coverage_gaps),
         excluded=tuple(st.excluded),
         apex_www=sitemap.apex_www if sitemap is not None else None,
+        seo_facts=tuple(sitemap.root_pages.values()) if sitemap is not None else (),
         coverage=coverage,
         counts=counts,
     )

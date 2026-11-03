@@ -808,6 +808,112 @@
       ],
       "type": "object"
     },
+    "PageSeoFacts": {
+      "additionalProperties": false,
+      "properties": {
+        "canonical": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "canonical_relation": {
+          "type": "string"
+        },
+        "delivery_hint": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "final_url": {
+          "type": "string"
+        },
+        "flags": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "framework_signals": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "h1": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "host": {
+          "type": "string"
+        },
+        "hreflang": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "meta_description": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "noindex": {
+          "type": "boolean"
+        },
+        "raw_html_tier": {
+          "type": "string"
+        },
+        "status": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "title": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "unreadable_reason": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "url": {
+          "type": "string"
+        },
+        "visible_text_len": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "host",
+        "url",
+        "final_url",
+        "status",
+        "title",
+        "h1",
+        "meta_description",
+        "canonical",
+        "canonical_relation",
+        "noindex",
+        "hreflang",
+        "visible_text_len",
+        "raw_html_tier",
+        "framework_signals",
+        "delivery_hint",
+        "flags",
+        "unreadable_reason"
+      ],
+      "type": "object"
+    },
     "Position": {
       "additionalProperties": false,
       "properties": {
@@ -1174,6 +1280,12 @@
           },
           "type": "object"
         },
+        "root_pages": {
+          "additionalProperties": {
+            "$ref": "#/$defs/PageSeoFacts"
+          },
+          "type": "object"
+        },
         "sitemap_urls": {
           "additionalProperties": {
             "items": {
@@ -1319,6 +1431,12 @@
     },
     "schema_version": {
       "const": "geo-audit/report/1"
+    },
+    "seo_facts": {
+      "items": {
+        "$ref": "#/$defs/PageSeoFacts"
+      },
+      "type": "array"
     },
     "tool_version": {
       "type": "string"
