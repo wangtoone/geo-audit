@@ -466,7 +466,10 @@ def host_is_live(root: Probe) -> bool:
     gusto.com（Cloudflare 403 挑战页）与 www.pipedrive.com（429）背后都是真
     llms.txt。把它们丢掉就是「软 404 让采纳率虚高」的反向孪生错误 —— 虚低。
     """
-    return root.verdict in (Verdict.OK, Verdict.BLOCKED)
+    # needs_js 只说「页面正文要 JS 才可读」，不说这个 host 不在线：llms.txt /
+    # robots.txt / sitemap.xml 是纯文本，照探。漏了它们，SPA 站的 AI 路径一条
+    # 都不探，下游却会把「没探」读成「没有」（combos.converge.ai 的首屏误报）。
+    return root.verdict in (Verdict.OK, Verdict.BLOCKED) or root.classification.needs_js
 
 
 def _resolvable(hosts: Iterable[tuple[str, HostRole]], resolver: HostResolver | None) -> list[str]:
