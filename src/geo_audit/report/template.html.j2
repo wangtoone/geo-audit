@@ -431,6 +431,34 @@
   {% endfor %}
 </section>
 
+{# ══════ #robots —— robots.txt 与 sitemap 事实 ════════ #}
+<section id="robots">
+  <h2>{{ copy["robots_title"] }}</h2>
+  <p class="small">{{ copy["robots_intro"] }}</p>
+  {% for rb in r.robots_facts %}
+  <dl class="kv">
+    <dt>{{ rb.host }} · robots.txt</dt>
+    {% if not rb.readable %}
+    <dd>{{ copy["robots_unreadable"].format(why=rb.why or rb.status) }}</dd>
+    {% else %}
+    <dd>HTTP {{ rb.status }} · {{ rb.policy }} · 声明 sitemap {{ rb.sitemaps_declared|length }} 个
+      {% for c in rb.crawlers if c.access != "allowed" %}· {{ c.token }}：{{ c.access }} {% endfor %}</dd>
+    {% endif %}
+  </dl>
+  {% endfor %}
+  {% for sm in r.sitemap_facts %}
+  <dl class="kv">
+    <dt>{{ sm.host }} · sitemap</dt>
+    {% if sm.state == "ok" %}
+    <dd>{{ sm.url }} · {{ sm.url_count }} 个 URL · 抽样 {{ sm.sample|length }} 页
+      {% if sm.flags %}<span class="tag">{{ sm.flags|join(" ") }}</span>{% endif %}</dd>
+    {% else %}
+    <dd>{{ copy["sitemap_" ~ sm.state].format(status=sm.status) }}</dd>
+    {% endif %}
+  </dl>
+  {% endfor %}
+</section>
+
 {# ══════ #apex —— 裸域/www 双向探测（标 single_case，不进首页计数）════════ #}
 <section id="apex">
   <h2>{{ copy["apex_title"] }}</h2>

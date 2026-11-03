@@ -239,6 +239,26 @@
       ],
       "type": "object"
     },
+    "CrawlerAccessFact": {
+      "additionalProperties": false,
+      "properties": {
+        "access": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string"
+        },
+        "token": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "token",
+        "role",
+        "access"
+      ],
+      "type": "object"
+    },
     "DiscoveredHost": {
       "additionalProperties": false,
       "properties": {
@@ -664,6 +684,51 @@
         "why",
         "precedent",
         "watch_command"
+      ],
+      "type": "object"
+    },
+    "HostRobotsFacts": {
+      "additionalProperties": false,
+      "properties": {
+        "crawlers": {
+          "items": {
+            "$ref": "#/$defs/CrawlerAccessFact"
+          },
+          "type": "array"
+        },
+        "host": {
+          "type": "string"
+        },
+        "policy": {
+          "type": "string"
+        },
+        "readable": {
+          "type": "boolean"
+        },
+        "sitemaps_declared": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "status": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "why": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "host",
+        "status",
+        "policy",
+        "readable",
+        "why",
+        "sitemaps_declared",
+        "crawlers"
       ],
       "type": "object"
     },
@@ -1286,6 +1351,12 @@
           },
           "type": "object"
         },
+        "sitemap_facts": {
+          "additionalProperties": {
+            "$ref": "#/$defs/SitemapFacts"
+          },
+          "type": "object"
+        },
         "sitemap_urls": {
           "additionalProperties": {
             "items": {
@@ -1318,6 +1389,58 @@
         "pricing_candidates_tried",
         "ai_path_probes",
         "robots"
+      ],
+      "type": "object"
+    },
+    "SitemapFacts": {
+      "additionalProperties": false,
+      "properties": {
+        "declared_in_robots": {
+          "type": "boolean"
+        },
+        "flags": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "host": {
+          "type": "string"
+        },
+        "sample": {
+          "items": {
+            "$ref": "#/$defs/PageSeoFacts"
+          },
+          "type": "array"
+        },
+        "state": {
+          "type": "string"
+        },
+        "status": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "url": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "url_count": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "host",
+        "state",
+        "declared_in_robots",
+        "url",
+        "status",
+        "url_count",
+        "sample",
+        "flags"
       ],
       "type": "object"
     },
@@ -1420,6 +1543,12 @@
       },
       "type": "array"
     },
+    "robots_facts": {
+      "items": {
+        "$ref": "#/$defs/HostRobotsFacts"
+      },
+      "type": "array"
+    },
     "root_causes": {
       "items": {
         "$ref": "#/$defs/RootCause"
@@ -1435,6 +1564,12 @@
     "seo_facts": {
       "items": {
         "$ref": "#/$defs/PageSeoFacts"
+      },
+      "type": "array"
+    },
+    "sitemap_facts": {
+      "items": {
+        "$ref": "#/$defs/SitemapFacts"
       },
       "type": "array"
     },

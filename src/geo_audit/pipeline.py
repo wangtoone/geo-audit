@@ -52,6 +52,7 @@ from geo_audit.checks.fix_candidates import (
     find_fix_candidate,
     grade_candidates,
 )
+from geo_audit.checks.seo_facts import robots_facts
 from geo_audit.extract import LinkTarget, PageExtraction, extract_page
 from geo_audit.fetch.cache import HttpCache
 from geo_audit.fetch.client import Fetcher, FetcherConfig, build_user_agent
@@ -182,7 +183,7 @@ NOT_CHECKED: tuple[str, ...] = (
     "托管 web 版（会让 --contact 这条合规约束当场失效）",
     "Playwright 渲染（合规不绕 WAF，且实测只有 2/72 = 2.8% 盲区）",
     "渲染对比（爬虫看到的 vs 用户看到的）：默认版没做，看不到两者的冲突，归入「没挖到」",
-    "SEO 事实只覆盖首页：关键页面、sitemap 有效性、robots 对搜索爬虫的规则、实际收录与排名都没查",
+    "SEO 事实只覆盖首页与 sitemap 抽样页（每个 host 最多 3 页）：其余页面、收录与排名没查",
     "--serve 本地服务",
 )
 
@@ -1984,6 +1985,8 @@ def _assemble(
         excluded=tuple(st.excluded),
         apex_www=sitemap.apex_www if sitemap is not None else None,
         seo_facts=tuple(sitemap.root_pages.values()) if sitemap is not None else (),
+        robots_facts=robots_facts(sitemap.robots) if sitemap is not None else (),
+        sitemap_facts=tuple(sitemap.sitemap_facts.values()) if sitemap is not None else (),
         coverage=coverage,
         counts=counts,
     )
