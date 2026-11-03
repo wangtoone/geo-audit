@@ -350,6 +350,13 @@ COPY_ZH: dict[str, str] = {
     "「静态 / 动态」是不跑 JS 的推断。没有做渲染对比，看不到「爬虫看到的 vs 用户看到的」冲突。",
     "seo_none": "本次没有首页 SEO 事实。",
     "seo_unreadable": "没读到首页（{reason}）：这不等于没问题。",
+    # ── #dimensions 首屏四个维度 ──────────────────────────────────────
+    "dim_intro": "四个维度，没有总分。灰 = 没看到，永远不算通过。",
+    "dim_state_red": "红",
+    "dim_state_yellow": "黄",
+    "dim_state_green": "绿",
+    "dim_state_gray": "灰",
+    "dim_gray_split": "灰按原因拆：没挖到 {not_dug} · 确实没有 {absent} · 被拦 {blocked}",
     # ── #robots / #sitemap ─────────────────────────────────────────────
     "robots_title": "robots.txt 与 sitemap",
     "robots_intro": "robots.txt 对搜索爬虫（Googlebot、Bingbot、Baiduspider）和 AI 爬虫各怎么说，"

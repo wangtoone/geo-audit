@@ -259,6 +259,39 @@
       ],
       "type": "object"
     },
+    "DimensionVerdict": {
+      "additionalProperties": false,
+      "properties": {
+        "absent": {
+          "type": "integer"
+        },
+        "blocked": {
+          "type": "integer"
+        },
+        "key": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "not_dug": {
+          "type": "integer"
+        },
+        "sentence": {
+          "type": "string"
+        },
+        "state": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "key",
+        "label",
+        "state",
+        "sentence"
+      ],
+      "type": "object"
+    },
     "DiscoveredHost": {
       "additionalProperties": false,
       "properties": {
@@ -1503,6 +1536,12 @@
     },
     "denoise_ruleset_version": {
       "type": "string"
+    },
+    "dimensions": {
+      "items": {
+        "$ref": "#/$defs/DimensionVerdict"
+      },
+      "type": "array"
     },
     "domain": {
       "type": "string"

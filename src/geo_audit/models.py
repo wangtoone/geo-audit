@@ -607,6 +607,25 @@ class SitemapFacts:
 
 
 @dataclass(frozen=True, slots=True)
+class DimensionVerdict:
+    """首屏的一个维度：红 / 黄 / 绿 / 灰四态 + 一句大白话。**没有总分。**
+
+    灰 = 无法判断，**永远不折算成绿**；``not_dug`` / ``absent`` / ``blocked`` 是灰按原因
+    拆开的三类（没挖到 / 确实没有 / 被拦）。红黄绿对应已看到的事实，灰对应没看到的部分，
+    两者并存时取更坏的已知状态（红 > 黄 > 灰 > 绿）。
+    """
+
+    key: str
+    label: str
+    #: "red" | "yellow" | "green" | "gray"
+    state: str
+    sentence: str
+    not_dug: int = 0
+    absent: int = 0
+    blocked: int = 0
+
+
+@dataclass(frozen=True, slots=True)
 class SiteMap:
     """Everything discovery produces for one input domain."""
 
@@ -1253,6 +1272,8 @@ class Report:
     seo_facts: tuple[PageSeoFacts, ...] = ()
     robots_facts: tuple[HostRobotsFacts, ...] = ()
     sitemap_facts: tuple[SitemapFacts, ...] = ()
+    #: 首屏四个维度（能不能被读到 / 能不能被索引 / AI 通道 / 死链），没有总分
+    dimensions: tuple[DimensionVerdict, ...] = ()
 
     def to_json(self) -> str:
         return json.dumps(asdict(self), ensure_ascii=False, indent=2, sort_keys=True, default=str)

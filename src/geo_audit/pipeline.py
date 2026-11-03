@@ -53,6 +53,7 @@ from geo_audit.checks.fix_candidates import (
     grade_candidates,
 )
 from geo_audit.checks.seo_facts import robots_facts
+from geo_audit.dimensions import build_dimensions
 from geo_audit.extract import LinkTarget, PageExtraction, extract_page
 from geo_audit.fetch.cache import HttpCache
 from geo_audit.fetch.client import Fetcher, FetcherConfig, build_user_agent
@@ -1965,6 +1966,10 @@ def _assemble(
         index_links_unprobed=coverage.index_links_unprobed,
         unknown_positions=positions,
     )
+    seo_facts = tuple(sitemap.root_pages.values()) if sitemap is not None else ()
+    robots_f = robots_facts(sitemap.robots) if sitemap is not None else ()
+    sitemap_f = tuple(sitemap.sitemap_facts.values()) if sitemap is not None else ()
+    dimensions = build_dimensions(positions, seo_facts, robots_f, sitemap_f, checks=checks)
     return Report(
         schema_version=SCHEMA_VERSION,
         tool_version=TOOL_VERSION,
@@ -1984,9 +1989,10 @@ def _assemble(
         coverage_gaps=tuple(st.coverage_gaps),
         excluded=tuple(st.excluded),
         apex_www=sitemap.apex_www if sitemap is not None else None,
-        seo_facts=tuple(sitemap.root_pages.values()) if sitemap is not None else (),
-        robots_facts=robots_facts(sitemap.robots) if sitemap is not None else (),
-        sitemap_facts=tuple(sitemap.sitemap_facts.values()) if sitemap is not None else (),
+        seo_facts=seo_facts,
+        robots_facts=robots_f,
+        sitemap_facts=sitemap_f,
+        dimensions=dimensions,
         coverage=coverage,
         counts=counts,
     )

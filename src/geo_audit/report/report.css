@@ -627,3 +627,17 @@ ol.tight li {
     min-width: 0;
   }
 }
+
+.dims {
+  list-style: none;
+  margin: 8px 0;
+  padding: 0;
+}
+.dims .dim {
+  padding: 6px 0;
+  border-top: 1px solid var(--line);
+}
+.dims .st-red { color: var(--fail); font-weight: 600; }
+.dims .st-yellow { color: var(--unknown); font-weight: 600; }
+.dims .st-green { color: var(--pass); font-weight: 600; }
+.dims .st-gray { color: var(--ink-2); font-weight: 600; }
