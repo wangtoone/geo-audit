@@ -531,6 +531,39 @@ class ApexWwwResult:
 
 
 @dataclass(frozen=True, slots=True)
+class PageSeoFacts:
+    """首页的 SEO 事实（``checks/seo_facts.py``）。**只陈述，不下结论，不影响退出码。**
+
+    ``raw_html_tier`` / ``framework_signals`` / ``delivery_hint`` 是不跑 JS 的**推断**：
+    ``full`` / ``partial`` / ``shell`` 按原始 HTML 里的可见文字量分档，``unreadable`` 表示
+    首页没读到（原因在 ``unreadable_reason``），**不等于没问题**。
+    """
+
+    host: str
+    url: str
+    final_url: str
+    status: int | None
+    title: str | None
+    h1: tuple[str, ...]
+    meta_description: str | None
+    canonical: str | None
+    #: "self" | "other_path" | "other_host" | "missing"
+    canonical_relation: str
+    #: meta robots 或 X-Robots-Tag 含 noindex
+    noindex: bool
+    #: "lang=href"
+    hreflang: tuple[str, ...]
+    visible_text_len: int
+    #: "full" | "partial" | "shell" | "unreadable"（推断）
+    raw_html_tier: str
+    framework_signals: tuple[str, ...]
+    #: "prerendered_or_cached" | "dynamic" | None（推断）
+    delivery_hint: str | None
+    flags: tuple[str, ...]
+    unreadable_reason: str | None
+
+
+@dataclass(frozen=True, slots=True)
 class SiteMap:
     """Everything discovery produces for one input domain."""
 
@@ -558,6 +591,8 @@ class SiteMap:
     requests_spent: int = 0
     budget_exhausted: bool = False
     skipped_by_budget: tuple[str, ...] = ()
+    #: host -> 首页 SEO 事实（discovery 探根路径时顺手读，不多发请求）
+    root_pages: dict[str, PageSeoFacts] = field(default_factory=dict)
 
 
 @dataclass(frozen=True, slots=True)
@@ -1170,6 +1205,8 @@ class Report:
     apex_www: ApexWwwResult | None
     coverage: Coverage
     counts: Counts
+    #: 首页 SEO 事实，每个探过根路径的 host 一行（旧报告没有这个字段 → 空）
+    seo_facts: tuple[PageSeoFacts, ...] = ()
 
     def to_json(self) -> str:
         return json.dumps(asdict(self), ensure_ascii=False, indent=2, sort_keys=True, default=str)

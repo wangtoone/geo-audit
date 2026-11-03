@@ -171,7 +171,7 @@ def test_breakdown_groups_by_category_and_lists_hosts() -> None:
 
 _PROSE = (
     "<html><body><main>"
-    + ("Example is a real product with real prose. " * 20)
+    + ("Example is a real product with real prose. " * 60)
     + "</main></body></html>"
 )
 _SHELL = (
@@ -248,3 +248,18 @@ def test_combos_shape_end_to_end_headline_does_not_misreport(
         for bad in FORBIDDEN_WITH_UNKNOWN:
             assert bad not in report.headline, report.headline
         assert "combos.example.ai" in report.headline
+
+
+def test_combos_shape_seo_facts_mark_shell_and_unreadable_not_clean(
+    fetcher_factory: Callable[[FakeSite], Fetcher],
+) -> None:
+    site, resolver = _combos_site()
+    report = audit_domain(
+        AuditOptions(domain="combos.example.ai", contact=CONTACT, use_cache=False),
+        fetcher=fetcher_factory(site),
+        resolver=resolver,  # type: ignore[arg-type]
+    )
+    by_host = {f.host: f for f in report.seo_facts}
+    assert by_host["combos.example.ai"].raw_html_tier == "shell"
+    assert by_host["example.ai"].raw_html_tier == "full"
+    assert "渲染对比" in "".join(report.coverage.not_checked)

@@ -87,6 +87,8 @@ class PageFacts:
     offer_prices_not_visible: tuple[str, ...]
     #: 页面里完整的可见文字（NFKC、折叠空白）。对账用，不进 JSON 输出
     text: str = field(repr=False, default="")
+    #: ``<link rel="alternate" hreflang=…>``，写成 ``"lang=href"``（原样保序）
+    hreflang: tuple[str, ...] = ()
 
 
 class _Scan(HTMLParser):
@@ -98,6 +100,7 @@ class _Scan(HTMLParser):
         self.in_h1 = 0
         self.meta: dict[str, str] = {}
         self.canonical: str | None = None
+        self.hreflang: list[str] = []
         self.ld_blocks: list[list[str]] = []
         self.in_ld = False
 
@@ -113,8 +116,11 @@ class _Scan(HTMLParser):
             if name and "content" in a:
                 self.meta.setdefault(name, a["content"])
         elif tag == "link":
-            if "canonical" in a.get("rel", "").lower().split() and self.canonical is None:
+            rel = a.get("rel", "").lower().split()
+            if "canonical" in rel and self.canonical is None:
                 self.canonical = a.get("href") or None
+            if "alternate" in rel and a.get("hreflang") and a.get("href"):
+                self.hreflang.append(f"{a['hreflang'].strip().lower()}={a['href'].strip()}")
         elif tag == "script" and "ld+json" in a.get("type", "").lower():
             self.in_ld = True
             self.ld_blocks.append([])
@@ -232,6 +238,7 @@ def inspect_raw_html(
         visible_amounts=amounts,
         offer_prices_not_visible=not_visible,
         text=text,
+        hreflang=tuple(scan.hreflang),
     )
 
 
