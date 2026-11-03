@@ -204,6 +204,33 @@ NOT_EVALUATED_REASONS: frozenset[str] = frozenset(
 )
 
 
+#: 「无法判断」按原因归并成的展示类别（交接说明第 3 节第 2 条）。
+#: ``absent``（确实没有 = 诚实 404）不会出现在这里：诚实 404 是 PASS / N/A，
+#: 不是 UNKNOWN；类别名留着，让渲染层三类并列时有统一的取值。
+UNKNOWN_BLOCKED_REASONS: frozenset[str] = frozenset(
+    {
+        "waf_status",
+        "waf_challenge_body",
+        "waf_challenge_header",
+        "rate_limited",
+        "login_required",
+        "robots_disallowed",
+        "robots_unreadable",
+    }
+)
+#: 其余原因（含 interrupted）都归「没挖到」：我们没拿到能下结论的内容。
+UNKNOWN_CATEGORY_LABEL: dict[str, str] = {
+    "not_dug": "没挖到",
+    "absent": "确实没有",
+    "blocked": "被拦",
+}
+
+
+def unknown_category(reason: str | None) -> Literal["not_dug", "blocked"]:
+    """一个 UNKNOWN 原因码属于哪一类展示：``blocked`` 或 ``not_dug``。"""
+    return "blocked" if reason in UNKNOWN_BLOCKED_REASONS else "not_dug"
+
+
 class Expect(str, Enum):
     """What kind of body the caller expects, which changes the soft-404 rules.
 

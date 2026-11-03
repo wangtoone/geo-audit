@@ -69,6 +69,7 @@ from geo_audit.models import (
     SEVERITY_RANK,
     STAGE_LABEL,
     TOOL_VERSION,
+    UNKNOWN_CATEGORY_LABEL,
     UNKNOWN_REMEDY,
     Counts,
     Coverage,
@@ -94,6 +95,7 @@ from geo_audit.models import (
     Status,
     Verdict,
     VerdictKind,
+    unknown_category,
     verdict_to_status,
 )
 from geo_audit.naive import NaiveEmulator, divergences
@@ -710,6 +712,30 @@ def sampled_ratio(cov: Coverage) -> float:
     return min(1.0, (cov.links_verified + cov.links_unknown) / denom)
 
 
+def unknown_breakdown(positions: Sequence[Position]) -> str:
+    """首屏里「无法判断」的去处：哪些域、按原因归成「没挖到 / 被拦」各几个。
+
+    没传 ``positions`` 返回空串（只剩计数）。**必须列出域**：用户要知道「没看到」
+    的是哪一块，而不是只看到一个数。
+    """
+    unknown = [p for p in positions if p.status is Status.UNKNOWN]
+    if not unknown:
+        return ""
+    hosts = sorted({(urlsplit(p.probe_url).hostname or p.probe_url) for p in unknown})
+    by_cat: dict[str, dict[str, int]] = {}
+    for p in unknown:
+        reason = p.unknown_reason or "unknown"
+        cat = unknown_category(reason)
+        by_cat.setdefault(cat, {})[reason] = by_cat.setdefault(cat, {}).get(reason, 0) + 1
+    parts = []
+    for cat in ("not_dug", "blocked"):
+        reasons = by_cat.get(cat)
+        if reasons:
+            detail = "、".join(f"{r} ×{n}" for r, n in sorted(reasons.items()))
+            parts.append(f"{UNKNOWN_CATEGORY_LABEL[cat]} {sum(reasons.values())}（{detail}）")
+    return f"，涉及 {'、'.join(hosts)}；{'；'.join(parts)}"
+
+
 def make_headline(
     c: Counts,
     *,
@@ -718,6 +744,7 @@ def make_headline(
     interrupted: bool,
     index_links_unresolved: int = 0,
     index_links_unprobed: int = 0,
+    unknown_positions: Sequence[Position] = (),
 ) -> tuple[str, VerdictKind]:
     """§6.1:3074 六分支逐字，互斥且穷尽。返回 ``(headline, verdict_kind)``。
 
@@ -731,31 +758,35 @@ def make_headline(
             "扫描被中断，下面只是已完成部分的结论。未跑到的位置标「无法判断」。",
             "unusable",
         )
-    if c.positions_unknown / core > 0.5:
+    breakdown = unknown_breakdown(unknown_positions)
+    if c.positions_unknown / core >= 0.5:  # 恰好一半也算：Combos 是 2/4
         return (
-            f"这次扫描不可信：{core} 个核心位置里有 {c.positions_unknown} 个我们没能评估。"
-            f"下面的结论不要当结论用。",
+            f"未能完整评估，这次扫描不可信：{core} 个核心位置里有 {c.positions_unknown} 个"
+            f"我们没能评估{breakdown}。下面的结论不要当结论用。",
             "unusable",
         )
     if c.positions_fail and c.positions_unknown:
         return (
             f"你的 AI 检索链路上有 {c.positions_fail} 个位置会被读错，"
-            f"另有 {c.positions_unknown} 个位置我们无法判断。",
+            f"另有 {c.positions_unknown} 个位置我们无法判断{breakdown}。",
             "has_fail",
         )
     if c.positions_fail:
         return (f"你的 AI 检索链路上有 {c.positions_fail} 个位置会被读错。", "has_fail")
+    if c.positions_unknown:
+        # 必须排在 ``not has_ai_channel`` 之前：有位置没看到时，「没有 AI 索引通道」
+        # 不是结论 —— 没探的位置里可能就有 llms.txt。
+        undecided = "是否存在 AI 索引通道也因此不下结论。" if not has_ai_channel else ""
+        return (
+            f"未能完整评估：{c.positions_unknown} 个位置没看到{breakdown}。"
+            f"看到的部分没发现被读错的位置，但看不到的部分不能算「没问题」。{undecided}",
+            "zero_with_unknown",
+        )
     if not has_ai_channel:
         return (
             "你的站没有 AI 索引通道（llms.txt / llms-full.txt 全部诚实 404）。"
             "AI 只能靠爬你的 HTML —— 这份报告检查的是它爬不爬得通。",
             "no_ai_channel",
-        )
-    if c.positions_unknown:
-        return (
-            f"没有发现被读错的位置。但有 {c.positions_unknown} 个位置我们无法判断，"
-            f"所以这不能算「全部通过」。",
-            "zero_with_unknown",
         )
     if sampled_ratio < 0.5:
         return (
@@ -1929,6 +1960,7 @@ def _assemble(
         interrupted=interrupted,
         index_links_unresolved=coverage.index_links_unresolved,
         index_links_unprobed=coverage.index_links_unprobed,
+        unknown_positions=positions,
     )
     return Report(
         schema_version=SCHEMA_VERSION,

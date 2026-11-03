@@ -354,11 +354,9 @@ def test_headline_zero_with_unknown_never_says_all_pass() -> None:
         _c(positions=8, p=6, u=2), has_ai_channel=True, sampled_ratio=1.0, interrupted=False
     )
     assert kind == "zero_with_unknown"
-    # ⚠️ A32 的字面要求是「有 UNKNOWN 的 HTML 不含『全部通过』」，但 §6.1:3098 给
-    # 这一分支的**逐字文案**里就有「所以这不能算「全部通过」」。铁律 8 要求照抄原文，
-    # 所以断言改成「只以被否定的形式出现」（已进交付说明 spec_gaps）。
-    assert "这不能算「全部通过」" in text
-    assert text.count("全部通过") == 1
+    # PR-1：首屏改写成「未能完整评估：N 个位置没看到」，不含「全部通过」「没有」。
+    assert text.startswith("未能完整评估：2 个位置没看到")
+    assert "全部通过" not in text
 
 
 # --------------------------------------------------------------------------- #
