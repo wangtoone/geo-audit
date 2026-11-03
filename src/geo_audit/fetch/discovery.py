@@ -41,6 +41,7 @@ from ..models import (
     Probe,
     RobotsInfo,
     SiteMap,
+    SitemapFacts,
     Verdict,
 )
 from .client import Fetcher
@@ -316,7 +317,11 @@ def mine_declared_hosts(bodies: list[str], *, apex: str) -> list[str]:
 
 
 def fetch_sitemap_urls(
-    fetcher: Fetcher, host: str, robots_sitemaps: tuple[str, ...]
+    fetcher: Fetcher,
+    host: str,
+    robots_sitemaps: tuple[str, ...],
+    *,
+    outcomes: list[tuple[str, int, bool]] | None = None,
 ) -> tuple[str, ...]:
     """robots.txt Sitemap: lines first, then the conventional filenames.
 
@@ -335,6 +340,10 @@ def fetch_sitemap_urls(
 
     for cand in candidates[:5]:
         resp = fetcher.fetch(cand, expect=Expect.TEXT_FILE)
+        if outcomes is not None:
+            # 被拦（403 / 401 / 429 / 挑战页）与「没有」（404 / 410）要分开记：只留 urls 的话
+            # 一份 403 的 sitemap 和不存在的 sitemap 在报告里长得一样。
+            outcomes.append((cand, resp.status, resp.blocked or resp.status in (401, 403, 429)))
         if resp.status != 200:
             continue
         text = resp.text
@@ -353,6 +362,59 @@ def fetch_sitemap_urls(
             break
 
     return tuple(dict.fromkeys(urls))[:MAX_SITEMAP_URLS]
+
+
+SITEMAP_SAMPLE = 3
+
+
+def _sample_urls(urls: Sequence[str], n: int = SITEMAP_SAMPLE) -> tuple[str, ...]:
+    """按位置等距取 ``n`` 个（确定性，不随机）。"""
+    if len(urls) <= n:
+        return tuple(urls)
+    step = len(urls) / n
+    return tuple(urls[int(i * step)] for i in range(n))
+
+
+def build_sitemap_facts(
+    host: str,
+    *,
+    robots: RobotsInfo,
+    urls: tuple[str, ...],
+    outcomes: Sequence[tuple[str, int, bool]],
+    sample: tuple[PageSeoFacts, ...],
+) -> SitemapFacts:
+    ok = [o for o in outcomes if o[1] == 200]
+    if ok and urls:
+        state = "ok"
+    elif any(o[2] for o in outcomes):
+        state = "blocked"
+    elif outcomes and all(o[1] in (404, 410) for o in outcomes):
+        state = "absent"
+    else:
+        state = "unreadable"
+    flags: list[str] = []
+    if state == "ok" and not robots.sitemaps:
+        flags.append("not_declared_in_robots")
+    if state in ("blocked", "unreadable", "absent"):
+        flags.append(f"sitemap_{state}")
+    for name, bad in (
+        ("sample_noindex", sum(1 for f in sample if f.noindex)),
+        ("sample_not_2xx", sum(1 for f in sample if f.status is None or not 200 <= f.status < 300)),
+        ("sample_canonical_not_self", sum(1 for f in sample if f.canonical_relation != "self")),
+    ):
+        if bad:
+            flags.append(f"{name}:{bad}/{len(sample)}")
+    first = ok[0] if ok else None
+    return SitemapFacts(
+        host=host,
+        state=state,
+        declared_in_robots=bool(robots.sitemaps),
+        url=first[0] if first else None,
+        status=first[1] if first else (outcomes[0][1] if outcomes else None),
+        url_count=len(urls),
+        sample=sample,
+        flags=tuple(flags),
+    )
 
 
 def pricing_candidate_urls(host: str) -> tuple[str, ...]:
@@ -619,7 +681,13 @@ def discover(
 
     # robots.txt 与 sitemap.xml 不计入预算（不是内容探测），但 C1 需要它们。
     robots: dict[str, RobotsInfo] = {h: fetcher.robots_for(f"https://{h}/") for h in live_hosts}
-    sitemaps = {h: fetch_sitemap_urls(fetcher, h, robots[h].sitemaps) for h in live_hosts}
+    sitemaps: dict[str, tuple[str, ...]] = {}
+    sitemap_outcomes: dict[str, list[tuple[str, int, bool]]] = {}
+    for h in live_hosts:
+        sitemap_outcomes[h] = []
+        sitemaps[h] = fetch_sitemap_urls(
+            fetcher, h, robots[h].sitemaps, outcomes=sitemap_outcomes[h]
+        )
 
     marketing_host = www if any(x.host == www and x.reachable for x in hosts) else apex
     if acct.exceeded():
@@ -630,6 +698,23 @@ def discover(
         pricing_tried: tuple[tuple[str, Verdict], ...] = ()
     else:
         pricing_url, pricing_tried = find_pricing_page(fetcher, marketing_host, budget=acct)
+
+    # sitemap 抽样：走预算，预算耗尽就不抽（该 host 的 sample 为空，flags 不会冒充「抽样通过」）。
+    sitemap_facts: dict[str, SitemapFacts] = {}
+    for h in live_hosts:
+        sampled: list[PageSeoFacts] = []
+        for url in _sample_urls(sitemaps[h]):
+            if acct.exceeded():
+                break
+            acct.charge(url)
+            sampled.append(build_seo_facts(h, fetcher.probe(url, expect=Expect.HTML_PAGE)))
+        sitemap_facts[h] = build_sitemap_facts(
+            h,
+            robots=robots[h],
+            urls=sitemaps[h],
+            outcomes=sitemap_outcomes[h],
+            sample=tuple(sampled),
+        )
 
     return SiteMap(
         input_domain=raw_domain,
@@ -646,4 +731,5 @@ def discover(
         budget_exhausted=acct.exhausted,
         skipped_by_budget=tuple(acct.skipped),
         root_pages=root_pages,
+        sitemap_facts=sitemap_facts,
     )

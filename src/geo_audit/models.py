@@ -564,6 +564,49 @@ class PageSeoFacts:
 
 
 @dataclass(frozen=True, slots=True)
+class CrawlerAccessFact:
+    """robots.txt 对一个爬虫怎么说（``checks/robots_crawlers`` 的判定，压成三个字段）。"""
+
+    token: str
+    #: "training" | "search" | "user_fetch" | "search_engine"（Baiduspider，表里没有的搜索引擎）
+    role: str
+    #: "allowed" | "partial" | "blocked_all" | "unreadable"
+    access: str
+
+
+@dataclass(frozen=True, slots=True)
+class HostRobotsFacts:
+    """一个 host 的 robots.txt：读没读到、声明了哪些 sitemap、对搜索与 AI 爬虫各怎么说。"""
+
+    host: str
+    status: int | None
+    #: "parsed" | "allow_all" | "disallow_all"
+    policy: str
+    #: 真读到了才是 True；False 时 ``crawlers`` 全是 unreadable，不是「站点放行」
+    readable: bool
+    why: str
+    sitemaps_declared: tuple[str, ...]
+    crawlers: tuple[CrawlerAccessFact, ...]
+
+
+@dataclass(frozen=True, slots=True)
+class SitemapFacts:
+    """一个 host 的 sitemap：有没有、拿不到是被拦还是没有、抽样的几页是否可索引。"""
+
+    host: str
+    #: "ok" | "absent"（候选全是诚实 404/410）| "blocked"（403/401/429/挑战页）| "unreadable"
+    state: str
+    declared_in_robots: bool
+    #: 第一份读到内容的 sitemap；没读到为 None
+    url: str | None
+    status: int | None
+    url_count: int
+    #: 抽样页（按位置等距取，确定性），每页复用首页那套事实
+    sample: tuple[PageSeoFacts, ...]
+    flags: tuple[str, ...]
+
+
+@dataclass(frozen=True, slots=True)
 class SiteMap:
     """Everything discovery produces for one input domain."""
 
@@ -593,6 +636,7 @@ class SiteMap:
     skipped_by_budget: tuple[str, ...] = ()
     #: host -> 首页 SEO 事实（discovery 探根路径时顺手读，不多发请求）
     root_pages: dict[str, PageSeoFacts] = field(default_factory=dict)
+    sitemap_facts: dict[str, SitemapFacts] = field(default_factory=dict)
 
 
 @dataclass(frozen=True, slots=True)
@@ -1207,6 +1251,8 @@ class Report:
     counts: Counts
     #: 首页 SEO 事实，每个探过根路径的 host 一行（旧报告没有这个字段 → 空）
     seo_facts: tuple[PageSeoFacts, ...] = ()
+    robots_facts: tuple[HostRobotsFacts, ...] = ()
+    sitemap_facts: tuple[SitemapFacts, ...] = ()
 
     def to_json(self) -> str:
         return json.dumps(asdict(self), ensure_ascii=False, indent=2, sort_keys=True, default=str)

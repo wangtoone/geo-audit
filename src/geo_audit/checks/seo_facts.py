@@ -9,10 +9,19 @@
 from __future__ import annotations
 
 import re
+from collections.abc import Mapping
 from urllib.parse import urljoin, urlsplit
 
 from geo_audit.checks.rawhtml import inspect_raw_html
-from geo_audit.models import HttpResponse, PageSeoFacts, Probe
+from geo_audit.checks.robots_crawlers import Access, judge_hosts, judge_path
+from geo_audit.models import (
+    CrawlerAccessFact,
+    HostRobotsFacts,
+    HttpResponse,
+    PageSeoFacts,
+    Probe,
+    RobotsInfo,
+)
 
 #: 可见文字字符数分档（不跑 JS）。< 200 与 ``detect_js_dependency`` 的 needs_js 门槛一致。
 SHELL_BELOW = 200
@@ -151,3 +160,49 @@ def build_seo_facts(host: str, probe: Probe) -> PageSeoFacts:
         flags=tuple(flags),
         unreadable_reason=None,
     )
+
+
+#: ``CRAWLERS`` 表里没有、但中文站要看的搜索引擎爬虫。
+EXTRA_SEARCH_ENGINES: tuple[str, ...] = ("Baiduspider",)
+
+
+def robots_facts(robots: Mapping[str, RobotsInfo]) -> tuple[HostRobotsFacts, ...]:
+    """每个 host 的 robots.txt 事实：读没读到、声明的 sitemap、搜索与 AI 爬虫各怎么说。
+
+    没读到（``readable`` 为 False）时所有爬虫都是 ``unreadable``，**不是**「站点放行」。
+    """
+    out: list[HostRobotsFacts] = []
+    for host, policy in judge_hosts(robots).items():
+        info = robots[host]
+        crawlers = [
+            CrawlerAccessFact(a.crawler.token, a.crawler.role.value, a.access.value)
+            for a in policy.answers
+        ]
+        for token in EXTRA_SEARCH_ENGINES:
+            if not info.readable or info.policy != "parsed":
+                access = (
+                    Access.UNREADABLE.value
+                    if not info.readable
+                    else (
+                        Access.ALLOWED.value
+                        if info.policy == "allow_all"
+                        else Access.BLOCKED_ALL.value
+                    )
+                )
+            else:
+                access = (
+                    Access.ALLOWED if judge_path(info.raw, token, "/") else Access.BLOCKED_ALL
+                ).value
+            crawlers.append(CrawlerAccessFact(token, "search_engine", access))
+        out.append(
+            HostRobotsFacts(
+                host=host,
+                status=info.status,
+                policy=info.policy,
+                readable=info.readable,
+                why=info.why,
+                sitemaps_declared=info.sitemaps,
+                crawlers=tuple(crawlers),
+            )
+        )
+    return tuple(out)

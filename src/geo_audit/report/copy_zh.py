@@ -350,6 +350,14 @@ COPY_ZH: dict[str, str] = {
     "「静态 / 动态」是不跑 JS 的推断。没有做渲染对比，看不到「爬虫看到的 vs 用户看到的」冲突。",
     "seo_none": "本次没有首页 SEO 事实。",
     "seo_unreadable": "没读到首页（{reason}）：这不等于没问题。",
+    # ── #robots / #sitemap ─────────────────────────────────────────────
+    "robots_title": "robots.txt 与 sitemap",
+    "robots_intro": "robots.txt 对搜索爬虫（Googlebot、Bingbot、Baiduspider）和 AI 爬虫各怎么说，"
+    "以及 sitemap 有没有、拿不到时是被拦还是没有。抽样页只看 noindex、canonical、状态码。",
+    "robots_unreadable": "robots.txt 没读到（{why}）：这不等于站点放行。",
+    "sitemap_blocked": "sitemap 被拦（HTTP {status}）：我们没读到，不等于没有。",
+    "sitemap_absent": "sitemap 确实没有（候选路径全是 404 / 410）。",
+    "sitemap_unreadable": "sitemap 没读到：这不等于没有。",
     # ── #apex 裸域/www ──────────────────────────────────────────────────
     "apex_title": "裸域 / www 双向探测",
     "apex_single_case": "证据强度 single_case：全语料只有一例（brevo 的裸域返回 Vercel 的"
