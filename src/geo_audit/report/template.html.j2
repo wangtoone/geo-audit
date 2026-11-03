@@ -69,6 +69,19 @@
   <div class="banner">{{ copy["unusable_banner"].format(unknown=r.counts.positions_unknown, core=core_positions) }}</div>
   {% endif %}
   <h1>{{ r.headline }}</h1>
+  {% if r.dimensions %}
+  <p class="small">{{ copy["dim_intro"] }}</p>
+  <ul class="dims">
+    {% for d in r.dimensions %}
+    <li class="dim dim-{{ d.state }}">
+      <strong>{{ d.label }}</strong>
+      <span class="st st-{{ d.state }}">{{ copy["dim_state_" ~ d.state] }}</span>
+      {{ d.sentence }}
+      {% if d.not_dug or d.absent or d.blocked %}<span class="tag">{{ copy["dim_gray_split"].format(not_dug=d.not_dug, absent=d.absent, blocked=d.blocked) }}</span>{% endif %}
+    </li>
+    {% endfor %}
+  </ul>
+  {% endif %}
   <div class="bar">
     <span class="total">{{ copy["count_bar_positions"].format(positions=r.counts.positions|thousands) }}</span>
     <span class="st st-pass">{{ r.counts.positions_pass|thousands }} {{ STATUS_LABEL["pass"] }}</span>

@@ -263,3 +263,18 @@ def test_combos_shape_seo_facts_mark_shell_and_unreadable_not_clean(
     assert by_host["combos.example.ai"].raw_html_tier == "shell"
     assert by_host["example.ai"].raw_html_tier == "full"
     assert "渲染对比" in "".join(report.coverage.not_checked)
+
+
+def test_combos_shape_dimensions_first_screen(
+    fetcher_factory: Callable[[FakeSite], Fetcher],
+) -> None:
+    site, resolver = _combos_site()
+    report = audit_domain(
+        AuditOptions(domain="combos.example.ai", contact=CONTACT, use_cache=False),
+        fetcher=fetcher_factory(site),
+        resolver=resolver,  # type: ignore[arg-type]
+    )
+    dims = {d.key: d for d in report.dimensions}
+    assert set(dims) == {"readable", "indexable", "ai_channel", "dead_links"}
+    assert dims["readable"].state == "red"
+    assert "combos.example.ai" in dims["readable"].sentence
