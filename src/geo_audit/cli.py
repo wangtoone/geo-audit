@@ -33,8 +33,10 @@ from typing import NoReturn, cast
 import jinja2
 
 from geo_audit import __version__
+from geo_audit.budget import resolve_max_requests
 from geo_audit.fetch import resolve as resolve_mod
 from geo_audit.fetch.jsrender import RENDER_FLAG_MESSAGE
+from geo_audit.fetch.ratelimit import MIN_INTERVAL_SECONDS
 from geo_audit.fixtures import DnsFixtureMissing, FixtureMissing, FixtureStore
 from geo_audit.models import SCHEMA_VERSION, Status
 from geo_audit.pipeline import (
@@ -42,7 +44,6 @@ from geo_audit.pipeline import (
     DEFAULT_FAIL_ON,
     DEFAULT_FORMAT,
     DEFAULT_MAX_LINKS,
-    DEFAULT_MAX_REQUESTS,
     DEFAULT_OUT_DIR,
     DEFAULT_RATE,
     DEFAULT_RESOLVERS,
@@ -208,8 +209,9 @@ def build_parser() -> argparse.ArgumentParser:
         "--max-requests",
         type=int,
         metavar="N",
-        default=DEFAULT_MAX_REQUESTS,
-        help="单域请求硬上限（0 = 不限）。超限的位置标「无法评估 · 超出预算」",
+        default=None,
+        help="单域请求硬上限（0 = 不限）。不传：交互终端里开跑前问你想花多久并换算成上限，"
+        "非交互场景不设上限。超限的位置标「无法评估 · 超出预算」",
     )
     checks.add_argument("--index-links-full", action="store_true", help="llms.txt 内链一律全量验证")
     checks.add_argument(
@@ -695,6 +697,14 @@ def _run(parser: argparse.ArgumentParser, argv: Sequence[str] | None) -> int:
     resolve_mod.FALLBACK_RESOLVERS = resolvers
 
     store = FixtureStore.default() if args.replay_fixtures else None
+    max_requests = resolve_max_requests(
+        args.max_requests,
+        # 回放不发真请求，问「想花多久」没有意义
+        interactive=sys.stdin.isatty() and sys.stderr.isatty() and not args.replay_fixtures,
+        interval=max(MIN_INTERVAL_SECONDS, 1.0 / args.rate),
+        ask=input,
+        say=lambda m: print(m, file=sys.stderr),
+    )
     options = AuditOptions(
         domain=domain,
         contact=contact,
@@ -702,7 +712,7 @@ def _run(parser: argparse.ArgumentParser, argv: Sequence[str] | None) -> int:
         skip=skip,
         seeds=tuple(args.seeds),
         max_links=args.max_links,
-        max_requests=args.max_requests,
+        max_requests=max_requests,
         index_links_full=args.index_links_full,
         fix_candidates=args.fix_candidates,
         wellknown=not args.no_wellknown,
